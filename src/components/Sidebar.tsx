@@ -22,6 +22,7 @@ import {
   Bell
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/Logo';
 
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -87,11 +88,8 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
     return (
       <div className="w-64 bg-card border-r border-border h-screen flex flex-col sticky top-0">
         <div className="p-6">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-white font-bold">O</span>
-            </div>
-            <span className="text-xl font-bold tracking-tight">Offrion</span>
+          <Link href="/" className="hover:opacity-90 transition-opacity">
+            <Logo size="sm" />
           </Link>
         </div>
         <nav className="flex-1 px-4 space-y-1">
@@ -112,11 +110,8 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   return (
     <div className="w-64 bg-card border-r border-border h-screen flex flex-col sticky top-0">
       <div className="p-6">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-white font-bold">O</span>
-          </div>
-          <span className="text-xl font-bold tracking-tight">Offrion</span>
+        <Link href="/" className="hover:opacity-90 transition-opacity">
+          <Logo size="sm" />
         </Link>
       </div>
 

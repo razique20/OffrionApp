@@ -2,17 +2,15 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ShoppingBag } from 'lucide-react';
+import { Logo } from '@/components/Logo';
 
 export const Navbar = () => {
   return (
     <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-white font-bold">O</span>
-          </div>
-          <span className="text-xl font-bold tracking-tight">Offrion</span>
+        <Link href="/" className="hover:opacity-90 transition-opacity">
+          <Logo />
         </Link>
         <div className="hidden md:flex items-center gap-8">
           <Link href="/features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Features</Link>
