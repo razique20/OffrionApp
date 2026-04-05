@@ -16,6 +16,7 @@ import {
   Loader2,
   ShieldCheck,
   Ban,
+  Edit2,
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
@@ -37,12 +38,19 @@ export default function AdminDashboard() {
   const [admins, setAdmins] = useState<any[]>([]);
   const [newCat, setNewCat] = useState({ name: '', slug: '', description: '' });
   const [newAdmin, setNewAdmin] = useState({ name: '', email: '', password: '', role: 'admin', permissions: [] as string[] });
+  const [editingAdminId, setEditingAdminId] = useState<string | null>(null);
 
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [detailData, setDetailData] = useState<any>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   // Fetch Stats & Initial Data
   useEffect(() => {
@@ -130,9 +138,14 @@ export default function AdminDashboard() {
       });
       if (res.ok) {
         setData(data.map(u => u._id === userId ? { ...u, isActive: !currentStatus } : u));
+        showNotification(`User ${!currentStatus ? 'activated' : 'deactivated'} successfully`);
+      } else {
+        const json = await res.json();
+        showNotification(json.error || 'Failed to update user status', 'error');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      showNotification(err.message || 'Network error occurred', 'error');
     } finally {
       setActionLoading(null);
     }
@@ -151,9 +164,14 @@ export default function AdminDashboard() {
         const json = await res.json();
         setCategories([...categories, json.category]);
         setNewCat({ name: '', slug: '', description: '' });
+        showNotification('Category initialized successfully');
+      } else {
+        const json = await res.json();
+        showNotification(json.error || 'Failed to create category', 'error');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      showNotification(err.message || 'Network error occurred', 'error');
     } finally {
       setActionLoading(null);
     }
@@ -168,9 +186,14 @@ export default function AdminDashboard() {
       });
       if (res.ok) {
         setData(data.map(d => d._id === dealId ? { ...d, isActive: approve } : d));
+        showNotification(`Deal ${approve ? 'approved' : 'rejected'} successfully`);
+      } else {
+        const json = await res.json();
+        showNotification(json.error || 'Failed to moderate deal', 'error');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      showNotification(err.message || 'Network error occurred', 'error');
     } finally {
       setActionLoading(null);
     }
@@ -202,9 +225,14 @@ export default function AdminDashboard() {
       });
       if (res.ok) {
         setCategories(categories.map(c => c._id === catId ? { ...c, isActive: !currentStatus } : c));
+        showNotification('Category status updated');
+      } else {
+        const json = await res.json();
+        showNotification(json.error || 'Failed to update category', 'error');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      showNotification(err.message || 'Network error occurred', 'error');
     } finally {
       setActionLoading(null);
     }
@@ -226,13 +254,14 @@ export default function AdminDashboard() {
         if (activeTab === 'categories') setCategories(categories.filter(c => c._id !== selectedItem._id));
         else setData(data.filter(i => i._id !== selectedItem._id));
         
-        // Update stats after deletion
+        showNotification(`${activeTab === 'categories' ? 'Category' : 'Item'} removed permanently`);
         fetchStats();
       } else {
-         console.error('Delete failed:', json.error);
+         showNotification(json.error || 'Delete failed', 'error');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      showNotification(err.message || 'Network error occurred', 'error');
     } finally {
       setIsDeleteOpen(false);
       setSelectedItem(null);
@@ -702,13 +731,23 @@ export default function AdminDashboard() {
                               )) : <span className="text-[9px] italic opacity-50">Standard Restricted</span>}
                            </div>
                         </td>
-                        <td className="px-4 py-5 text-right">
+                        <td className="px-4 py-5 text-right flex items-center justify-end gap-2">
                            {adm._id !== me._id && (
-                             <button 
-                               onClick={() => { setSelectedItem(adm); setIsDeleteOpen(true); }}
-                               className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-all">
-                                <Ban className="w-4 h-4" />
-                             </button>
+                             <>
+                               <button 
+                                 onClick={() => { 
+                                   setEditingAdminId(adm._id);
+                                   setNewAdmin({ name: adm.name, email: adm.email, password: '', role: adm.role, permissions: adm.permissions || [] });
+                                 }}
+                                 className="p-2 bg-blue-500/10 text-blue-500 rounded-lg hover:bg-blue-500/20 transition-all">
+                                  <Edit2 className="w-4 h-4" />
+                               </button>
+                               <button 
+                                 onClick={() => { setSelectedItem(adm); setIsDeleteOpen(true); }}
+                                 className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-all">
+                                  <Ban className="w-4 h-4" />
+                               </button>
+                             </>
                            )}
                         </td>
                       </tr>
@@ -722,27 +761,51 @@ export default function AdminDashboard() {
               <div className="w-12 h-12 bg-premium-gradient rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
                  <ShieldCheck className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-xl font-bold">New Security Principal</h3>
-              <p className="text-xs text-muted-foreground">Provision a new administrative account with specific bypass capabilities.</p>
+              <h3 className="text-xl font-bold">{editingAdminId ? 'Modify Principal' : 'New Security Principal'}</h3>
+              <p className="text-xs text-muted-foreground">{editingAdminId ? "Update access levels or identify for this administrative account." : "Provision a new administrative account with specific bypass capabilities."}</p>
               
               <form onSubmit={async (e) => {
                 e.preventDefault();
                 setActionLoading('new-adm');
-                const res = await fetch('/api/admin/admins', {
-                  method: 'POST',
+                
+                const method = editingAdminId ? 'PATCH' : 'POST';
+                const endpoint = editingAdminId ? `/api/admin/users/${editingAdminId}` : '/api/admin/admins';
+                
+                const res = await fetch(endpoint, {
+                  method,
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(newAdmin),
+                  body: JSON.stringify(editingAdminId ? { name: newAdmin.name, role: newAdmin.role, permissions: newAdmin.permissions } : newAdmin),
                 });
+                
                 if (res.ok) {
                    const json = await res.json();
-                   setAdmins([json.user, ...admins]);
+                   if (editingAdminId) {
+                      setAdmins(admins.map(a => a._id === editingAdminId ? json.user : a));
+                      setEditingAdminId(null);
+                      showNotification('Principal access levels updated');
+                   } else {
+                      setAdmins([json.user, ...admins]);
+                      showNotification('New security principal initialized');
+                   }
                    setNewAdmin({ name: '', email: '', password: '', role: 'admin', permissions: [] });
+                } else {
+                   const json = await res.json();
+                   showNotification(json.error || 'Failed to update principal', 'error');
                 }
                 setActionLoading(null);
               }} className="space-y-4">
                  <input type="text" placeholder="Full Name" className="w-full bg-secondary/30 border border-border rounded-xl px-4 py-3 text-xs" value={newAdmin.name} onChange={e => setNewAdmin({...newAdmin, name: e.target.value})} required />
-                 <input type="email" placeholder="Email Address" className="w-full bg-secondary/30 border border-border rounded-xl px-4 py-3 text-xs" value={newAdmin.email} onChange={e => setNewAdmin({...newAdmin, email: e.target.value})} required />
-                 <input type="password" placeholder="Secure Password" className="w-full bg-secondary/30 border border-border rounded-xl px-4 py-3 text-xs" value={newAdmin.password} onChange={e => setNewAdmin({...newAdmin, password: e.target.value})} required />
+                 {!editingAdminId && <input type="email" placeholder="Email Address" className="w-full bg-secondary/30 border border-border rounded-xl px-4 py-3 text-xs" value={newAdmin.email} onChange={e => setNewAdmin({...newAdmin, email: e.target.value})} required />}
+                 {!editingAdminId && <input type="password" placeholder="Secure Password" className="w-full bg-secondary/30 border border-border rounded-xl px-4 py-3 text-xs" value={newAdmin.password} onChange={e => setNewAdmin({...newAdmin, password: e.target.value})} required />}
+                 
+                 {editingAdminId && (
+                   <button 
+                    type="button"
+                    onClick={() => { setEditingAdminId(null); setNewAdmin({ name: '', email: '', password: '', role: 'admin', permissions: [] }); }}
+                    className="text-[10px] text-blue-500 font-bold hover:underline">
+                      Cancel Editing & Create New Instead
+                   </button>
+                 )}
                  
                  <div className="space-y-2">
                     <label className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">Permissions Matrix</label>
@@ -771,12 +834,26 @@ export default function AdminDashboard() {
                  <button 
                   disabled={actionLoading === 'new-adm'}
                   className="w-full py-4 bg-premium-gradient text-white font-bold rounded-2xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                    {actionLoading === 'new-adm' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Initialize Admin Account'}
+                    {actionLoading === 'new-adm' ? <Loader2 className="w-4 h-4 animate-spin" /> : editingAdminId ? 'Update Admin Access' : 'Initialize Admin Account'}
                  </button>
               </form>
            </div>
-        </div>
-      )}
+         </div>
+       )}
+
+       {/* Toast Notification */}
+       {notification && (
+         <div className={cn(
+           "fixed bottom-8 right-8 z-[100] flex items-center gap-4 px-6 py-4 rounded-[24px] border shadow-2xl animate-in slide-in-from-right-10 duration-300",
+           notification.type === 'success' 
+            ? "bg-emerald-500 text-white border-emerald-400" 
+            : "bg-red-500 text-white border-red-400"
+         )}>
+           {notification.type === 'success' ? <ShieldCheck className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+           <span className="text-xs font-bold tracking-wide">{notification.message}</span>
+           <button onClick={() => setNotification(null)} className="ml-4 opacity-70 hover:opacity-100"><X className="w-4 h-4" /></button>
+         </div>
+       )}
     </div>
   );
 }

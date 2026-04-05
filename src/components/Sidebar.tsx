@@ -72,7 +72,13 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
       .catch(console.error);
   }, []);
 
-  const handleLogout = async () => {
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+
+  const handleLogout = () => {
+    setIsLogoutConfirmOpen(true);
+  };
+
+  const actualLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
       router.push('/');
@@ -116,7 +122,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   const isSuperAdmin = me?.role === 'super_admin';
 
   return (
-    <div className="w-64 bg-card border-r border-border h-screen flex flex-col sticky top-0 overflow-y-auto custom-scrollbar">
+    <div className="w-64 bg-card border-r border-border h-screen flex flex-col sticky top-0 overflow-y-auto custom-scrollbar z-50">
       <div className="p-6">
         <Link href="/" className="hover:opacity-90 transition-opacity">
           <Logo size="sm" />
@@ -198,6 +204,37 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
           <span>Logout</span>
         </button>
       </div>
+      {/* Logout Confirmation Modal */}
+      {isLogoutConfirmOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-md" onClick={() => setIsLogoutConfirmOpen(false)} />
+          <div className="bg-card w-full max-w-sm border border-border rounded-[40px] shadow-2xl relative z-[10000] overflow-hidden p-8 text-center space-y-6 animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-red-500/10">
+              <LogOut className="w-8 h-8" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2 tracking-tight">End Session?</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed px-4">
+                Are you sure you want to log out of the Offrion governance ecosystem?
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setIsLogoutConfirmOpen(false)} 
+                className="flex-1 py-3 text-xs font-bold bg-secondary rounded-xl hover:bg-secondary/80 transition-all"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={actualLogout} 
+                className="flex-1 py-3 text-xs font-bold bg-red-500 text-white rounded-xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all flex items-center justify-center gap-2"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

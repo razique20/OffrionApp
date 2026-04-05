@@ -16,7 +16,7 @@ const roleRoutes = {
   [UserRole.PARTNER]: '/api/partner',
 };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Handle Public Routes

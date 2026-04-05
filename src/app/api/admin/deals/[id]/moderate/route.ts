@@ -2,12 +2,22 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
 
+import { checkAdminPermission } from '@/lib/auth-admin';
+
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
+    const userId = req.headers.get('x-user-id');
+
+    // Enforce MANAGE_DEALS permission
+    const isAuthorized = await checkAdminPermission(userId, 'MANAGE_DEALS');
+    if (!isAuthorized) {
+      return NextResponse.json({ error: 'Forbidden: Insufficient permissions to moderate deals' }, { status: 403 });
+    }
+
     const { id } = await params;
     const body = await req.json();
     const { isActive } = body;
@@ -15,7 +25,7 @@ export async function PATCH(
     const deal = await Deal.findByIdAndUpdate(
       id,
       { isActive },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!deal) {

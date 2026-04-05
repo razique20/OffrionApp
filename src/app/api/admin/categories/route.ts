@@ -16,9 +16,19 @@ export async function GET() {
   }
 }
 
+import { checkAdminPermission } from '@/lib/auth-admin';
+
 export async function POST(req: Request) {
   try {
     await dbConnect();
+    const userId = req.headers.get('x-user-id');
+
+    // Enforce MANAGE_CATEGORIES
+    const isAuthorized = await checkAdminPermission(userId, 'MANAGE_CATEGORIES');
+    if (!isAuthorized) {
+      return NextResponse.json({ error: 'Forbidden: Insufficient permissions to manage categories' }, { status: 403 });
+    }
+
     const body = await req.json();
     const { name, slug, description } = body;
 

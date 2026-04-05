@@ -5,9 +5,18 @@ import Deal from '@/models/Deal';
 import Commission from '@/models/Commission';
 import { UserRole } from '@/lib/constants';
 
-export async function GET() {
+import { checkAdminPermission } from '@/lib/auth-admin';
+
+export async function GET(req: Request) {
   try {
     await dbConnect();
+    const userId = req.headers.get('x-user-id');
+
+    // Enforce VIEW_REVENUE permission
+    const isAuthorized = await checkAdminPermission(userId, 'VIEW_REVENUE');
+    if (!isAuthorized) {
+      return NextResponse.json({ error: 'Forbidden: Insufficient permissions to view revenue stats' }, { status: 403 });
+    }
 
     // 1. Merchant Count
     const merchantCount = await User.countDocuments({ role: UserRole.MERCHANT });

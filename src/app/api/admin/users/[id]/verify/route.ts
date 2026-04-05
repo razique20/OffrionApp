@@ -2,12 +2,22 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 
+import { checkAdminPermission } from '@/lib/auth-admin';
+
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
+    const userId = req.headers.get('x-user-id');
+
+    // Enforce MANAGE_USERS permission
+    const isAuthorized = await checkAdminPermission(userId, 'MANAGE_USERS');
+    if (!isAuthorized) {
+      return NextResponse.json({ error: 'Forbidden: Insufficient permissions to manage users' }, { status: 403 });
+    }
+
     const { id } = await params;
     const body = await req.json();
     const { isActive } = body;
@@ -15,7 +25,7 @@ export async function PATCH(
     const user = await User.findByIdAndUpdate(
       id,
       { isActive },
-      { new: true }
+      { returnDocument: 'after' }
     ).select('-password');
 
     if (!user) {
