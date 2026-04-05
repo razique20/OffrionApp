@@ -29,111 +29,132 @@ async function seed() {
 
     // Create Categories
     const categories = await Category.insertMany([
-      { name: 'Retail', slug: 'retail', description: 'Fashion, Electronics, and more' },
-      { name: 'Food & Dining', slug: 'food-dining', description: 'Restaurants and Cafes' },
-      { name: 'Travel', slug: 'travel', description: 'Flights, Hotels, and Tours' },
-      { name: 'Lifestyle', slug: 'lifestyle', description: 'Spas, Wellness, and Events' },
+      { name: 'Retail', slug: 'retail', description: 'Fashion, Electronics, and more', isActive: true },
+      { name: 'Food & Dining', slug: 'food-dining', description: 'Restaurants and Cafes', isActive: true },
+      { name: 'Travel', slug: 'travel', description: 'Flights, Hotels, and Tours', isActive: true },
+      { name: 'Lifestyle', slug: 'lifestyle', description: 'Spas, Wellness, and Events', isActive: true },
+      { name: 'Automotive', slug: 'automotive', description: 'Cars, Parts, and Service', isActive: true },
+      { name: 'Electronics', slug: 'electronics', description: 'Gadgets and Appliances', isActive: true },
     ]);
     console.log('Created Categories');
 
     // Create Users
     const hashedPassword = await bcrypt.hash('password123', 10);
 
-    const merchantUser = await User.create({
-      name: 'Global Merchant',
-      email: 'merchant@example.com',
+    // 5 Merchants
+    const merchants = await User.insertMany([
+      { name: 'Global Retailers', email: 'merchant@example.com', password: hashedPassword, role: UserRole.MERCHANT, isActive: true },
+      { name: 'Urban Eats Corp', email: 'eats@example.com', password: hashedPassword, role: UserRole.MERCHANT, isActive: true },
+      { name: 'Tech Haven', email: 'tech@example.com', password: hashedPassword, role: UserRole.MERCHANT, isActive: true },
+      { name: 'Slow Sips Coffee', email: 'coffee@example.com', password: hashedPassword, role: UserRole.MERCHANT, isActive: false },
+      { name: 'Auto Pros', email: 'auto@example.com', password: hashedPassword, role: UserRole.MERCHANT, isActive: true },
+    ]);
+
+    // 5 Partners
+    const partners = await User.insertMany([
+      { name: 'Mobile App Partner', email: 'partner@example.com', password: hashedPassword, role: UserRole.PARTNER, isActive: true },
+      { name: 'Travelo Network', email: 'travelo@example.com', password: hashedPassword, role: UserRole.PARTNER, isActive: true },
+      { name: 'Deal Hunter App', email: 'hunter@example.com', password: hashedPassword, role: UserRole.PARTNER, isActive: true },
+      { name: 'Local Guide', email: 'guide@example.com', password: hashedPassword, role: UserRole.PARTNER, isActive: false },
+      { name: 'Social Influencer X', email: 'influencer@example.com', password: hashedPassword, role: UserRole.PARTNER, isActive: true },
+    ]);
+
+    const adminUser = await User.create({
+      name: 'Offrion Admin',
+      email: 'admin@offrion.com',
       password: hashedPassword,
-      role: UserRole.MERCHANT,
+      role: UserRole.ADMIN,
+      isActive: true,
+      permissions: ['MANAGE_DEALS', 'MANAGE_CATEGORIES']
     });
 
-    const partnerUser = await User.create({
-      name: 'Mobile App Partner',
-      email: 'partner@example.com',
+    const superAdminUser = await User.create({
+      name: 'Super Director',
+      email: 'superadmin@offrion.com',
       password: hashedPassword,
-      role: UserRole.PARTNER,
+      role: UserRole.SUPER_ADMIN,
+      isActive: true,
+      permissions: ['ALL']
     });
 
-    console.log('Created Users');
+    console.log('Created Diverse Users (Super Admin, Admin, Merchant, Partner)');
 
-    // Create Merchant Profile
-    await MerchantProfile.create({
-      userId: merchantUser._id,
-      businessName: 'Global Retail Solutions',
-      description: 'A leading provider of retail deals across the globe.',
-      logoUrl: '/images/merchant-owner.png',
-      website: 'https://example.com',
-      contactEmail: 'merchant@example.com',
-      contactPhone: '+1234567890',
-      address: '123 Business Ave, Tech City, TC 10101',
-    });
-    console.log('Created Merchant Profile');
+    // Create Merchant Profiles
+    for (const merchant of merchants) {
+      await MerchantProfile.create({
+        userId: merchant._id,
+        businessName: merchant.name,
+        description: `Premium services from ${merchant.name}.`,
+        logoUrl: '/images/merchant-owner.png',
+        website: `https://${merchant.email.split('@')[0]}.com`,
+        contactEmail: merchant.email,
+        contactPhone: '+1-555-010-999',
+        address: '123 Business Way, Suite 100, Innovation District',
+      });
+    }
+    console.log('Created Merchant Profiles');
 
-    // Create Sample Deals
+    // Create 12 Sample Deals
     const sampleDeals = [
       {
-        merchantId: merchantUser._id,
-        categoryId: categories[0]._id, // Retail
-        title: '50% Off Premium Footwear',
-        description: 'Get half price on all premium leather boots and sneakers.',
-        images: ['/images/dashboard.png'],
-        originalPrice: 200,
-        discountedPrice: 100,
-        commissionPercentage: 15,
-        location: { type: 'Point', coordinates: [73.8567, 18.5204] }, // Pune
-        validFrom: new Date(),
-        validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        isActive: true,
-        priorityScore: 85,
+        merchantId: merchants[0]._id, categoryId: categories[0]._id,
+        title: '50% Off Premium Footwear', description: 'Half price on all premium leather boots.',
+        images: ['/images/dashboard.png'], originalPrice: 200, discountedPrice: 100, discountPercentage: 50,
+        commissionPercentage: 15, eventType: 'flash', dealType: 'percentage', targetAudience: ['all'],
+        tags: ['flash-sale', 'footwear'], location: { type: 'Point', coordinates: [73.85, 18.52] },
+        validFrom: new Date(), validUntil: new Date(Date.now() + 30 * 24 * 3600000), isActive: true,
       },
       {
-        merchantId: merchantUser._id,
-        categoryId: categories[1]._id, // Food
-        title: 'Buy 1 Get 1 Free - Gourmet Pizzas',
-        description: 'Enjoy our signature wood-fired pizzas with a BOGO offer.',
-        images: ['/images/qr-scan.png'],
-        originalPrice: 40,
-        discountedPrice: 20,
-        commissionPercentage: 10,
-        location: { type: 'Point', coordinates: [72.8777, 19.0760] }, // Mumbai
-        validFrom: new Date(),
-        validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        isActive: true,
-        priorityScore: 90,
+        merchantId: merchants[1]._id, categoryId: categories[1]._id,
+        title: 'BOGO - Artisan Pizzas', description: 'Wood-fired perfection.',
+        images: ['/images/qr-scan.png'], originalPrice: 40, discountedPrice: 20, discountPercentage: 50,
+        commissionPercentage: 10, eventType: 'general', dealType: 'bogo', targetAudience: ['all'],
+        tags: ['bogo', 'pizza'], location: { type: 'Point', coordinates: [72.87, 19.07] },
+        validFrom: new Date(), validUntil: new Date(Date.now() + 7 * 24 * 3600000), isActive: true,
       },
       {
-        merchantId: merchantUser._id,
-        categoryId: categories[2]._id, // Travel
-        title: 'Luxury Staycation - 30% Off',
-        description: 'Experience a 5-star retreat in the heart of the city.',
-        images: ['/images/api-network.png'],
-        originalPrice: 500,
-        discountedPrice: 350,
-        commissionPercentage: 20,
-        location: { type: 'Point', coordinates: [77.2090, 28.6139] }, // Delhi
-        validFrom: new Date(),
-        validUntil: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-        isActive: true,
-        priorityScore: 75,
+        merchantId: merchants[2]._id, categoryId: categories[5]._id,
+        title: 'Last-Gen Laptop Clearout', description: 'Powerful machines at unbeatable prices.',
+        images: ['/images/api-network.png'], originalPrice: 1200, discountedPrice: 800, discountPercentage: 33,
+        commissionPercentage: 8, eventType: 'seasonal', dealType: 'flat', targetAudience: ['all'],
+        tags: ['laptop', 'electronics'], location: { type: 'Point', coordinates: [77.20, 28.61] },
+        validFrom: new Date(), validUntil: new Date(Date.now() + 14 * 24 * 3600000), isActive: false, // Pending moderation
       },
       {
-         merchantId: merchantUser._id,
-         categoryId: categories[3]._id, // Lifestyle
-         title: 'Full Day Spa Package',
-         description: 'Complete relaxation with our signature massage and facial.',
-         images: ['/images/merchant-owner.png'],
-         originalPrice: 150,
-         discountedPrice: 99,
-         commissionPercentage: 12,
-         location: { type: 'Point', coordinates: [80.2707, 13.0827] }, // Chennai
-         validFrom: new Date(),
-         validUntil: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
-         isActive: true,
-         priorityScore: 80,
-       }
+        merchantId: merchants[4]._id, categoryId: categories[4]._id,
+        title: 'Free Oil Change w/ Service', description: 'Keep your car running smooth.',
+        images: ['/images/merchant-owner.png'], originalPrice: 80, discountedPrice: 0, discountPercentage: 100,
+        commissionPercentage: 5, eventType: 'holiday', dealType: 'flat', targetAudience: ['all'],
+        tags: ['auto', 'maintenance'], location: { type: 'Point', coordinates: [80.27, 13.08] },
+        validFrom: new Date(), validUntil: new Date(Date.now() + 10 * 24 * 3600000), isActive: true,
+      }
     ];
 
+    // Add 8 more random-ish deals
+    for (let i = 0; i < 8; i++) {
+        sampleDeals.push({
+            merchantId: merchants[Math.floor(Math.random() * merchants.length)]._id,
+            categoryId: categories[Math.floor(Math.random() * categories.length)]._id,
+            title: `Dynamic Deal #${i + 1}`,
+            description: 'A great value deal for our platform members.',
+            images: ['/images/dashboard.png'],
+            originalPrice: 100 + (i * 10),
+            discountedPrice: 50 + (i * 5),
+            discountPercentage: 50,
+            commissionPercentage: 10,
+            eventType: 'general',
+            dealType: 'percentage',
+            targetAudience: ['all'],
+            tags: ['deal', 'promo'],
+            location: { type: 'Point', coordinates: [72.87, 19.07] },
+            validFrom: new Date(),
+            validUntil: new Date(Date.now() + 30 * 24 * 3600000),
+            isActive: i % 3 !== 0,
+        });
+    }
+
     await Deal.insertMany(sampleDeals);
-    console.log('Created Sample Deals');
+    console.log('Created Extensive Sample Deals');
 
     console.log('Seeding completed successfully!');
     process.exit(0);

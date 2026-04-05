@@ -1,4 +1,12 @@
 import mongoose from 'mongoose';
+import '@/models/User';
+import '@/models/Category';
+import '@/models/Deal';
+import '@/models/APIKey';
+import '@/models/AnalyticsEvent';
+import '@/models/Transaction';
+import '@/models/MerchantProfile';
+import '@/models/Commission';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/offrion_deals';
 

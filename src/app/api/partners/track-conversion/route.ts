@@ -44,6 +44,7 @@ export async function POST(req: Request) {
       partnerId: apiKey.partnerId,
       amount,
       currency,
+      environment: apiKey.environment,
       status: 'completed',
     });
 
@@ -61,6 +62,7 @@ export async function POST(req: Request) {
       amount: totalCommission,
       partnerShare,
       platformShare,
+      environment: apiKey.environment,
       status: 'pending',
     });
 
@@ -70,6 +72,7 @@ export async function POST(req: Request) {
       dealId,
       partnerId: apiKey.partnerId,
       merchantId: deal.merchantId,
+      environment: apiKey.environment,
       metadata: {
         ...metadata,
         transactionId: transaction._id,

@@ -44,24 +44,64 @@ Global oversight and platform governance.
 
 ---
 
-## 📡 API Reference Summary
+---
 
-### List Deals
+## 📡 Partner API Reference
+
+Offrion provides a high-performance, geo-spatial REST API for partners. All responses are returned in **JSON** format.
+
+### 1. Authentication
+Include your partner API key in the request headers:
+`x-api-key: YOUR_PUBLIC_API_KEY`
+
+### 2. Discover Deals
 `GET /api/deals`
-| Parameter | Type | Description |
-|---|---|---|
-| `x-api-key` | **Header** | Required for authentication. |
-| `lat` / `lng` | Query | Latitude and Longitude for proximity search. |
-| `radius` | Query | Search radius in meters (default: 10km). |
-| `categoryId` | Query | Filter by category ID. |
-| `search` | Query | Multi-field text search. |
+Supports 14 query parameters for precision targeting:
 
-### Track Engagement
-`POST /api/deals/[id]/click`
-| Parameter | Type | Description |
-|---|---|---|
-| `x-api-key` | **Header** | Required for attribution. |
-| `id` | **Path** | The unique ID of the deal. |
+| Category | Parameter | Type | Description |
+|---|---|---|---|
+| **Core** | `categoryId` | String | Multi-filter (comma-separated ID list). |
+| | `search` | String | Keyword search in title/description. |
+| **Type** | `eventType` | Enum | `flash`, `holiday`, `seasonal`, `clearance`, `general`. |
+| | `dealType` | Enum | `percentage`, `flat`, `bogo`, `free-item`. |
+| **Audience** | `audience` | Enum | `student`, `senior`, `member`, `all`. |
+| **Value** | `minDiscount` | Number | Minimum discount percentage (e.g., `30`). |
+| | `maxDiscount` | Number | Maximum discount percentage. |
+| | `minPrice` | Number | Minimum discounted price. |
+| **Location** | `lat` / `lng` | Number | Coordinates for proximity search. |
+| | `radius` | Number | Search radius in meters (default: 10,000). |
+| **Time** | `activeNow` | Boolean | Set `true` to show only currently valid deals. |
+| | `from` / `to` | Date | Date range for deal validity windows. |
+| **Utility** | `page` / `limit` | Number | Pagination controls (default: 20 per page). |
+
+### 3. Track Engagement & Attribution
+Properly logging clicks and conversions is critical for commission attribution.
+
+- **Track Click**: `POST /api/partners/track-click`
+  ```json
+  { "dealId": "654a..." }
+  ```
+- **Track Conversion**: `POST /api/partners/track-conversion`
+  ```json
+  { "dealId": "654a...", "amount": 49.99 }
+  ```
+
+---
+
+## 🛠️ Partner Integration Guide (v1.0)
+
+Follow these 3 steps to integrate Offrion into your system:
+
+### 1. Header Requirement
+Every request to the public API must include your `x-api-key`. This key maps all traffic to your partner account for real-time earnings tracking.
+
+### 2. The "Deals Near Me" Implementation
+To provide value to local users, use the geo-spatial filters.
+`GET /api/deals?lat={lat}&lng={lng}&radius=5000`
+*This returns all deals within 5km of the user's current coordinates.*
+
+### 3. Handle attribution correctly
+When a user clicks a deal in your UI, trigger a `POST` to `/api/partners/track-click`. This creates a session log that guarantees you get credited even if the user completes the purchase later on.
 
 ---
 
@@ -81,6 +121,7 @@ Populate your environment with verified test credentials:
 npx tsx scripts/seed.ts
 ```
 **Test Credentials:**
+- **Admin**: `admin@offrion.com` / `password123`
 - **Merchant**: `merchant@example.com` / `password123`
 - **Partner**: `partner@example.com` / `password123`
 

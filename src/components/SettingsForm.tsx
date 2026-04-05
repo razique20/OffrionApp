@@ -81,7 +81,7 @@ export default function SettingsForm() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <aside className="md:col-span-1 space-y-1">
           <nav className="space-y-1">
-            <button className="w-full flex items-center gap-3 px-4 py-2 text-sm font-bold bg-primary text-white rounded-xl shadow-lg shadow-primary/20">
+            <button className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold bg-premium-gradient text-white rounded-xl shadow-lg shadow-primary/20 transition-all">
                <User className="w-4 h-4" /> Personal Info
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary rounded-xl">
@@ -144,14 +144,14 @@ export default function SettingsForm() {
               </div>
 
               <div className="pt-6 border-t border-border flex justify-end">
-                 <button 
+                  <button 
                   type="submit" 
                   disabled={saving}
-                  className="flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 shadow-lg shadow-primary/20"
+                  className="flex items-center gap-2 px-8 py-3.5 bg-premium-gradient text-white rounded-2xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl shadow-primary/20 text-sm"
                  >
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     Save Changes
-                 </button>
+                  </button>
               </div>
             </form>
           </div>

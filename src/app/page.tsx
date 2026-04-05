@@ -18,6 +18,8 @@ import {
 
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { HeroButtons } from '@/components/HeroButtons';
+import { AppCTA } from '@/components/AppCTA';
 
 export default function LandingPage() {
   return (
@@ -29,12 +31,12 @@ export default function LandingPage() {
         <section className="relative pt-40 pb-24 overflow-hidden">
           {/* Background Blurs */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10 pointer-events-none opacity-20">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary rounded-full blur-[120px] -translate-y-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-400 rounded-full blur-[120px] translate-y-1/2"></div>
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full blur-[120px] -translate-y-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-400 to-emerald-500 rounded-full blur-[120px] translate-y-1/2"></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-6 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-premium-gradient/5 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-8">
               <Zap className="w-3 h-3 fill-primary" />
               Next-Gen Deals Platform
             </div>
@@ -44,20 +46,7 @@ export default function LandingPage() {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
               Connect merchants with partners through a high-performance API. Publish deals in minutes, distribute via thousands of apps, and track everything in real-time.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link 
-                href="/merchant/dashboard" 
-                className="w-full sm:w-auto px-8 py-4 bg-primary text-white rounded-2xl text-lg font-bold shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-              >
-                Start as Merchant <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link 
-                href="/partner/dashboard" 
-                className="w-full sm:w-auto px-8 py-4 bg-card border border-border rounded-2xl text-lg font-bold hover:bg-secondary transition-all flex items-center justify-center gap-2"
-              >
-                Integrate API
-              </Link>
-            </div>
+            <HeroButtons />
 
             {/* Developer Experience Section (Replaces Hero Image) */}
             <div className="mt-20 w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8 items-stretch">
@@ -97,8 +86,8 @@ export default function LandingPage() {
                </div>
 
                {/* Live Preview Card */}
-               <div className="lg:col-span-2 bg-gradient-to-br from-primary/20 to-blue-600/20 rounded-3xl border border-primary/20 p-8 flex flex-col justify-center text-left backdrop-blur-3xl shadow-xl">
-                  <div className="w-12 h-12 bg-primary/20 text-primary rounded-xl flex items-center justify-center mb-6">
+                <div className="lg:col-span-2 bg-gradient-to-br from-emerald-500/20 to-blue-600/20 rounded-3xl border border-primary/20 p-8 flex flex-col justify-center text-left backdrop-blur-3xl shadow-xl">
+                  <div className="w-12 h-12 bg-premium-gradient text-white rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-primary/20">
                      <Rocket className="w-6 h-6" />
                   </div>
                   <h4 className="text-2xl font-bold mb-4">Live Integration</h4>
@@ -139,7 +128,7 @@ export default function LandingPage() {
                   />
                 </div>
                 <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary text-white text-sm flex items-center justify-center">1</div>
+                  <div className="w-8 h-8 rounded-full bg-premium-gradient text-white text-sm flex items-center justify-center">1</div>
                   For Merchants
                 </h3>
                 <ul className="space-y-6">
@@ -169,7 +158,7 @@ export default function LandingPage() {
                   />
                 </div>
                 <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary text-white text-sm flex items-center justify-center">2</div>
+                  <div className="w-8 h-8 rounded-full bg-premium-gradient text-white text-sm flex items-center justify-center">2</div>
                   For Partners
                 </h3>
                 <ul className="space-y-6">
@@ -217,7 +206,7 @@ export default function LandingPage() {
                 </p>
                 <div className="pt-6 border-t border-border flex items-center justify-between text-sm">
                   <span className="font-medium">Revenue Retention</span>
-                  <span className="font-bold text-primary">85-95%</span>
+                  <span className="font-bold text-emerald-600">85-95%</span>
                 </div>
               </div>
 
@@ -226,22 +215,22 @@ export default function LandingPage() {
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform">
                   <Users className="w-24 h-24" />
                 </div>
-                <div className="w-16 h-16 rounded-2xl bg-primary/20 text-primary flex items-center justify-center mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-premium-gradient text-white flex items-center justify-center mb-6">
                   <Globe className="w-8 h-8" />
                 </div>
-                <h4 className="text-2xl font-bold mb-4 text-primary">The Partner</h4>
+                <h4 className="text-2xl font-bold mb-4 text-emerald-600">The Partner</h4>
                 <p className="text-sm text-slate-400 mb-6 leading-relaxed">
                   Integrates the deals API into their apps (Fintech, E-commerce, Social). Earns the lion's share of the generated commission.
                 </p>
                 <div className="pt-6 border-t border-white/10 flex items-center justify-between text-sm">
-                  <span className="font-medium">Commission Share</span>
-                  <span className="font-bold text-primary">70%</span>
+                  <span className="font-medium text-slate-400">Commission Share</span>
+                  <span className="font-bold text-emerald-600">70%</span>
                 </div>
               </div>
 
               {/* Platform Role */}
               <div className="bg-card border border-border p-8 rounded-[40px] shadow-sm hover:shadow-xl transition-all group">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <div className="w-16 h-16 rounded-2xl bg-premium-gradient/10 text-emerald-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <Zap className="w-8 h-8" />
                 </div>
                 <h4 className="text-2xl font-bold mb-4 text-foreground">The Platform</h4>
@@ -250,7 +239,7 @@ export default function LandingPage() {
                 </p>
                 <div className="pt-6 border-t border-border flex items-center justify-between text-sm">
                   <span className="font-medium">Platform Share</span>
-                  <span className="font-bold text-primary">30%</span>
+                  <span className="font-bold text-emerald-600">30%</span>
                 </div>
               </div>
             </div>
@@ -291,7 +280,7 @@ export default function LandingPage() {
                   </ul>
                   <button className={cn(
                     "w-full py-3 rounded-xl font-bold transition-all",
-                    tier.active ? "bg-primary text-white" : "bg-secondary hover:bg-primary/5"
+                    tier.active ? "bg-premium-gradient text-white" : "bg-secondary hover:bg-premium-gradient/10"
                   )}>
                     Select {tier.name}
                   </button>
@@ -313,7 +302,7 @@ export default function LandingPage() {
               ].map((faq, i) => (
                 <div key={i} className="p-6 bg-secondary/30 rounded-2xl border border-border">
                   <h5 className="font-bold mb-2 flex items-center gap-2">
-                    <span className="w-1.5 h-6 bg-primary rounded-full"></span>
+                    <span className="w-1.5 h-6 bg-premium-gradient rounded-full"></span>
                     {faq.q}
                   </h5>
                   <p className="text-muted-foreground text-sm leading-relaxed">{faq.a}</p>
@@ -325,17 +314,12 @@ export default function LandingPage() {
 
         {/* CTA Section */}
         <section className="py-24 px-6 flex justify-center">
-          <div className="max-w-5xl w-full bg-primary rounded-[40px] p-12 md:p-20 text-center text-white relative overflow-hidden shadow-2xl">
+          <div className="max-w-5xl w-full bg-premium-gradient rounded-[40px] p-12 md:p-20 text-center text-white relative overflow-hidden shadow-2xl">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 relative z-10">Start distributing rewards.</h2>
             <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto relative z-10 font-mono italic">
               "Scale from 1 to 1M deals without touching the infrastructure."
             </p>
-            <Link 
-              href="/auth/register" 
-              className="inline-block px-10 py-5 bg-white text-primary rounded-2xl text-lg font-bold shadow-xl hover:bg-slate-50 transition-all active:scale-95 relative z-10"
-            >
-              Get Started for Free
-            </Link>
+            <AppCTA />
           </div>
         </section>
       </main>

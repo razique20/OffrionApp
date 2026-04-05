@@ -24,14 +24,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Handle Partner API Routes (API Key Authentication)
-  if (pathname.startsWith('/api/deals') && request.headers.has('x-api-key')) {
-    // In a real middleware, we might want to verify the API key here
-    // But since middleware doesn't have easy access to DB in some environments (Edge),
-    // we might do it in the API route or use a high-performance cache (Redis).
-    // For simplicity in this demo, we'll let the API route handle API key validation
-    // or assume it's valid if it passes basic checks if we were using Edge.
-    // However, Next.js Node.js middleware CAN access DB if configured correctly.
+  // 2. Handle Public API Routes (API Key Authentication — validated in each route handler)
+  const isApiKeyRoute =
+    (pathname.startsWith('/api/deals') ||
+      pathname.startsWith('/api/categories') ||
+      pathname.startsWith('/api/partners/track-')) &&
+    request.headers.has('x-api-key');
+  if (isApiKeyRoute) {
     return NextResponse.next();
   }
 
@@ -60,16 +59,35 @@ export async function middleware(request: NextRequest) {
   }
 
   // 4. Role-based Access Control
-  if (pathname.startsWith('/api/admin') && decoded.role !== UserRole.ADMIN) {
-    return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+  // Super Admin has bypass access to all dashboards
+  if (decoded.role === UserRole.SUPER_ADMIN) {
+    return NextResponse.next({
+      request: {
+        headers: new Headers({
+          ...Object.fromEntries(request.headers),
+          'x-user-id': decoded.userId,
+          'x-user-role': decoded.role,
+        }),
+      },
+    });
   }
 
-  if (pathname.startsWith('/api/merchant') && decoded.role !== UserRole.MERCHANT) {
-    return NextResponse.json({ error: 'Forbidden: Merchant access required' }, { status: 403 });
+  if (pathname.startsWith('/api/admin') || pathname.startsWith('/admin')) {
+    if (decoded.role !== UserRole.ADMIN) {
+      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
   }
 
-  if (pathname.startsWith('/api/partner') && decoded.role !== UserRole.PARTNER) {
-    return NextResponse.json({ error: 'Forbidden: Partner access required' }, { status: 403 });
+  if (pathname.startsWith('/api/merchant') || pathname.startsWith('/merchant')) {
+    if (decoded.role !== UserRole.MERCHANT) {
+      return NextResponse.json({ error: 'Forbidden: Merchant access required' }, { status: 403 });
+    }
+  }
+
+  if (pathname.startsWith('/api/partner') || pathname.startsWith('/partner')) {
+    if (decoded.role !== UserRole.PARTNER) {
+      return NextResponse.json({ error: 'Forbidden: Partner access required' }, { status: 403 });
+    }
   }
 
   // Inject user info into headers for downstream routes (optional but helpful)
@@ -89,6 +107,7 @@ export const config = {
     '/api/admin/:path*',
     '/api/merchant/:path*',
     '/api/partner/:path*',
+    '/api/auth/me',
     '/admin/:path*',
     '/merchant/:path*',
     '/partner/:path*',

@@ -62,8 +62,14 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
+  const [me, setMe] = useState<any>(null);
+
   useEffect(() => {
     setMounted(true);
+    fetch('/api/auth/me')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => setMe(data))
+      .catch(console.error);
   }, []);
 
   const handleLogout = async () => {
@@ -107,41 +113,82 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
     );
   }
 
+  const isSuperAdmin = me?.role === 'super_admin';
+
   return (
-    <div className="w-64 bg-card border-r border-border h-screen flex flex-col sticky top-0">
+    <div className="w-64 bg-card border-r border-border h-screen flex flex-col sticky top-0 overflow-y-auto custom-scrollbar">
       <div className="p-6">
         <Link href="/" className="hover:opacity-90 transition-opacity">
           <Logo size="sm" />
         </Link>
       </div>
 
-      <nav className="flex-1 px-4 space-y-1">
-        {items.map((item) => {
-          const isActive = activeItemHref === item.href;
-          const Icon = iconMap[item.icon] || LayoutDashboard;
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group",
-                isActive 
-                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/10" 
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-              )}
-            >
-              <Icon className="w-5 h-5 flex-shrink-0" />
-              <span className="flex-1 truncate">{item.name}</span>
-              {isActive && <ChevronRight className="w-4 h-4" />}
-            </Link>
-          );
-        })}
-      </nav>
+      <div className="flex-1 space-y-6">
+        <nav className="px-4 space-y-1">
+          <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-50">Local Scope</p>
+          {items.map((item) => {
+            const isActive = activeItemHref === item.href;
+            const Icon = iconMap[item.icon] || LayoutDashboard;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group",
+                  isActive 
+                    ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                )}
+              >
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                <span className="flex-1 truncate">{item.name}</span>
+                {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+              </Link>
+            );
+          })}
+        </nav>
 
-      <div className="p-4 border-t border-border">
-        <div className="mb-4 px-3 py-2 rounded-lg bg-secondary/50 border border-border">
-           <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">Active Role</p>
-           <p className="text-xs font-bold capitalize">{role}</p>
+        {isSuperAdmin && (
+          <nav className="px-4 space-y-1">
+             <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-500">Universal Gateway</p>
+             <Link 
+              href="/admin/dashboard" 
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all",
+                pathname.startsWith('/admin') ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "text-muted-foreground hover:bg-secondary"
+              )}>
+                <ShieldCheck className="w-5 h-5" />
+                <span>Admin Governance</span>
+             </Link>
+             <Link 
+              href="/merchant/dashboard" 
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all",
+                pathname.startsWith('/merchant') ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "text-muted-foreground hover:bg-secondary"
+              )}>
+                <ShoppingBag className="w-5 h-5" />
+                <span>Merchant Portal</span>
+             </Link>
+             <Link 
+              href="/partner/dashboard" 
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all",
+                pathname.startsWith('/partner') ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "text-muted-foreground hover:bg-secondary"
+              )}>
+                <Handshake className="w-5 h-5" />
+                <span>Partner Hub</span>
+             </Link>
+          </nav>
+        )}
+      </div>
+
+      <div className="p-4 border-t border-border mt-auto">
+        <div className="mb-4 px-3 py-2.5 rounded-xl bg-secondary/50 border border-border flex items-center justify-between">
+           <div>
+             <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold leading-none mb-1">Session Role</p>
+             <p className="text-xs font-bold capitalize leading-none">{role}</p>
+           </div>
+           {isSuperAdmin && <Zap className="w-3.5 h-3.5 text-emerald-500 fill-emerald-500 animate-pulse" />}
         </div>
         <button 
           onClick={handleLogout}

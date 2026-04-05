@@ -1,14 +1,20 @@
 import { NextResponse } from 'next/server';
 
 export async function POST() {
-  const response = NextResponse.json({ message: 'Logged out successfully' });
+  try {
+    const response = NextResponse.json({ success: true, message: 'Logged out' });
 
-  // Clear the token cookie by setting its maxAge to 0
-  response.cookies.set('token', '', {
-    httpOnly: true,
-    expires: new Date(0),
-    path: '/',
-  });
+    // Set cookie to expire immediately
+    response.cookies.set('token', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      expires: new Date(0), // Expire now
+    });
 
-  return response;
+    return response;
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }

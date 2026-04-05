@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IAPIKey extends Document {
   partnerId: mongoose.Types.ObjectId;
+  environment: 'production' | 'sandbox';
   key: string;
   name: string;
   isActive: boolean;
@@ -14,6 +15,13 @@ export interface IAPIKey extends Document {
 const APIKeySchema: Schema = new Schema(
   {
     partnerId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    environment: { 
+      type: String, 
+      enum: ['production', 'sandbox'], 
+      default: 'production',
+      required: true,
+      index: true 
+    },
     key: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
     isActive: { type: Boolean, default: true },
@@ -23,7 +31,12 @@ const APIKeySchema: Schema = new Schema(
   { timestamps: true }
 );
 
-const APIKey: Model<IAPIKey> = mongoose.models.APIKey || 
-  mongoose.model<IAPIKey>('APIKey', APIKeySchema);
+// Handle model registration for Next.js hot-reloading
+if (mongoose.models.APIKey) {
+  // Check if we need to force update the model (e.g. during development if schema changes)
+  delete (mongoose.models as any).APIKey; 
+}
+
+const APIKey: Model<IAPIKey> = mongoose.model<IAPIKey>('APIKey', APIKeySchema);
 
 export default APIKey;

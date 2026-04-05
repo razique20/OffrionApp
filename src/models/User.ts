@@ -10,6 +10,7 @@ export interface IUser extends Document {
   password?: string;
   role: UserRole;
   isActive: boolean;
+  permissions: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,6 +26,7 @@ const UserSchema: Schema = new Schema(
       default: UserRole.PARTNER,
     },
     isActive: { type: Boolean, default: true },
+    permissions: [{ type: String }],
   },
   { timestamps: true }
 );

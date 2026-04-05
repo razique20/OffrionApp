@@ -40,6 +40,7 @@ export async function POST(req: Request) {
       dealId: new mongoose.Types.ObjectId(dealId),
       partnerId: apiKey.partnerId,
       merchantId: deal.merchantId,
+      environment: apiKey.environment,
       metadata,
     });
 

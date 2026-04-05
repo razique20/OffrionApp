@@ -14,7 +14,12 @@ import {
   Info,
   Layers,
   MapPin,
-  DollarSign
+  DollarSign,
+  Activity,
+  Search,
+  List,
+  Target,
+  FlaskConical
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -47,28 +52,46 @@ export default function PartnerDocsPage() {
           <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-4 ml-3">API Reference</h4>
           <nav className="space-y-1">
             <DocNavItem 
-              active={activeTab === 'list-deals'} 
-              onClick={() => setActiveTab('list-deals')}
+              active={activeTab === 'deals'} 
+              onClick={() => setActiveTab('deals')}
               icon={Layers}
-              label="List Deals" 
+              label="Deals API" 
             />
             <DocNavItem 
               active={activeTab === 'filtering'} 
               onClick={() => setActiveTab('filtering')}
-              icon={Zap}
-              label="Filtering & Search" 
+              icon={Search}
+              label="Advanced Filtering" 
             />
             <DocNavItem 
-              active={activeTab === 'geo'} 
-              onClick={() => setActiveTab('geo')}
-              icon={MapPin}
-              label="Geo-spatial Search" 
+              active={activeTab === 'categories'} 
+              onClick={() => setActiveTab('categories')}
+              icon={List}
+              label="Categories" 
             />
             <DocNavItem 
-              active={activeTab === 'commission'} 
-              onClick={() => setActiveTab('commission')}
+              active={activeTab === 'tracking'} 
+              onClick={() => setActiveTab('tracking')}
+              icon={Activity}
+              label="Tracking" 
+            />
+          </nav>
+        </div>
+
+        <div>
+          <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-4 ml-3">Account & Stats</h4>
+          <nav className="space-y-1">
+            <DocNavItem 
+              active={activeTab === 'analytics'} 
+              onClick={() => setActiveTab('analytics')}
+              icon={Target}
+              label="Partner Analytics" 
+            />
+            <DocNavItem 
+              active={activeTab === 'ledger'} 
+              onClick={() => setActiveTab('ledger')}
               icon={DollarSign}
-              label="Commissions" 
+              label="Earnings Ledger" 
             />
           </nav>
         </div>
@@ -77,25 +100,42 @@ export default function PartnerDocsPage() {
       {/* Content Area */}
       <main className="flex-1 max-w-4xl">
         {activeTab === 'getting-started' && (
-          <DocSection title="API Introduction">
+          <DocSection title="Quick Start & Installation">
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-              Offrion's Deals-as-a-Service API enables you to programmatically access thousands of merchant deals across dozens of categories. Integrated into your app to provide instant value to your users.
+              Offrion's Deals-as-a-Service API enables you to programmatically access thousands of merchant deals. The API is designed to be RESTful and easy to integrate into any stack.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-               <FeatureHighlight 
-                 title="Fast & Global" 
-                 desc="Edge-accelerated API responses with low latency globally." 
-                 icon={Zap}
-               />
-               <FeatureHighlight 
-                 title="Real-time Tracking" 
-                 desc="Every impression and conversion is tracked and attributed back to you." 
-                 icon={CheckCircle2}
-               />
-            </div>
+            
             <h3 className="text-2xl font-bold mb-4">Base URL</h3>
-            <div className="p-4 bg-secondary font-mono rounded-xl border border-border">
-              https://api.offrion.com/api
+            <div className="p-4 bg-secondary font-mono rounded-xl border border-border flex items-center justify-between mb-8">
+              <span>https://api.offrion.com/api</span>
+              <span className="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded">Dev: localhost:3000/api</span>
+            </div>
+
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold">Integration Checklist</h3>
+              <ol className="space-y-4">
+                <li className="flex gap-4">
+                  <div className="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center shrink-0">1</div>
+                  <div>
+                    <p className="font-bold">Generate API Key</p>
+                    <p className="text-sm text-muted-foreground">Go to the Keys section and create your first integration key.</p>
+                  </div>
+                </li>
+                <li className="flex gap-4">
+                  <div className="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center shrink-0">2</div>
+                  <div>
+                    <p className="font-bold">Fetch Deals</p>
+                    <p className="text-sm text-muted-foreground">List all active deals with categories and locations.</p>
+                  </div>
+                </li>
+                <li className="flex gap-4">
+                  <div className="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center shrink-0">3</div>
+                  <div>
+                    <p className="font-bold">Track Conversions</p>
+                    <p className="text-sm text-muted-foreground">Log clicks and successful conversions for attribution.</p>
+                  </div>
+                </li>
+              </ol>
             </div>
           </DocSection>
         )}
@@ -103,143 +143,174 @@ export default function PartnerDocsPage() {
         {activeTab === 'auth' && (
           <DocSection title="Authentication">
             <p className="text-muted-foreground mb-8">
-              All API requests must be authenticated using your partner API Key. You can generate keys from your dashboard.
+              All public API requests must include the <code>x-api-key</code> header. 
             </p>
-            <h4 className="font-bold mb-4">Header Requirement</h4>
-            <div className="bg-slate-900 rounded-2xl overflow-hidden p-6 mb-8 shadow-xl">
-               <pre className="text-slate-300 font-mono text-sm leading-6">
-{`x-api-key: your_api_key_here`}
-               </pre>
-            </div>
-            <div className="p-6 bg-amber-500/5 border border-amber-500/20 rounded-2xl flex gap-4">
-               <Info className="w-5 h-5 text-amber-500 shrink-0 mt-1" />
+            <CodeBlock 
+              language="http"
+              code={`GET /api/deals HTTP/1.1
+Host: api.offrion.com
+x-api-key: YOUR_API_KEY`}
+            />
+            <div className="mt-8 p-6 bg-blue-500/5 border border-blue-500/20 rounded-2xl flex gap-4">
+               <Shield className="w-5 h-5 text-blue-500 shrink-0 mt-1" />
                <p className="text-sm text-muted-foreground leading-relaxed">
-                 <strong>Keep your keys safe:</strong> If a key is compromised, revoke it immediately from the dashboard and generate a new one.
+                 For partner dashboard requests (internal), authentication uses <strong>JWT HTTP-only cookies</strong>. When calling internal APIs, ensure your cross-origin settings (CORS) allow credentials.
                </p>
             </div>
           </DocSection>
         )}
 
-        {activeTab === 'list-deals' && (
-          <DocSection title="List Deals">
-            <p className="text-muted-foreground mb-8 text-lg">Retrieve a list of active deals currently being offered by merchants on the platform.</p>
+        {activeTab === 'deals' && (
+          <DocSection title="Deals API">
+            <p className="text-muted-foreground mb-12">The primary endpoint to discover and retrieve deals.</p>
             
-            <div className="flex items-center gap-2 mb-6">
-               <span className="px-2 py-1 bg-emerald-500/20 text-emerald-500 rounded text-xs font-bold font-mono">GET</span>
-               <code className="text-sm font-bold font-mono">/deals</code>
+            <div className="space-y-12">
+              <div>
+                <EndpointLabel method="GET" path="/deals" />
+                <p className="text-sm text-muted-foreground mb-4">List all active deals. Support multiple filters (see Advanced Filtering).</p>
+                <CodeBlock 
+                  code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals"`}
+                />
+              </div>
+
+              <div>
+                <EndpointLabel method="GET" path="/deals/[id]" />
+                <p className="text-sm text-muted-foreground mb-4">Retrieve details of a single deal by its ID.</p>
+                <CodeBlock 
+                  code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals/654a123f8b..."`}
+                />
+              </div>
+
+              <div>
+                <EndpointLabel method="GET" path="/deals/[id]/similar" />
+                <p className="text-sm text-muted-foreground mb-4">Get up to 10 deals from the same category as the reference deal.</p>
+                <CodeBlock 
+                  code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals/654a123f8b/similar"`}
+                />
+              </div>
             </div>
-
-            <h4 className="text-lg font-bold mb-6">Request Example</h4>
-            <CodeBlock 
-              code={`curl -X GET "https://api.offrion.com/api/deals" \\
-  -H "x-api-key: your_key"`}
-            />
-
-            <h4 className="text-lg font-bold mb-6 mt-12">Response Format</h4>
-            <CodeBlock 
-              language="json"
-              code={`{
-  "count": 1,
-  "deals": [
-    {
-      "id": "deal_123",
-      "title": "50% Off Burger",
-      "discountedPrice": 12.00,
-      "originalPrice": 24.00,
-      "commissionPercentage": 10
-    }
-  ]
-}`}
-            />
           </DocSection>
         )}
 
         {activeTab === 'filtering' && (
-          <DocSection title="Filtering & Search">
-            <p className="text-muted-foreground mb-12 italic">Precision targeting for your users.</p>
-            
-            <div className="space-y-12">
-               <ParamTable 
-                 title="Categories & Prices"
-                 params={[
-                   { name: 'categoryId', type: 'string', desc: 'Filter by specific category ID.' },
-                   { name: 'minPrice', type: 'number', desc: 'Minimum discounted price threshold.' },
-                   { name: 'maxPrice', type: 'number', desc: 'Maximum discounted price threshold.' },
-                   { name: 'search', type: 'string', desc: 'Keyword search in title and description.' },
-                 ]}
-               />
-
-               <h4 className="text-lg font-bold">Complex Query Example</h4>
-               <CodeBlock 
-                 code={`GET /api/deals?categoryId=food&minPrice=10&maxPrice=50&search=pizza`}
-               />
-            </div>
-          </DocSection>
-        )}
-
-        {activeTab === 'geo' && (
-          <DocSection title="Geo-spatial Search">
-            <p className="text-muted-foreground mb-8">
-              Enable "Deals Near Me" features by filtering based on the user's location.
-            </p>
+          <DocSection title="Advanced Filtering">
+            <p className="text-muted-foreground mb-8 italic">Fine-tune your deal delivery with 14 powerful query parameters.</p>
             
             <ParamTable 
-              title="Location Parameters"
+              title="Query Parameters"
               params={[
-                { name: 'lat', type: 'number', desc: 'Latitude of the user.' },
-                { name: 'lng', type: 'number', desc: 'Longitude of the user.' },
-                { name: 'radius', type: 'number', desc: 'Search radius in meters (default: 10000).' },
+                { name: 'categoryId', type: 'string', desc: 'Category ID(s), comma-separated.' },
+                { name: 'eventType', type: 'string', desc: 'Event: holiday, flash, seasonal, clearance.' },
+                { name: 'dealType', type: 'string', desc: 'Type: percentage, flat, bogo, free-item.' },
+                { name: 'tags', type: 'string', desc: 'Comma-separated tags to match.' },
+                { name: 'audience', type: 'string', desc: 'student, senior, member, all.' },
+                { name: 'minDiscount', type: 'number', desc: 'Minimum discount percentage.' },
+                { name: 'activeNow', type: 'boolean', desc: 'Only deals currently valid by time.' },
+                { name: 'lat / lng', type: 'number', desc: 'Co-ordinates for distance search.' },
+                { name: 'radius', type: 'number', desc: 'Search radius in meters.' },
+                { name: 'page / limit', type: 'number', desc: 'Pagination controls.' },
               ]}
             />
-
-            <h4 className="text-lg font-bold mt-12">Geo Query Example</h4>
+            
+            <h4 className="text-lg font-bold mt-12 mb-4">Advanced Example</h4>
             <CodeBlock 
-              code={`GET /api/deals?lat=40.7128&lng=-74.0060&radius=5000`}
+              code={`https://api.offrion.com/api/deals?activeNow=true&minDiscount=30&eventType=flash&audience=student`}
             />
-            <p className="mt-4 text-xs text-muted-foreground">This query will return all deals within a 5km radius of NYC.</p>
           </DocSection>
         )}
 
-        {activeTab === 'commission' && (
-          <DocSection title="Commissions & Attribution">
-            <p className="text-muted-foreground mb-10 leading-relaxed">
-              Every deal object contains a `commissionPercentage` field. This is the estimated amount you will earn when a user claims the deal through your implementation.
-            </p>
+        {activeTab === 'categories' && (
+          <DocSection title="Categories">
+            <p className="text-muted-foreground mb-8">Fetch all available deal categories to build your navigation or filters.</p>
+            <EndpointLabel method="GET" path="/categories" />
+            <CodeBlock 
+              code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/categories"`}
+            />
+          </DocSection>
+        )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-               <div className="p-8 bg-emerald-500/5 border border-emerald-500/20 rounded-[32px]">
-                  <h4 className="font-bold mb-4">How it's tracked</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">When you fetch deals via our API, we associate your unique Partner ID with every impression. When a customer pays, our platform attributes the revenue based on that session log.</p>
-               </div>
-               <div className="p-8 bg-blue-500/5 border border-blue-500/20 rounded-[32px]">
-                  <h4 className="font-bold mb-4">Earnings Calculation</h4>
-                  <pre className="text-blue-600 font-mono text-xs font-bold leading-6">
-{`Commission = 
-  Sale Price * 
-  (percent / 100)`}
-                  </pre>
-               </div>
-            </div>
-
-            <div className="p-8 bg-card border border-border rounded-[40px]">
-               <h4 className="text-xl font-bold mb-4">Log Conversion (Postback)</h4>
-               <p className="text-sm text-muted-foreground mb-6">For partners with custom payment flows, use our tracking endpoint to manually log conversions.</p>
-               <div className="flex items-center gap-2 mb-4">
-                  <span className="px-2 py-1 bg-blue-500/20 text-blue-500 rounded text-xs font-bold font-mono">POST</span>
-                  <code className="text-sm font-bold font-mono">/track/conversion</code>
-               </div>
-               <CodeBlock 
-                 language="json"
-                 code={`{
-  "dealId": "deal_123",
-  "transactionId": "your_order_id",
-  "amount": 49.99
+        {activeTab === 'tracking' && (
+          <DocSection title="Tracking & Attribution">
+            <p className="text-muted-foreground mb-12">Log engagement to ensure proper commission attribution.</p>
+            
+            <div className="space-y-12">
+              <div>
+                <EndpointLabel method="POST" path="/partners/track-click" />
+                <p className="text-sm text-muted-foreground mb-4">Track a user clicking on a deal.</p>
+                <CodeBlock 
+                  language="json"
+                  code={`{
+  "dealId": "654a123f8b",
+  "metadata": { "source": "mobile_app" }
 }`}
-               />
+                />
+              </div>
+
+              <div>
+                <EndpointLabel method="POST" path="/partners/track-conversion" />
+                <p className="text-sm text-muted-foreground mb-4">Record a successful purchase or conversion.</p>
+                <CodeBlock 
+                  language="json"
+                  code={`{
+  "dealId": "654a123f8b",
+  "amount": 49.99,
+  "currency": "USD"
+}`}
+                />
+              </div>
+            </div>
+          </DocSection>
+        )}
+
+        {activeTab === 'analytics' && (
+          <DocSection title="Partner Analytics">
+            <p className="text-muted-foreground mb-8">Fetch performance data for your partner account.</p>
+            <div className="flex items-center gap-2 mb-6">
+               <span className="px-2 py-1 bg-emerald-500/20 text-emerald-500 rounded text-xs font-bold font-mono">GET</span>
+               <code className="text-sm font-bold font-mono">/partner/analytics</code>
+            </div>
+            <ParamTable 
+              title="Query Parameters"
+              params={[
+                { name: 'period', type: 'string', desc: '7d, 30d (default), or 90d.' },
+                { name: 'environment', type: 'string', desc: 'production (default) or sandbox.' },
+              ]}
+            />
+          </DocSection>
+        )}
+
+        {activeTab === 'ledger' && (
+          <DocSection title="Earnings Ledger">
+            <p className="text-muted-foreground mb-8">Access detailed logs of your transactions and earned commissions.</p>
+            
+            <div className="space-y-8">
+              <div>
+                <EndpointLabel method="GET" path="/partner/transactions" />
+                <p className="text-sm text-muted-foreground mb-2">Partner transaction history. Support ?environment=sandbox</p>
+              </div>
+              <div>
+                <EndpointLabel method="GET" path="/partner/commissions" />
+                <p className="text-sm text-muted-foreground mb-2">Individual commission records (pending/paid). Support ?environment=sandbox</p>
+              </div>
             </div>
           </DocSection>
         )}
       </main>
+    </div>
+  );
+}
+
+function EndpointLabel({ method, path }: { method: string, path: string }) {
+  const isPost = method === 'POST';
+  return (
+    <div className="flex items-center gap-2 mb-4">
+      <span className={cn(
+        "px-2 py-1 rounded text-xs font-bold font-mono",
+        isPost ? "bg-blue-500/20 text-blue-500" : "bg-emerald-500/20 text-emerald-500"
+      )}>
+        {method}
+      </span>
+      <code className="text-sm font-bold font-mono text-foreground">{path}</code>
     </div>
   );
 }
@@ -297,7 +368,7 @@ function CodeBlock({ code, language = 'bash' }: any) {
         </button>
       </div>
       <div className="p-6 overflow-x-auto">
-        <pre className="text-xs font-mono text-slate-300 leading-relaxed">
+        <pre className="text-[11px] font-mono text-slate-300 leading-relaxed whitespace-pre">
           {code}
         </pre>
       </div>

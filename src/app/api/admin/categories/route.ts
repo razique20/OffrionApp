@@ -1,34 +1,45 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Category from '@/models/Category';
-import { z } from 'zod';
-import mongoose from 'mongoose';
 
-const categorySchema = z.object({
-  name: z.string().min(2),
-  slug: z.string().min(2),
-  description: z.string().optional(),
-  parent: z.string().nullable().optional(),
-  isActive: z.boolean().optional().default(true),
-});
+export async function GET() {
+  try {
+    await dbConnect();
+
+    const categories = await Category.find({})
+      .sort({ name: 1 });
+
+    return NextResponse.json(categories);
+  } catch (error: any) {
+    console.error('Admin Categories GET Error:', error);
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+  }
+}
 
 export async function POST(req: Request) {
   try {
     await dbConnect();
     const body = await req.json();
-    const validatedData = categorySchema.parse(body);
+    const { name, slug, description } = body;
 
-    const categoryData: any = {
-      ...validatedData,
-      parent: validatedData.parent ? new mongoose.Types.ObjectId(validatedData.parent) : undefined,
-    };
-
-    const category = await Category.create(categoryData);
-    return NextResponse.json({ message: 'Category created successfully', category }, { status: 201 });
-  } catch (error: any) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.issues }, { status: 400 });
+    if (!name || !slug) {
+      return NextResponse.json({ error: 'Name and Slug are required' }, { status: 400 });
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+
+    const category = await Category.create({
+      name,
+      slug,
+      description,
+      isActive: true
+    });
+
+    return NextResponse.json({
+      message: 'Category created successfully',
+      category
+    });
+
+  } catch (error: any) {
+    console.error('Admin Categories POST Error:', error);
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }
