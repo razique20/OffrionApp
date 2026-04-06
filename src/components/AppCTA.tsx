@@ -17,7 +17,7 @@ export const AppCTA = () => {
     return (
       <Link 
         href={`/${user.role}/dashboard`}
-        className="inline-block px-10 py-5 bg-white text-emerald-600 rounded-2xl text-lg font-bold shadow-xl hover:bg-slate-50 transition-all active:scale-95 relative z-10"
+        className="inline-block px-10 py-5 bg-white text-primary rounded-2xl text-lg font-bold shadow-xl hover:bg-slate-50 transition-all active:scale-95 relative z-10"
       >
         Go to Dashboard
       </Link>
@@ -27,7 +27,7 @@ export const AppCTA = () => {
   return (
     <Link 
       href="/auth/register" 
-      className="inline-block px-10 py-5 bg-white text-emerald-600 rounded-2xl text-lg font-bold shadow-xl hover:bg-slate-50 transition-all active:scale-95 relative z-10"
+      className="inline-block px-10 py-5 bg-white text-primary rounded-2xl text-lg font-bold shadow-xl hover:bg-slate-50 transition-all active:scale-95 relative z-10"
     >
       Get Started for Free
     </Link>

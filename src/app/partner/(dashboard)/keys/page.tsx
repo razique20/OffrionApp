@@ -166,7 +166,7 @@ export default function PartnerKeysPage() {
                     onClick={() => setNewKeyEnvironment('production')}
                     className={cn(
                       "py-1.5 text-[10px] font-bold rounded-lg transition-all",
-                      newKeyEnvironment === 'production' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-secondary"
+                      newKeyEnvironment === 'production' ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-secondary"
                     )}
                   >
                     Production
@@ -176,7 +176,7 @@ export default function PartnerKeysPage() {
                     onClick={() => setNewKeyEnvironment('sandbox')}
                     className={cn(
                       "py-1.5 text-[10px] font-bold rounded-lg transition-all",
-                      newKeyEnvironment === 'sandbox' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-secondary"
+                      newKeyEnvironment === 'sandbox' ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" : "text-muted-foreground hover:bg-secondary"
                     )}
                   >
                     Sandbox
@@ -200,11 +200,11 @@ export default function PartnerKeysPage() {
             </form>
             <div className="mt-6 space-y-3">
               <div className="flex items-center gap-2.5 text-[10px] text-muted-foreground">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
                 <span>Unlimited testing keys</span>
               </div>
               <div className="flex items-center gap-2.5 text-[10px] text-muted-foreground">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
                 <span>1,000 requests / hour</span>
               </div>
             </div>
@@ -265,7 +265,7 @@ export default function PartnerKeysPage() {
                           onClick={() => toggleKeyStatus(displayId, key.isActive)}
                           className={cn(
                             "p-1.5 rounded-lg transition-all text-[10px] font-bold",
-                            key.isActive ? "text-muted-foreground hover:bg-destructive/10 hover:text-destructive" : "text-emerald-500 hover:bg-emerald-500/10"
+                            key.isActive ? "text-muted-foreground hover:bg-destructive/10 hover:text-destructive" : "text-primary hover:bg-primary/10"
                           )}
                           title={key.isActive ? "Deactivate" : "Activate"}
                         >
@@ -295,7 +295,7 @@ export default function PartnerKeysPage() {
                           onClick={() => copyToClipboard(key.key)}
                           className={cn(
                             "p-1 rounded-md",
-                            copiedKey === key.key ? "bg-emerald-500 text-white" : "hover:bg-background text-muted-foreground"
+                            copiedKey === key.key ? "bg-premium-gradient text-white" : "hover:bg-background text-muted-foreground"
                           )}
                         >
                           {copiedKey === key.key ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}

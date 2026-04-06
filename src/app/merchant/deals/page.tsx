@@ -74,7 +74,7 @@ export default function MerchantDealsPage() {
         <p className="text-sm text-muted-foreground mb-6">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="px-6 py-2 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all"
+          className="px-6 py-2 bg-premium-gradient text-white rounded-xl font-bold hover:bg-primary/90 transition-all"
         >
           Retry Connection
         </button>
@@ -100,7 +100,7 @@ export default function MerchantDealsPage() {
           </button>
           <Link 
             href="/merchant/deals/new"
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-premium-gradient text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
             <Plus className="w-4 h-4" />
             New Deal
@@ -134,7 +134,7 @@ export default function MerchantDealsPage() {
                 )}
                 <div className="absolute top-4 right-4 bg-background/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-border">
                   {deal.isActive ? (
-                    <span className="text-emerald-500">Active</span>
+                    <span className="text-primary">Active</span>
                   ) : (
                     <span className="text-destructive">Inactive</span>
                   )}

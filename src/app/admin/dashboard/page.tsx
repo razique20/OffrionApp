@@ -272,7 +272,7 @@ export default function AdminDashboard() {
   const dashboardStats = [
     { name: 'Merchants', value: stats?.merchants || '0', icon: ShoppingBag, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { name: 'Partners', value: stats?.partners || '0', icon: Users, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-    { name: 'Revenue', value: `$${stats?.revenue?.toLocaleString() || '0'}`, icon: TrendingUp, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    { name: 'Revenue', value: `$${stats?.revenue?.toLocaleString() || '0'}`, icon: TrendingUp, color: 'text-primary', bg: 'bg-primary/10' },
     { name: 'Active Deals', value: stats?.deals || '0', icon: Layers, color: 'text-amber-500', bg: 'bg-amber-500/10' },
   ];
 
@@ -331,7 +331,7 @@ export default function AdminDashboard() {
                           <p className="text-sm leading-relaxed text-muted-foreground">{detailData.deal.description}</p>
                           <div className="grid grid-cols-2 gap-4">
                              <div><span className="text-[10px] text-muted-foreground">Original:</span> <p className="font-bold font-mono">${detailData.deal.originalPrice}</p></div>
-                             <div><span className="text-[10px] text-muted-foreground">Discount:</span> <p className="font-bold text-emerald-500">{detailData.deal.discountPercentage}% Off</p></div>
+                             <div><span className="text-[10px] text-muted-foreground">Discount:</span> <p className="font-bold text-primary">{detailData.deal.discountPercentage}% Off</p></div>
                           </div>
                           <div className="flex gap-2 flex-wrap">
                              {detailData.deal.tags?.map((t: string) => (
@@ -436,8 +436,8 @@ export default function AdminDashboard() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="p-8 bg-card border border-border rounded-[40px] flex flex-col items-center justify-center text-center py-20">
-               <div className="w-16 h-16 bg-premium-gradient/10 rounded-full flex items-center justify-center mb-6">
-                  <TrendingUp className="w-8 h-8 text-emerald-500" />
+               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                  <TrendingUp className="w-8 h-8 text-primary" />
                </div>
                <h3 className="text-xl font-bold mb-2 text-gradient">Revenue Trending</h3>
                <p className="text-sm text-muted-foreground mb-8 max-w-xs">Detailed revenue charts will appear here as transaction data accumulates.</p>
@@ -446,20 +446,22 @@ export default function AdminDashboard() {
             
             <div className="p-8 bg-card border border-border rounded-[40px] space-y-6">
                 <h3 className="text-lg font-bold flex items-center gap-2">
-                   <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                   <ShieldCheck className="w-5 h-5 text-primary" />
                    Security Alerts
                 </h3>
                 <div className="space-y-4">
-                   {[
-                     { msg: "New Merchant Application: 'Urban Eats'", time: "2h ago" },
-                     { msg: "Deals Priority Audit Completed", time: "5h ago" },
-                     { msg: "High Traffic Alert: Partner 'Travelo'", time: "Yesterday" }
-                   ].map((alert, i) => (
-                     <div key={i} className="flex items-center justify-between p-3 bg-secondary/30 rounded-xl border border-border/50 text-xs text-muted-foreground">
-                        <span>{alert.msg}</span>
-                        <span className="font-mono opacity-50">{alert.time}</span>
+                   {[].length > 0 ? (
+                     [].map((alert: any, i: number) => (
+                       <div key={i} className="flex items-center justify-between p-3 bg-secondary/30 rounded-xl border border-border/50 text-xs text-muted-foreground">
+                          <span>{alert.msg}</span>
+                          <span className="font-mono opacity-50">{alert.time}</span>
+                       </div>
+                     ))
+                   ) : (
+                     <div className="py-4 text-center text-xs text-muted-foreground border border-dashed border-border rounded-xl">
+                        No recent security alerts.
                      </div>
-                   ))}
+                   )}
                 </div>
             </div>
           </div>
@@ -517,7 +519,7 @@ export default function AdminDashboard() {
                         <span className={cn(
                           "px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider",
                           item.isActive 
-                            ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" 
+                            ? "bg-primary/10 text-primary border border-primary/20" 
                             : "bg-red-500/10 text-red-500 border border-red-500/20"
                         )}>
                           {item.isActive ? (activeTab === 'deals' ? 'Active' : 'Verified') : (activeTab === 'deals' ? 'Rejected' : 'Deactivated')}
@@ -530,7 +532,7 @@ export default function AdminDashboard() {
                             onClick={() => activeTab === 'deals' ? handleModerateDeal(item._id, !item.isActive) : handleToggleUser(item._id, item.isActive)}
                             className={cn(
                               "p-2 rounded-lg transition-all",
-                              item.isActive ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+                              item.isActive ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "bg-primary/10 text-primary hover:bg-primary/20"
                             )}>
                               {actionLoading === item._id ? <Loader2 className="w-4 h-4 animate-spin" /> : item.isActive ? <Ban className="w-4 h-4" /> : <ShieldCheck className="w-4 h-4" />}
                            </button>
@@ -554,7 +556,7 @@ export default function AdminDashboard() {
                                      <button 
                                       onClick={(e) => { e.stopPropagation(); handleViewDetail(item); setOpenMenuId(null); }}
                                       className="w-full text-left px-4 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-secondary flex items-center gap-3 transition-colors text-muted-foreground hover:text-foreground">
-                                        <Search className="w-4 h-4 text-emerald-500" /> View Detailed Registry
+                                        <Search className="w-4 h-4 text-primary" /> View Detailed Registry
                                      </button>
                                      {activeTab === 'deals' && (
                                        <button 
@@ -619,7 +621,7 @@ export default function AdminDashboard() {
                               onClick={() => handleToggleCategory(cat._id, cat.isActive)}
                               className={cn(
                                 "p-2 rounded-lg transition-all",
-                                cat.isActive ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+                                cat.isActive ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "bg-primary/10 text-primary hover:bg-primary/20"
                               )}>
                                 {actionLoading === cat._id ? <Loader2 className="w-4 h-4 animate-spin" /> : cat.isActive ? <Ban className="w-4 h-4" /> : <ShieldCheck className="w-4 h-4" />}
                              </button>
@@ -719,7 +721,7 @@ export default function AdminDashboard() {
                         <td className="px-4 py-5">
                            <span className={cn(
                              "px-2 py-0.5 rounded-md text-[9px] font-bold uppercase",
-                             adm.role === 'super_admin' ? "bg-primary text-white" : "bg-secondary text-muted-foreground"
+                             adm.role === 'super_admin' ? "bg-premium-gradient text-white" : "bg-secondary text-muted-foreground"
                            )}>
                              {adm.role}
                            </span>
@@ -822,7 +824,7 @@ export default function AdminDashboard() {
                            }}
                            className={cn(
                              "px-3 py-2 rounded-lg text-[8px] font-bold border transition-all text-left",
-                             newAdmin.permissions.includes(perm) ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-500" : "bg-secondary/50 border-border text-muted-foreground"
+                             newAdmin.permissions.includes(perm) ? "bg-primary/10 border-primary/50 text-primary" : "bg-secondary/50 border-border text-muted-foreground"
                            )}
                          >
                             {perm.replace('_', ' ')}
@@ -846,7 +848,7 @@ export default function AdminDashboard() {
          <div className={cn(
            "fixed bottom-8 right-8 z-[100] flex items-center gap-4 px-6 py-4 rounded-[24px] border shadow-2xl animate-in slide-in-from-right-10 duration-300",
            notification.type === 'success' 
-            ? "bg-emerald-500 text-white border-emerald-400" 
+            ? "bg-premium-gradient text-white border-primary" 
             : "bg-red-500 text-white border-red-400"
          )}>
            {notification.type === 'success' ? <ShieldCheck className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}

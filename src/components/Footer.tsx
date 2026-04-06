@@ -6,7 +6,7 @@ export const Footer = () => {
     <footer className="py-12 border-t border-border bg-card/30">
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center">
+          <div className="w-6 h-6 rounded-lg bg-premium-gradient flex items-center justify-center">
             <span className="text-white text-[10px] font-bold">O</span>
           </div>
           <span className="text-lg font-bold tracking-tight">Offrion</span>

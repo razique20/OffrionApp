@@ -87,7 +87,7 @@ export default function PartnerDashboard() {
           </div>
           <div>
             <p className="text-sm text-muted-foreground font-medium">API Requests (24h)</p>
-            <h3 className="text-2xl font-bold">12,482</h3>
+            <h3 className="text-2xl font-bold">0</h3>
           </div>
         </div>
         <div className="p-6 bg-card border border-border rounded-2xl flex items-center gap-4">
@@ -96,16 +96,16 @@ export default function PartnerDashboard() {
           </div>
           <div>
             <p className="text-sm text-muted-foreground font-medium">Avg Latency</p>
-            <h3 className="text-2xl font-bold">42ms</h3>
+            <h3 className="text-2xl font-bold">—</h3>
           </div>
         </div>
         <div className="p-6 bg-card border border-border rounded-2xl flex items-center gap-4">
-          <div className="p-3 bg-emerald-500/10 text-emerald-500 rounded-xl">
+          <div className="p-3 bg-primary/10 text-primary rounded-xl">
             <CheckCircle2 className="w-6 h-6" />
           </div>
           <div>
             <p className="text-sm text-muted-foreground font-medium">Success Rate</p>
-            <h3 className="text-2xl font-bold">99.9%</h3>
+            <h3 className="text-2xl font-bold">—</h3>
           </div>
         </div>
       </div>
@@ -121,7 +121,7 @@ export default function PartnerDashboard() {
             <button 
               onClick={generateKey}
               disabled={generating}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="px-4 py-2 bg-premium-gradient text-primary-foreground rounded-xl text-sm font-bold hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {generating ? 'Generating...' : 'Generate New Key'}
             </button>
@@ -147,7 +147,7 @@ export default function PartnerDashboard() {
                       <h4 className="font-bold">{k.name}</h4>
                       <p className="text-xs text-muted-foreground">Created on {formatDate(k.createdAt)}</p>
                     </div>
-                    <div className="bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">
+                    <div className="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">
                       Active
                     </div>
                   </div>
@@ -159,7 +159,7 @@ export default function PartnerDashboard() {
                       onClick={() => copyToClipboard(k.key)}
                       className="p-2 hover:bg-background rounded-lg transition-colors"
                     >
-                      {copied === k.key ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
+                      {copied === k.key ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
                     </button>
                   </div>
                 </div>

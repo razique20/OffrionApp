@@ -1,20 +1,27 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Category from '@/models/Category';
 import APIKey from '@/models/APIKey';
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     await dbConnect();
 
-    // API Key Validation
+    // API Key Validation or Internal Token Bypass
     const apiKeyHeader = req.headers.get('x-api-key');
-    if (!apiKeyHeader) {
-      return NextResponse.json({ error: 'API Key is required' }, { status: 401 });
+    const authHeader = req.headers.get('authorization');
+    const tokenCookie = req.cookies.get('token')?.value; 
+    const token = authHeader?.split(' ')[1] || tokenCookie;
+
+    if (!apiKeyHeader && !token) {
+      return NextResponse.json({ error: 'API Key or Authorization required' }, { status: 401 });
     }
-    const validKey = await APIKey.findOne({ key: apiKeyHeader, isActive: true });
-    if (!validKey) {
-      return NextResponse.json({ error: 'Invalid or inactive API Key' }, { status: 401 });
+
+    if (apiKeyHeader) {
+      const validKey = await APIKey.findOne({ key: apiKeyHeader, isActive: true });
+      if (!validKey) {
+        return NextResponse.json({ error: 'Invalid or inactive API Key' }, { status: 401 });
+      }
     }
 
     const categories = await Category.find({})

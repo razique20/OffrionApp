@@ -32,11 +32,11 @@ export default function LandingPage() {
           {/* Background Blurs */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10 pointer-events-none opacity-20">
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full blur-[120px] -translate-y-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-400 to-emerald-500 rounded-full blur-[120px] translate-y-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-400 to-primary rounded-full blur-[120px] translate-y-1/2"></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-6 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-premium-gradient/5 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-8">
               <Zap className="w-3 h-3 fill-primary" />
               Next-Gen Deals Platform
             </div>
@@ -56,13 +56,13 @@ export default function LandingPage() {
                      <div className="flex gap-1.5">
                         <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
                         <div className="w-3 h-3 rounded-full bg-amber-500/50"></div>
-                        <div className="w-3 h-3 rounded-full bg-emerald-500/50"></div>
+                        <div className="w-3 h-3 rounded-full bg-primary/50"></div>
                      </div>
                      <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest ml-4">Terminal — bash</span>
                   </div>
                   <div className="p-8 font-mono text-sm leading-relaxed text-left">
                      <div className="flex gap-4 mb-4">
-                        <span className="text-emerald-500">➜</span>
+                        <span className="text-primary">➜</span>
                         <span className="text-white">curl -X GET "https://api.offrion.com/v1/deals" \</span>
                      </div>
                      <div className="flex gap-4 mb-4 pl-8">
@@ -75,8 +75,8 @@ export default function LandingPage() {
                      <div className="space-y-2 opacity-80 group-hover:opacity-100 transition-opacity">
                         <p className="text-white/40 italic">// Recieved 200 OK</p>
                         <p className="text-blue-300">{"{"}</p>
-                        <p className="pl-4 text-emerald-300">"status": "success",</p>
-                        <p className="pl-4 text-emerald-300">"deals": [ {"{"} "title": "50% OFF Coffee", "dist": "0.4km" {"}"} ]</p>
+                        <p className="pl-4 text-primary">"status": "success",</p>
+                        <p className="pl-4 text-primary">"deals": [ {"{"} "title": "50% OFF Coffee", "dist": "0.4km" {"}"} ]</p>
                         <p className="text-blue-300">{"}"}</p>
                      </div>
                   </div>
@@ -86,7 +86,7 @@ export default function LandingPage() {
                </div>
 
                {/* Live Preview Card */}
-                <div className="lg:col-span-2 bg-gradient-to-br from-emerald-500/20 to-blue-600/20 rounded-3xl border border-primary/20 p-8 flex flex-col justify-center text-left backdrop-blur-3xl shadow-xl">
+                <div className="lg:col-span-2 bg-gradient-to-br from-primary/20 to-blue-600/20 rounded-3xl border border-primary/20 p-8 flex flex-col justify-center text-left backdrop-blur-3xl shadow-xl">
                   <div className="w-12 h-12 bg-premium-gradient text-white rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-primary/20">
                      <Rocket className="w-6 h-6" />
                   </div>
@@ -96,7 +96,7 @@ export default function LandingPage() {
                   </p>
                   <div className="space-y-4">
                      <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></div>
+                        <div className="w-2 h-2 rounded-full bg-premium-gradient shadow-lg shadow-primary/50"></div>
                         <span className="text-xs font-bold uppercase tracking-wider">99.9% API Uptime</span>
                      </div>
                      <div className="flex items-center gap-3">
@@ -206,7 +206,7 @@ export default function LandingPage() {
                 </p>
                 <div className="pt-6 border-t border-border flex items-center justify-between text-sm">
                   <span className="font-medium">Revenue Retention</span>
-                  <span className="font-bold text-emerald-600">85-95%</span>
+                  <span className="font-bold text-primary">85-95%</span>
                 </div>
               </div>
 
@@ -218,19 +218,19 @@ export default function LandingPage() {
                 <div className="w-16 h-16 rounded-2xl bg-premium-gradient text-white flex items-center justify-center mb-6">
                   <Globe className="w-8 h-8" />
                 </div>
-                <h4 className="text-2xl font-bold mb-4 text-emerald-600">The Partner</h4>
+                <h4 className="text-2xl font-bold mb-4 text-primary">The Partner</h4>
                 <p className="text-sm text-slate-400 mb-6 leading-relaxed">
                   Integrates the deals API into their apps (Fintech, E-commerce, Social). Earns the lion's share of the generated commission.
                 </p>
                 <div className="pt-6 border-t border-white/10 flex items-center justify-between text-sm">
                   <span className="font-medium text-slate-400">Commission Share</span>
-                  <span className="font-bold text-emerald-600">70%</span>
+                  <span className="font-bold text-primary">70%</span>
                 </div>
               </div>
 
               {/* Platform Role */}
               <div className="bg-card border border-border p-8 rounded-[40px] shadow-sm hover:shadow-xl transition-all group">
-                <div className="w-16 h-16 rounded-2xl bg-premium-gradient/10 text-emerald-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <Zap className="w-8 h-8" />
                 </div>
                 <h4 className="text-2xl font-bold mb-4 text-foreground">The Platform</h4>
@@ -239,7 +239,7 @@ export default function LandingPage() {
                 </p>
                 <div className="pt-6 border-t border-border flex items-center justify-between text-sm">
                   <span className="font-medium">Platform Share</span>
-                  <span className="font-bold text-emerald-600">30%</span>
+                  <span className="font-bold text-primary">30%</span>
                 </div>
               </div>
             </div>
@@ -280,7 +280,7 @@ export default function LandingPage() {
                   </ul>
                   <button className={cn(
                     "w-full py-3 rounded-xl font-bold transition-all",
-                    tier.active ? "bg-premium-gradient text-white" : "bg-secondary hover:bg-premium-gradient/10"
+                    tier.active ? "bg-premium-gradient text-white" : "bg-secondary hover:bg-primary/10"
                   )}>
                     Select {tier.name}
                   </button>

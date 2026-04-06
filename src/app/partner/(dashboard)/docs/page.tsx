@@ -115,21 +115,21 @@ export default function PartnerDocsPage() {
               <h3 className="text-2xl font-bold">Integration Checklist</h3>
               <ol className="space-y-4">
                 <li className="flex gap-4">
-                  <div className="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center shrink-0">1</div>
+                  <div className="w-6 h-6 rounded-full bg-premium-gradient text-white text-xs flex items-center justify-center shrink-0">1</div>
                   <div>
                     <p className="font-bold">Generate API Key</p>
                     <p className="text-sm text-muted-foreground">Go to the Keys section and create your first integration key.</p>
                   </div>
                 </li>
                 <li className="flex gap-4">
-                  <div className="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center shrink-0">2</div>
+                  <div className="w-6 h-6 rounded-full bg-premium-gradient text-white text-xs flex items-center justify-center shrink-0">2</div>
                   <div>
                     <p className="font-bold">Fetch Deals</p>
                     <p className="text-sm text-muted-foreground">List all active deals with categories and locations.</p>
                   </div>
                 </li>
                 <li className="flex gap-4">
-                  <div className="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center shrink-0">3</div>
+                  <div className="w-6 h-6 rounded-full bg-premium-gradient text-white text-xs flex items-center justify-center shrink-0">3</div>
                   <div>
                     <p className="font-bold">Track Conversions</p>
                     <p className="text-sm text-muted-foreground">Log clicks and successful conversions for attribution.</p>
@@ -266,7 +266,7 @@ x-api-key: YOUR_API_KEY`}
           <DocSection title="Partner Analytics">
             <p className="text-muted-foreground mb-8">Fetch performance data for your partner account.</p>
             <div className="flex items-center gap-2 mb-6">
-               <span className="px-2 py-1 bg-emerald-500/20 text-emerald-500 rounded text-xs font-bold font-mono">GET</span>
+               <span className="px-2 py-1 bg-primary/20 text-primary rounded text-xs font-bold font-mono">GET</span>
                <code className="text-sm font-bold font-mono">/partner/analytics</code>
             </div>
             <ParamTable 
@@ -306,7 +306,7 @@ function EndpointLabel({ method, path }: { method: string, path: string }) {
     <div className="flex items-center gap-2 mb-4">
       <span className={cn(
         "px-2 py-1 rounded text-xs font-bold font-mono",
-        isPost ? "bg-blue-500/20 text-blue-500" : "bg-emerald-500/20 text-emerald-500"
+        isPost ? "bg-blue-500/20 text-blue-500" : "bg-primary/20 text-primary"
       )}>
         {method}
       </span>
@@ -322,7 +322,7 @@ function DocNavItem({ active, onClick, icon: Icon, label }: any) {
       className={cn(
         "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all",
         active 
-          ? "bg-primary text-white shadow-lg shadow-primary/20" 
+          ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
           : "text-muted-foreground hover:bg-secondary hover:text-foreground"
       )}
     >

@@ -56,7 +56,7 @@ export default function FeaturesPage() {
               title: "Enterprise Grade Analytics",
               description: "Every impression, click, and conversion is tracked with millisecond precision. Aggregate data across categories or drill down into specific deals.",
               icon: BarChart3,
-              color: "text-emerald-500",
+              color: "text-primary",
               bullets: ["Live tracking", "Historical aggregation", "Conversion funnel mapping"]
             }
           ].map((feature, i) => (
@@ -72,7 +72,7 @@ export default function FeaturesPage() {
                 <ul className="space-y-4">
                   {feature.bullets.map((b, j) => (
                     <li key={j} className="flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-premium-gradient" />
                       <span className="font-medium">{b}</span>
                     </li>
                   ))}

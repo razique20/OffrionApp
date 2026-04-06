@@ -74,7 +74,7 @@ export default function MerchantAnalyticsPage() {
         <p className="text-muted-foreground mb-8">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="px-8 py-3 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+          className="px-8 py-3 bg-premium-gradient text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
         >
           Retry Connection
         </button>
@@ -131,8 +131,8 @@ export default function MerchantAnalyticsPage() {
           change="+14.2%" 
           isPositive={true}
           icon={DollarSign}
-          color="text-emerald-500"
-          bg="bg-emerald-500/10"
+          color="text-primary"
+          bg="bg-primary/10"
         />
         <StatCard 
           title="Impressions" 
@@ -168,7 +168,7 @@ export default function MerchantAnalyticsPage() {
         <div className="lg:col-span-2 p-8 bg-card border border-border rounded-[32px] shadow-sm">
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-xl font-bold">Revenue Growth</h3>
-            <TrendingUp className="w-5 h-5 text-emerald-500" />
+            <TrendingUp className="w-5 h-5 text-primary" />
           </div>
           <div className="h-[350px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -286,11 +286,11 @@ export default function MerchantAnalyticsPage() {
                   <td className="py-5 font-bold">
                     {formatCurrency(item.conversions * (item.dealInfo?.discountedPrice || 0))}
                   </td>
-                  <td className="py-5 text-emerald-500 font-bold">
+                  <td className="py-5 text-primary font-bold">
                     +{(Math.random() * 20 + 5).toFixed(1)}x
                   </td>
                   <td className="py-5 text-right">
-                    <span className="px-2 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-bold rounded uppercase">Active</span>
+                    <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase">Active</span>
                   </td>
                 </tr>
               ))}
@@ -311,7 +311,7 @@ function StatCard({ title, value, change, isPositive, icon: Icon, color, bg }: a
         </div>
         <div className={cn(
           "flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-full",
-          isPositive ? "text-emerald-500 bg-emerald-500/10" : "text-destructive bg-destructive/10"
+          isPositive ? "text-primary bg-primary/10" : "text-destructive bg-destructive/10"
         )}>
           {isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
           {change}

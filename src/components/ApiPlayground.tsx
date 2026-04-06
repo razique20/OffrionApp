@@ -160,7 +160,7 @@ export function ApiPlayground() {
                       <div className="flex items-center gap-2">
                         <span className={cn(
                           "px-1.5 py-0.5 rounded-[4px] text-[9px] font-bold font-mono",
-                          ep.method === 'POST' ? "bg-blue-500/10 text-blue-500" : "bg-emerald-500/10 text-emerald-500"
+                          ep.method === 'POST' ? "bg-blue-500/10 text-blue-500" : "bg-primary/10 text-primary"
                         )}>
                           {ep.method}
                         </span>
@@ -199,7 +199,7 @@ export function ApiPlayground() {
                   <textarea 
                     value={requestBody}
                     onChange={(e) => setRequestBody(e.target.value)}
-                    className="w-full h-24 bg-slate-950 text-emerald-400 font-mono text-[10px] rounded-xl p-3 border border-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                    className="w-full h-24 bg-slate-950 text-primary font-mono text-[10px] rounded-xl p-3 border border-slate-800 focus:outline-none focus:ring-1 focus:ring-primary/50"
                   />
                 </div>
               )}
@@ -222,7 +222,7 @@ export function ApiPlayground() {
             <div className="px-6 py-4 bg-slate-900/50 border-b border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-primary/50"></div>
                   <div className="w-2.5 h-2.5 rounded-full bg-blue-500/50"></div>
                 </div>
                 <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">HTTP Response</span>
@@ -230,7 +230,7 @@ export function ApiPlayground() {
               {response && (
                 <div className={cn(
                   "px-2 py-0.5 rounded text-[10px] font-bold font-mono",
-                  response.status >= 200 && response.status < 300 ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
+                  response.status >= 200 && response.status < 300 ? "bg-primary/10 text-primary" : "bg-red-500/10 text-red-500"
                 )}>
                   {response.status} {response.statusText}
                 </div>
@@ -252,7 +252,7 @@ export function ApiPlayground() {
                 </div>
               )}
               {response && (
-                <pre className="text-emerald-400 leading-relaxed whitespace-pre pr-4">
+                <pre className="text-primary leading-relaxed whitespace-pre pr-4">
                   {JSON.stringify(response.data || response.error, null, 2)}
                 </pre>
               )}

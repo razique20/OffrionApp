@@ -66,7 +66,7 @@ export default function MerchantDashboard() {
         <p className="text-sm text-muted-foreground mb-6">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="px-6 py-2 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all"
+          className="px-6 py-2 bg-premium-gradient text-white rounded-xl font-bold hover:bg-primary/90 transition-all"
         >
           Retry Connection
         </button>
@@ -77,10 +77,10 @@ export default function MerchantDashboard() {
   if (!data || !data.stats) return null;
 
   const stats = [
-    { name: 'Total Sales', value: formatCurrency(data.stats.totalSales), icon: ShoppingBag, change: '+12.5%', color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { name: 'Total Conversions', value: data.stats.conversions, icon: Users, change: '+5.4%', color: 'text-purple-500', bg: 'bg-purple-500/10' },
-    { name: 'Net Revenue', value: formatCurrency(data.stats.netRevenue), icon: DollarSign, change: '+18.2%', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { name: 'Commission Paid', value: formatCurrency(data.stats.totalCommission), icon: TrendingUp, change: '+2.1%', color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    { name: 'Total Sales', value: formatCurrency(data.stats.totalSales), icon: ShoppingBag, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { name: 'Total Conversions', value: data.stats.conversions, icon: Users, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+    { name: 'Net Revenue', value: formatCurrency(data.stats.netRevenue), icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10' },
+    { name: 'Commission Paid', value: formatCurrency(data.stats.totalCommission), icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-500/10' },
   ];
 
   return (
@@ -93,10 +93,6 @@ export default function MerchantDashboard() {
               <div className={cn("p-2 rounded-xl", stat.bg)}>
                 <stat.icon className={cn("w-6 h-6", stat.color)} />
               </div>
-              <div className="flex items-center gap-1 text-xs font-medium text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full">
-                <ArrowUpRight className="w-3 h-3" />
-                {stat.change}
-              </div>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">{stat.name}</p>
@@ -108,54 +104,61 @@ export default function MerchantDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Sales Chart */}
-        <div className="lg:col-span-2 p-6 bg-card border border-border rounded-2xl">
+        <div className="lg:col-span-2 p-6 bg-card border border-border rounded-2xl min-h-[400px] flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold">Revenue Overview</h3>
-            <select className="bg-secondary text-sm px-3 py-1 rounded-lg border-none focus:ring-1 focus:ring-primary">
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
-            </select>
           </div>
-          <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(0.922 0 0)" />
-                <XAxis 
-                  dataKey="name" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: 'oklch(0.556 0 0)', fontSize: 12 }} 
-                  dy={10}
-                />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: 'oklch(0.556 0 0)', fontSize: 12 }} 
-                />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'oklch(1 0 0)', 
-                    borderRadius: '12px', 
-                    border: '1px solid oklch(0.922 0 0)',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' 
-                  }} 
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="revenue" 
-                  stroke="oklch(0.646 0.222 41.116)" 
-                  strokeWidth={3}
-                  fillOpacity={1} 
-                  fill="url(#colorRevenue)" 
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+          <div className="flex-1 w-full flex flex-col items-center justify-center">
+            {chartData.length > 0 ? (
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData}>
+                    <defs>
+                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0.1}/>
+                        <stop offset="95%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(0.922 0 0)" />
+                    <XAxis 
+                      dataKey="name" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: 'oklch(0.556 0 0)', fontSize: 12 }} 
+                      dy={10}
+                    />
+                    <YAxis 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: 'oklch(0.556 0 0)', fontSize: 12 }} 
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'oklch(1 0 0)', 
+                        borderRadius: '12px', 
+                        border: '1px solid oklch(0.922 0 0)',
+                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' 
+                      }} 
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="revenue" 
+                      stroke="oklch(0.646 0.222 41.116)" 
+                      strokeWidth={3}
+                      fillOpacity={1} 
+                      fill="url(#colorRevenue)" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mb-4">
+                  <TrendingUp className="w-8 h-8 text-muted-foreground opacity-20" />
+                </div>
+                <p className="text-sm text-muted-foreground max-w-[200px]">Revenue data will appear here once sales transactions occur.</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -191,12 +194,4 @@ export default function MerchantDashboard() {
   );
 }
 
-const chartData = [
-  { name: 'Mon', revenue: 4000 },
-  { name: 'Tue', revenue: 3000 },
-  { name: 'Wed', revenue: 2000 },
-  { name: 'Thu', revenue: 2780 },
-  { name: 'Fri', revenue: 1890 },
-  { name: 'Sat', revenue: 2390 },
-  { name: 'Sun', revenue: 3490 },
-];
+const chartData: any[] = [];

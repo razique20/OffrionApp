@@ -3,6 +3,7 @@ import Sidebar, { SidebarItem } from '@/components/Sidebar';
 
 const adminMenuItems: SidebarItem[] = [
   { name: 'Governance', icon: 'analytics', href: '/admin/dashboard' },
+  { name: 'Support', icon: 'support', href: '/admin/support' },
   { name: 'System Settings', icon: 'settings', href: '/admin/settings' },
 ];
 

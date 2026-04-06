@@ -36,7 +36,20 @@ export default function NewDealPage() {
   useEffect(() => {
     fetch('/api/categories')
       .then(res => res.json())
-      .then(setCategories);
+      .then(data => {
+        if (Array.isArray(data)) {
+          setCategories(data);
+        } else if (data && Array.isArray(data.categories)) {
+          setCategories(data.categories);
+        } else {
+          console.error('Failed to fetch categories:', data);
+          setCategories([]);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching categories:', error);
+        setCategories([]);
+      });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,7 +90,7 @@ export default function NewDealPage() {
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] text-center">
-        <div className="w-20 h-20 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mb-6">
+        <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-6">
           <CheckCircle2 className="w-10 h-10" />
         </div>
         <h2 className="text-2xl font-bold">Deal Created Successfully!</h2>
@@ -246,7 +259,7 @@ export default function NewDealPage() {
             <button 
               type="submit"
               disabled={loading}
-              className="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full bg-premium-gradient text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {loading ? 'Creating Deal...' : 'Publish Deal'}
             </button>

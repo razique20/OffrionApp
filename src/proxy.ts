@@ -74,19 +74,28 @@ export async function proxy(request: NextRequest) {
 
   if (pathname.startsWith('/api/admin') || pathname.startsWith('/admin')) {
     if (decoded.role !== UserRole.ADMIN) {
-      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+      }
+      return NextResponse.redirect(new URL('/auth/login?error=admin_required', request.url));
     }
   }
 
   if (pathname.startsWith('/api/merchant') || pathname.startsWith('/merchant')) {
     if (decoded.role !== UserRole.MERCHANT) {
-      return NextResponse.json({ error: 'Forbidden: Merchant access required' }, { status: 403 });
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'Forbidden: Merchant access required' }, { status: 403 });
+      }
+      return NextResponse.redirect(new URL('/auth/login?error=merchant_required', request.url));
     }
   }
 
   if (pathname.startsWith('/api/partner') || pathname.startsWith('/partner')) {
     if (decoded.role !== UserRole.PARTNER) {
-      return NextResponse.json({ error: 'Forbidden: Partner access required' }, { status: 403 });
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'Forbidden: Partner access required' }, { status: 403 });
+      }
+      return NextResponse.redirect(new URL('/auth/login?error=partner_required', request.url));
     }
   }
 
@@ -108,6 +117,8 @@ export const config = {
     '/api/merchant/:path*',
     '/api/partner/:path*',
     '/api/auth/me',
+    '/api/auth/profile/:path*',
+    '/api/billing/:path*',
     '/admin/:path*',
     '/merchant/:path*',
     '/partner/:path*',

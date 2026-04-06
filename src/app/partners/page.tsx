@@ -29,7 +29,7 @@ export default function PartnersPage() {
                 Join hundreds of platforms that use Offrion to increase user engagement and generate new revenue streams. Our API is built for scale.
               </p>
               <div className="flex-gap-4">
-                <Link href="/auth/register?role=partner" className="px-8 py-4 bg-primary text-white rounded-2xl font-bold shadow-xl hover:scale-[1.02] transition-all">
+                <Link href="/auth/register?role=partner" className="px-8 py-4 bg-premium-gradient text-white rounded-2xl font-bold shadow-xl hover:scale-[1.02] transition-all">
                   Become a Partner
                 </Link>
                 <Link href="/partner/docs" className="px-8 py-4 bg-secondary text-foreground rounded-2xl font-bold hover:bg-secondary/80 transition-all">

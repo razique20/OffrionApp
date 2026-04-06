@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
   ChevronRight,
+  ChevronLeft,
+  Menu,
   LogOut,
   BarChart3,
   LayoutDashboard,
@@ -61,6 +63,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   const [me, setMe] = useState<any>(null);
 
@@ -98,23 +101,15 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   // Avoid hydration mismatch by waiting for mount
   if (!mounted) {
     return (
-      <div className="w-64 bg-card border-r border-border h-screen flex flex-col sticky top-0">
+      <div className={cn(
+        "bg-card border-r border-border h-screen flex flex-col sticky top-0 transition-all duration-300",
+        isMinimized ? "w-20" : "w-64"
+      )}>
         <div className="p-6">
-          <Link href="/" className="hover:opacity-90 transition-opacity">
+          <Link href="/" className="hover:opacity-90 transition-opacity flex items-center justify-center">
             <Logo size="sm" />
           </Link>
         </div>
-        <nav className="flex-1 px-4 space-y-1">
-          {items.map((item) => {
-            const Icon = iconMap[item.icon] || LayoutDashboard;
-            return (
-              <div key={item.name} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground">
-                <Icon className="w-5 h-5 flex-shrink-0" />
-                <span className="flex-1 truncate">{item.name}</span>
-              </div>
-            );
-          })}
-        </nav>
       </div>
     );
   }
@@ -122,16 +117,26 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   const isSuperAdmin = me?.role === 'super_admin';
 
   return (
-    <div className="w-64 bg-card border-r border-border h-screen flex flex-col sticky top-0 overflow-y-auto custom-scrollbar z-50">
-      <div className="p-6">
-        <Link href="/" className="hover:opacity-90 transition-opacity">
-          <Logo size="sm" />
-        </Link>
+    <div className={cn(
+      "bg-card border-r border-border h-screen flex flex-col sticky top-0 overflow-y-auto custom-scrollbar z-50 transition-all duration-300",
+      isMinimized ? "w-20 items-center px-2" : "w-64"
+    )}>
+      <div className={cn("p-6 flex items-center relative", isMinimized ? "justify-center" : "justify-between")}>
+        {!isMinimized && (
+          <Link href="/" className="hover:opacity-90 transition-opacity">
+            <Logo size="sm" />
+          </Link>
+        )}
+        {isMinimized && (
+          <Link href="/" className="hover:opacity-90 transition-opacity font-bold text-2xl text-primary mt-2">
+            O.
+          </Link>
+        )}
       </div>
 
-      <div className="flex-1 space-y-6">
-        <nav className="px-4 space-y-1">
-          <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-50">Local Scope</p>
+      <div className={cn("flex-1 space-y-6 w-full", isMinimized ? "px-0" : "px-0")}>
+        <nav className={cn("space-y-1 w-full", isMinimized ? "px-2" : "px-4")}>
+          {!isMinimized && <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-50">Local Scope</p>}
           {items.map((item) => {
             const isActive = activeItemHref === item.href;
             const Icon = iconMap[item.icon] || LayoutDashboard;
@@ -139,71 +144,99 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
               <Link
                 key={item.name}
                 href={item.href}
+                title={isMinimized ? item.name : undefined}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group",
+                  "flex items-center rounded-lg text-sm font-medium transition-all group",
+                  isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2",
                   isActive 
                     ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
                     : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 )}
               >
-                <Icon className="w-5 h-5 flex-shrink-0" />
-                <span className="flex-1 truncate">{item.name}</span>
-                {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+                <Icon className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
+                {!isMinimized && <span className="flex-1 truncate">{item.name}</span>}
+                {!isMinimized && isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
               </Link>
             );
           })}
         </nav>
 
         {isSuperAdmin && (
-          <nav className="px-4 space-y-1">
-             <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-500">Universal Gateway</p>
+          <nav className={cn("space-y-1 w-full", isMinimized ? "px-2" : "px-4")}>
+             {!isMinimized && <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Universal Gateway</p>}
+             {isMinimized && <div className="border-t border-border my-4 w-1/2 mx-auto"></div>}
              <Link 
               href="/admin/dashboard" 
+              title={isMinimized ? "Admin Governance" : undefined}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all",
-                pathname.startsWith('/admin') ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "text-muted-foreground hover:bg-secondary"
+                "flex items-center rounded-lg text-sm font-medium transition-all",
+                isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2",
+                pathname.startsWith('/admin') ? "bg-primary/10 text-primary border border-primary/20" : "text-muted-foreground hover:bg-secondary"
               )}>
-                <ShieldCheck className="w-5 h-5" />
-                <span>Admin Governance</span>
+                <ShieldCheck className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
+                {!isMinimized && <span>Admin Governance</span>}
              </Link>
              <Link 
               href="/merchant/dashboard" 
+              title={isMinimized ? "Merchant Portal" : undefined}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all",
-                pathname.startsWith('/merchant') ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "text-muted-foreground hover:bg-secondary"
+                "flex items-center rounded-lg text-sm font-medium transition-all",
+                isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2",
+                pathname.startsWith('/merchant') ? "bg-primary/10 text-primary border border-primary/20" : "text-muted-foreground hover:bg-secondary"
               )}>
-                <ShoppingBag className="w-5 h-5" />
-                <span>Merchant Portal</span>
+                <ShoppingBag className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
+                {!isMinimized && <span>Merchant Portal</span>}
              </Link>
              <Link 
               href="/partner/dashboard" 
+              title={isMinimized ? "Partner Hub" : undefined}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all",
-                pathname.startsWith('/partner') ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "text-muted-foreground hover:bg-secondary"
+                "flex items-center rounded-lg text-sm font-medium transition-all",
+                isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2",
+                pathname.startsWith('/partner') ? "bg-primary/10 text-primary border border-primary/20" : "text-muted-foreground hover:bg-secondary"
               )}>
-                <Handshake className="w-5 h-5" />
-                <span>Partner Hub</span>
+                <Handshake className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
+                {!isMinimized && <span>Partner Hub</span>}
              </Link>
           </nav>
         )}
       </div>
 
-      <div className="p-4 border-t border-border mt-auto">
-        <div className="mb-4 px-3 py-2.5 rounded-xl bg-secondary/50 border border-border flex items-center justify-between">
-           <div>
-             <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold leading-none mb-1">Session Role</p>
-             <p className="text-xs font-bold capitalize leading-none">{role}</p>
-           </div>
-           {isSuperAdmin && <Zap className="w-3.5 h-3.5 text-emerald-500 fill-emerald-500 animate-pulse" />}
-        </div>
+      <div className={cn("p-4 border-t border-border mt-auto w-full", isMinimized ? "px-2" : "")}>
+        {!isMinimized && (
+          <div className="mb-4 px-3 py-2.5 rounded-xl bg-secondary/50 border border-border flex items-center justify-between">
+             <div>
+               <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold leading-none mb-1">Session Role</p>
+               <p className="text-xs font-bold capitalize leading-none">{role}</p>
+             </div>
+             {isSuperAdmin && <Zap className="w-3.5 h-3.5 text-primary fill-primary animate-pulse" />}
+          </div>
+        )}
+        
         <button 
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2 w-full rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-all"
+          title={isMinimized ? "Logout" : undefined}
+          className={cn(
+            "flex items-center w-full rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-all",
+            isMinimized ? "justify-center p-3 mb-2" : "gap-3 px-3 py-2 mb-2"
+          )}
         >
-          <LogOut className="w-5 h-5" />
-          <span>Logout</span>
+          <LogOut className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
+          {!isMinimized && <span>Logout</span>}
+        </button>
+
+        <button 
+          onClick={() => setIsMinimized(!isMinimized)}
+          className={cn(
+            "flex items-center w-full rounded-lg text-sm font-medium text-muted-foreground hover:bg-secondary transition-all",
+            isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2"
+          )}
+        >
+          {isMinimized ? <ChevronRight className="w-6 h-6" /> : <ChevronLeft className="w-5 h-5" />}
+          {!isMinimized && <span>Collapse</span>}
         </button>
       </div>
+
       {/* Logout Confirmation Modal */}
       {isLogoutConfirmOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
