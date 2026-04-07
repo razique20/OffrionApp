@@ -20,9 +20,9 @@ import {
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 
-type TabType = 'overview' | 'merchants' | 'partners' | 'deals' | 'categories' | 'admins';
+type TabType = 'overview' | 'merchants' | 'partners' | 'deals' | 'categories' | 'admins' | 'financials';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -58,8 +58,21 @@ export default function AdminDashboard() {
     fetchStats();
     if (activeTab === 'categories') fetchCategories();
     else if (activeTab === 'admins') fetchAdmins();
+    else if (activeTab === 'financials') fetchFinancials();
     else if (activeTab !== 'overview') fetchData(activeTab);
   }, [activeTab]);
+
+  const [financials, setFinancials] = useState<any>(null);
+
+  const fetchFinancials = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/commissions');
+      const json = await res.json();
+      if (res.ok) setFinancials(json);
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  };
 
   const fetchMe = async () => {
     try {
@@ -393,7 +406,7 @@ export default function AdminDashboard() {
         </div>
         
         <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border overflow-x-auto no-scrollbar">
-          {(['overview', 'merchants', 'partners', 'deals', 'categories', 'admins'] as TabType[])
+          {(['overview', 'merchants', 'partners', 'deals', 'categories', 'admins', 'financials'] as TabType[])
             .filter(tab => tab !== 'admins' || me?.role === 'super_admin')
             .map((tab) => (
             <button
@@ -469,7 +482,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Dynamic Data Table for Merchants / Partners / Deals */}
-      {activeTab !== 'overview' && activeTab !== 'categories' && (
+      {['merchants', 'partners', 'deals'].includes(activeTab) && (
         <div className="p-8 bg-card border border-border rounded-[40px] shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="flex justify-between items-center mb-8">
              <h3 className="text-xl font-bold capitalize">{activeTab} Management</h3>
@@ -509,8 +522,11 @@ export default function AdminDashboard() {
                 <tbody className="text-sm">
                   {data.map((item) => (
                     <tr key={item._id} className="border-b border-border/50 group hover:bg-secondary/10 transition-colors relative hover:z-40">
-                      <td className="px-4 py-5 font-bold text-xs">
+                      <td className="px-4 py-5 font-bold text-xs flex flex-col gap-1">
                         {activeTab === 'deals' ? item.title : item.name}
+                        {activeTab === 'deals' && (
+                          <span className="text-[9px] font-mono font-normal text-muted-foreground uppercase opacity-70">ID: {item._id}</span>
+                        )}
                       </td>
                       <td className="px-4 py-5 text-xs text-muted-foreground">
                         {activeTab === 'deals' ? (item.merchantId?.name || 'N/A') : item.email}
@@ -586,7 +602,92 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Categories Tab (Merged earlier logic with new styling) */}
+      {/* Financials Tab */}
+      {activeTab === 'financials' && (
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+           {/* Ledger Stats */}
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-8 bg-card border border-border rounded-[32px] shadow-sm">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Gross Referral Volume</p>
+                <h3 className="text-3xl font-bold">{formatCurrency(financials?.summary?.grossVolume || 0)}</h3>
+                <div className="mt-4 flex items-center gap-2 text-xs text-emerald-500 font-bold">
+                   <TrendingUp className="w-4 h-4" /> 100% Marketplace Flow
+                </div>
+              </div>
+              <div className="p-8 bg-card border border-border rounded-[32px] shadow-sm">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Partner Payouts (70%)</p>
+                <h3 className="text-3xl font-bold">{formatCurrency(financials?.summary?.partnerPayouts || 0)}</h3>
+                <div className="mt-4 flex items-center gap-2 text-xs text-blue-500 font-bold">
+                   <Users className="w-4 h-4" /> Ecosystem Growth
+                </div>
+              </div>
+              <div className="p-8 bg-card border border-border rounded-[32px] shadow-sm ring-2 ring-primary/20 ring-offset-4 ring-offset-background">
+                <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Platform Profit (30%)</p>
+                <h3 className="text-3xl font-bold text-gradient">{formatCurrency(financials?.summary?.platformProfit || 0)}</h3>
+                <div className="mt-4 flex items-center gap-2 text-xs text-primary font-bold">
+                   <ShieldCheck className="w-4 h-4" /> Infrastructure Fee
+                </div>
+              </div>
+           </div>
+
+           {/* Ledger Table */}
+           <div className="p-8 bg-card border border-border rounded-[40px] shadow-sm">
+              <div className="flex justify-between items-center mb-8">
+                 <h3 className="text-xl font-bold">Transaction Ledger</h3>
+                 <div className="flex gap-2">
+                    <button className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold hover:bg-secondary/80 transition-all flex items-center gap-2">
+                       <ExternalLink className="w-4 h-4" /> Export CSV
+                    </button>
+                 </div>
+              </div>
+
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-4">
+                   <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                   <p className="text-xs text-muted-foreground font-medium">Auditing Financial Records...</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                   <table className="w-full text-left">
+                      <thead>
+                        <tr className="border-b border-border text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                           <th className="px-4 py-4">Participant</th>
+                           <th className="px-4 py-4">Gross Amt</th>
+                           <th className="px-4 py-4">Partner (70%)</th>
+                           <th className="px-4 py-4">Platform (30%)</th>
+                           <th className="px-4 py-4">Date</th>
+                           <th className="px-4 py-4 text-right">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-sm">
+                        {financials?.commissions?.map((c: any) => (
+                          <tr key={c._id} className="border-b border-border/50 hover:bg-secondary/10 transition-colors">
+                            <td className="px-4 py-5 font-bold text-xs">
+                               <div className="flex flex-col">
+                                  <span>{c.partnerId?.name || 'Unknown'}</span>
+                                  <span className="text-[9px] font-normal text-muted-foreground">ref: {c.merchantId?.name || 'Unknown'}</span>
+                               </div>
+                            </td>
+                            <td className="px-4 py-5 font-mono text-xs">${c.amount.toFixed(2)}</td>
+                            <td className="px-4 py-5 font-bold text-blue-500">${c.partnerShare.toFixed(2)}</td>
+                            <td className="px-4 py-5 font-bold text-primary">${c.platformShare.toFixed(2)}</td>
+                            <td className="px-4 py-5 text-xs text-muted-foreground">{new Date(c.createdAt).toLocaleDateString()}</td>
+                            <td className="px-4 py-5 text-right">
+                               <span className="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                                  Captured
+                               </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                   </table>
+                </div>
+              )}
+           </div>
+        </div>
+      )}
+
+      {/* Categories Tab */}
       {activeTab === 'categories' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
            <div className="lg:col-span-2 p-8 bg-card border border-border rounded-[40px] shadow-sm">

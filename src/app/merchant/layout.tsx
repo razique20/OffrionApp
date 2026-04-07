@@ -3,6 +3,7 @@ import Sidebar, { SidebarItem } from '@/components/Sidebar';
 
 const merchantMenuItems: SidebarItem[] = [
   { name: 'Dashboard', icon: 'dashboard', href: '/merchant/dashboard' },
+  { name: 'Scan & Redeem', icon: 'scan', href: '/merchant/redeem' },
   { name: 'My Deals', icon: 'deals', href: '/merchant/deals' },
   { name: 'Create Deal', icon: 'zap', href: '/merchant/deals/new' },
   { name: 'Analytics', icon: 'analytics', href: '/merchant/analytics' },

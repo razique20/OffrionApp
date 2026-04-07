@@ -21,7 +21,8 @@ import {
   Globe,
   Zap,
   ShoppingBag,
-  Bell
+  Bell,
+  ScanLine
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/Logo';
@@ -41,7 +42,8 @@ export const iconMap = {
   trending: TrendingUp,
   globe: Globe,
   zap: Zap,
-  notifications: Bell
+  notifications: Bell,
+  scan: ScanLine
 };
 
 import { Handshake } from 'lucide-react';

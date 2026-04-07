@@ -143,7 +143,10 @@ export default function MerchantDealsPage() {
               
               <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-bold truncate group-hover:text-primary transition-colors">{deal.title}</h3>
+                  <div className="flex flex-col gap-1 min-w-0">
+                    <h3 className="text-lg font-bold truncate group-hover:text-primary transition-colors">{deal.title}</h3>
+                    <span className="text-[10px] font-mono text-muted-foreground bg-secondary/50 px-1.5 py-0.5 rounded uppercase self-start">ID: {deal._id}</span>
+                  </div>
                   <div className="flex items-center gap-2">
                     <Link 
                       href={`/merchant/deals/edit/${deal._id}`}

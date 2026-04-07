@@ -3,6 +3,7 @@ import Sidebar, { SidebarItem } from '@/components/Sidebar';
 
 const partnerMenuItems: SidebarItem[] = [
   { name: 'Dashboard', icon: 'dashboard', href: '/partner/dashboard' },
+  { name: 'Analytics', icon: 'analytics', href: '/partner/analytics' },
   { name: 'API Keys', icon: 'keys', href: '/partner/keys' },
   { name: 'API Playground', icon: 'zap', href: '/partner/playground' },
   { name: 'Documentation', icon: 'docs', href: '/partner/docs' },

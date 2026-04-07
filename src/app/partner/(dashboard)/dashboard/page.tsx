@@ -11,9 +11,13 @@ import {
   Code,
   Terminal,
   Activity,
-  Zap
+  Zap,
+  DollarSign,
+  TrendingUp,
+  Clock,
+  ExternalLink
 } from 'lucide-react';
-import { cn, formatDate } from '@/lib/utils';
+import { cn, formatDate, formatCurrency } from '@/lib/utils';
 
 export default function PartnerDashboard() {
   const [keys, setKeys] = useState<any[]>([]);
@@ -21,6 +25,13 @@ export default function PartnerDashboard() {
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [apiRequests, setApiRequests] = useState<number | null>(null);
+  const [avgLatency, setAvgLatency] = useState<string>('—');
+  const [successRate, setSuccessRate] = useState<string>('—');
+  const [earnings, setEarnings] = useState<any>({ pending: 0, paid: 0 });
+  const [totalEarned, setTotalEarned] = useState<number>(0);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transLoading, setTransLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/partner/keys')
@@ -44,6 +55,37 @@ export default function PartnerDashboard() {
       .finally(() => {
         setLoading(false);
       });
+  }, []);
+
+  // Fetch analytics stats
+  useEffect(() => {
+    fetch('/api/partner/analytics?period=7d')
+      .then(async (res) => {
+        if (!res.ok) return;
+        const data = await res.json();
+        const { impressions = 0, clicks = 0, conversions = 0 } = data.summary || {};
+        setApiRequests(impressions + clicks + conversions);
+        if (impressions + clicks + conversions > 0) {
+          setSuccessRate(data.summary.conversionRate || '—');
+        }
+        if (data.summary.earnings) {
+          setEarnings(data.summary.earnings);
+          setTotalEarned(data.summary.totalEarned);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Fetch transactions
+  useEffect(() => {
+    fetch('/api/partner/transactions?limit=5')
+      .then(async (res) => {
+        if (!res.ok) return;
+        const data = await res.json();
+        setTransactions(data.transactions || []);
+      })
+      .catch(console.error)
+      .finally(() => setTransLoading(false));
   }, []);
 
   const generateKey = async () => {
@@ -82,30 +124,30 @@ export default function PartnerDashboard() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 bg-card border border-border rounded-2xl flex items-center gap-4">
-          <div className="p-3 bg-blue-500/10 text-blue-500 rounded-xl">
-            <Activity className="w-6 h-6" />
+          <div className="p-3 bg-emerald-500/10 text-emerald-500 rounded-xl">
+            <DollarSign className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm text-muted-foreground font-medium">API Requests (24h)</p>
-            <h3 className="text-2xl font-bold">0</h3>
+            <p className="text-sm text-muted-foreground font-medium">Total Earned</p>
+            <h3 className="text-2xl font-bold">{formatCurrency(totalEarned)}</h3>
           </div>
         </div>
         <div className="p-6 bg-card border border-border rounded-2xl flex items-center gap-4">
           <div className="p-3 bg-amber-500/10 text-amber-500 rounded-xl">
-            <Zap className="w-6 h-6" />
+            <Clock className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm text-muted-foreground font-medium">Avg Latency</p>
-            <h3 className="text-2xl font-bold">—</h3>
+            <p className="text-sm text-muted-foreground font-medium">Pending Payout</p>
+            <h3 className="text-2xl font-bold">{formatCurrency(earnings.pending)}</h3>
           </div>
         </div>
         <div className="p-6 bg-card border border-border rounded-2xl flex items-center gap-4">
-          <div className="p-3 bg-primary/10 text-primary rounded-xl">
-            <CheckCircle2 className="w-6 h-6" />
+          <div className="p-3 bg-blue-500/10 text-blue-500 rounded-xl">
+            <TrendingUp className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-sm text-muted-foreground font-medium">Success Rate</p>
-            <h3 className="text-2xl font-bold">—</h3>
+            <p className="text-sm text-muted-foreground font-medium">Conversion Rate</p>
+            <h3 className="text-2xl font-bold">{successRate}</h3>
           </div>
         </div>
       </div>
@@ -200,6 +242,77 @@ export default function PartnerDashboard() {
               Read Governance Policy →
             </Link>
           </div>
+        </div>
+      </div>
+
+      {/* Recent Deal Claims */}
+      <div className="bg-card border border-border rounded-[32px] overflow-hidden shadow-sm">
+        <div className="p-8 border-b border-border flex justify-between items-center">
+          <div>
+            <h3 className="text-xl font-bold tracking-tight">Recent Deal Claims</h3>
+            <p className="text-sm text-muted-foreground">Track your referred customer redemptions.</p>
+          </div>
+          <Link href="/partner/analytics" className="text-sm font-bold text-primary hover:underline flex items-center gap-1">
+            View All Analytics <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-secondary/30">
+                <th className="px-8 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border">Deal</th>
+                <th className="px-8 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border">Code</th>
+                <th className="px-8 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border">Date</th>
+                <th className="px-8 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border">Status</th>
+                <th className="px-8 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border text-right">Commission</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {transLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td colSpan={5} className="px-8 py-6 h-16 bg-secondary/10"></td>
+                  </tr>
+                ))
+              ) : transactions.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-8 py-12 text-center text-muted-foreground italic">
+                    No transactions found yet. Try tracking a conversion via API.
+                  </td>
+                </tr>
+              ) : (
+                transactions.map((t) => (
+                  <tr key={t._id} className="group hover:bg-secondary/20 transition-colors">
+                    <td className="px-8 py-5">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-sm">{t.dealId?.title || 'Unknown Deal'}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-tight">ID: {t._id.slice(-8)}</span>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5">
+                      <span className="font-mono text-xs font-bold bg-secondary px-2 py-1 rounded text-primary">
+                        {t.qrCode || 'N/A'}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5 text-sm text-muted-foreground">
+                      {formatDate(t.createdAt)}
+                    </td>
+                    <td className="px-8 py-5">
+                      <span className={cn(
+                        "px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                        t.status === 'completed' ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
+                      )}>
+                        {t.status}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5 text-right font-bold text-sm text-primary">
+                      {formatCurrency((t.amount * (t.dealId?.commissionPercentage || 10)) / 100 * 0.7)}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

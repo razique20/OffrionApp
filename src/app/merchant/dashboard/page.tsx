@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { 
   BarChart, 
   Bar, 
@@ -109,10 +110,10 @@ export default function MerchantDashboard() {
             <h3 className="text-lg font-bold">Revenue Overview</h3>
           </div>
           <div className="flex-1 w-full flex flex-col items-center justify-center">
-            {chartData.length > 0 ? (
+            {data.dailyRevenue && data.dailyRevenue.length > 0 ? (
               <div className="h-[300px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartData}>
+                  <AreaChart data={data.dailyRevenue}>
                     <defs>
                       <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0.1}/>
@@ -177,7 +178,10 @@ export default function MerchantDashboard() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-bold truncate">{item.dealInfo?.title || 'Unknown Deal'}</h4>
-                  <p className="text-xs text-muted-foreground">{item.conversions} conversions</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <p className="text-[10px] font-mono text-muted-foreground bg-secondary/50 px-1.5 py-0.5 rounded uppercase tracking-tighter">ID: {item._id}</p>
+                    <p className="text-xs text-muted-foreground">{item.conversions} conversions</p>
+                  </div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold">{formatCurrency(item.conversions * (item.dealInfo?.discountedPrice || 0))}</p>
@@ -185,13 +189,14 @@ export default function MerchantDashboard() {
               </div>
             ))}
           </div>
-          <button className="w-full mt-8 py-2 rounded-xl border border-border text-sm font-medium hover:bg-secondary transition-all">
-            View All Deals
-          </button>
+          <Link href="/merchant/deals">
+            <button className="w-full mt-8 py-2 rounded-xl border border-border text-sm font-medium hover:bg-secondary transition-all">
+              View All Deals
+            </button>
+          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-const chartData: any[] = [];

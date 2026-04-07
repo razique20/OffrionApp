@@ -38,35 +38,30 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Deal not found' }, { status: 404 });
     }
 
-    // 1. Create Transaction
+    // Helper to generate 6-digit alphanumeric code
+    const generateRedeemCode = () => {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Avoid ambiguous chars
+      let result = '';
+      for (let i = 0; i < 6; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    };
+
+    const redeemCode = generateRedeemCode();
+
+    // 1. Create Transaction (as Pending)
     const transaction = await Transaction.create({
       dealId: new mongoose.Types.ObjectId(dealId),
-      partnerId: apiKey.partnerId,
+      partnerId: new mongoose.Types.ObjectId(apiKey.partnerId.toString()),
       amount,
       currency,
       environment: apiKey.environment,
-      status: 'completed',
-    });
-
-    // 2. Calculate Commission
-    // Total commission is deal.commissionPercentage % of amount
-    // Split: 70% to Partner, 30% to Platform (Example logic)
-    const totalCommission = (amount * deal.commissionPercentage) / 100;
-    const partnerShare = totalCommission * 0.7;
-    const platformShare = totalCommission * 0.3;
-
-    await Commission.create({
-      transactionId: transaction._id,
-      partnerId: apiKey.partnerId,
-      merchantId: deal.merchantId,
-      amount: totalCommission,
-      partnerShare,
-      platformShare,
-      environment: apiKey.environment,
       status: 'pending',
+      qrCode: redeemCode,
     });
 
-    // 3. Log Conversion Event
+    // 2. Log Conversion Event
     await AnalyticsEvent.create({
       type: 'conversion',
       dealId,
@@ -77,21 +72,18 @@ export async function POST(req: Request) {
         ...metadata,
         transactionId: transaction._id,
         amount,
-        commission: totalCommission,
+        redeemCode,
       },
     });
 
-    // 4. Update Deal Usage
+    // 3. Update Deal Usage
     await Deal.findByIdAndUpdate(dealId, { $inc: { currentUsage: 1 } });
 
     return NextResponse.json({ 
-      message: 'Conversion tracked and commission calculated',
+      message: 'Conversion tracked. Redemption code generated.',
       transactionId: transaction._id,
-      commission: {
-        total: totalCommission,
-        partner: partnerShare,
-        platform: platformShare,
-      }
+      redeemCode: transaction.qrCode,
+      status: 'pending'
     });
 
   } catch (error: any) {

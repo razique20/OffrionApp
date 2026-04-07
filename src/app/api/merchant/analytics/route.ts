@@ -99,9 +99,55 @@ export async function GET(req: Request) {
       { $unwind: '$dealInfo' },
     ]);
 
+    // 4. Daily Revenue for Chart (Last 7 Days)
+    const dailyRevenue: any[] = [];
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        dailyRevenue.push({ name: dateStr, revenue: 0 });
+    }
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const dailyRevenueAggregation = await Transaction.aggregate([
+      {
+        $lookup: {
+          from: 'deals',
+          localField: 'dealId',
+          foreignField: '_id',
+          as: 'deal'
+        }
+      },
+      { $unwind: '$deal' },
+      { 
+        $match: { 
+          'deal.merchantId': merchantId,
+          createdAt: { $gte: sevenDaysAgo }
+        } 
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          revenue: { $sum: '$amount' }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    // Merge aggregation into dailyRevenue
+    dailyRevenueAggregation.forEach(item => {
+        const index = dailyRevenue.findIndex(d => d.name === item._id);
+        if (index !== -1) {
+            dailyRevenue[index].revenue = item.revenue;
+        }
+    });
+
     return NextResponse.json({
       stats,
       topDeals,
+      dailyRevenue,
     });
 
   } catch (error: any) {

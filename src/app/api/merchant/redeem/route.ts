@@ -2,11 +2,17 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Transaction from '@/models/Transaction';
 import Deal from '@/models/Deal';
+import Commission from '@/models/Commission';
+import mongoose from 'mongoose';
 import { z } from 'zod';
 
 const redeemSchema = z.object({
-  transactionId: z.string(),
-});
+  transactionId: z.string().optional(),
+  redeemCode: z.string().length(6).optional(),
+}).refine(
+  (data) => data.transactionId || data.redeemCode,
+  { message: 'Either transactionId or redeemCode is required' }
+);
 
 export async function POST(req: Request) {
   try {
@@ -18,9 +24,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { transactionId } = redeemSchema.parse(body);
+    const { transactionId, redeemCode } = redeemSchema.parse(body);
 
-    const transaction = await Transaction.findById(transactionId).populate('dealId');
+    // Look up transaction by ID or 6-digit redeem code
+    let transaction;
+    if (transactionId) {
+      transaction = await Transaction.findById(transactionId).populate('dealId');
+    } else {
+      transaction = await Transaction.findOne({ 
+        qrCode: redeemCode!.toUpperCase(), 
+        status: 'pending' 
+      }).populate('dealId');
+    }
+
     if (!transaction) {
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
     }
@@ -36,9 +52,27 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Transaction already redeemed' }, { status: 400 });
     }
 
+    // Mark transaction as completed
     transaction.status = 'completed';
     transaction.redeemedAt = new Date();
     await transaction.save();
+
+    // --- Automated Commission Engine ---
+    const commissionRate = deal.commissionPercentage / 100;
+    const totalCommission = deal.discountedPrice * commissionRate;
+    const partnerShare = Math.round(totalCommission * 0.70 * 100) / 100;
+    const platformShare = Math.round(totalCommission * 0.30 * 100) / 100;
+
+    const commission = await Commission.create({
+      transactionId: transaction._id,
+      partnerId: new mongoose.Types.ObjectId(transaction.partnerId.toString()),
+      merchantId: deal.merchantId,
+      amount: Math.round(totalCommission * 100) / 100,
+      partnerShare,
+      platformShare,
+      environment: transaction.environment || 'production',
+      status: 'pending',
+    });
 
     return NextResponse.json({ 
       message: 'Deal redeemed successfully',
@@ -46,7 +80,15 @@ export async function POST(req: Request) {
         id: transaction._id,
         redeemedAt: transaction.redeemedAt,
         dealTitle: deal.title,
-      }
+        originalPrice: deal.originalPrice,
+        discountedPrice: deal.discountedPrice,
+      },
+      commission: {
+        id: commission._id,
+        total: commission.amount,
+        partnerShare: commission.partnerShare,
+        platformShare: commission.platformShare,
+      },
     });
 
   } catch (error: any) {
