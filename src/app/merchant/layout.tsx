@@ -7,6 +7,7 @@ const merchantMenuItems: SidebarItem[] = [
   { name: 'My Deals', icon: 'deals', href: '/merchant/deals' },
   { name: 'Create Deal', icon: 'zap', href: '/merchant/deals/new' },
   { name: 'Analytics', icon: 'analytics', href: '/merchant/analytics' },
+  { name: 'Wallet', icon: 'wallet', href: '/merchant/wallet' },
   { name: 'Support', icon: 'support', href: '/merchant/support' },
   { name: 'Settings', icon: 'settings', href: '/merchant/settings' },
 ];

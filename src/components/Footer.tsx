@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { Globe } from 'lucide-react';
 
 export const Footer = () => {
   return (
@@ -17,7 +18,13 @@ export const Footer = () => {
            <Link href="/partner/docs" className="text-xs text-muted-foreground hover:text-primary transition-colors">API Docs</Link>
            <Link href="/auth/register?role=merchant" className="text-xs text-muted-foreground hover:text-primary transition-colors">Join as Merchant</Link>
         </div>
-        <p className="text-xs text-muted-foreground">© 2026 Offrion Platform. All rights reserved.</p>
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mt-8 md:mt-0">
+          <p className="text-xs text-muted-foreground">© 2026 Offrion Platform. All rights reserved.</p>
+          <div className="hidden sm:block w-1 h-1 rounded-full bg-border"></div>
+          <p className="text-xs text-muted-foreground flex items-center gap-1.5 font-medium">
+            <Globe className="w-3 h-3" /> A product from Aethyl Group
+          </p>
+        </div>
       </div>
     </footer>
   );

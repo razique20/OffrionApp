@@ -8,15 +8,24 @@ import {
   User, 
   LogOut, 
   LayoutDashboard,
-  ChevronDown
+  ChevronDown,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useUser } from '@/hooks/useUser';
 import { cn } from '@/lib/utils';
+import { useTheme } from 'next-themes';
 
 export const Navbar = () => {
   const { user, loading, logout } = useUser();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -30,6 +39,15 @@ export const Navbar = () => {
           <Link href="/partner/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">API Docs</Link>
         </div>
         <div className="flex items-center gap-3">
+          {mounted && (
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="p-2 rounded-full hover:bg-secondary transition-colors text-muted-foreground mr-1"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+          )}
           {loading ? (
             <div className="w-20 h-8 bg-secondary animate-pulse rounded-xl"></div>
           ) : user ? (

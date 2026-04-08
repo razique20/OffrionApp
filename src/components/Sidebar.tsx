@@ -22,10 +22,14 @@ import {
   Zap,
   ShoppingBag,
   Bell,
-  ScanLine
+  ScanLine,
+  Wallet,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/Logo';
+import { useTheme } from 'next-themes';
 
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -43,7 +47,8 @@ export const iconMap = {
   globe: Globe,
   zap: Zap,
   notifications: Bell,
-  scan: ScanLine
+  scan: ScanLine,
+  wallet: Wallet
 };
 
 import { Handshake } from 'lucide-react';
@@ -66,6 +71,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const [me, setMe] = useState<any>(null);
 
@@ -118,6 +124,45 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
 
   const isSuperAdmin = me?.role === 'super_admin';
 
+  const renderItems = (itemsToRender: SidebarItem[], label?: string) => (
+    <nav className={cn("space-y-1 w-full", isMinimized ? "px-2" : "px-4")}>
+      {!isMinimized && label && itemsToRender.length > 0 && (
+        <p className="px-3 mb-2 mt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-50">
+          {label}
+        </p>
+      )}
+      {itemsToRender.map((item) => {
+        const isActive = activeItemHref === item.href;
+        const Icon = iconMap[item.icon] || LayoutDashboard;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            title={isMinimized ? item.name : undefined}
+            className={cn(
+              "flex items-center rounded-lg text-sm font-medium transition-all group",
+              isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2",
+              isActive 
+                ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
+                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+            )}
+          >
+            <Icon className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
+            {!isMinimized && (
+              <div className="flex-1 flex items-center justify-between">
+                <span className="truncate">{item.name}</span>
+                {item.href.includes('sandbox') && !isActive && (
+                  <span className="text-[8px] px-1 py-0.5 rounded bg-amber-500/10 text-amber-500 font-bold uppercase">Test</span>
+                )}
+              </div>
+            )}
+            {!isMinimized && isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+
   return (
     <div className={cn(
       "bg-card border-r border-border h-screen flex flex-col sticky top-0 overflow-y-auto custom-scrollbar z-50 transition-all duration-300",
@@ -136,35 +181,14 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
         )}
       </div>
 
-      <div className={cn("flex-1 space-y-6 w-full", isMinimized ? "px-0" : "px-0")}>
-        <nav className={cn("space-y-1 w-full", isMinimized ? "px-2" : "px-4")}>
-          {!isMinimized && <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-50">Local Scope</p>}
-          {items.map((item) => {
-            const isActive = activeItemHref === item.href;
-            const Icon = iconMap[item.icon] || LayoutDashboard;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                title={isMinimized ? item.name : undefined}
-                className={cn(
-                  "flex items-center rounded-lg text-sm font-medium transition-all group",
-                  isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2",
-                  isActive 
-                    ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                )}
-              >
-                <Icon className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
-                {!isMinimized && <span className="flex-1 truncate">{item.name}</span>}
-                {!isMinimized && isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
-              </Link>
-            );
-          })}
-        </nav>
+      <div className={cn("flex-1 space-y-2 w-full", isMinimized ? "px-0" : "px-0")}>
+        {renderItems(items.filter(i => !['docs', 'support', 'settings', 'keys', 'playground'].some(k => i.href.includes(k))), "Insights")}
+        {renderItems(items.filter(i => i.href.includes('keys')), "Connectivity")}
+        {renderItems(items.filter(i => ['playground', 'docs'].some(k => i.href.includes(k))), "Development")}
+        {renderItems(items.filter(i => ['settings', 'support'].some(k => i.href.includes(k))), "Account")}
 
         {isSuperAdmin && (
-          <nav className={cn("space-y-1 w-full", isMinimized ? "px-2" : "px-4")}>
+          <nav className={cn("space-y-1 w-full mt-8", isMinimized ? "px-2" : "px-4")}>
              {!isMinimized && <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Universal Gateway</p>}
              {isMinimized && <div className="border-t border-border my-4 w-1/2 mx-auto"></div>}
              <Link 
@@ -225,6 +249,18 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
         >
           <LogOut className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
           {!isMinimized && <span>Logout</span>}
+        </button>
+
+        <button 
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          title={isMinimized ? "Toggle Theme" : undefined}
+          className={cn(
+            "flex items-center w-full rounded-lg text-sm font-medium text-muted-foreground hover:bg-secondary transition-all",
+            isMinimized ? "justify-center p-3 mb-2" : "gap-3 px-3 py-2 mb-2"
+          )}
+        >
+          {theme === 'dark' ? <Sun className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} /> : <Moon className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />}
+          {!isMinimized && <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
         </button>
 
         <button 

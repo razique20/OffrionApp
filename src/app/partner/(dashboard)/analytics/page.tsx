@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { 
   AreaChart, 
   Area, 
@@ -26,7 +27,10 @@ import {
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
 
-export default function PartnerAnalytics() {
+function AnalyticsContent() {
+  const searchParams = useSearchParams();
+  const envParam = searchParams.get('env') === 'sandbox' ? 'sandbox' : 'production';
+  
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('7d');
@@ -34,7 +38,7 @@ export default function PartnerAnalytics() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/partner/analytics?period=${period}`)
+    fetch(`/api/partner/analytics?period=${period}&environment=${envParam}`)
       .then(async (res) => {
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'Failed to fetch analytics');
@@ -50,7 +54,7 @@ export default function PartnerAnalytics() {
       .finally(() => {
         setLoading(false);
       });
-  }, [period]);
+  }, [period, envParam]);
 
   if (loading && !data) return (
     <div className="flex items-center justify-center h-[60vh]">
@@ -92,8 +96,14 @@ export default function PartnerAnalytics() {
     <div className="space-y-8 pb-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Performance Analytics</h1>
-          <p className="text-muted-foreground">Deep dive into your referral metrics and earnings.</p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {envParam === 'sandbox' ? 'Sandbox Analytics' : 'Performance Analytics'}
+          </h1>
+          <p className="text-muted-foreground">
+            {envParam === 'sandbox' 
+              ? 'Monitor your integration tests and sandbox API usage.' 
+              : 'Deep dive into your referral metrics and earnings.'}
+          </p>
         </div>
         <div className="flex items-center gap-2 bg-card border border-border p-1 rounded-xl shadow-sm">
           {['7d', '30d', '90d'].map((p) => (
@@ -223,5 +233,13 @@ export default function PartnerAnalytics() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PartnerAnalytics() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-[60vh]"><div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
+      <AnalyticsContent />
+    </Suspense>
   );
 }

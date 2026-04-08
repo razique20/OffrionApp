@@ -119,6 +119,7 @@ export const config = {
     '/api/auth/me',
     '/api/auth/profile/:path*',
     '/api/billing/:path*',
+    '/api/wallet/:path*',
     '/admin/:path*',
     '/merchant/:path*',
     '/partner/:path*',

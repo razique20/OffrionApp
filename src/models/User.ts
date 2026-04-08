@@ -11,6 +11,7 @@ export interface IUser extends Document {
   role: UserRole;
   isActive: boolean;
   permissions: string[];
+  stripeConnectId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +28,7 @@ const UserSchema: Schema = new Schema(
     },
     isActive: { type: Boolean, default: true },
     permissions: [{ type: String }],
+    stripeConnectId: { type: String, unique: true, sparse: true },
   },
   { timestamps: true }
 );

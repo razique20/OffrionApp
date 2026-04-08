@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { 
   Key, 
   Plus, 
@@ -19,15 +20,23 @@ import {
 } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
 
-export default function PartnerKeysPage() {
+function KeysContent() {
+  const searchParams = useSearchParams();
+  const envParam = searchParams.get('env') === 'sandbox' ? 'sandbox' : 'production';
+  
   const [keys, setKeys] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [newKeyName, setNewKeyName] = useState('');
-  const [newKeyEnvironment, setNewKeyEnvironment] = useState<'production' | 'sandbox'>('sandbox');
+  const [newKeyEnvironment, setNewKeyEnvironment] = useState<'production' | 'sandbox'>(envParam);
   const [generating, setGenerating] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [showKeyId, setShowKeyId] = useState<string | null>(null);
+
+  // Update environment when search params change
+  useEffect(() => {
+    setNewKeyEnvironment(envParam);
+  }, [envParam]);
 
   useEffect(() => {
     fetchKeys();
@@ -122,20 +131,15 @@ export default function PartnerKeysPage() {
 
   return (
     <div className="space-y-6 max-w-6xl -mt-2">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight">API Key Management</h1>
-        <p className="text-xs text-muted-foreground mt-1">Generate and manage secure keys for your integration.</p>
-      </div>
-
-      {/* Hero Warning/Banner */}
-      <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-3xl flex flex-col md:flex-row items-center gap-4">
-        <div className="w-10 h-10 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center shrink-0">
-          <Shield className="w-5 h-5" />
-        </div>
-        <div className="flex-1 text-center md:text-left">
-          <h3 className="text-sm font-bold">Security Best Practices</h3>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Never share your secret keys in public repositories. Use environment variables on your server.</p>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold tracking-tight">
+          {envParam === 'sandbox' ? 'Sandbox API Keys' : 'Production API Keys'}
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          {envParam === 'sandbox' 
+            ? 'Test your integration with isolated sandbox keys.' 
+            : 'Manage live keys for your production application.'}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -220,17 +224,19 @@ export default function PartnerKeysPage() {
             </div>
           )}
 
-          {keys.length === 0 ? (
+          {keys.filter(k => (k.environment || 'production') === envParam).length === 0 ? (
             <div className="flex flex-col items-center justify-center p-20 bg-card border border-border border-dashed rounded-[40px] text-center">
               <div className="w-20 h-20 bg-secondary rounded-3xl flex items-center justify-center mb-6">
                 <Key className="w-10 h-10 text-muted-foreground/30" />
               </div>
-              <h3 className="text-xl font-bold">No API Keys Yet</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs">Generate your first key to start integration.</p>
+              <h3 className="text-xl font-bold">No {envParam === 'sandbox' ? 'Sandbox' : 'Production'} Keys</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs">
+                Generate your first {envParam} key to start your integration.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {keys.map((key) => {
+              {keys.filter(k => (k.environment || 'production') === envParam).map((key) => {
                 const displayId = key._id || key.id;
                 const isRevealed = showKeyId === displayId;
                 
@@ -310,5 +316,13 @@ export default function PartnerKeysPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PartnerKeysPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[50vh]"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
+      <KeysContent />
+    </Suspense>
   );
 }

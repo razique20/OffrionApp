@@ -20,6 +20,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { HeroButtons } from '@/components/HeroButtons';
 import { AppCTA } from '@/components/AppCTA';
+import { InteractiveShowcase } from '@/components/InteractiveShowcase';
 
 export default function LandingPage() {
   return (
@@ -28,156 +29,107 @@ export default function LandingPage() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative pt-40 pb-24 overflow-hidden">
+        <section className="relative pt-32 pb-16 overflow-hidden">
           {/* Background Blurs */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10 pointer-events-none opacity-20">
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full blur-[120px] -translate-y-1/2"></div>
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-400 to-primary rounded-full blur-[120px] translate-y-1/2"></div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-6 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-8">
-              <Zap className="w-3 h-3 fill-primary" />
-              Next-Gen Deals Platform
+          <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            
+            {/* Text Content Left */}
+            <div className="flex flex-col items-center lg:items-start text-center lg:text-left mt-8 lg:mt-0">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
+                <Zap className="w-3 h-3 fill-primary" />
+                Next-Gen Deals Platform
+              </div>
+              
+              <h1 className="text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-[1.1] text-foreground">
+                The Scalable <br className="hidden lg:block"/> <span className="text-gradient">Deals Architecture</span> <br className="hidden lg:block"/> for Modern Platforms.
+              </h1>
+              
+              <p className="text-lg lg:text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl">
+                Connect merchants with partners through a high-performance API. Publish deals in minutes, distribute via thousands of apps, and track everything in real-time.
+              </p>
+              
+              <div className="w-full sm:w-auto">
+                <HeroButtons />
+              </div>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 max-w-4xl mx-auto leading-[1.1] text-foreground">
-              The Scalable <span className="text-gradient">Deals Architecture</span> for Modern Platforms.
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-              Connect merchants with partners through a high-performance API. Publish deals in minutes, distribute via thousands of apps, and track everything in real-time.
-            </p>
-            <HeroButtons />
 
-            {/* Developer Experience Section (Replaces Hero Image) */}
-            <div className="mt-20 w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8 items-stretch">
-               {/* Terminal Mockup */}
-               <div className="lg:col-span-3 bg-slate-950 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden group">
-                  <div className="flex items-center gap-2 px-6 py-4 border-b border-white/5 bg-white/5">
-                     <div className="flex gap-1.5">
-                        <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
-                        <div className="w-3 h-3 rounded-full bg-amber-500/50"></div>
-                        <div className="w-3 h-3 rounded-full bg-primary/50"></div>
-                     </div>
-                     <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest ml-4">Terminal — bash</span>
-                  </div>
-                  <div className="p-8 font-mono text-sm leading-relaxed text-left">
-                     <div className="flex gap-4 mb-4">
-                        <span className="text-primary">➜</span>
-                        <span className="text-white">curl -X GET "https://api.offrion.com/v1/deals" \</span>
-                     </div>
-                     <div className="flex gap-4 mb-4 pl-8">
-                        <span className="text-blue-400">-H "x-api-key: offr_live_8k2l9..." \</span>
-                     </div>
-                     <div className="flex gap-4 mb-8 pl-8">
-                        <span className="text-blue-400">-d "radius=5000&lat=40.71&lng=-74.00"</span>
-                     </div>
-                     
-                     <div className="space-y-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                        <p className="text-white/40 italic">// Recieved 200 OK</p>
-                        <p className="text-blue-300">{"{"}</p>
-                        <p className="pl-4 text-primary">"status": "success",</p>
-                        <p className="pl-4 text-primary">"deals": [ {"{"} "title": "50% OFF Coffee", "dist": "0.4km" {"}"} ]</p>
-                        <p className="text-blue-300">{"}"}</p>
-                     </div>
-                  </div>
-                  <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                     <Code className="w-40 h-40 text-white" />
-                  </div>
-               </div>
-
-               {/* Live Preview Card */}
-                <div className="lg:col-span-2 bg-gradient-to-br from-primary/20 to-blue-600/20 rounded-3xl border border-primary/20 p-8 flex flex-col justify-center text-left backdrop-blur-3xl shadow-xl">
-                  <div className="w-12 h-12 bg-premium-gradient text-white rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-primary/20">
-                     <Rocket className="w-6 h-6" />
-                  </div>
-                  <h4 className="text-2xl font-bold mb-4">Live Integration</h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-8">
-                     Our SDK handles the heavy lifting. Integrate hyper-local deals into your mobile app or website with just 3 lines of code.
-                  </p>
-                  <div className="space-y-4">
-                     <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-premium-gradient shadow-lg shadow-primary/50"></div>
-                        <span className="text-xs font-bold uppercase tracking-wider">99.9% API Uptime</span>
-                     </div>
-                     <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50"></div>
-                        <span className="text-xs font-bold uppercase tracking-wider">&lt; 80ms Latency</span>
-                     </div>
-                  </div>
-               </div>
+            {/* Interactive Showcase Right */}
+            <div className="relative w-full z-10 perspective-[2000px]">
+              <div className="lg:rotate-y-[-5deg] lg:rotate-x-[5deg] transition-transform duration-700 hover:rotate-0">
+                <InteractiveShowcase />
+              </div>
             </div>
+
           </div>
         </section>
 
-        {/* How it Works Section */}
-        <section id="process" className="py-24 bg-secondary/20">
+        {/* Features Section */}
+        <section id="process" className="py-24 bg-background">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4">How it Works</h2>
-              <p className="text-muted-foreground italic">Getting started is easier than you think.</p>
+            <div className="text-center mb-24">
+              <h2 className="text-3xl md:text-5xl font-bold mb-4">Built for scale. Designed for speed.</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Everything you need to launch a deals network or monetize your existing audience.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {/* Merchant Path */}
-              <div className="p-8 bg-card border border-border rounded-[32px] relative overflow-hidden group flex flex-col">
-                <div className="aspect-video w-full rounded-2xl overflow-hidden mb-8 relative border border-border">
-                  <img 
-                    src="/images/qr-vision.png" 
-                    alt="Merchant Deal Management & QR" 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
+            {/* Feature 1: Merchant */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
+              <div className="order-2 lg:order-1 rounded-[2rem] shadow-2xl relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-transparent blur-3xl -z-10 rounded-full"></div>
+                <div className="aspect-video w-full rounded-[2rem] overflow-hidden relative">
+                   <img src="/images/qr-vision.png" alt="Merchant Portal" className="w-full h-full object-cover" />
                 </div>
-                <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-premium-gradient text-white text-sm flex items-center justify-center">1</div>
-                  For Merchants
-                </h3>
-                <ul className="space-y-6">
-                  {[
-                    { icon: Plus, t: 'Create Profile', d: 'Register and set up your merchant identity.' },
-                    { icon: Rocket, t: 'Publish Deals', d: 'Launch discounts with Geo-metadata and usage limits.' },
-                    { icon: BarChart3, t: 'Track Success', d: 'Monitor performance via your real-time dashboard.' },
-                  ].map((step, i) => (
-                    <li key={i} className="flex gap-4">
-                      <div className="mt-1"><step.icon className="w-5 h-5 text-primary" /></div>
-                      <div>
-                        <p className="font-bold">{step.t}</p>
-                        <p className="text-sm text-muted-foreground">{step.d}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
               </div>
-
-              {/* Partner Path */}
-              <div className="p-8 bg-card border border-border rounded-[32px] relative overflow-hidden group flex flex-col">
-                <div className="aspect-video w-full rounded-2xl overflow-hidden mb-8 relative">
-                  <img 
-                    src="/images/api-network.png" 
-                    alt="API Integration" 
-                    className="w-full h-full object-cover transition-transform duration-500"
-                  />
+              <div className="order-1 lg:order-2">
+                <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-6">
+                  <ShoppingBag className="w-6 h-6" />
                 </div>
-                <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-premium-gradient text-white text-sm flex items-center justify-center">2</div>
-                  For Partners
-                </h3>
-                <ul className="space-y-6">
-                  {[
-                    { icon: Globe, t: 'Get API Key', d: 'Instantly generate keys from your partner portal.' },
-                    { icon: MousePointer2, t: 'Embed Deals', d: 'Query deals by location/category and embed in your app.' },
-                    { icon: Zap, t: 'Earn Commission', d: 'Automated 70% revenue split on every conversion.' },
-                  ].map((step, i) => (
-                    <li key={i} className="flex gap-4">
-                      <div className="mt-1"><step.icon className="w-5 h-5 text-primary" /></div>
-                      <div>
-                        <p className="font-bold">{step.t}</p>
-                        <p className="text-sm text-muted-foreground">{step.d}</p>
-                      </div>
+                <h3 className="text-3xl font-bold mb-4">Merchant Control Center</h3>
+                <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
+                  Provide local businesses with a powerful dashboard to publish deals, configure Geo-spatial constraints, and track performance in real-time. Say goodbye to complex onboarding and manual deal validation.
+                </p>
+                <ul className="space-y-3">
+                  {['Instant Deal Publication', 'Cryptographic QR Validation', 'Real-time Analytics Dashboard'].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-sm font-medium">
+                      <CheckCircle2 className="w-5 h-5 text-blue-500 flex-shrink-0" /> <span className="text-foreground">{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
+
+            {/* Feature 2: Partner */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6">
+                  <Code className="w-6 h-6" />
+                </div>
+                <h3 className="text-3xl font-bold mb-4">Developer-First Platform API</h3>
+                <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
+                  Integrate seamlessly into any fintech app, map service, or social network. Query rewards by location, perfectly matching your users to relevant nearby discounts in milliseconds.
+                </p>
+                <ul className="space-y-3">
+                  {['Sub-100ms Latency Globally', 'Simple SDKs & Endpoints', 'Automated Commission Splits'].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-sm font-medium">
+                      <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" /> <span className="text-foreground">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-[2rem] shadow-2xl relative">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent blur-3xl -z-10 rounded-full"></div>
+                <div className="aspect-video w-full rounded-[2rem] overflow-hidden relative">
+                   <img src="/images/api-network.png" alt="API Network" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            </div>
+
           </div>
         </section>
 

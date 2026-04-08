@@ -18,11 +18,13 @@ import {
   Ban,
   Edit2,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Clock,
+  Download
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
 
-type TabType = 'overview' | 'merchants' | 'partners' | 'deals' | 'categories' | 'admins' | 'financials';
+type TabType = 'overview' | 'merchants' | 'partners' | 'deals' | 'categories' | 'admins' | 'financials' | 'review';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -45,6 +47,7 @@ export default function AdminDashboard() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [selectedCommissions, setSelectedCommissions] = useState<string[]>([]);
   const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
@@ -58,7 +61,7 @@ export default function AdminDashboard() {
     fetchStats();
     if (activeTab === 'categories') fetchCategories();
     else if (activeTab === 'admins') fetchAdmins();
-    else if (activeTab === 'financials') fetchFinancials();
+    else if (activeTab === 'financials' || activeTab === 'review') fetchFinancials();
     else if (activeTab !== 'overview') fetchData(activeTab);
   }, [activeTab]);
 
@@ -406,7 +409,7 @@ export default function AdminDashboard() {
         </div>
         
         <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border overflow-x-auto no-scrollbar">
-          {(['overview', 'merchants', 'partners', 'deals', 'categories', 'admins', 'financials'] as TabType[])
+          {(['overview', 'merchants', 'partners', 'deals', 'categories', 'review', 'admins', 'financials'] as TabType[])
             .filter(tab => tab !== 'admins' || me?.role === 'super_admin')
             .map((tab) => (
             <button
@@ -606,7 +609,7 @@ export default function AdminDashboard() {
       {activeTab === 'financials' && (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
            {/* Ledger Stats */}
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="p-8 bg-card border border-border rounded-[32px] shadow-sm">
                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Gross Referral Volume</p>
                 <h3 className="text-3xl font-bold">{formatCurrency(financials?.summary?.grossVolume || 0)}</h3>
@@ -621,12 +624,17 @@ export default function AdminDashboard() {
                    <Users className="w-4 h-4" /> Ecosystem Growth
                 </div>
               </div>
-              <div className="p-8 bg-card border border-border rounded-[32px] shadow-sm ring-2 ring-primary/20 ring-offset-4 ring-offset-background">
-                <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Platform Profit (30%)</p>
-                <h3 className="text-3xl font-bold text-gradient">{formatCurrency(financials?.summary?.platformProfit || 0)}</h3>
-                <div className="mt-4 flex items-center gap-2 text-xs text-primary font-bold">
-                   <ShieldCheck className="w-4 h-4" /> Infrastructure Fee
+              <div className="p-8 bg-card border border-border rounded-[32px] shadow-sm bg-premium-gradient text-white border-primary/20">
+                <p className="text-[10px] font-bold uppercase opacity-70 tracking-widest mb-1">Platform Profit (30%)</p>
+                <h3 className="text-3xl font-bold">{formatCurrency(financials?.summary?.platformProfit || 0)}</h3>
+                <div className="mt-4 flex items-center gap-2 text-xs font-bold">
+                   <ShieldCheck className="w-4 h-4 opacity-70" /> Infrastructure Revenue
                 </div>
+              </div>
+              <div className="p-8 bg-card border border-border rounded-[32px] shadow-sm bg-secondary/50 border-border/20 flex flex-col justify-center items-center text-center">
+                <Clock className="w-6 h-6 text-muted-foreground mb-2" />
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Awaiting Review</p>
+                <h3 className="text-xl font-bold">{financials?.commissions?.filter((c:any) => c.status === 'pending').length || 0} Items</h3>
               </div>
            </div>
 
@@ -941,6 +949,156 @@ export default function AdminDashboard() {
                  </button>
               </form>
            </div>
+         </div>
+       )}
+
+       {/* Review Tab (Commission Hold & Maturity) */}
+       {activeTab === 'review' && (
+         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-card p-6 border border-border rounded-[32px] shadow-sm gap-4">
+               <div>
+                  <h3 className="text-xl font-bold">Commission Review Queue</h3>
+                  <p className="text-xs text-muted-foreground mt-1">Review and clear pending funds. Standard hold is 7 days.</p>
+               </div>
+               <div className="flex gap-3 w-full md:w-auto">
+                  <button 
+                    disabled={selectedCommissions.length === 0 || !!actionLoading}
+                    onClick={async () => {
+                      setActionLoading('bulk-settle');
+                      try {
+                        const res = await fetch('/api/admin/wallet/settle', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ ids: selectedCommissions })
+                        });
+                        const json = await res.json();
+                        showNotification(json.message);
+                        setSelectedCommissions([]);
+                        fetchFinancials();
+                      } catch (err) { showNotification('Bulk settlement failed', 'error'); }
+                      finally { setActionLoading(null); }
+                    }}
+                    className="flex-1 md:flex-initial px-6 py-2.5 bg-premium-gradient text-white text-xs font-bold rounded-xl shadow-lg disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                  >
+                    {actionLoading === 'bulk-settle' ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> Clear Selected ({selectedCommissions.length})</>}
+                  </button>
+                  <button 
+                    onClick={async () => {
+                      setActionLoading('settle-mature');
+                      try {
+                        const res = await fetch('/api/admin/wallet/settle', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ forceAll: false })
+                        });
+                        const json = await res.json();
+                        showNotification(json.message);
+                        fetchFinancials();
+                      } catch (err) { showNotification('Maturity settlement failed', 'error'); }
+                      finally { setActionLoading(null); }
+                    }}
+                    className="flex-1 md:flex-initial px-6 py-2.5 bg-secondary text-xs font-bold rounded-xl hover:bg-secondary/80 transition-all flex items-center justify-center gap-2"
+                  >
+                    {actionLoading === 'settle-mature' ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ShieldCheck className="w-4 h-4" /> Clear All Mature</>}
+                  </button>
+               </div>
+            </div>
+
+            <div className="p-8 bg-card border border-border rounded-[40px] shadow-sm overflow-hidden min-h-[400px]">
+               <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                     <thead>
+                        <tr className="border-b border-border text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                           <th className="px-4 py-4 w-12">
+                              <input 
+                                type="checkbox" 
+                                className="w-4 h-4 rounded border-border text-primary focus:ring-primary/20 bg-secondary"
+                                checked={selectedCommissions.length > 0 && selectedCommissions.length === financials?.commissions?.filter((c:any) => c.status === 'pending').length}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedCommissions(financials?.commissions?.filter((c:any) => c.status === 'pending').map((c:any) => c._id));
+                                  } else {
+                                    setSelectedCommissions([]);
+                                  }
+                                }}
+                              />
+                           </th>
+                           <th className="px-4 py-4">Participant</th>
+                           <th className="px-4 py-4 text-center">Commission (70%)</th>
+                           <th className="px-4 py-4 text-center">Hold Maturity</th>
+                           <th className="px-4 py-4 text-right">Status</th>
+                        </tr>
+                     </thead>
+                     <tbody className="text-sm">
+                        {financials?.commissions?.filter((c: any) => c.status === 'pending').map((c: any) => {
+                          const maturityDate = new Date(c.createdAt);
+                          maturityDate.setDate(maturityDate.getDate() + 7);
+                          const isMature = new Date() >= maturityDate;
+                          
+                          return (
+                            <tr key={c._id} className="border-b border-border/50 hover:bg-secondary/10 transition-colors">
+                               <td className="px-4 py-5">
+                                  <input 
+                                    type="checkbox" 
+                                    className="w-4 h-4 rounded border-border text-primary focus:ring-primary/20 bg-secondary"
+                                    checked={selectedCommissions.includes(c._id)}
+                                    onChange={() => {
+                                      if (selectedCommissions.includes(c._id)) {
+                                        setSelectedCommissions(selectedCommissions.filter(id => id !== c._id));
+                                      } else {
+                                        setSelectedCommissions([...selectedCommissions, c._id]);
+                                      }
+                                    }}
+                                  />
+                               </td>
+                               <td className="px-4 py-5 font-bold text-xs">
+                                  <div className="flex flex-col">
+                                     <span>{c.partnerId?.name || 'Unknown'}</span>
+                                     <span className="text-[9px] font-normal text-muted-foreground">ref: {c.merchantId?.name || 'Unknown'}</span>
+                                  </div>
+                               </td>
+                               <td className="px-4 py-5 text-center">
+                                  <div className="flex flex-col">
+                                     <span className="font-bold text-primary font-mono text-sm">${c.partnerShare.toFixed(2)}</span>
+                                     <span className="text-[9px] text-muted-foreground font-mono">Platform: ${c.platformShare.toFixed(2)}</span>
+                                  </div>
+                               </td>
+                               <td className="px-4 py-5 text-center">
+                                  <div className="flex flex-col gap-1 items-center">
+                                     <span className="text-xs font-bold font-mono tracking-tight">{maturityDate.toLocaleDateString()}</span>
+                                     <span className={cn(
+                                       "px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest border",
+                                       isMature ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                                     )}>
+                                        {isMature ? 'Ready to Clear' : 'Hold Period'}
+                                     </span>
+                                  </div>
+                               </td>
+                               <td className="px-4 py-5 text-right">
+                                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-secondary/50 border border-border text-[10px] font-bold uppercase text-muted-foreground">
+                                     {isMature ? <Clock className="w-3 h-3 text-emerald-500" /> : <Clock className="w-3 h-3 text-amber-500" />}
+                                     Pending
+                                  </div>
+                               </td>
+                            </tr>
+                          );
+                        })}
+                        {financials?.commissions?.filter((c: any) => c.status === 'pending').length === 0 && (
+                          <tr>
+                            <td colSpan={5} className="py-24 text-center">
+                               <div className="flex flex-col items-center gap-3">
+                                  <div className="w-12 h-12 bg-secondary/50 rounded-2xl flex items-center justify-center">
+                                     <Check className="w-6 h-6 text-muted-foreground" />
+                                  </div>
+                                  <p className="text-sm text-muted-foreground italic">Queue empty. All commissions are cleared.</p>
+                               </div>
+                            </td>
+                          </tr>
+                        )}
+                     </tbody>
+                  </table>
+               </div>
+            </div>
          </div>
        )}
 

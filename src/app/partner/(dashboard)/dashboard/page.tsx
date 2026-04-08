@@ -70,7 +70,7 @@ export default function PartnerDashboard() {
         }
         if (data.summary.earnings) {
           setEarnings(data.summary.earnings);
-          setTotalEarned(data.summary.totalEarned);
+          setTotalEarned(data.summary.lifetimeEarned || data.summary.totalEarned || 0);
         }
       })
       .catch(() => {});

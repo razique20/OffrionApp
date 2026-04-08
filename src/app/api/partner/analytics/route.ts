@@ -40,7 +40,7 @@ export async function GET(req: Request) {
     const ctr = stats.impression > 0 ? ((stats.click / stats.impression) * 100).toFixed(2) : '0.00';
     const conversionRate = stats.click > 0 ? ((stats.conversion / stats.click) * 100).toFixed(2) : '0.00';
 
-    // Aggregate commissions
+    // Aggregate commissions for selected period
     const commissionStats = await Commission.aggregate([
       { $match: { partnerId, environment, createdAt: { $gte: since } } },
       {
@@ -52,9 +52,15 @@ export async function GET(req: Request) {
       },
     ]);
 
-    const earnings: Record<string, number> = { pending: 0, paid: 0 };
+    // Aggregate lifetime commissions (ignoring period)
+    const lifetimeStats = await Commission.aggregate([
+      { $match: { partnerId, environment } },
+      { $group: { _id: null, total: { $sum: '$partnerShare' } } }
+    ]);
+
+    const earnings: Record<string, number> = { pending: 0, cleared: 0, paid: 0 };
     for (const { _id, total } of commissionStats) {
-      earnings[_id as string] = parseFloat(total.toFixed(2));
+      if (_id) earnings[_id as string] = parseFloat(total.toFixed(2));
     }
 
     // Time-series data (daily breakdown)
@@ -82,7 +88,8 @@ export async function GET(req: Request) {
         ctr: `${ctr}%`,
         conversionRate: `${conversionRate}%`,
         earnings,
-        totalEarned: parseFloat((earnings.pending + earnings.paid).toFixed(2)),
+        totalEarned: parseFloat((earnings.pending + earnings.cleared + earnings.paid).toFixed(2)),
+        lifetimeEarned: lifetimeStats[0]?.total || 0,
       },
       timeSeries,
     });
