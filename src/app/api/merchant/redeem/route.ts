@@ -5,6 +5,7 @@ import Deal from '@/models/Deal';
 import Commission from '@/models/Commission';
 import mongoose from 'mongoose';
 import { z } from 'zod';
+import { dispatchWebhook } from '@/lib/webhooks';
 
 const redeemSchema = z.object({
   transactionId: z.string().optional(),
@@ -73,6 +74,21 @@ export async function POST(req: Request) {
       environment: transaction.environment || 'production',
       status: 'pending',
     });
+
+    // --- Dispatch Real-Time Webhook (Fire-and-forget) ---
+    dispatchWebhook(
+      transaction.partnerId.toString(),
+      'deal.redeemed',
+      {
+        transactionId: transaction._id,
+        dealId: deal._id,
+        dealTitle: deal.title,
+        amount: deal.discountedPrice,
+        partnerShare: commission.partnerShare,
+        redeemedAt: transaction.redeemedAt,
+      },
+      transaction.environment || 'production'
+    ).catch(err => console.error('[Webhook Trigger Error]:', err));
 
     return NextResponse.json({ 
       message: 'Deal redeemed successfully',

@@ -12,6 +12,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { CloudinaryUpload } from '@/components/CloudinaryUpload';
 
 export default function NewDealPage() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function NewDealPage() {
     usageLimit: '0',
     lat: '',
     lng: '',
+    images: [] as string[],
   });
 
   useEffect(() => {
@@ -253,6 +255,20 @@ export default function NewDealPage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="space-y-6 pt-8 border-t border-border">
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-1">Deal Images</h3>
+              <p className="text-xs text-muted-foreground mb-6">Upload high-quality images to attract more customers. The first image will be the cover.</p>
+            </div>
+            
+            <CloudinaryUpload 
+              onUploadSuccess={(url) => setFormData(prev => ({ ...prev, images: [...prev.images, url] }))}
+              existingImages={formData.images}
+              onRemoveImage={(url) => setFormData(prev => ({ ...prev, images: prev.images.filter(img => img !== url) }))}
+              maxFiles={4}
+            />
           </div>
 
           <div className="pt-6 border-t border-border">

@@ -172,7 +172,7 @@ export default function MerchantAnalyticsPage() {
           </div>
           <div className="h-[350px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
+              <AreaChart data={data.dailyRevenue}>
                 <defs>
                   <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0.1}/>
@@ -186,6 +186,10 @@ export default function MerchantAnalyticsPage() {
                   tickLine={false} 
                   tick={{ fill: 'oklch(0.556 0 0)', fontSize: 12 }} 
                   dy={10}
+                  tickFormatter={(val) => {
+                    const d = new Date(val);
+                    return d.toLocaleDateString('en-US', { weekday: 'short' });
+                  }}
                 />
                 <YAxis 
                   axisLine={false} 
@@ -324,13 +328,3 @@ function StatCard({ title, value, change, isPositive, icon: Icon, color, bg }: a
     </div>
   );
 }
-
-const chartData = [
-  { name: 'Mon', revenue: 4200, users: 120 },
-  { name: 'Tue', revenue: 3800, users: 150 },
-  { name: 'Wed', revenue: 5100, users: 200 },
-  { name: 'Thu', revenue: 4700, users: 180 },
-  { name: 'Fri', revenue: 6200, users: 250 },
-  { name: 'Sat', revenue: 7800, users: 300 },
-  { name: 'Sun', revenue: 8500, users: 350 },
-];

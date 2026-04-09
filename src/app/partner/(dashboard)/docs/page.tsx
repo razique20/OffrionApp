@@ -19,7 +19,8 @@ import {
   Search,
   List,
   Target,
-  FlaskConical
+  FlaskConical,
+  Code2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -74,6 +75,12 @@ export default function PartnerDocsPage() {
               onClick={() => setActiveTab('tracking')}
               icon={Activity}
               label="Tracking" 
+            />
+            <DocNavItem 
+              active={activeTab === 'sdk-widget'} 
+              onClick={() => setActiveTab('sdk-widget')}
+              icon={Code2}
+              label="SDK Widget" 
             />
           </nav>
         </div>
@@ -292,6 +299,77 @@ x-api-key: YOUR_API_KEY`}
                 <EndpointLabel method="GET" path="/partner/commissions" />
                 <p className="text-sm text-muted-foreground mb-2">Individual commission records (pending/paid). Support ?environment=sandbox</p>
               </div>
+            </div>
+          </DocSection>
+        )}
+        {activeTab === 'sdk-widget' && (
+          <DocSection title="JavaScript SDK Widget">
+            <p className="text-muted-foreground mb-8">
+              The fastest way to integrate Offrion. Add a premium "Deals Near Me" experience to your site with a single line of code.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+              <FeatureHighlight 
+                title="Zero Code Integration"
+                desc="No API knowledge required. Just paste the script and target div."
+                icon={Zap}
+              />
+              <FeatureHighlight 
+                title="Responsive & Themed"
+                desc="Beautifully adapts to mobile and desktop with Offrion's premium glassmorphism."
+                icon={Globe}
+              />
+            </div>
+
+            <h3 className="text-xl font-bold mb-4">1. Add the Script</h3>
+            <p className="text-sm text-muted-foreground mb-4">Place this in your <code>&lt;head&gt;</code> or at the end of your <code>&lt;body&gt;</code>.</p>
+            <CodeBlock 
+              language="html"
+              code={`<script src="https://api.offrion.com/sdk/widget.js" defer></script>`}
+            />
+
+            <h3 className="text-xl font-bold mt-12 mb-4">2. Place the Container</h3>
+            <p className="text-sm text-muted-foreground mb-4">Insert this div wherever you want the deals to appear. Our SDK will automatically find it and inject the latest rewards.</p>
+            <CodeBlock 
+              language="html"
+              code={`<div 
+  id="offrion-deals-widget" 
+  data-api-key="YOUR_API_KEY"
+  data-lat="25.1972"
+  data-lng="55.2744"
+  data-limit="3"
+></div>`}
+            />
+
+            <h3 className="text-xl font-bold mt-12 mb-6">Live Widget Preview</h3>
+            <div className="p-8 bg-secondary/30 border border-border rounded-[40px] relative overflow-hidden">
+               <div className="absolute top-4 right-8 text-[10px] font-bold uppercase tracking-widest text-primary animate-pulse">
+                  Live SDK Instance
+               </div>
+               
+               {/* Internal Simulator of the SDK UI */}
+               <div className="space-y-4 max-w-lg mx-auto">
+                  <div className="p-5 bg-white/80 backdrop-blur-md border border-black/5 rounded-[24px] flex items-center gap-5 shadow-sm">
+                    <div className="w-16 h-16 bg-secondary rounded-2xl shrink-0" />
+                    <div className="flex-1">
+                      <div className="w-20 h-2 bg-primary/20 rounded mb-2" />
+                      <div className="w-32 h-4 bg-secondary rounded" />
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <div className="p-5 bg-white/80 backdrop-blur-md border border-black/5 rounded-[24px] flex items-center gap-5 shadow-sm opacity-60">
+                    <div className="w-16 h-16 bg-secondary rounded-2xl shrink-0" />
+                    <div className="flex-1">
+                      <div className="w-20 h-2 bg-primary/20 rounded mb-2" />
+                      <div className="w-32 h-4 bg-secondary rounded" />
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                  </div>
+               </div>
+
+               <div className="mt-8 text-center">
+                  <p className="text-xs text-muted-foreground italic">Note: Live preview uses mock data. Actual widget matches your account environment.</p>
+               </div>
             </div>
           </DocSection>
         )}

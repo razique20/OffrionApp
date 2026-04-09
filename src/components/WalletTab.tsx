@@ -48,8 +48,8 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
     }
   }, []);
 
-  const fetchData = async () => {
-    setLoading(true);
+  const fetchData = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const [statsRes, ledgerRes, bankRes] = await Promise.all([
         fetch('/api/wallet/stats'),
@@ -68,9 +68,10 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
       setLedger(ledgerJson.ledger);
       setBankStatus(bankJson);
     } catch (err: any) {
-      setError(err.message);
+      if (!silent) setError(err.message);
+      else console.error('Silent Refresh Error:', err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -108,7 +109,8 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
       
       setIsPayoutModalOpen(false);
       setPayoutAmount('');
-      fetchData(); // Refresh
+      // Use silent refresh to avoid global layout blink
+      fetchData(true);
     } catch (err: any) {
       alert(err.message);
     } finally {
@@ -128,7 +130,7 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
       <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
       <h3 className="text-xl font-bold mb-2">Wallet Offline</h3>
       <p className="text-muted-foreground mb-6">{error}</p>
-      <button onClick={fetchData} className="px-6 py-2 bg-primary text-white rounded-xl">Retry Connection</button>
+      <button onClick={() => fetchData()} className="px-6 py-2 bg-primary text-white rounded-xl">Retry Connection</button>
     </div>
   );
 
@@ -157,7 +159,10 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
       </div>
 
       {/* Balance Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className={cn(
+        "grid gap-6",
+        role === 'partner' ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 md:grid-cols-3"
+      )}>
         {role === 'partner' ? (
           <>
             <StatCard 
@@ -184,6 +189,14 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
               icon={TrendingUp}
               color="text-blue-500"
               bg="bg-blue-500/10"
+            />
+            <StatCard 
+              title="Amount Withdrawn" 
+              value={formatCurrency(stats.totalWithdrawn)} 
+              label="Successful payouts"
+              icon={Download}
+              color="text-emerald-500"
+              bg="bg-emerald-500/10"
             />
           </>
         ) : (
@@ -225,32 +238,34 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
               <div className="p-2 bg-secondary rounded-lg"><TrendingUp className="w-5 h-5 text-primary" /></div>
            </div>
            <div className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'oklch(1 0 0)', 
-                      borderRadius: '16px', 
-                      border: '1px solid oklch(0.922 0 0)',
-                      boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' 
-                    }} 
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="val" 
-                    stroke="oklch(0.646 0.222 41.116)" 
-                    strokeWidth={4}
-                    fillOpacity={1} 
-                    fill="url(#colorRev)" 
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+               <ResponsiveContainer width="100%" height="100%">
+                 <AreaChart data={stats?.chartData || []}>
+                   <defs>
+                     <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                       <stop offset="5%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0.1}/>
+                       <stop offset="95%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0}/>
+                     </linearGradient>
+                   </defs>
+                   <XAxis dataKey="name" hide />
+                   <Tooltip 
+                     contentStyle={{ 
+                       backgroundColor: 'oklch(1 0 0)', 
+                       borderRadius: '16px', 
+                       border: '1px solid oklch(0.922 0 0)',
+                       boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' 
+                     }} 
+                     labelFormatter={(label) => formatDate(label)}
+                   />
+                   <Area 
+                     type="monotone" 
+                     dataKey="val" 
+                     stroke="oklch(0.646 0.222 41.116)" 
+                     strokeWidth={4}
+                     fillOpacity={1} 
+                     fill="url(#colorRev)" 
+                   />
+                 </AreaChart>
+               </ResponsiveContainer>
            </div>
         </div>
 
@@ -424,13 +439,3 @@ function StatCard({ title, value, label, icon: Icon, color, bg, primary }: any) 
     </div>
   );
 }
-
-const chartData = [
-  { name: 'Mon', val: 1200 },
-  { name: 'Tue', val: 1900 },
-  { name: 'Wed', val: 1500 },
-  { name: 'Thu', val: 2400 },
-  { name: 'Fri', val: 3200 },
-  { name: 'Sat', val: 2800 },
-  { name: 'Sun', val: 4100 },
-];

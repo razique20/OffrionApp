@@ -14,6 +14,7 @@ import {
   Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSearchParams } from 'next/navigation';
 
 interface Endpoint {
   id: string;
@@ -40,6 +41,7 @@ export function ApiPlayground() {
   const [response, setResponse] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [fetchingKeys, setFetchingKeys] = useState(true);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     fetchKeys();
@@ -51,8 +53,22 @@ export function ApiPlayground() {
     } else {
       setRequestBody('');
     }
-    setParams({});
-  }, [selectedEndpoint]);
+
+    // Initialize params from URL first, then fall back to empty
+    const initialParams: Record<string, string> = {};
+    searchParams.forEach((value, key) => {
+      if (selectedEndpoint.params.includes(key)) {
+        initialParams[key] = value;
+      }
+    });
+
+    // Special case for missing radius mapper
+    if (searchParams.has('radius') && selectedEndpoint.id === 'deals') {
+      initialParams.radius = searchParams.get('radius') || '';
+    }
+
+    setParams(initialParams);
+  }, [selectedEndpoint, searchParams]);
 
   const fetchKeys = async () => {
     try {

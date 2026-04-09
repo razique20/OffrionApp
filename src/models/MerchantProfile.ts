@@ -9,7 +9,7 @@ export interface IMerchantProfile extends Document {
   contactEmail: string;
   contactPhone: string;
   address: string;
-  isVerified: boolean;
+  status: 'pending' | 'verified' | 'rejected' | 'suspended';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,7 +24,12 @@ const MerchantProfileSchema: Schema = new Schema(
     contactEmail: { type: String, required: true },
     contactPhone: { type: String, required: true },
     address: { type: String, required: true },
-    isVerified: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: ['pending', 'verified', 'rejected', 'suspended'],
+      default: 'pending',
+      index: true,
+    },
   },
   { timestamps: true }
 );

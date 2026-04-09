@@ -4,11 +4,8 @@ import Sidebar, { SidebarItem } from '@/components/Sidebar';
 const partnerMenuItems: SidebarItem[] = [
   { name: 'Dashboard', icon: 'dashboard', href: '/partner/dashboard' },
   { name: 'Analytics', icon: 'analytics', href: '/partner/analytics' },
-  { name: 'Wallet', icon: 'wallet', href: '/partner/wallet' },
-  { name: 'Production Keys', icon: 'keys', href: '/partner/keys' },
-  { name: 'Sandbox Keys', icon: 'keys', href: '/partner/keys?env=sandbox' },
-  { name: 'Sandbox Analytics', icon: 'analytics', href: '/partner/analytics?env=sandbox' },
-  { name: 'API Playground', icon: 'zap', href: '/partner/playground' },
+  { name: 'Financials', icon: 'wallet', href: '/partner/wallet' },
+  { name: 'Connectivity', icon: 'zap', href: '/partner/connectivity' },
   { name: 'Documentation', icon: 'docs', href: '/partner/docs' },
   { name: 'Settings', icon: 'settings', href: '/partner/settings' },
   { name: 'Support', icon: 'support', href: '/partner/support' },

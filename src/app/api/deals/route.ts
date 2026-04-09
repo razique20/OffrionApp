@@ -109,13 +109,26 @@ export async function GET(req: Request) {
     const skip = (page - 1) * limit;
 
     // 3. Fetch Deals
+    const isGeoSearch = !!(lat && lng);
+    const sortParams = search 
+      ? { score: { $meta: 'textScore' } } 
+      : isGeoSearch 
+        ? {} // MongoDB automatically sorts by proximity for $near queries
+        : { priorityScore: -1, createdAt: -1 };
+
+    // countDocuments does NOT support $near. We must use a separate count query.
+    const countQuery = { ...query };
+    if (isGeoSearch) {
+      delete countQuery.location;
+    }
+
     const [deals, total] = await Promise.all([
       Deal.find(query)
         .populate('categoryId', 'name slug')
-        .sort(search ? { score: { $meta: 'textScore' } } : { priorityScore: -1, createdAt: -1 })
+        .sort(sortParams as any)
         .skip(skip)
         .limit(limit),
-      Deal.countDocuments(query),
+      Deal.countDocuments(countQuery),
     ]);
 
     // 4. Log Impressions (fire-and-forget)
@@ -132,7 +145,7 @@ export async function GET(req: Request) {
       );
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       page,
       limit,
       total,
@@ -140,7 +153,26 @@ export async function GET(req: Request) {
       count: deals.length,
       deals,
     });
+
+    // Add CORS headers
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, x-api-key');
+
+    return response;
+
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, x-api-key',
+    },
+  });
 }

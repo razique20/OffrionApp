@@ -14,6 +14,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { CloudinaryUpload } from '@/components/CloudinaryUpload';
 
 export default function EditDealPage() {
   const router = useRouter();
@@ -38,6 +39,7 @@ export default function EditDealPage() {
     usageLimit: '0',
     lat: '',
     lng: '',
+    images: [] as string[],
   });
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export default function EditDealPage() {
           usageLimit: deal.usageLimit.toString(),
           lat: deal.location.coordinates[1].toString(),
           lng: deal.location.coordinates[0].toString(),
+          images: deal.images || [],
         });
         setLoading(false);
       })
@@ -298,6 +301,20 @@ export default function EditDealPage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="space-y-6 pt-8 border-t border-border">
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-1">Deal Images</h3>
+              <p className="text-xs text-muted-foreground mb-6">Manage high-quality images to attract more customers. The first image will be the cover.</p>
+            </div>
+            
+            <CloudinaryUpload 
+              onUploadSuccess={(url) => setFormData(prev => ({ ...prev, images: [...prev.images, url] }))}
+              existingImages={formData.images}
+              onRemoveImage={(url) => setFormData(prev => ({ ...prev, images: prev.images.filter(img => img !== url) }))}
+              maxFiles={4}
+            />
           </div>
 
           <div className="pt-6 border-t border-border">

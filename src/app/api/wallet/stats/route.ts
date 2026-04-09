@@ -37,14 +37,53 @@ export async function GET(req: Request) {
         },
       ]);
 
-      const result = stats[0] || {
-        totalEarned: 0,
-        pendingBalance: 0,
-        withdrawableBalance: 0,
-        totalPaid: 0,
+      // Fetch actual withdrawals from Payout model
+      const payoutStats = await Payout.aggregate([
+        { $match: { userId: userObjectId, status: 'paid' } },
+        { $group: { _id: null, totalWithdrawn: { $sum: '$amount' } } }
+      ]);
+
+      const result = {
+        ...(stats[0] || {
+          totalEarned: 0,
+          pendingBalance: 0,
+          withdrawableBalance: 0,
+          totalPaid: 0,
+        }),
+        totalWithdrawn: payoutStats[0]?.totalWithdrawn || 0
       };
 
-      return NextResponse.json(result);
+      // --- Time Series Aggregation (Last 7 Days) ---
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const timeSeries = await Commission.aggregate([
+        { 
+          $match: { 
+            partnerId: userObjectId,
+            createdAt: { $gte: sevenDaysAgo }
+          } 
+        },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            val: { $sum: '$partnerShare' }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ]);
+
+      // Fill in zeros for missing days
+      const chartData: any[] = [];
+      for (let i = 6; i >= 0; i--) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          const dateStr = date.toISOString().split('T')[0];
+          const match = timeSeries.find(t => t._id === dateStr);
+          chartData.push({ name: dateStr, val: match ? match.val : 0 });
+      }
+
+      return NextResponse.json({ ...result, chartData });
     } 
     
     if (role === 'merchant') {
@@ -94,12 +133,52 @@ export async function GET(req: Request) {
       const sales = salesAggregation[0]?.totalSales || 0;
       const comm = commissionAggregation[0] || { totalCommission: 0, pendingCommission: 0, paidCommission: 0 };
 
+      // --- Time Series Aggregation for Merchant ---
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const timeSeries = await Transaction.aggregate([
+        {
+          $lookup: {
+            from: 'deals',
+            localField: 'dealId',
+            foreignField: '_id',
+            as: 'deal'
+          }
+        },
+        { $unwind: '$deal' },
+        { 
+          $match: { 
+            'deal.merchantId': userObjectId,
+            status: 'completed',
+            createdAt: { $gte: sevenDaysAgo }
+          } 
+        },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            val: { $sum: '$amount' }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ]);
+
+      const chartData: any[] = [];
+      for (let i = 6; i >= 0; i--) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          const dateStr = date.toISOString().split('T')[0];
+          const match = timeSeries.find(t => t._id === dateStr);
+          chartData.push({ name: dateStr, val: match ? match.val : 0 });
+      }
+
       return NextResponse.json({
         totalSales: sales,
         netRevenue: sales - comm.totalCommission,
         totalCommission: comm.totalCommission,
         pendingCommission: comm.pendingCommission,
         paidCommission: comm.paidCommission,
+        chartData
       });
     }
 

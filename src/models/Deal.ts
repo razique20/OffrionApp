@@ -27,6 +27,7 @@ export interface IDeal extends Document {
   validUntil: Date;
   usageLimit: number;
   currentUsage: number;
+  status: 'pending' | 'active' | 'rejected' | 'suspended';
   isActive: boolean;
   priorityScore: number;
   createdAt: Date;
@@ -79,7 +80,13 @@ const DealSchema: Schema = new Schema(
     validUntil: { type: Date, required: true },
     usageLimit: { type: Number, default: 0 }, // 0 means unlimited
     currentUsage: { type: Number, default: 0 },
-    isActive: { type: Boolean, default: true },
+    status: {
+      type: String,
+      enum: ['pending', 'active', 'rejected', 'suspended'],
+      default: 'pending',
+      index: true,
+    },
+    isActive: { type: Boolean, default: false },
     priorityScore: { type: Number, default: 0 },
   },
   { timestamps: true }

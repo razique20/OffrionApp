@@ -187,42 +187,18 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
         {renderItems(items.filter(i => ['playground', 'docs'].some(k => i.href.includes(k))), "Development")}
         {renderItems(items.filter(i => ['settings', 'support'].some(k => i.href.includes(k))), "Account")}
 
-        {isSuperAdmin && (
+        {isSuperAdmin && role !== 'admin' && (
           <nav className={cn("space-y-1 w-full mt-8", isMinimized ? "px-2" : "px-4")}>
-             {!isMinimized && <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Universal Gateway</p>}
              {isMinimized && <div className="border-t border-border my-4 w-1/2 mx-auto"></div>}
              <Link 
               href="/admin/dashboard" 
               title={isMinimized ? "Admin Governance" : undefined}
               className={cn(
-                "flex items-center rounded-lg text-sm font-medium transition-all",
-                isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2",
-                pathname.startsWith('/admin') ? "bg-primary/10 text-primary border border-primary/20" : "text-muted-foreground hover:bg-secondary"
+                "flex items-center rounded-lg text-sm font-medium transition-all text-primary hover:bg-primary/10",
+                isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2"
               )}>
                 <ShieldCheck className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
-                {!isMinimized && <span>Admin Governance</span>}
-             </Link>
-             <Link 
-              href="/merchant/dashboard" 
-              title={isMinimized ? "Merchant Portal" : undefined}
-              className={cn(
-                "flex items-center rounded-lg text-sm font-medium transition-all",
-                isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2",
-                pathname.startsWith('/merchant') ? "bg-primary/10 text-primary border border-primary/20" : "text-muted-foreground hover:bg-secondary"
-              )}>
-                <ShoppingBag className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
-                {!isMinimized && <span>Merchant Portal</span>}
-             </Link>
-             <Link 
-              href="/partner/dashboard" 
-              title={isMinimized ? "Partner Hub" : undefined}
-              className={cn(
-                "flex items-center rounded-lg text-sm font-medium transition-all",
-                isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2",
-                pathname.startsWith('/partner') ? "bg-primary/10 text-primary border border-primary/20" : "text-muted-foreground hover:bg-secondary"
-              )}>
-                <Handshake className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
-                {!isMinimized && <span>Partner Hub</span>}
+                {!isMinimized && <span className="font-bold">Admin Governance</span>}
              </Link>
           </nav>
         )}
@@ -233,7 +209,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
           <div className="mb-4 px-3 py-2.5 rounded-xl bg-secondary/50 border border-border flex items-center justify-between">
              <div>
                <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold leading-none mb-1">Session Role</p>
-               <p className="text-xs font-bold capitalize leading-none">{role}</p>
+               <p className="text-xs font-bold capitalize leading-none">{isSuperAdmin ? 'Super Admin' : role}</p>
              </div>
              {isSuperAdmin && <Zap className="w-3.5 h-3.5 text-primary fill-primary animate-pulse" />}
           </div>

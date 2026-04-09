@@ -23,6 +23,7 @@ import {
   Download
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
+import { RedemptionPulse } from '@/components/admin/RedemptionPulse';
 
 type TabType = 'overview' | 'merchants' | 'partners' | 'deals' | 'categories' | 'admins' | 'financials' | 'review';
 
@@ -48,6 +49,7 @@ export default function AdminDashboard() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [selectedCommissions, setSelectedCommissions] = useState<string[]>([]);
+  const [reviewSubTab, setReviewSubTab] = useState<'merchants' | 'deals' | 'funds'>('merchants');
   const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
@@ -61,11 +63,13 @@ export default function AdminDashboard() {
     fetchStats();
     if (activeTab === 'categories') fetchCategories();
     else if (activeTab === 'admins') fetchAdmins();
-    else if (activeTab === 'financials' || activeTab === 'review') fetchFinancials();
+    else if (activeTab === 'financials') fetchFinancials();
+    else if (activeTab === 'review') fetchModerationQueue();
     else if (activeTab !== 'overview') fetchData(activeTab);
   }, [activeTab]);
 
   const [financials, setFinancials] = useState<any>(null);
+  const [moderationData, setModerationData] = useState<any>({ deals: [], merchants: [], commissions: [] });
 
   const fetchFinancials = async () => {
     setLoading(true);
@@ -73,6 +77,16 @@ export default function AdminDashboard() {
       const res = await fetch('/api/admin/commissions');
       const json = await res.json();
       if (res.ok) setFinancials(json);
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  };
+
+  const fetchModerationQueue = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/moderation');
+      const json = await res.json();
+      if (res.ok) setModerationData(json);
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
   };
@@ -192,20 +206,51 @@ export default function AdminDashboard() {
       setActionLoading(null);
     }
   };
-  const handleModerateDeal = async (dealId: string, approve: boolean) => {
+  const handleModerateDealV2 = async (dealId: string, status: 'active' | 'rejected') => {
     setActionLoading(dealId);
     try {
       const res = await fetch(`/api/admin/deals/${dealId}/moderate`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isActive: approve }),
+        body: JSON.stringify({ status }),
       });
       if (res.ok) {
-        setData(data.map(d => d._id === dealId ? { ...d, isActive: approve } : d));
-        showNotification(`Deal ${approve ? 'approved' : 'rejected'} successfully`);
+        setModerationData({
+          ...moderationData,
+          deals: moderationData.deals.filter((d: any) => d._id !== dealId)
+        });
+        showNotification(`Deal ${status === 'active' ? 'approved' : 'rejected'} successfully`);
+        fetchStats();
       } else {
         const json = await res.json();
         showNotification(json.error || 'Failed to moderate deal', 'error');
+      }
+    } catch (err: any) {
+      console.error(err);
+      showNotification(err.message || 'Network error occurred', 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleModerateMerchant = async (merchantId: string, status: 'verified' | 'rejected') => {
+    setActionLoading(merchantId);
+    try {
+      const res = await fetch(`/api/admin/merchants/${merchantId}/verify`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      if (res.ok) {
+        setModerationData({
+          ...moderationData,
+          merchants: moderationData.merchants.filter((m: any) => m._id !== merchantId)
+        });
+        showNotification(`Merchant ${status === 'verified' ? 'verified' : 'rejected'} successfully`);
+        fetchStats();
+      } else {
+        const json = await res.json();
+        showNotification(json.error || 'Failed to verify merchant', 'error');
       }
     } catch (err: any) {
       console.error(err);
@@ -450,17 +495,12 @@ export default function AdminDashboard() {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="p-8 bg-card border border-border rounded-[40px] flex flex-col items-center justify-center text-center py-20">
-               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-                  <TrendingUp className="w-8 h-8 text-primary" />
-               </div>
-               <h3 className="text-xl font-bold mb-2 text-gradient">Revenue Trending</h3>
-               <p className="text-sm text-muted-foreground mb-8 max-w-xs">Detailed revenue charts will appear here as transaction data accumulates.</p>
-               <button className="px-6 py-2 bg-secondary text-xs font-bold rounded-xl hover:bg-secondary/80 transition-all">View Full Report</button>
-            </div>
-            
-            <div className="p-8 bg-card border border-border rounded-[40px] space-y-6">
+          <div className="grid grid-cols-1 gap-8">
+            <RedemptionPulse />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 p-8 bg-card border border-border rounded-[40px] space-y-6">
                 <h3 className="text-lg font-bold flex items-center gap-2">
                    <ShieldCheck className="w-5 h-5 text-primary" />
                    Security Alerts
@@ -548,7 +588,7 @@ export default function AdminDashboard() {
                         <div className="flex items-center justify-end gap-2 pr-2">
                            <button 
                             disabled={actionLoading === item._id}
-                            onClick={() => activeTab === 'deals' ? handleModerateDeal(item._id, !item.isActive) : handleToggleUser(item._id, item.isActive)}
+                            onClick={() => activeTab === 'deals' ? handleModerateDealV2(item._id, item.isActive ? 'rejected' : 'active') : handleToggleUser(item._id, item.isActive)}
                             className={cn(
                               "p-2 rounded-lg transition-all",
                               item.isActive ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "bg-primary/10 text-primary hover:bg-primary/20"
@@ -680,11 +720,16 @@ export default function AdminDashboard() {
                             <td className="px-4 py-5 font-bold text-blue-500">${c.partnerShare.toFixed(2)}</td>
                             <td className="px-4 py-5 font-bold text-primary">${c.platformShare.toFixed(2)}</td>
                             <td className="px-4 py-5 text-xs text-muted-foreground">{new Date(c.createdAt).toLocaleDateString()}</td>
-                            <td className="px-4 py-5 text-right">
-                               <span className="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                                  Captured
+                             <td className="px-4 py-5 text-right">
+                               <span className={cn(
+                                 "px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border",
+                                 c.status === 'paid' || c.status === 'captured' ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :
+                                 c.status === 'pending' ? "bg-amber-500/10 text-amber-600 border-amber-500/20" :
+                                 "bg-red-500/10 text-red-600 border-red-500/20"
+                               )}>
+                                  {c.status === 'paid' ? 'Captured' : c.status}
                                </span>
-                            </td>
+                             </td>
                           </tr>
                         ))}
                       </tbody>
@@ -952,153 +997,258 @@ export default function AdminDashboard() {
          </div>
        )}
 
-       {/* Review Tab (Commission Hold & Maturity) */}
+       {/* Governance & Moderation Tab */}
        {activeTab === 'review' && (
          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-card p-6 border border-border rounded-[32px] shadow-sm gap-4">
                <div>
-                  <h3 className="text-xl font-bold">Commission Review Queue</h3>
-                  <p className="text-xs text-muted-foreground mt-1">Review and clear pending funds. Standard hold is 7 days.</p>
+                  <h3 className="text-xl font-bold">Governance Center</h3>
+                  <p className="text-xs text-muted-foreground mt-1">Quality control and financial settlement oversight.</p>
                </div>
-               <div className="flex gap-3 w-full md:w-auto">
-                  <button 
-                    disabled={selectedCommissions.length === 0 || !!actionLoading}
-                    onClick={async () => {
-                      setActionLoading('bulk-settle');
-                      try {
-                        const res = await fetch('/api/admin/wallet/settle', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ ids: selectedCommissions })
-                        });
-                        const json = await res.json();
-                        showNotification(json.message);
-                        setSelectedCommissions([]);
-                        fetchFinancials();
-                      } catch (err) { showNotification('Bulk settlement failed', 'error'); }
-                      finally { setActionLoading(null); }
-                    }}
-                    className="flex-1 md:flex-initial px-6 py-2.5 bg-premium-gradient text-white text-xs font-bold rounded-xl shadow-lg disabled:opacity-50 transition-all flex items-center justify-center gap-2"
-                  >
-                    {actionLoading === 'bulk-settle' ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> Clear Selected ({selectedCommissions.length})</>}
-                  </button>
-                  <button 
-                    onClick={async () => {
-                      setActionLoading('settle-mature');
-                      try {
-                        const res = await fetch('/api/admin/wallet/settle', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ forceAll: false })
-                        });
-                        const json = await res.json();
-                        showNotification(json.message);
-                        fetchFinancials();
-                      } catch (err) { showNotification('Maturity settlement failed', 'error'); }
-                      finally { setActionLoading(null); }
-                    }}
-                    className="flex-1 md:flex-initial px-6 py-2.5 bg-secondary text-xs font-bold rounded-xl hover:bg-secondary/80 transition-all flex items-center justify-center gap-2"
-                  >
-                    {actionLoading === 'settle-mature' ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ShieldCheck className="w-4 h-4" /> Clear All Mature</>}
-                  </button>
+               <div className="flex p-1 bg-secondary/50 rounded-xl border border-border">
+                  {['merchants', 'deals', 'funds'].map((sub) => (
+                    <button
+                      key={sub}
+                      onClick={() => setReviewSubTab(sub as any)}
+                      className={cn(
+                        "px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
+                        reviewSubTab === sub 
+                          ? "bg-background text-foreground shadow-sm" 
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {sub} ({sub === 'merchants' ? moderationData?.merchants?.length : sub === 'deals' ? moderationData?.deals?.length : moderationData?.commissions?.length})
+                    </button>
+                  ))}
                </div>
             </div>
 
-            <div className="p-8 bg-card border border-border rounded-[40px] shadow-sm overflow-hidden min-h-[400px]">
-               <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                     <thead>
-                        <tr className="border-b border-border text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
-                           <th className="px-4 py-4 w-12">
-                              <input 
-                                type="checkbox" 
-                                className="w-4 h-4 rounded border-border text-primary focus:ring-primary/20 bg-secondary"
-                                checked={selectedCommissions.length > 0 && selectedCommissions.length === financials?.commissions?.filter((c:any) => c.status === 'pending').length}
-                                onChange={(e) => {
-                                  if (e.target.checked) {
-                                    setSelectedCommissions(financials?.commissions?.filter((c:any) => c.status === 'pending').map((c:any) => c._id));
-                                  } else {
-                                    setSelectedCommissions([]);
-                                  }
-                                }}
-                              />
-                           </th>
-                           <th className="px-4 py-4">Participant</th>
-                           <th className="px-4 py-4 text-center">Commission (70%)</th>
-                           <th className="px-4 py-4 text-center">Hold Maturity</th>
-                           <th className="px-4 py-4 text-right">Status</th>
-                        </tr>
-                     </thead>
-                     <tbody className="text-sm">
-                        {financials?.commissions?.filter((c: any) => c.status === 'pending').map((c: any) => {
-                          const maturityDate = new Date(c.createdAt);
-                          maturityDate.setDate(maturityDate.getDate() + 7);
-                          const isMature = new Date() >= maturityDate;
-                          
-                          return (
-                            <tr key={c._id} className="border-b border-border/50 hover:bg-secondary/10 transition-colors">
-                               <td className="px-4 py-5">
-                                  <input 
-                                    type="checkbox" 
-                                    className="w-4 h-4 rounded border-border text-primary focus:ring-primary/20 bg-secondary"
-                                    checked={selectedCommissions.includes(c._id)}
-                                    onChange={() => {
-                                      if (selectedCommissions.includes(c._id)) {
-                                        setSelectedCommissions(selectedCommissions.filter(id => id !== c._id));
-                                      } else {
-                                        setSelectedCommissions([...selectedCommissions, c._id]);
-                                      }
-                                    }}
-                                  />
-                               </td>
-                               <td className="px-4 py-5 font-bold text-xs">
-                                  <div className="flex flex-col">
-                                     <span>{c.partnerId?.name || 'Unknown'}</span>
-                                     <span className="text-[9px] font-normal text-muted-foreground">ref: {c.merchantId?.name || 'Unknown'}</span>
-                                  </div>
-                               </td>
-                               <td className="px-4 py-5 text-center">
-                                  <div className="flex flex-col">
-                                     <span className="font-bold text-primary font-mono text-sm">${c.partnerShare.toFixed(2)}</span>
-                                     <span className="text-[9px] text-muted-foreground font-mono">Platform: ${c.platformShare.toFixed(2)}</span>
-                                  </div>
-                               </td>
-                               <td className="px-4 py-5 text-center">
-                                  <div className="flex flex-col gap-1 items-center">
-                                     <span className="text-xs font-bold font-mono tracking-tight">{maturityDate.toLocaleDateString()}</span>
-                                     <span className={cn(
-                                       "px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest border",
-                                       isMature ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                                     )}>
-                                        {isMature ? 'Ready to Clear' : 'Hold Period'}
-                                     </span>
-                                  </div>
-                               </td>
-                               <td className="px-4 py-5 text-right">
-                                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-secondary/50 border border-border text-[10px] font-bold uppercase text-muted-foreground">
-                                     {isMature ? <Clock className="w-3 h-3 text-emerald-500" /> : <Clock className="w-3 h-3 text-amber-500" />}
-                                     Pending
-                                  </div>
-                               </td>
-                            </tr>
-                          );
-                        })}
-                        {financials?.commissions?.filter((c: any) => c.status === 'pending').length === 0 && (
-                          <tr>
-                            <td colSpan={5} className="py-24 text-center">
-                               <div className="flex flex-col items-center gap-3">
-                                  <div className="w-12 h-12 bg-secondary/50 rounded-2xl flex items-center justify-center">
-                                     <Check className="w-6 h-6 text-muted-foreground" />
-                                  </div>
-                                  <p className="text-sm text-muted-foreground italic">Queue empty. All commissions are cleared.</p>
-                               </div>
-                            </td>
-                          </tr>
-                        )}
-                     </tbody>
-                  </table>
+            {reviewSubTab === 'merchants' && (
+               <div className="p-8 bg-card border border-border rounded-[40px] shadow-sm min-h-[400px]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     {moderationData?.merchants?.length > 0 ? moderationData.merchants.map((merchant: any) => (
+                       <div key={merchant._id} className="p-6 bg-secondary/30 border border-border rounded-[32px] space-y-4 hover:shadow-xl transition-all group">
+                          <div className="flex justify-between items-start">
+                             <div className="w-12 h-12 bg-premium-gradient rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                                <ShoppingBag className="w-6 h-6" />
+                             </div>
+                             <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button 
+                                  onClick={() => handleModerateMerchant(merchant._id, 'verified')}
+                                  className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg border border-emerald-500/20 hover:bg-emerald-500/20">
+                                   <Check className="w-4 h-4" />
+                                </button>
+                                <button 
+                                  onClick={() => handleModerateMerchant(merchant._id, 'rejected')}
+                                  className="p-2 bg-red-500/10 text-red-500 rounded-lg border border-red-500/20 hover:bg-red-500/20">
+                                   <X className="w-4 h-4" />
+                                </button>
+                             </div>
+                          </div>
+                          <div>
+                             <h4 className="font-bold text-lg">{merchant.businessName}</h4>
+                             <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{merchant.userId?.name}</p>
+                          </div>
+                          <div className="text-xs text-muted-foreground line-clamp-2 leading-relaxed h-8">
+                             {merchant.description || 'No business description provided.'}
+                          </div>
+                          <div className="pt-4 border-t border-border/50 flex justify-between items-center">
+                             <span className="text-[10px] font-mono opacity-50">{new Date(merchant.createdAt).toLocaleDateString()}</span>
+                             <button onClick={() => handleViewDetail(merchant)} className="text-[10px] font-bold text-primary hover:underline">Verify Identity</button>
+                          </div>
+                       </div>
+                     )) : (
+                        <div className="col-span-full py-20 text-center text-muted-foreground italic text-sm">No merchants awaiting verification.</div>
+                     )}
+                  </div>
                </div>
-            </div>
+            )}
+
+            {reviewSubTab === 'deals' && (
+               <div className="p-8 bg-card border border-border rounded-[40px] shadow-sm min-h-[400px]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                     {moderationData?.deals?.length > 0 ? moderationData.deals.map((deal: any) => (
+                       <div key={deal._id} className="p-6 bg-secondary/30 border border-border rounded-[32px] space-y-4 hover:shadow-xl transition-all group">
+                          <div className="flex justify-between items-start">
+                             <div className="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-lg text-[9px] font-bold uppercase tracking-widest">
+                                {deal.dealType}
+                             </div>
+                             <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button 
+                                  onClick={() => handleModerateDealV2(deal._id, 'active')}
+                                  className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg border border-emerald-500/20 hover:bg-emerald-500/20">
+                                   <Check className="w-4 h-4" />
+                                </button>
+                                <button 
+                                  onClick={() => handleModerateDealV2(deal._id, 'rejected')}
+                                  className="p-2 bg-red-500/10 text-red-500 rounded-lg border border-red-500/20 hover:bg-red-500/20">
+                                   <X className="w-4 h-4" />
+                                </button>
+                             </div>
+                          </div>
+                          <div>
+                             <h4 className="font-bold text-lg leading-tight">{deal.title}</h4>
+                             <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest mt-1">by {deal.merchantId?.name}</p>
+                          </div>
+                          <div className="flex items-center gap-4 text-xs font-bold font-mono">
+                             <span className="text-primary">${deal.discountedPrice}</span>
+                             <span className="text-muted-foreground line-through opacity-50">${deal.originalPrice}</span>
+                             <span className="text-emerald-500">{deal.discountPercentage}% Off</span>
+                          </div>
+                          <div className="pt-4 border-t border-border/50 flex justify-between items-center">
+                             <span className="text-[10px] font-mono opacity-50">{new Date(deal.createdAt).toLocaleDateString()}</span>
+                             <button onClick={() => handleViewDetail(deal)} className="text-[10px] font-bold text-primary hover:underline">Inspector</button>
+                          </div>
+                       </div>
+                     )) : (
+                        <div className="col-span-full py-20 text-center text-muted-foreground italic text-sm">No deals in the moderation pipe.</div>
+                     )}
+                  </div>
+               </div>
+            )}
+
+            {reviewSubTab === 'funds' && (
+               <div className="p-8 bg-card border border-border rounded-[40px] shadow-sm overflow-hidden min-h-[400px]">
+                  <div className="flex justify-between items-center mb-6">
+                     <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Settlement Ledger</h4>
+                     <div className="flex gap-2">
+                        <button 
+                           disabled={selectedCommissions.length === 0 || !!actionLoading}
+                           onClick={async () => {
+                             setActionLoading('bulk-settle');
+                             try {
+                               const res = await fetch('/api/admin/wallet/settle', {
+                                 method: 'POST',
+                                 headers: { 'Content-Type': 'application/json' },
+                                 body: JSON.stringify({ ids: selectedCommissions })
+                               });
+                               const json = await res.json();
+                               showNotification(json.message);
+                               setSelectedCommissions([]);
+                               fetchFinancials();
+                             } catch (err) { showNotification('Bulk settlement failed', 'error'); }
+                             finally { setActionLoading(null); }
+                           }}
+                           className="px-4 py-2 bg-premium-gradient text-white text-[10px] font-bold rounded-lg shadow-lg disabled:opacity-50 transition-all flex items-center gap-2"
+                        >
+                           {actionLoading === 'bulk-settle' ? <Loader2 className="w-3 h-3 animate-spin" /> : <><Check className="w-3 h-3" /> Clear ({selectedCommissions.length})</>}
+                        </button>
+                        <button 
+                           onClick={async () => {
+                             setActionLoading('settle-mature');
+                             try {
+                               const res = await fetch('/api/admin/wallet/settle', {
+                                 method: 'POST',
+                                 headers: { 'Content-Type': 'application/json' },
+                                 body: JSON.stringify({ forceAll: false })
+                               });
+                               const json = await res.json();
+                               showNotification(json.message);
+                               fetchFinancials();
+                             } catch (err) { showNotification('Maturity settlement failed', 'error'); }
+                             finally { setActionLoading(null); }
+                           }}
+                           className="px-4 py-2 bg-secondary text-[10px] font-bold rounded-lg hover:bg-secondary/80 transition-all flex items-center gap-2"
+                        >
+                           {actionLoading === 'settle-mature' ? <Loader2 className="w-3 h-3 animate-spin" /> : <><ShieldCheck className="w-3 h-3" /> Clear Mature</>}
+                        </button>
+                     </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                     <table className="w-full text-left">
+                        <thead>
+                           <tr className="border-b border-border text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                              <th className="px-4 py-4 w-12">
+                                 <input 
+                                   type="checkbox" 
+                                   className="w-4 h-4 rounded border-border text-primary focus:ring-primary/20 bg-secondary"
+                                   checked={selectedCommissions.length > 0 && selectedCommissions.length === financials?.commissions?.filter((c:any) => c.status === 'pending').length}
+                                   onChange={(e) => {
+                                     if (e.target.checked) {
+                                       setSelectedCommissions(financials?.commissions?.filter((c:any) => c.status === 'pending').map((c:any) => c._id));
+                                     } else {
+                                       setSelectedCommissions([]);
+                                     }
+                                   }}
+                                 />
+                              </th>
+                              <th className="px-4 py-4">Participant</th>
+                              <th className="px-4 py-4 text-center">Commission (70%)</th>
+                              <th className="px-4 py-4 text-center">Hold Maturity</th>
+                              <th className="px-4 py-4 text-right">Status</th>
+                           </tr>
+                        </thead>
+                        <tbody className="text-sm">
+                           {moderationData?.commissions?.map((c: any) => {
+                             const maturityDate = new Date(c.createdAt);
+                             maturityDate.setDate(maturityDate.getDate() + 7);
+                             const isMature = new Date() >= maturityDate;
+                             
+                             return (
+                               <tr key={c._id} className="border-b border-border/50 hover:bg-secondary/10 transition-colors">
+                                  <td className="px-4 py-5">
+                                     <input 
+                                       type="checkbox" 
+                                       className="w-4 h-4 rounded border-border text-primary focus:ring-primary/20 bg-secondary"
+                                       checked={selectedCommissions.includes(c._id)}
+                                       onChange={() => {
+                                         if (selectedCommissions.includes(c._id)) {
+                                           setSelectedCommissions(selectedCommissions.filter(id => id !== c._id));
+                                         } else {
+                                           setSelectedCommissions([...selectedCommissions, c._id]);
+                                         }
+                                       }}
+                                     />
+                                  </td>
+                                  <td className="px-4 py-5 font-bold text-xs">
+                                     <div className="flex flex-col">
+                                        <span>{c.partnerId?.name || 'Unknown'}</span>
+                                        <span className="text-[9px] font-normal text-muted-foreground">ref: {c.merchantId?.name || 'Unknown'}</span>
+                                     </div>
+                                  </td>
+                                  <td className="px-4 py-5 text-center">
+                                     <div className="flex flex-col">
+                                        <span className="font-bold text-primary font-mono text-sm">${c.partnerShare.toFixed(2)}</span>
+                                        <span className="text-[9px] text-muted-foreground font-mono">Platform: ${c.platformShare.toFixed(2)}</span>
+                                     </div>
+                                  </td>
+                                  <td className="px-4 py-5 text-center">
+                                     <div className="flex flex-col gap-1 items-center">
+                                        <span className="text-xs font-bold font-mono tracking-tight">{maturityDate.toLocaleDateString()}</span>
+                                        <span className={cn(
+                                          "px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest border",
+                                          isMature ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                                        )}>
+                                           {isMature ? 'Ready to Clear' : 'Hold Period'}
+                                        </span>
+                                     </div>
+                                  </td>
+                                  <td className="px-4 py-5 text-right">
+                                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-secondary/50 border border-border text-[10px] font-bold uppercase text-muted-foreground">
+                                        {isMature ? <Clock className="w-3 h-3 text-emerald-500" /> : <Clock className="w-3 h-3 text-amber-500" />}
+                                        Pending
+                                     </div>
+                                  </td>
+                               </tr>
+                             );
+                           })}
+                           {moderationData?.commissions?.length === 0 && (
+                             <tr>
+                               <td colSpan={5} className="py-24 text-center">
+                                  <div className="flex flex-col items-center gap-3">
+                                     <div className="w-12 h-12 bg-secondary/50 rounded-2xl flex items-center justify-center">
+                                        <Check className="w-6 h-6 text-muted-foreground" />
+                                     </div>
+                                     <p className="text-sm text-muted-foreground italic">Queue empty. All commissions are cleared.</p>
+                                  </div>
+                               </td>
+                             </tr>
+                           )}
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            )}
          </div>
        )}
 

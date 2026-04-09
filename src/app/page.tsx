@@ -13,19 +13,28 @@ import {
   Code,
   MousePointer2,
   Rocket,
-  Plus
+  Plus,
+  Car,
+  Wallet,
+  Plane,
+  Layers
 } from 'lucide-react';
 
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { HeroButtons } from '@/components/HeroButtons';
 import { AppCTA } from '@/components/AppCTA';
-import { InteractiveShowcase } from '@/components/InteractiveShowcase';
+import { Logo } from '@/components/Logo';
+import { ApiUseCases } from '@/components/ApiUseCases';
+import { InteractivePricing } from '@/components/InteractivePricing';
+import { FomoTicker } from '@/components/FomoTicker';
+import { LastCallDeals } from '@/components/LastCallDeals';
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background selection:bg-primary/20">
       <Navbar />
+      <FomoTicker />
 
       <main>
         {/* Hero Section */}
@@ -36,37 +45,102 @@ export default function LandingPage() {
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-400 to-primary rounded-full blur-[120px] translate-y-1/2"></div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          <div className="max-w-5xl mx-auto px-6 flex flex-col items-center gap-12">
             
-            {/* Text Content Left */}
-            <div className="flex flex-col items-center lg:items-start text-center lg:text-left mt-8 lg:mt-0">
+            {/* Text Content */}
+            <div className="flex flex-col items-center text-center mt-8 lg:mt-0">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
                 <Zap className="w-3 h-3 fill-primary" />
                 Next-Gen Deals Platform
               </div>
               
-              <h1 className="text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-[1.1] text-foreground">
+              <h1 className="text-5xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1] text-foreground">
                 The Scalable <br className="hidden lg:block"/> <span className="text-gradient">Deals Architecture</span> <br className="hidden lg:block"/> for Modern Platforms.
               </h1>
               
-              <p className="text-lg lg:text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl">
+              <p className="text-lg lg:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl">
                 Connect merchants with partners through a high-performance API. Publish deals in minutes, distribute via thousands of apps, and track everything in real-time.
               </p>
               
-              <div className="w-full sm:w-auto">
+              <div className="w-full flex justify-center sm:w-auto">
                 <HeroButtons />
               </div>
             </div>
 
-            {/* Interactive Showcase Right */}
-            <div className="relative w-full z-10 perspective-[2000px]">
-              <div className="lg:rotate-y-[-5deg] lg:rotate-x-[5deg] transition-transform duration-700 hover:rotate-0">
-                <InteractiveShowcase />
+            {/* Hero Visual Right (Now Centered Bottom) */}
+            <div className="relative w-full flex justify-center items-center z-10 mt-8 mb-12">
+              <div className="relative w-full max-w-4xl h-auto">
+                <div className="relative bg-card border border-border rounded-[3rem] w-full flex flex-col items-center justify-center p-8 lg:p-16 transition-all duration-700 hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5">
+                   
+                   <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-primary/30 transition-colors">
+                       <div className="p-2 bg-primary/20 text-primary rounded-lg shrink-0">
+                         <Zap className="w-5 h-5" />
+                       </div>
+                       <div>
+                         <div className="text-sm font-bold text-foreground">Latency</div>
+                         <div className="text-xs text-muted-foreground">&lt;80ms Edge Network</div>
+                       </div>
+                     </div>
+                     
+                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-blue-500/30 transition-colors">
+                       <div className="p-2 bg-blue-500/20 text-blue-500 rounded-lg shrink-0">
+                         <Globe className="w-5 h-5" />
+                       </div>
+                       <div>
+                         <div className="text-sm font-bold text-foreground">Geo-Spatial</div>
+                         <div className="text-xs text-muted-foreground">Hyper-local Targeting</div>
+                       </div>
+                     </div>
+
+                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-emerald-500/30 transition-colors">
+                       <div className="p-2 bg-emerald-500/20 text-emerald-500 rounded-lg shrink-0">
+                         <Shield className="w-5 h-5" />
+                       </div>
+                       <div>
+                         <div className="text-sm font-bold text-foreground">Security</div>
+                         <div className="text-xs text-muted-foreground">Fraud-proof Scanning</div>
+                       </div>
+                     </div>
+
+                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-orange-500/30 transition-colors">
+                       <div className="p-2 bg-orange-500/20 text-orange-500 rounded-lg shrink-0">
+                         <BarChart3 className="w-5 h-5" />
+                       </div>
+                       <div>
+                         <div className="text-sm font-bold text-foreground">Analytics</div>
+                         <div className="text-xs text-muted-foreground">Real-time Performance</div>
+                       </div>
+                     </div>
+
+                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-purple-500/30 transition-colors">
+                       <div className="p-2 bg-purple-500/20 text-purple-500 rounded-lg shrink-0">
+                         <ShoppingBag className="w-5 h-5" />
+                       </div>
+                       <div>
+                         <div className="text-sm font-bold text-foreground">Terminal</div>
+                         <div className="text-xs text-muted-foreground">Instant Redemption</div>
+                       </div>
+                     </div>
+
+                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-primary/30 transition-colors">
+                       <div className="p-2 bg-primary/20 text-primary rounded-lg shrink-0">
+                         <Users className="w-5 h-5" />
+                       </div>
+                       <div>
+                         <div className="text-sm font-bold text-foreground">Partners</div>
+                         <div className="text-xs text-muted-foreground">Automated Splits</div>
+                       </div>
+                     </div>
+                   </div>
+                </div>
               </div>
             </div>
 
           </div>
         </section>
+
+
 
         {/* Features Section */}
         <section id="process" className="py-24 bg-background">
@@ -133,112 +207,39 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Ecosystem & Commission Section */}
-        <section id="ecosystem" className="py-24 overflow-hidden relative">
+        {/* API Use Cases Section */}
+        <section className="py-16 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-full h-[800px] dark:from-primary/20 dark:to-blue-500/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
           <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-bold mb-6">A Fair <span className="text-gradient">Economic Model</span></h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Offrion creates a sustainable triangle of value between producers, distributors, and the core infrastructure.
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-5xl font-bold mb-6">Integrate Anywhere. <span className="text-gradient">Monetize Every Audience.</span></h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+                The Offrion API is completely agnostic. Fetch hyper-local deals and inject them seamlessly wherever your users are making decisions.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
-              {/* Connector Lines (Visual only for desktop) */}
-              <div className="hidden lg:block absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent -z-10"></div>
-              
-              {/* Merchant Role */}
-              <div className="bg-card border border-border p-8 rounded-[40px] shadow-sm hover:shadow-xl transition-all group">
-                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <ShoppingBag className="w-8 h-8" />
-                </div>
-                <h4 className="text-2xl font-bold mb-4 text-blue-500">The Merchant</h4>
-                <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                  Publishes deals and manages inventory. Only pays a platform fee on successful redemptions. No upfront costs.
-                </p>
-                <div className="pt-6 border-t border-border flex items-center justify-between text-sm">
-                  <span className="font-medium">Revenue Retention</span>
-                  <span className="font-bold text-primary">85-95%</span>
-                </div>
-              </div>
-
-              {/* Partner Role */}
-              <div className="bg-slate-900 text-white p-8 rounded-[40px] shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform">
-                  <Users className="w-24 h-24" />
-                </div>
-                <div className="w-16 h-16 rounded-2xl bg-premium-gradient text-white flex items-center justify-center mb-6">
-                  <Globe className="w-8 h-8" />
-                </div>
-                <h4 className="text-2xl font-bold mb-4 text-primary">The Partner</h4>
-                <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-                  Integrates the deals API into their apps (Fintech, E-commerce, Social). Earns the lion's share of the generated commission.
-                </p>
-                <div className="pt-6 border-t border-white/10 flex items-center justify-between text-sm">
-                  <span className="font-medium text-slate-400">Commission Share</span>
-                  <span className="font-bold text-primary">70%</span>
-                </div>
-              </div>
-
-              {/* Platform Role */}
-              <div className="bg-card border border-border p-8 rounded-[40px] shadow-sm hover:shadow-xl transition-all group">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Zap className="w-8 h-8" />
-                </div>
-                <h4 className="text-2xl font-bold mb-4 text-foreground">The Platform</h4>
-                <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                  The Offrion core handles Geo-indexing, API high-concurrency, security, and automated commission settlements.
-                </p>
-                <div className="pt-6 border-t border-border flex items-center justify-between text-sm">
-                  <span className="font-medium">Platform Share</span>
-                  <span className="font-bold text-primary">30%</span>
-                </div>
-              </div>
-            </div>
+            <ApiUseCases />
           </div>
         </section>
 
+        <LastCallDeals />
+
+
+
+
         {/* Pricing Section */}
-        <section id="pricing" className="py-24">
+        <section id="pricing" className="py-24 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-secondary/50 to-transparent pointer-events-none -z-10"></div>
+          
           <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4 text-gradient">Simple Revenue-Based Pricing</h2>
-              <p className="text-muted-foreground max-w-xl mx-auto italic">Scale naturally with your success.</p>
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-5xl font-bold mb-4 text-gradient">We grow when you grow.</h2>
+              <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+                No fixed API limits. No complex enterprise silos. Your revenue share aggressively scales in your favor.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                { name: 'Starter', price: 'Free', fee: '15%', features: ['Geo-Spatial Search', '10 Active Deals', 'Partner Dashboard'] },
-                { name: 'Pro', price: '$49/mo', fee: '10%', features: ['Unlimited Deals', 'Priority API Support', 'Advanced Analytics', 'Global Distribution'], active: true },
-                { name: 'Enterprise', price: 'Custom', fee: '5%', features: ['White-label Portal', 'Dedicated Node Cluster', 'Custom Data Retention', 'SLA Guarantee'] },
-              ].map((tier, i) => (
-                <div key={i} className={cn(
-                  "p-8 rounded-[32px] border transition-all",
-                  tier.active ? "bg-slate-900 text-white border-primary shadow-2xl scale-105" : "bg-card border-border hover:border-primary/20"
-                )}>
-                  <h4 className="text-xl font-bold mb-2">{tier.name}</h4>
-                  <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-4xl font-bold">{tier.price}</span>
-                    <span className="text-sm opacity-60">/per month</span>
-                  </div>
-                  <p className="text-sm mb-8 opacity-80">Platform fee: <span className="font-bold">{tier.fee} per deal</span></p>
-                  <ul className="space-y-4 mb-8">
-                    {tier.features.map((f, j) => (
-                      <li key={j} className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="w-4 h-4 text-primary" />
-                        <span className="opacity-90">{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <button className={cn(
-                    "w-full py-3 rounded-xl font-bold transition-all",
-                    tier.active ? "bg-premium-gradient text-white" : "bg-secondary hover:bg-primary/10"
-                  )}>
-                    Select {tier.name}
-                  </button>
-                </div>
-              ))}
-            </div>
+            <InteractivePricing />
           </div>
         </section>
 

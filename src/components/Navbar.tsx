@@ -10,7 +10,8 @@ import {
   LayoutDashboard,
   ChevronDown,
   Moon,
-  Sun
+  Sun,
+  ShieldCheck
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useUser } from '@/hooks/useUser';
@@ -34,9 +35,9 @@ export const Navbar = () => {
           <Logo />
         </Link>
         <div className="hidden md:flex items-center gap-8">
-          <Link href="/#process" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">How it Works</Link>
-          <Link href="/#ecosystem" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Ecosystem</Link>
+          <Link href="/ecosystem" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Ecosystem</Link>
           <Link href="/partner/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">API Docs</Link>
+          <Link href="/#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
         </div>
         <div className="flex items-center gap-3">
           {mounted && (
@@ -78,6 +79,37 @@ export const Navbar = () => {
                       <LayoutDashboard className="w-4 h-4" />
                       Dashboard
                     </Link>
+
+                    {/* Role Switcher Section */}
+                    <div className="border-t border-border my-1 pt-1">
+                      <p className="px-4 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Switch View</p>
+                      <Link 
+                        href="/merchant/dashboard"
+                        className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-secondary transition-colors"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        <User className="w-4 h-4 text-blue-500" />
+                        Merchant
+                      </Link>
+                      <Link 
+                        href="/partner/dashboard"
+                        className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-secondary transition-colors"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        <User className="w-4 h-4 text-purple-500" />
+                        Partner
+                      </Link>
+                      <Link 
+                        href="/admin/dashboard"
+                        className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-secondary transition-colors"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        <ShieldCheck className="w-4 h-4 text-primary" />
+                        Platform Admin
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-border my-1"></div>
                     <button 
                       onClick={() => {
                         logout();

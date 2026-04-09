@@ -20,11 +20,17 @@ export async function PATCH(
 
     const { id } = await params;
     const body = await req.json();
-    const { isActive } = body;
+    const { status } = body;
+
+    if (!['pending', 'active', 'rejected', 'suspended'].includes(status)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    }
+
+    const isActive = status === 'active';
 
     const deal = await Deal.findByIdAndUpdate(
       id,
-      { isActive },
+      { status, isActive },
       { returnDocument: 'after' }
     );
 
@@ -33,7 +39,7 @@ export async function PATCH(
     }
 
     return NextResponse.json({
-      message: `Deal ${isActive ? 'approved' : 'rejected'} successfully`,
+      message: `Deal status updated to ${status} successfully`,
       deal
     });
 

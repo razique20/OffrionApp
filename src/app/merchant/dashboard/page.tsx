@@ -26,7 +26,8 @@ import {
   Tag
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Flame, Clock, ArrowRight } from 'lucide-react';
+import { FomoTicker } from '@/components/FomoTicker';
 
 export default function MerchantDashboard() {
   const [data, setData] = useState<any>(null);
@@ -86,6 +87,26 @@ export default function MerchantDashboard() {
 
   return (
     <div className="space-y-8">
+      <FomoTicker />
+      
+      {/* Expiry Alerts Section */}
+      {data.topDeals.some((d: any) => d.dealInfo?.validUntil && new Date(d.dealInfo.validUntil).getTime() < Date.now() + 72 * 60 * 60 * 1000) && (
+        <div className="p-6 bg-red-500/5 border border-red-500/20 rounded-2xl flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
+              <Flame className="w-6 h-6 text-red-500 animate-pulse" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-foreground">Immediate Action Required</h4>
+              <p className="text-xs text-muted-foreground">Some of your top-performing deals are expiring within 72 hours.</p>
+            </div>
+          </div>
+          <Link href="/merchant/deals" className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white text-xs font-bold rounded-xl hover:bg-red-600 transition-all">
+            Extend Now <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      )}
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (

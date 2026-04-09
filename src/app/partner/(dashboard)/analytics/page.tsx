@@ -94,30 +94,59 @@ function AnalyticsContent() {
 
   return (
     <div className="space-y-8 pb-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {envParam === 'sandbox' ? 'Sandbox Analytics' : 'Performance Analytics'}
-          </h1>
-          <p className="text-muted-foreground">
-            {envParam === 'sandbox' 
-              ? 'Monitor your integration tests and sandbox API usage.' 
-              : 'Deep dive into your referral metrics and earnings.'}
-          </p>
+      <div className="flex flex-col space-y-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
+            <p className="text-muted-foreground">Deep dive into your referral metrics and earnings.</p>
+          </div>
+          <div className="flex items-center gap-2 bg-card border border-border p-1 rounded-xl shadow-sm">
+            {['7d', '30d', '90d'].map((p) => (
+              <button
+                key={p}
+                onClick={() => setPeriod(p)}
+                className={cn(
+                  "px-4 py-1.5 rounded-lg text-sm font-bold transition-all",
+                  period === p ? "bg-primary text-primary-foreground shadow-md" : "hover:bg-secondary text-muted-foreground"
+                )}
+              >
+                {p.toUpperCase()}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex items-center gap-2 bg-card border border-border p-1 rounded-xl shadow-sm">
-          {['7d', '30d', '90d'].map((p) => (
-            <button
-              key={p}
-              onClick={() => setPeriod(p)}
-              className={cn(
-                "px-4 py-1.5 rounded-lg text-sm font-bold transition-all",
-                period === p ? "bg-primary text-primary-foreground shadow-md" : "hover:bg-secondary text-muted-foreground"
-              )}
-            >
-              {p.toUpperCase()}
-            </button>
-          ))}
+
+        <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border w-fit">
+          <button
+            onClick={() => {
+              const params = new URLSearchParams(searchParams);
+              params.set('env', 'production');
+              window.history.pushState(null, '', `?${params.toString()}`);
+            }}
+            className={cn(
+              "px-6 py-2 rounded-xl text-xs font-bold transition-all",
+              envParam === 'production' 
+                ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Production
+          </button>
+          <button
+            onClick={() => {
+              const params = new URLSearchParams(searchParams);
+              params.set('env', 'sandbox');
+              window.history.pushState(null, '', `?${params.toString()}`);
+            }}
+            className={cn(
+              "px-6 py-2 rounded-xl text-xs font-bold transition-all",
+              envParam === 'sandbox' 
+                ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Sandbox
+          </button>
         </div>
       </div>
 

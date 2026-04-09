@@ -11,7 +11,8 @@ import {
   ExternalLink,
   Tag,
   MapPin,
-  Clock
+  Clock,
+  Layers
 } from 'lucide-react';
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
 import { AlertCircle } from 'lucide-react';
@@ -98,6 +99,13 @@ export default function MerchantDealsPage() {
             <Filter className="w-4 h-4" />
             Filter
           </button>
+          <Link 
+            href="/merchant/deals/bulk"
+            className="flex items-center gap-2 px-4 py-2 bg-secondary border border-border rounded-xl text-sm font-medium hover:bg-secondary/80 transition-all"
+          >
+            <Layers className="w-4 h-4 text-primary" />
+            Bulk Upload
+          </Link>
           <Link 
             href="/merchant/deals/new"
             className="flex items-center gap-2 px-4 py-2 bg-premium-gradient text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
