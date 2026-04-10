@@ -1,0 +1,401 @@
+'use client';
+
+import React, { useState } from 'react';
+import { 
+  Book, 
+  Code, 
+  Terminal, 
+  Globe, 
+  Shield, 
+  Zap, 
+  Copy, 
+  CheckCircle2,
+  ChevronRight,
+  Info,
+  Layers,
+  MapPin,
+  DollarSign,
+  Activity,
+  Search,
+  List,
+  Target,
+  FlaskConical,
+  Code2
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
+
+export default function PublicDocsPage() {
+  const [activeTab, setActiveTab] = useState('getting-started');
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navbar />
+      
+      <main className="max-w-7xl mx-auto px-6 py-20 w-full flex-1">
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Sidebar Navigation */}
+          <aside className="lg:w-64 shrink-0 space-y-8">
+            <div>
+              <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-4 ml-3">Getting Started</h4>
+              <nav className="space-y-1">
+                <DocNavItem 
+                  active={activeTab === 'getting-started'} 
+                  onClick={() => setActiveTab('getting-started')}
+                  icon={Book}
+                  label="Introduction" 
+                />
+                <DocNavItem 
+                  active={activeTab === 'auth'} 
+                  onClick={() => setActiveTab('auth')}
+                  icon={Shield}
+                  label="Authentication" 
+                />
+              </nav>
+            </div>
+
+            <div>
+              <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-4 ml-3">API Reference</h4>
+              <nav className="space-y-1">
+                <DocNavItem 
+                  active={activeTab === 'deals'} 
+                  onClick={() => setActiveTab('deals')}
+                  icon={Layers}
+                  label="Deals API" 
+                />
+                <DocNavItem 
+                  active={activeTab === 'filtering'} 
+                  onClick={() => setActiveTab('filtering')}
+                  icon={Search}
+                  label="Advanced Filtering" 
+                />
+                <DocNavItem 
+                  active={activeTab === 'categories'} 
+                  onClick={() => setActiveTab('categories')}
+                  icon={List}
+                  label="Categories" 
+                />
+                <DocNavItem 
+                  active={activeTab === 'tracking'} 
+                  onClick={() => setActiveTab('tracking')}
+                  icon={Activity}
+                  label="Tracking" 
+                />
+                <DocNavItem 
+                  active={activeTab === 'sdk-widget'} 
+                  onClick={() => setActiveTab('sdk-widget')}
+                  icon={Code2}
+                  label="SDK Widget" 
+                />
+              </nav>
+            </div>
+          </aside>
+
+          {/* Content Area */}
+          <div className="flex-1 max-w-4xl">
+            {activeTab === 'getting-started' && (
+              <DocSection title="Quick Start & Installation">
+                <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+                  Offrion's Deals-as-a-Service API enables you to programmatically access thousands of merchant deals. The API is designed to be RESTful and easy to integrate into any stack.
+                </p>
+                
+                <h3 className="text-2xl font-bold mb-4">Base URL</h3>
+                <div className="p-4 bg-secondary font-mono rounded-xl border border-border flex items-center justify-between mb-8">
+                  <span>https://api.offrion.com/api</span>
+                  <span className="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded">Dev: localhost:3000/api</span>
+                </div>
+
+                <div className="space-y-6">
+                  <h3 className="text-2xl font-bold">Integration Checklist</h3>
+                  <ol className="space-y-4">
+                    <li className="flex gap-4">
+                      <div className="w-6 h-6 rounded-full bg-premium-gradient text-white text-xs flex items-center justify-center shrink-0">1</div>
+                      <div>
+                        <p className="font-bold">Create Partner Account</p>
+                        <p className="text-sm text-muted-foreground">Sign up to get your unique client credentials.</p>
+                      </div>
+                    </li>
+                    <li className="flex gap-4">
+                      <div className="w-6 h-6 rounded-full bg-premium-gradient text-white text-xs flex items-center justify-center shrink-0">2</div>
+                      <div>
+                        <p className="font-bold">Generate API Key</p>
+                        <p className="text-sm text-muted-foreground">Go to your Connectivity dashboard and create a sandbox or production key.</p>
+                      </div>
+                    </li>
+                    <li className="flex gap-4">
+                      <div className="w-6 h-6 rounded-full bg-premium-gradient text-white text-xs flex items-center justify-center shrink-0">3</div>
+                      <div>
+                        <p className="font-bold">Fetch Local Deals</p>
+                        <p className="text-sm text-muted-foreground">Build high-conversion rewards loops into your product.</p>
+                      </div>
+                    </li>
+                  </ol>
+                </div>
+              </DocSection>
+            )}
+
+            {activeTab === 'auth' && (
+              <DocSection title="Authentication">
+                <p className="text-muted-foreground mb-8">
+                  All public API requests must include the <code>x-api-key</code> header. 
+                </p>
+                <CodeBlock 
+                  language="http"
+                  code={`GET /api/deals HTTP/1.1
+Host: api.offrion.com
+x-api-key: YOUR_API_KEY`}
+                />
+                <div className="mt-8 p-6 bg-blue-500/5 border border-blue-500/20 rounded-2xl flex gap-4">
+                   <Shield className="w-5 h-5 text-blue-500 shrink-0 mt-1" />
+                   <p className="text-sm text-muted-foreground leading-relaxed">
+                     Keys come in two flavors: <strong>Sandbox</strong> (for testing) and <strong>Production</strong>. Webhooks and payouts are only processed for production-stamped transactions.
+                   </p>
+                </div>
+              </DocSection>
+            )}
+
+            {activeTab === 'deals' && (
+              <DocSection title="Deals API">
+                <p className="text-muted-foreground mb-12">The primary endpoint to discover and retrieve deals.</p>
+                
+                <div className="space-y-12">
+                  <div>
+                    <EndpointLabel method="GET" path="/deals" />
+                    <p className="text-sm text-muted-foreground mb-4">List all active deals. Support multiple filters (see Advanced Filtering).</p>
+                    <CodeBlock 
+                      code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals"`}
+                    />
+                  </div>
+
+                  <div>
+                    <EndpointLabel method="GET" path="/deals/[id]" />
+                    <p className="text-sm text-muted-foreground mb-4">Retrieve details of a single deal by its ID.</p>
+                    <CodeBlock 
+                      code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals/654a123f8b..."`}
+                    />
+                  </div>
+                </div>
+              </DocSection>
+            )}
+
+            {activeTab === 'filtering' && (
+              <DocSection title="Advanced Filtering">
+                <p className="text-muted-foreground mb-8 italic">Fine-tune your deal delivery with powerful query parameters.</p>
+                
+                <ParamTable 
+                  title="Query Parameters"
+                  params={[
+                    { name: 'categoryId', type: 'string', desc: 'Category ID(s), comma-separated.' },
+                    { name: 'eventType', type: 'string', desc: 'Event: holiday, flash, seasonal, clearance.' },
+                    { name: 'dealType', type: 'string', desc: 'Type: percentage, flat, bogo, free-item.' },
+                    { name: 'tags', type: 'string', desc: 'Comma-separated tags to match.' },
+                    { name: 'audience', type: 'string', desc: 'student, senior, member, all.' },
+                    { name: 'minDiscount', type: 'number', desc: 'Minimum discount percentage.' },
+                    { name: 'lat / lng', type: 'number', desc: 'Co-ordinates for distance search.' },
+                    { name: 'radius', type: 'number', desc: 'Search radius in meters.' },
+                  ]}
+                />
+              </DocSection>
+            )}
+
+            {activeTab === 'categories' && (
+              <DocSection title="Categories">
+                <p className="text-muted-foreground mb-8">Fetch all available deal categories to build your navigation or filters.</p>
+                <EndpointLabel method="GET" path="/categories" />
+                <CodeBlock 
+                  code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/categories"`}
+                />
+              </DocSection>
+            )}
+
+            {activeTab === 'tracking' && (
+              <DocSection title="Tracking & Attribution">
+                <p className="text-muted-foreground mb-12">Log engagement to ensure proper commission attribution.</p>
+                
+                <div className="space-y-12">
+                  <div>
+                    <EndpointLabel method="POST" path="/partners/track-click" />
+                    <p className="text-sm text-muted-foreground mb-4">Track a user clicking on a deal.</p>
+                    <CodeBlock 
+                      language="json"
+                      code={`{
+  "dealId": "654a123f8b",
+  "metadata": { "source": "mobile_app" }
+}`}
+                    />
+                  </div>
+
+                  <div>
+                    <EndpointLabel method="POST" path="/partners/track-conversion" />
+                    <p className="text-sm text-muted-foreground mb-4">Record a successful purchase or conversion.</p>
+                    <CodeBlock 
+                      language="json"
+                      code={`{
+  "dealId": "654a123f8b",
+  "amount": 49.99,
+  "currency": "USD"
+}`}
+                    />
+                  </div>
+                </div>
+              </DocSection>
+            )}
+
+            {activeTab === 'sdk-widget' && (
+              <DocSection title="JavaScript SDK Widget">
+                <p className="text-muted-foreground mb-8">
+                  The fastest way to integrate Offrion. Add a premium "Deals Near Me" experience to your site with a single line of code.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                  <FeatureHighlight 
+                    title="Zero Code Integration"
+                    desc="No API knowledge required. Just paste the script and target div."
+                    icon={Zap}
+                  />
+                  <FeatureHighlight 
+                    title="Responsive & Themed"
+                    desc="Beautifully adapts to mobile and desktop with Offrion's premium glassmorphism."
+                    icon={Globe}
+                  />
+                </div>
+
+                <h3 className="text-xl font-bold mb-4">1. Add the Script</h3>
+                <CodeBlock 
+                  language="html"
+                  code={`<script src="https://api.offrion.com/sdk/widget.js" defer></script>`}
+                />
+
+                <h3 className="text-xl font-bold mt-12 mb-4">2. Place the Container</h3>
+                <CodeBlock 
+                  language="html"
+                  code={`<div 
+  id="offrion-deals-widget" 
+  data-api-key="YOUR_API_KEY"
+  data-lat="25.1972"
+  data-lng="55.2744"
+></div>`}
+                />
+              </DocSection>
+            )}
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
+
+function EndpointLabel({ method, path }: { method: string, path: string }) {
+  const isPost = method === 'POST';
+  return (
+    <div className="flex items-center gap-2 mb-4">
+      <span className={cn(
+        "px-2 py-1 rounded text-xs font-bold font-mono",
+        isPost ? "bg-blue-500/20 text-blue-500" : "bg-primary/20 text-primary"
+      )}>
+        {method}
+      </span>
+      <code className="text-sm font-bold font-mono text-foreground">{path}</code>
+    </div>
+  );
+}
+
+function DocNavItem({ active, onClick, icon: Icon, label }: any) {
+  return (
+    <button 
+      onClick={onClick}
+      className={cn(
+        "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all",
+        active 
+          ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
+          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+      )}
+    >
+      <Icon className="w-4 h-4" />
+      {label}
+    </button>
+  );
+}
+
+function DocSection({ title, children }: any) {
+  return (
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <h2 className="text-4xl font-bold mb-8 tracking-tight">{title}</h2>
+      {children}
+    </div>
+  );
+}
+
+function FeatureHighlight({ title, desc, icon: Icon }: any) {
+  return (
+    <div className="p-6 bg-card border border-border rounded-2xl flex items-start gap-4">
+      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+        <Icon className="w-5 h-5 text-primary" />
+      </div>
+      <div>
+        <h4 className="font-bold text-sm mb-1">{title}</h4>
+        <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+      </div>
+    </div>
+  );
+}
+
+function CodeBlock({ code, language = 'bash' }: any) {
+  const [copied, setCopied] = useState(false);
+  
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-xl group">
+      <div className="flex items-center justify-between px-4 py-2 bg-slate-900/50 border-b border-slate-800">
+        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{language}</span>
+        <button 
+          onClick={handleCopy}
+          className="text-slate-400 hover:text-white transition-colors"
+        >
+          {copied ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
+        </button>
+      </div>
+      <div className="p-6 overflow-x-auto">
+        <pre className="text-[11px] font-mono text-slate-300 leading-relaxed whitespace-pre">
+          {code}
+        </pre>
+      </div>
+    </div>
+  );
+}
+
+function ParamTable({ title, params }: any) {
+  return (
+    <div className="space-y-4">
+      <h4 className="font-bold text-lg mb-2">{title}</h4>
+      <div className="border border-border rounded-2xl overflow-hidden">
+        <table className="w-full text-left text-sm">
+          <thead>
+            <tr className="bg-secondary/50 text-[10px] uppercase tracking-widest text-muted-foreground font-bold border-b border-border">
+              <th className="px-6 py-4">Parameter</th>
+              <th className="px-6 py-4">Type</th>
+              <th className="px-6 py-4">Description</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {params.map((p: any) => (
+              <tr key={p.name} className="group hover:bg-secondary/20 transition-all">
+                <td className="px-6 py-4 font-mono font-bold text-primary">{p.name}</td>
+                <td className="px-6 py-4"><span className="px-2 py-0.5 bg-secondary rounded text-[10px] font-mono">{p.type}</span></td>
+                <td className="px-6 py-4 text-muted-foreground">{p.desc}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
+import SandboxDeal from '@/models/SandboxDeal';
 import APIKey from '@/models/APIKey';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import mongoose from 'mongoose';
@@ -20,6 +21,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Invalid or inactive API Key' }, { status: 401 });
     }
 
+    // Determine environment
+    const isSandbox = apiKey.environment === 'sandbox';
+    const DealModel = isSandbox ? SandboxDeal : (Deal as any);
+
     // Update last used
     apiKey.lastUsedAt = new Date();
     await apiKey.save();
@@ -27,6 +32,7 @@ export async function GET(req: Request) {
     // 2. Build Query
     const query: any = { isActive: true };
 
+    // ... (rest of the query building logic remains same)
     // --- Category Filter (supports multiple comma-separated IDs) ---
     const categoryId = searchParams.get('categoryId');
     if (categoryId) {
@@ -123,17 +129,17 @@ export async function GET(req: Request) {
     }
 
     const [deals, total] = await Promise.all([
-      Deal.find(query)
+      DealModel.find(query)
         .populate('categoryId', 'name slug')
         .sort(sortParams as any)
         .skip(skip)
         .limit(limit),
-      Deal.countDocuments(countQuery),
+      DealModel.countDocuments(countQuery),
     ]);
 
     // 4. Log Impressions (fire-and-forget)
     if (deals.length > 0) {
-      const impressionEvents = deals.map((deal) => ({
+      const impressionEvents = deals.map((deal: any) => ({
         type: 'impression',
         dealId: deal._id,
         partnerId: apiKey.partnerId,

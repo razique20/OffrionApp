@@ -36,7 +36,8 @@ export const Navbar = () => {
         </Link>
         <div className="hidden md:flex items-center gap-8">
           <Link href="/ecosystem" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Ecosystem</Link>
-          <Link href="/partner/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">API Docs</Link>
+          <Link href="/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Docs</Link>
+          <Link href="/sandbox" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Sandbox</Link>
           <Link href="/#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
         </div>
         <div className="flex items-center gap-3">

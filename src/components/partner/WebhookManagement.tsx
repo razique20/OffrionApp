@@ -17,7 +17,11 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export function WebhookManagement() {
+interface WebhookManagementProps {
+  environment: 'production' | 'sandbox';
+}
+
+export function WebhookManagement({ environment }: WebhookManagementProps) {
   const [webhooks, setWebhooks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -27,7 +31,7 @@ export function WebhookManagement() {
   // New Webhook Form
   const [newWebhook, setNewWebhook] = useState({
     url: '',
-    environment: 'production',
+    environment: environment,
     events: ['deal.redeemed', 'commission.earned']
   });
 
@@ -35,12 +39,12 @@ export function WebhookManagement() {
 
   useEffect(() => {
     fetchWebhooks();
-  }, []);
+  }, [environment]);
 
   const fetchWebhooks = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/partner/webhooks');
+      const res = await fetch(`/api/partner/webhooks?environment=${environment}`);
       if (!res.ok) throw new Error('Failed to fetch webhooks');
       const data = await res.json();
       setWebhooks(data);
@@ -59,12 +63,12 @@ export function WebhookManagement() {
       const res = await fetch('/api/partner/webhooks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newWebhook)
+        body: JSON.stringify({ ...newWebhook, environment })
       });
       if (!res.ok) throw new Error('Failed to create webhook');
       
       setSuccess('Webhook configured successfully');
-      setNewWebhook({ url: '', environment: 'production', events: ['deal.redeemed', 'commission.earned'] });
+      setNewWebhook({ url: '', environment: environment, events: ['deal.redeemed', 'commission.earned'] });
       fetchWebhooks();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
@@ -109,31 +113,21 @@ export function WebhookManagement() {
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold ml-1">Environment</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setNewWebhook({ ...newWebhook, environment: 'production' })}
-                    className={cn(
-                      "py-2 rounded-lg text-[10px] font-bold border transition-all",
-                      newWebhook.environment === 'production' ? "bg-primary text-white border-primary" : "bg-secondary/30 border-border text-muted-foreground"
-                    )}
-                  >
-                    Production
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setNewWebhook({ ...newWebhook, environment: 'sandbox' })}
-                    className={cn(
-                      "py-2 rounded-lg text-[10px] font-bold border transition-all",
-                      newWebhook.environment === 'sandbox' ? "bg-amber-500 text-white border-amber-500" : "bg-secondary/30 border-border text-muted-foreground"
-                    )}
-                  >
-                    Sandbox
-                  </button>
+              <div className="space-y-1.5 p-3 bg-secondary/30 rounded-xl border border-border/50">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Target Environment</label>
+                  <span className={cn(
+                    "text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter",
+                    environment === 'sandbox' ? "bg-amber-500/20 text-amber-500" : "bg-primary/20 text-primary"
+                  )}>
+                    {environment}
+                  </span>
                 </div>
+                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                  This endpoint will strictly receive events from the <span className="font-bold text-foreground capitalize">{environment}</span> environment.
+                </p>
               </div>
+
 
               <button
                 type="submit"

@@ -42,6 +42,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
     }
 
+    // --- Environment Segregation ---
+    // Prevent sandbox transactions from being redeemed in the production terminal
+    if (transaction.environment === 'sandbox') {
+      return NextResponse.json({ 
+        error: 'This is a sandbox transaction and cannot be redeemed in the production terminal.' 
+      }, { status: 400 });
+    }
+
     const deal = transaction.dealId as any;
     
     // Security check: Only the merchant who owns the deal can redeem it

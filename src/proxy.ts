@@ -4,9 +4,13 @@ import { UserRole } from '@/lib/constants';
 
 // Routes that don't require authentication
 const publicRoutes = [
+  '/',
   '/api/auth/login',
   '/api/auth/register',
-  '/api/deals/public', // Example public deal listing
+  '/api/deals/public',
+  '/docs',
+  '/sandbox',
+  '/api/sandbox',
 ];
 
 // Role-based route prefixes
@@ -16,11 +20,15 @@ const roleRoutes = {
   [UserRole.PARTNER]: '/api/partner',
 };
 
-export async function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Handle Public Routes
-  if (publicRoutes.some(route => pathname.startsWith(route))) {
+  const isPublicRoute = publicRoutes.some(route => 
+    route === '/' ? pathname === '/' : pathname.startsWith(route)
+  );
+
+  if (isPublicRoute) {
     return NextResponse.next();
   }
 

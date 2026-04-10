@@ -49,7 +49,9 @@ export async function POST(req: Request) {
     }
 
     const { name, environment } = apiKeySchema.parse(body);
-    const key = `offrion_${crypto.randomBytes(24).toString('hex')}`;
+
+    const prefix = environment === 'sandbox' ? 'offrion_sandbox_' : 'offrion_live_';
+    const key = `${prefix}${crypto.randomBytes(24).toString('hex')}`;
 
     const apiKey = await APIKey.create({
       partnerId: userId,

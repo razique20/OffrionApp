@@ -11,15 +11,15 @@ export async function dispatchWebhook(
   environment: 'production' | 'sandbox' = 'production'
 ) {
   try {
-    // 1. Find active webhook for the partner and environment
-    const webhook = await PartnerWebhook.findOne({ 
+    // 1. Find active webhooks for the partner that listens for this event in the correct environment.
+    const webhooks = await PartnerWebhook.find({ 
       partnerId, 
-      environment,
       isActive: true,
+      environment,
       enabledEvents: event
     });
 
-    if (!webhook) {
+    if (!webhooks || webhooks.length === 0) {
       console.log(`[Webhook] No active subscription found for partner ${partnerId} on event ${event} in ${environment}`);
       return;
     }
@@ -34,30 +34,34 @@ export async function dispatchWebhook(
 
     const body = JSON.stringify(fullPayload);
 
-    // 3. Create HMAC Signature
-    const signature = crypto
-      .createHmac('sha256', webhook.secret)
-      .update(body)
-      .digest('hex');
+    // 3. Dispatch to all matching endpoints
+    const dispatchPromises = webhooks.map(async (webhook) => {
+      // Create HMAC Signature
+      const signature = crypto
+        .createHmac('sha256', webhook.secret)
+        .update(body)
+        .digest('hex');
 
-    // 4. Dispatch the request
-    console.log(`[Webhook] Dispatching ${event} to ${webhook.url}...`);
-    
-    const response = await fetch(webhook.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Offrion-Signature': signature,
-        'User-Agent': 'Offrion-Webhook-Dispatcher/1.0'
-      },
-      body
+      console.log(`[Webhook] Dispatching ${event} to ${webhook.url} (${environment})...`);
+      
+      const response = await fetch(webhook.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Offrion-Signature': signature,
+          'User-Agent': 'Offrion-Webhook-Dispatcher/1.0'
+        },
+        body
+      });
+
+      if (!response.ok) {
+        throw new Error(`Webhook responded with status: ${response.status}`);
+      }
+
+      console.log(`[Webhook] Successfully delivered ${event} to ${webhook.url}`);
     });
 
-    if (!response.ok) {
-      throw new Error(`Webhook responded with status: ${response.status}`);
-    }
-
-    console.log(`[Webhook] Successfully delivered ${event} to ${webhook.url}`);
+    await Promise.all(dispatchPromises);
     return true;
 
   } catch (err: any) {

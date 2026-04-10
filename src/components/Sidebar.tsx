@@ -182,8 +182,8 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
       </div>
 
       <div className={cn("flex-1 space-y-2 w-full", isMinimized ? "px-0" : "px-0")}>
-        {renderItems(items.filter(i => !['docs', 'support', 'settings', 'keys', 'playground'].some(k => i.href.includes(k))), "Insights")}
-        {renderItems(items.filter(i => i.href.includes('keys')), "Connectivity")}
+        {renderItems(items.filter(i => !['docs', 'support', 'settings', 'api-keys', 'playground'].some(k => i.href.includes(k))), "Insights")}
+        {renderItems(items.filter(i => i.href.includes('api-keys')), "Connectivity")}
         {renderItems(items.filter(i => ['playground', 'docs'].some(k => i.href.includes(k))), "Development")}
         {renderItems(items.filter(i => ['settings', 'support'].some(k => i.href.includes(k))), "Account")}
 

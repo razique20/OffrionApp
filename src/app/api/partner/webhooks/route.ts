@@ -9,7 +9,13 @@ export async function GET(req: Request) {
     const userId = req.headers.get('x-user-id');
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const webhooks = await PartnerWebhook.find({ partnerId: userId }).sort({ createdAt: -1 });
+    const { searchParams } = new URL(req.url);
+    const environment = searchParams.get('environment');
+
+    const query: any = { partnerId: userId };
+    if (environment) query.environment = environment;
+
+    const webhooks = await PartnerWebhook.find(query).sort({ createdAt: -1 });
     return NextResponse.json(webhooks);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
