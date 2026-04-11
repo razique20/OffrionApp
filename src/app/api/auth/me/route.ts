@@ -16,7 +16,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json(user);
+    // Ensure roles array is always present for the frontend
+    const roles = user.roles && user.roles.length > 0 ? user.roles : [user.role];
+
+    return NextResponse.json(JSON.parse(JSON.stringify({
+      ...user.toObject(),
+      roles
+    })));
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

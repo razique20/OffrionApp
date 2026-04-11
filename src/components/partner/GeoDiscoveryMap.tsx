@@ -48,7 +48,8 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
   const fetchNearbyDeals = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/deals/search?lat=${userLocation.lat}&lng=${userLocation.lng}&radius=${radius}`);
+      const env = trackingKey ? 'sandbox' : 'production';
+      const res = await fetch(`/api/deals/search?lat=${userLocation.lat}&lng=${userLocation.lng}&radius=${radius}&environment=${env}`);
       if (res.ok) {
         const data = await res.json();
         setDeals(data);
@@ -334,7 +335,7 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
             <div className="mt-10 p-5 bg-primary/5 rounded-3xl border border-primary/10 flex items-start gap-4 text-left">
               <Zap className="w-6 h-6 text-primary shrink-0 mt-0.5" />
               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                <strong className="text-foreground">Test the Webhook</strong>: Copy this code and use it in the <span className="text-primary font-bold">Merchant Redemption Terminal</span> to trigger your real-time webhook notification.
+                <strong className="text-foreground">Test the Webhook</strong>: Copy this code and use it in the <span className="text-primary font-bold">Sandbox Redemption Terminal</span> (under Merchant Dashboard) to trigger your real-time webhook notification.
               </p>
             </div>
           </div>

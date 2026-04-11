@@ -10,6 +10,7 @@ export interface TokenPayload {
   userId: string;
   email: string;
   role: UserRole;
+  roles: UserRole[];
 }
 
 export async function generateToken(payload: TokenPayload): Promise<string> {

@@ -4,7 +4,13 @@ import bcrypt from 'bcryptjs';
 import User, { UserRole } from '../src/models/User';
 import Category from '../src/models/Category';
 import Deal from '../src/models/Deal';
+import SandboxDeal from '../src/models/SandboxDeal';
+import SandboxTransaction from '../src/models/SandboxTransaction';
+import SandboxCommission from '../src/models/SandboxCommission';
 import MerchantProfile from '../src/models/MerchantProfile';
+import AnalyticsEvent from '../src/models/AnalyticsEvent';
+import Transaction from '../src/models/Transaction';
+import Commission from '../src/models/Commission';
 
 dotenv.config({ path: '.env.local' });
 
@@ -24,11 +30,17 @@ async function seed() {
     await User.deleteMany({});
     await Category.deleteMany({});
     await Deal.deleteMany({});
-    await MerchantProfile.deleteMany({});
+    await SandboxDeal.deleteMany({});
+    await Transaction.deleteMany({});
+    await Commission.deleteMany({});
+    await SandboxTransaction.deleteMany({});
+    await SandboxCommission.deleteMany({});
+    await AnalyticsEvent.deleteMany({});
     console.log('Cleared existing data');
 
     // Create Categories
     const categories = await Category.insertMany([
+      { name: 'Hot Deals 🔥', slug: 'hot-deals', description: 'Limited time, high-value offers.', isActive: true },
       { name: 'Retail', slug: 'retail', description: 'Fashion, Electronics, and more', isActive: true },
       { name: 'Food & Dining', slug: 'food-dining', description: 'Restaurants and Cafes', isActive: true },
       { name: 'Travel', slug: 'travel', description: 'Flights, Hotels, and Tours', isActive: true },
@@ -36,7 +48,7 @@ async function seed() {
       { name: 'Automotive', slug: 'automotive', description: 'Cars, Parts, and Service', isActive: true },
       { name: 'Electronics', slug: 'electronics', description: 'Gadgets and Appliances', isActive: true },
     ]);
-    console.log('Created Categories');
+    console.log('Created Categories (including Hot Deals)');
 
     // Create Users
     const hashedPassword = await bcrypt.hash('password123', 10);
@@ -85,59 +97,65 @@ async function seed() {
         userId: merchant._id,
         businessName: merchant.name,
         description: `Premium services from ${merchant.name}.`,
-        logoUrl: '/images/merchant-owner.png',
+        logoUrl: 'https://images.unsplash.com/photo-1556740734-7f9a2b7a0f42?auto=format&fit=crop&w=200&h=200&q=80',
         website: `https://${merchant.email.split('@')[0]}.com`,
         contactEmail: merchant.email,
         contactPhone: '+1-555-010-999',
         address: '123 Business Way, Suite 100, Innovation District',
+        status: merchant.isActive ? 'verified' : 'pending',
       });
     }
     console.log('Created Merchant Profiles');
 
-    // Create 12 Sample Deals
+    // Create Sample Deals
     const sampleDeals = [
       {
-        merchantId: merchants[0]._id, categoryId: categories[0]._id,
-        title: '50% Off Premium Footwear', description: 'Half price on all premium leather boots.',
-        images: ['/images/dashboard.png'], originalPrice: 200, discountedPrice: 100, discountPercentage: 50,
-        commissionPercentage: 15, eventType: 'flash', dealType: 'percentage', targetAudience: ['all'],
-        tags: ['flash-sale', 'footwear'], location: { type: 'Point', coordinates: [73.85, 18.52] },
-        validFrom: new Date(), validUntil: new Date(Date.now() + 30 * 24 * 3600000), isActive: true,
+        merchantId: merchants[0]._id, categoryId: categories[0]._id, // Hot Deal
+        title: '70% Off Luxury SPA Weekend', description: 'Full body massage, sauna, and lunch included at the Palm Jumeirah.',
+        images: ['https://images.unsplash.com/photo-1544161515-4ae6ce6fe858?auto=format&fit=crop&w=800&q=80'], 
+        originalPrice: 500, discountedPrice: 150, discountPercentage: 70,
+        commissionPercentage: 20, eventType: 'flash', dealType: 'percentage', targetAudience: ['all'],
+        tags: ['spa', 'luxury', 'hot-deal'], location: { type: 'Point', coordinates: [55.13, 25.11] },
+        validFrom: new Date(), validUntil: new Date(Date.now() + 2 * 24 * 3600000), isActive: true, status: 'active',
       },
       {
-        merchantId: merchants[1]._id, categoryId: categories[1]._id,
-        title: 'BOGO - Artisan Pizzas', description: 'Wood-fired perfection.',
-        images: ['/images/qr-scan.png'], originalPrice: 40, discountedPrice: 20, discountPercentage: 50,
+        merchantId: merchants[1]._id, categoryId: categories[2]._id,
+        title: 'BOGO - Artisan Pizzas', description: 'Wood-fired perfection at Urban Eats Corp. Buy one get one free all weekend.',
+        images: ['https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80'], 
+        originalPrice: 40, discountedPrice: 20, discountPercentage: 50,
         commissionPercentage: 10, eventType: 'general', dealType: 'bogo', targetAudience: ['all'],
-        tags: ['bogo', 'pizza'], location: { type: 'Point', coordinates: [72.87, 19.07] },
-        validFrom: new Date(), validUntil: new Date(Date.now() + 7 * 24 * 3600000), isActive: true,
+        tags: ['bogo', 'pizza'], location: { type: 'Point', coordinates: [55.27, 25.20] },
+        validFrom: new Date(), validUntil: new Date(Date.now() + 7 * 24 * 3600000), isActive: true, status: 'active',
       },
       {
-        merchantId: merchants[2]._id, categoryId: categories[5]._id,
-        title: 'Last-Gen Laptop Clearout', description: 'Powerful machines at unbeatable prices.',
-        images: ['/images/api-network.png'], originalPrice: 1200, discountedPrice: 800, discountPercentage: 33,
+        merchantId: merchants[2]._id, categoryId: categories[6]._id,
+        title: 'Last-Gen Laptop Clearout', description: 'Powerful machines at unbeatable prices. While stocks last.',
+        images: ['https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=800&q=80'], 
+        originalPrice: 1200, discountedPrice: 800, discountPercentage: 33,
         commissionPercentage: 8, eventType: 'seasonal', dealType: 'flat', targetAudience: ['all'],
-        tags: ['laptop', 'electronics'], location: { type: 'Point', coordinates: [77.20, 28.61] },
-        validFrom: new Date(), validUntil: new Date(Date.now() + 14 * 24 * 3600000), isActive: false, // Pending moderation
+        tags: ['laptop', 'electronics'], location: { type: 'Point', coordinates: [55.30, 25.25] },
+        validFrom: new Date(), validUntil: new Date(Date.now() + 14 * 24 * 3600000), status: 'pending', isActive: false,
       },
       {
-        merchantId: merchants[4]._id, categoryId: categories[4]._id,
-        title: 'Free Oil Change w/ Service', description: 'Keep your car running smooth.',
-        images: ['/images/merchant-owner.png'], originalPrice: 80, discountedPrice: 0, discountPercentage: 100,
+        merchantId: merchants[4]._id, categoryId: categories[5]._id,
+        title: 'Free Oil Change w/ Service', description: 'Keep your car running smooth with our premium oil change service.',
+        images: ['https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=800&q=80'], 
+        originalPrice: 80, discountedPrice: 0, discountPercentage: 100,
         commissionPercentage: 5, eventType: 'holiday', dealType: 'flat', targetAudience: ['all'],
-        tags: ['auto', 'maintenance'], location: { type: 'Point', coordinates: [80.27, 13.08] },
-        validFrom: new Date(), validUntil: new Date(Date.now() + 10 * 24 * 3600000), isActive: true,
+        tags: ['auto', 'maintenance'], location: { type: 'Point', coordinates: [55.40, 25.30] },
+        validFrom: new Date(), validUntil: new Date(Date.now() + 10 * 24 * 3600000), isActive: true, status: 'active',
       }
     ];
 
     // Add 8 more random-ish deals
     for (let i = 0; i < 8; i++) {
+        const catIdx = Math.floor(Math.random() * categories.length);
         sampleDeals.push({
             merchantId: merchants[Math.floor(Math.random() * merchants.length)]._id,
-            categoryId: categories[Math.floor(Math.random() * categories.length)]._id,
-            title: `Dynamic Deal #${i + 1}`,
-            description: 'A great value deal for our platform members.',
-            images: ['/images/dashboard.png'],
+            categoryId: categories[catIdx]._id,
+            title: `Exclusive ${categories[catIdx].name} Offer #${i + 1}`,
+            description: 'A great value deal for our platform members. Limited time only.',
+            images: [`https://images.unsplash.com/photo-${1500000000000 + i}?auto=format&fit=crop&w=800&q=80`],
             originalPrice: 100 + (i * 10),
             discountedPrice: 50 + (i * 5),
             discountPercentage: 50,
@@ -145,16 +163,66 @@ async function seed() {
             eventType: 'general',
             dealType: 'percentage',
             targetAudience: ['all'],
-            tags: ['deal', 'promo'],
-            location: { type: 'Point', coordinates: [72.87, 19.07] },
+            tags: ['deal', 'promo', categories[catIdx].slug],
+            location: { type: 'Point', coordinates: [55.27, 25.20] },
             validFrom: new Date(),
             validUntil: new Date(Date.now() + 30 * 24 * 3600000),
             isActive: i % 3 !== 0,
+            status: i % 3 !== 0 ? 'active' : 'pending',
         });
     }
 
     await Deal.insertMany(sampleDeals);
-    console.log('Created Extensive Sample Deals');
+    const seededSandboxDeals = await SandboxDeal.insertMany(sampleDeals);
+    console.log('Created Extensive Sample Deals (Production & Sandbox)');
+
+    // 6. Create some dummy Transactions & Commissions for Analytics
+    const partner = partners[0];
+    const merchant = merchants[0];
+    const sandboxDeal = seededSandboxDeals[0];
+
+    const dummyTransactions = [];
+    const dummyCommissions = [];
+    const dummyEvents = [];
+
+    // Create 10 transactions over the last 5 days
+    for (let i = 0; i < 10; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - Math.floor(i / 2));
+        
+        const trans = {
+            dealId: sandboxDeal._id,
+            partnerId: partner._id,
+            amount: 150,
+            status: 'completed',
+            createdAt: date
+        };
+        dummyTransactions.push(trans);
+
+        const comm = {
+            transactionId: new mongoose.Types.ObjectId(), // placeholder
+            partnerId: partner._id,
+            merchantId: merchant._id,
+            amount: 30, // 20% of 150
+            partnerShare: 22.5, // 75% of 30
+            platformShare: 7.5, // 25% of 30
+            status: 'pending',
+            createdAt: date
+        };
+        dummyCommissions.push(comm);
+
+        // Add some events
+        dummyEvents.push(
+            { type: 'impression', dealId: sandboxDeal._id, merchantId: merchant._id, partnerId: partner._id, createdAt: date },
+            { type: 'click', dealId: sandboxDeal._id, merchantId: merchant._id, partnerId: partner._id, createdAt: date },
+            { type: 'conversion', dealId: sandboxDeal._id, merchantId: merchant._id, partnerId: partner._id, createdAt: date }
+        );
+    }
+
+    await SandboxTransaction.insertMany(dummyTransactions);
+    await SandboxCommission.insertMany(dummyCommissions);
+    await AnalyticsEvent.insertMany(dummyEvents);
+    console.log('Created Sandbox Demo Analytics Data');
 
     console.log('Seeding completed successfully!');
     process.exit(0);

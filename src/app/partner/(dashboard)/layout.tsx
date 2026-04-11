@@ -7,6 +7,7 @@ const partnerMenuItems: SidebarItem[] = [
   { name: 'Dashboard', icon: 'dashboard', href: '/partner/dashboard' },
   { name: 'Analytics', icon: 'analytics', href: '/partner/analytics' },
   { name: 'Financials', icon: 'wallet', href: '/partner/wallet' },
+  { name: 'Transactions', icon: 'dashboard', href: '/partner/transactions' },
   { name: 'API Keys', icon: 'keys', href: '/partner/api-keys' },
   { name: 'Webhooks', icon: 'notifications', href: '/partner/webhooks' },
   { name: 'Settings', icon: 'settings', href: '/partner/settings' },

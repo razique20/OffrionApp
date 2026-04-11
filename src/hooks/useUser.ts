@@ -7,7 +7,8 @@ export interface UserInfo {
   _id: string;
   name: string;
   email: string;
-  role: 'admin' | 'merchant' | 'partner';
+  role: 'admin' | 'merchant' | 'partner' | 'super_admin';
+  roles: ('admin' | 'merchant' | 'partner' | 'super_admin')[];
   avatar?: string;
 }
 

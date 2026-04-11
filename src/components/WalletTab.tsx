@@ -17,16 +17,13 @@ import {
   ExternalLink,
   Wallet
 } from 'lucide-react';
-import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer 
-} from 'recharts';
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
+import dynamic from 'next/dynamic';
+
+const AnalyticsChart = dynamic(() => import('@/components/partner/AnalyticsChart'), { 
+  ssr: false,
+  loading: () => <div className="w-full h-[300px] bg-secondary/20 animate-pulse rounded-2xl" />
+});
 
 export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
   const [stats, setStats] = useState<any>(null);
@@ -35,16 +32,18 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
   const [error, setError] = useState<string | null>(null);
   const [isPayoutModalOpen, setIsPayoutModalOpen] = useState(false);
   const [isBankModalOpen, setIsBankModalOpen] = useState(false);
+  const [isTopupModalOpen, setIsTopupModalOpen] = useState(false);
   const [payoutAmount, setPayoutAmount] = useState('');
+  const [topupAmount, setTopupAmount] = useState('100');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bankStatus, setBankStatus] = useState<any>(null);
 
   useEffect(() => {
     fetchData();
-    // Check for query params from Stripe redirect
     const params = new URLSearchParams(window.location.search);
     if (params.get('success') === 'true') {
-      console.log('Stripe onboarding successful');
+      // Clear URL params
+      window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
 
@@ -118,6 +117,26 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
     }
   };
 
+  const handleTopup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const res = await fetch('/api/wallet/topup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: Number(topupAmount) }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Top-up initialization failed');
+      
+      // Redirect to Stripe Checkout
+      window.location.href = json.url;
+    } catch (err: any) {
+      alert(err.message);
+      setIsSubmitting(false);
+    }
+  };
+
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
       <Loader2 className="w-10 h-10 text-primary animate-spin" />
@@ -149,12 +168,28 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
           >
             <CreditCard className="w-4 h-4" /> {bankStatus?.isConnected ? 'Manage Bank' : 'Link Bank Account'}
           </button>
-          <button 
-            onClick={() => setIsPayoutModalOpen(true)}
-            className="px-6 py-2.5 bg-premium-gradient text-white text-xs font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
-          >
-            <Download className="w-4 h-4" /> Withdraw Funds
-          </button>
+          {role === 'merchant' && stats?.billingPreference === 'prepaid' ? (
+            <button 
+              onClick={() => setIsTopupModalOpen(true)}
+              className="px-6 py-2.5 bg-premium-gradient text-white text-xs font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" /> Add Credits
+            </button>
+          ) : role === 'merchant' && stats?.billingPreference === 'card_on_file' ? (
+            <button 
+              onClick={handleOnboard}
+              className="px-6 py-2.5 bg-premium-gradient text-white text-xs font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+            >
+              <CreditCard className="w-4 h-4" /> Manage Card
+            </button>
+          ) : (
+            <button 
+              onClick={() => setIsPayoutModalOpen(true)}
+              className="px-6 py-2.5 bg-premium-gradient text-white text-xs font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" /> Withdraw Funds
+            </button>
+          )}
         </div>
       </div>
 
@@ -202,27 +237,27 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
         ) : (
           <>
             <StatCard 
-              title="Offrion Revenue" 
-              value={formatCurrency(stats.totalSales)} 
-              label="Gross sales volume"
-              icon={DollarSign}
-              color="text-primary"
-              bg="bg-primary/10"
+              title={stats?.billingPreference === 'prepaid' ? "Wallet Balance" : "Outstanding Debt"} 
+              value={formatCurrency(stats?.billingPreference === 'prepaid' ? stats.balance : stats.pendingCommission)} 
+              label={stats?.billingPreference === 'prepaid' ? "Available for redemptions" : "To be charged from card"}
+              icon={stats?.billingPreference === 'prepaid' ? Wallet : AlertCircle}
+              color={stats?.billingPreference === 'prepaid' ? "text-primary" : "text-amber-500"}
+              bg={stats?.billingPreference === 'prepaid' ? "bg-primary/10" : "bg-amber-500/10"}
               primary
             />
             <StatCard 
-              title="Commission Paid" 
-              value={formatCurrency(stats.paidCommission)} 
-              label="To partner network"
-              icon={History}
+              title="Total Sales" 
+              value={formatCurrency(stats.totalSales)} 
+              label="Gross volume"
+              icon={DollarSign}
               color="text-blue-500"
               bg="bg-blue-500/10"
             />
             <StatCard 
-              title="Net Contribution" 
-              value={formatCurrency(stats.netRevenue)} 
-              label="Growth after fees"
-              icon={TrendingUp}
+              title="Commission Paid" 
+              value={formatCurrency(stats.paidCommission)} 
+              label="All-time fees"
+              icon={History}
               color="text-emerald-500"
               bg="bg-emerald-500/10"
             />
@@ -237,35 +272,12 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
               <h3 className="text-xl font-bold">Revenue Growth</h3>
               <div className="p-2 bg-secondary rounded-lg"><TrendingUp className="w-5 h-5 text-primary" /></div>
            </div>
-           <div className="h-[300px] w-full">
-               <ResponsiveContainer width="100%" height="100%">
-                 <AreaChart data={stats?.chartData || []}>
-                   <defs>
-                     <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                       <stop offset="5%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0.1}/>
-                       <stop offset="95%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0}/>
-                     </linearGradient>
-                   </defs>
-                   <XAxis dataKey="name" hide />
-                   <Tooltip 
-                     contentStyle={{ 
-                       backgroundColor: 'oklch(1 0 0)', 
-                       borderRadius: '16px', 
-                       border: '1px solid oklch(0.922 0 0)',
-                       boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' 
-                     }} 
-                     labelFormatter={(label) => formatDate(label)}
-                   />
-                   <Area 
-                     type="monotone" 
-                     dataKey="val" 
-                     stroke="oklch(0.646 0.222 41.116)" 
-                     strokeWidth={4}
-                     fillOpacity={1} 
-                     fill="url(#colorRev)" 
-                   />
-                 </AreaChart>
-               </ResponsiveContainer>
+           <div className="w-full">
+               <AnalyticsChart 
+                  data={stats?.chartData || []} 
+                  series={[{ key: 'val', name: 'Revenue', color: 'oklch(0.646 0.222 41.116)', gradient: true }]}
+                  height={300}
+               />
            </div>
         </div>
 
@@ -353,6 +365,60 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
             </table>
          </div>
       </div>
+
+      {/* Top-up Modal */}
+      {isTopupModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsTopupModalOpen(false)} />
+           <div className="bg-card w-full max-w-sm border border-border rounded-[40px] shadow-2xl relative z-10 p-8 space-y-6 animate-in zoom-in-95 duration-200">
+              <h3 className="text-2xl font-bold flex items-center gap-3">
+                 <div className="w-10 h-10 bg-premium-gradient rounded-xl flex items-center justify-center"><Plus className="text-white w-5 h-5" /></div>
+                 Add Credits
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">Choose an amount to add to your pre-paid wallet balance. Funds are available instantly after payment.</p>
+              
+              <div className="grid grid-cols-3 gap-2">
+                 {['50', '100', '500'].map(amt => (
+                    <button 
+                       key={amt}
+                       onClick={() => setTopupAmount(amt)}
+                       className={cn(
+                          "py-2 text-xs font-bold rounded-lg border transition-all",
+                          topupAmount === amt ? "bg-primary/10 border-primary text-primary" : "bg-secondary/50 border-border text-muted-foreground hover:bg-secondary"
+                       )}
+                    >
+                       ${amt}
+                    </button>
+                 ))}
+              </div>
+
+              <form onSubmit={handleTopup} className="space-y-4">
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Custom Amount (USD)</label>
+                    <div className="relative">
+                       <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                       <input 
+                         type="number" 
+                         required
+                         min="10"
+                         placeholder="100.00"
+                         className="w-full bg-secondary/50 border border-border rounded-xl pl-10 pr-4 py-3 text-lg font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                         value={topupAmount}
+                         onChange={(e) => setTopupAmount(e.target.value)}
+                       />
+                    </div>
+                 </div>
+                 <button 
+                   disabled={isSubmitting || !topupAmount || Number(topupAmount) < 10}
+                   className="w-full py-4 bg-premium-gradient text-white font-bold rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                 >
+                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <><CreditCard className="w-4 h-4" /> Secure Checkout</>}
+                 </button>
+                 <p className="text-[10px] text-center text-muted-foreground">Secure payment via Stripe</p>
+              </form>
+           </div>
+        </div>
+      )}
 
       {/* Payout Modal */}
       {isPayoutModalOpen && (

@@ -567,9 +567,9 @@ export default function AdminDashboard() {
                     <tr key={item._id} className="border-b border-border/50 group hover:bg-secondary/10 transition-colors relative hover:z-40">
                       <td className="px-4 py-5 font-bold text-xs flex flex-col gap-1">
                         {activeTab === 'deals' ? item.title : item.name}
-                        {activeTab === 'deals' && (
-                          <span className="text-[9px] font-mono font-normal text-muted-foreground uppercase opacity-70">ID: {item._id}</span>
-                        )}
+                        <span className="text-[9px] font-mono font-normal text-muted-foreground uppercase opacity-70">
+                          {activeTab === 'deals' ? 'ID' : activeTab === 'merchants' ? 'Merchant ID' : 'Partner ID'}: {item._id}
+                        </span>
                       </td>
                       <td className="px-4 py-5 text-xs text-muted-foreground">
                         {activeTab === 'deals' ? (item.merchantId?.name || 'N/A') : item.email}

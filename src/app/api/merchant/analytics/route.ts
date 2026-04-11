@@ -4,6 +4,7 @@ import AnalyticsEvent from '@/models/AnalyticsEvent';
 import Transaction from '@/models/Transaction';
 import Commission from '@/models/Commission';
 import Deal from '@/models/Deal';
+import MerchantProfile from '@/models/MerchantProfile';
 import mongoose from 'mongoose';
 
 export async function GET(req: Request) {
@@ -16,10 +17,21 @@ export async function GET(req: Request) {
     }
 
     const merchantId = new mongoose.Types.ObjectId(userId);
+    const { searchParams } = new URL(req.url);
+    const environment = searchParams.get('environment') || 'production';
+    const isSandbox = environment === 'sandbox';
+
+    // Import sandbox models dynamically if needed, or use them if already imported
+    // For now, let's assume they are imported. I'll add imports at the top.
+    const TransactionModel = isSandbox ? (await import('@/models/SandboxTransaction')).default : Transaction;
+    const CommissionModel = isSandbox ? (await import('@/models/SandboxCommission')).default : Commission;
+    const DealModel = isSandbox ? (await import('@/models/SandboxDeal')).default : Deal;
 
     // 1. Aggregate Analytics Events (Impressions, Clicks, Conversions)
+    // Note: AnalyticsEvent could be env-agnostic or we could add an env field. 
+    // For now, we'll keep it as is, but filter by merchantId.
     const eventsAggregation = await AnalyticsEvent.aggregate([
-      { $match: { merchantId } },
+      { $match: { merchantId, environment } },
       {
         $group: {
           _id: '$type',
@@ -41,23 +53,20 @@ export async function GET(req: Request) {
     });
 
     // 2. Aggregate Revenue and Commission
-    const commissionAggregation = await Commission.aggregate([
+    const commissionAggregation = await CommissionModel.aggregate([
       { $match: { merchantId } },
       {
         $group: {
           _id: null,
-          totalRevenue: { $sum: '$amount' }, // This is total commission amount actually
-          // But merchant revenue is transaction amount - commission?
-          // Let's get transaction amount sum
+          totalRevenue: { $sum: '$amount' },
         },
       },
     ]);
 
-    const transactionAggregation = await Transaction.aggregate([
-        // We need to join with Deals to filter by merchantId
+    const transactionAggregation = await TransactionModel.aggregate([
         {
             $lookup: {
-                from: 'deals',
+                from: isSandbox ? 'sandboxdeals' : 'deals',
                 localField: 'dealId',
                 foreignField: '_id',
                 as: 'deal'
@@ -79,7 +88,7 @@ export async function GET(req: Request) {
 
     // 3. Top Deals
     const topDeals = await AnalyticsEvent.aggregate([
-      { $match: { merchantId, type: 'conversion' } },
+      { $match: { merchantId, type: 'conversion', environment } },
       {
         $group: {
           _id: '$dealId',
@@ -90,7 +99,7 @@ export async function GET(req: Request) {
       { $limit: 5 },
       {
         $lookup: {
-          from: 'deals',
+          from: isSandbox ? 'sandboxdeals' : 'deals',
           localField: '_id',
           foreignField: '_id',
           as: 'dealInfo',
@@ -111,10 +120,10 @@ export async function GET(req: Request) {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const dailyRevenueAggregation = await Transaction.aggregate([
+    const dailyRevenueAggregation = await TransactionModel.aggregate([
       {
         $lookup: {
-          from: 'deals',
+          from: isSandbox ? 'sandboxdeals' : 'deals',
           localField: 'dealId',
           foreignField: '_id',
           as: 'deal'
@@ -144,10 +153,15 @@ export async function GET(req: Request) {
         }
     });
 
+    // 5. Merchant Verification Status
+    const profile = await MerchantProfile.findOne({ userId });
+    const verificationStatus = profile?.status || 'pending';
+
     return NextResponse.json({
       stats,
       topDeals,
       dailyRevenue,
+      verificationStatus,
     });
 
   } catch (error: any) {

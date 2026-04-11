@@ -31,31 +31,28 @@ export async function POST(req: Request) {
       userId: user._id.toString(),
       email: user.email,
       role: user.role,
+      roles: JSON.parse(JSON.stringify(user.roles && user.roles.length > 0 ? user.roles : [user.role])),
     });
 
-    const response = NextResponse.json({ 
+    return NextResponse.json(JSON.parse(JSON.stringify({ 
       message: 'Login successful',
       token,
       user: {
-        id: user._id,
+        id: user._id.toString(),
         name: user.name,
         email: user.email,
         role: user.role,
+        roles: user.roles && user.roles.length > 0 ? user.roles : [user.role],
       }
-    }, { status: 200 });
-
-    // Set HTTP-only cookie for middleware and server components
-    response.cookies.set('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24, // 24 hours
-      path: '/',
+    })), { 
+      status: 200,
+      headers: {
+        'Set-Cookie': `token=${token}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24}; SameSite=Lax${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`
+      }
     });
 
-    return response;
-
   } catch (error: any) {
+    console.error('LOGIN_API_ERROR:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues }, { status: 400 });
     }

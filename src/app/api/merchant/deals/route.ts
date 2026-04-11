@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
+import MerchantProfile from '@/models/MerchantProfile';
 import { z } from 'zod';
 import mongoose from 'mongoose';
 
@@ -47,15 +48,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Check Merchant Verification Status
+    const profile = await MerchantProfile.findOne({ userId });
+    const isVerified = profile?.status === 'verified';
+
     const validatedData = dealSchema.parse(body);
 
     const deal = await Deal.create({
       ...validatedData,
       merchantId: new mongoose.Types.ObjectId(userId),
       categoryId: new mongoose.Types.ObjectId(validatedData.categoryId),
+      status: isVerified ? 'active' : 'pending',
+      isActive: isVerified, // Only activate automatically if verified
     });
 
-    return NextResponse.json({ message: 'Deal created successfully', deal }, { status: 201 });
+    return NextResponse.json({ 
+      message: isVerified 
+        ? 'Deal created successfully' 
+        : 'Deal submitted for moderation. It will be live once your account is verified.', 
+      deal 
+    }, { status: 201 });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues }, { status: 400 });

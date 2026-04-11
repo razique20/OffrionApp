@@ -1,45 +1,36 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  Cell,
-  PieChart,
-  Pie
-} from 'recharts';
+import React, { useState, useEffect, Suspense } from 'react';
 import { 
   TrendingUp, 
   Users, 
   ShoppingBag, 
   DollarSign,
   ArrowUpRight,
-  ArrowDownRight,
   Filter,
-  Download,
-  Calendar,
+  BarChart3,
   MousePointer2,
-  Eye,
-  Target,
+  Calendar,
   AlertCircle
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
+import dynamic from 'next/dynamic';
 
-export default function MerchantAnalyticsPage() {
+const AnalyticsChart = dynamic(() => import('@/components/partner/AnalyticsChart'), { 
+  ssr: false,
+  loading: () => <div className="w-full h-[400px] bg-secondary/20 animate-pulse rounded-2xl" />
+});
+
+function MerchantAnalyticsContent() {
+  const [activeEnv, setActiveEnv] = useState<'production' | 'sandbox'>('production');
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [timeRange, setTimeRange] = useState('7d');
+  const [period, setPeriod] = useState('7d');
 
   useEffect(() => {
-    fetch('/api/merchant/analytics', { credentials: 'include' })
+    setLoading(true);
+    fetch(`/api/merchant/analytics?environment=${activeEnv}&period=${period}`, { credentials: 'include' })
       .then(async (res) => {
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'Failed to fetch analytics');
@@ -49,282 +40,194 @@ export default function MerchantAnalyticsPage() {
         setData(json);
       })
       .catch(err => {
-        console.error('Analytics error:', err);
+        console.error('Analytics fetch error:', err);
         setError(err.message);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [activeEnv, period]);
 
-  if (loading) return (
+  if (loading && !data) return (
     <div className="flex items-center justify-center h-[60vh]">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-muted-foreground animate-pulse font-medium">Crunching your numbers...</p>
-      </div>
+      <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
 
   if (error) return (
     <div className="flex items-center justify-center h-[60vh]">
-      <div className="p-10 bg-destructive/5 border border-destructive/10 rounded-[40px] text-center max-w-md">
-        <AlertCircle className="w-16 h-16 text-destructive mx-auto mb-6" />
-        <h3 className="text-2xl font-bold mb-2">Analytics Offline</h3>
-        <p className="text-muted-foreground mb-8">{error}</p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="px-8 py-3 bg-premium-gradient text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-        >
-          Retry Connection
-        </button>
+      <div className="p-8 bg-destructive/10 border border-destructive/20 rounded-[32px] text-center max-w-md">
+        <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
+        <h3 className="text-xl font-bold mb-2">Analytics Error</h3>
+        <p className="text-sm text-muted-foreground mb-6">{error}</p>
+        <button onClick={() => window.location.reload()} className="px-6 py-2 bg-primary text-white rounded-xl font-bold">Retry</button>
       </div>
     </div>
   );
 
-  if (!data || !data.stats) return null;
-
-  const { stats } = data;
-  const ctr = ((stats.clicks / stats.impressions) * 100 || 0).toFixed(1);
-  const convRate = ((stats.conversions / stats.clicks) * 100 || 0).toFixed(1);
-
-  const funnelData = [
-    { name: 'Impressions', value: stats.impressions, fill: 'oklch(0.646 0.222 41.116)' },
-    { name: 'Clicks', value: stats.clicks, fill: 'oklch(0.627 0.265 303.891)' },
-    { name: 'Conversions', value: stats.conversions, fill: 'oklch(0.705 0.191 146.75)' },
+  const stats = [
+    { name: 'Impressions', value: data?.stats?.impressions || 0, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { name: 'Clicks', value: data?.stats?.clicks || 0, icon: MousePointer2, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+    { name: 'Conversions', value: data?.stats?.conversions || 0, icon: ShoppingBag, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    { name: 'Net Revenue', value: formatCurrency(data?.stats?.netRevenue || 0), icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10' },
   ];
 
   return (
-    <div className="space-y-8 pb-20">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="space-y-8 pb-10 transition-all duration-500">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Performance Analytics</h1>
-          <p className="text-muted-foreground mt-1">Deep dive into your deal engagement and ROI.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Analytics & Insights</h1>
+          <p className="text-muted-foreground flex items-center gap-2 mt-1">
+            {activeEnv === 'production' ? (
+              <>Live business performance and conversion metrics.</>
+            ) : (
+              <span className="flex items-center gap-1.5 text-amber-500 font-bold">
+                <AlertCircle className="w-4 h-4" /> Sandbox / Developer Simulation Mode
+              </span>
+            )}
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex bg-secondary p-1 rounded-xl">
-            {['7d', '30d', '90d'].map(range => (
-              <button 
-                key={range}
-                onClick={() => setTimeRange(range)}
+
+        <div className="flex flex-col gap-3 items-end">
+            <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border shrink-0">
+              <button
+                onClick={() => setActiveEnv('production')}
                 className={cn(
-                  "px-4 py-1.5 text-xs font-bold rounded-lg transition-all",
-                  timeRange === range ? "bg-background shadow-sm" : "hover:bg-background/50 text-muted-foreground"
+                  "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
+                  activeEnv === 'production' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
                 )}
               >
-                {range.toUpperCase()}
+                <div className={cn("w-1.5 h-1.5 rounded-full", activeEnv === 'production' ? "bg-primary" : "bg-muted-foreground/30")} />
+                Production
               </button>
-            ))}
-          </div>
-          <button className="p-2.5 bg-secondary hover:bg-secondary/80 rounded-xl transition-all">
-            <Download className="w-5 h-5" />
-          </button>
+              <button
+                onClick={() => setActiveEnv('sandbox')}
+                className={cn(
+                  "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
+                  activeEnv === 'sandbox' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
+                )}
+              >
+                <div className={cn("w-1.5 h-1.5 rounded-full", activeEnv === 'sandbox' ? "bg-amber-500" : "bg-muted-foreground/30")} />
+                Sandbox
+              </button>
+            </div>
+            <div className="flex items-center gap-2 bg-card border border-border p-1 rounded-xl shadow-sm">
+                {['7d', '30d', '90d'].map((p) => (
+                    <button
+                        key={p}
+                        onClick={() => setPeriod(p)}
+                        className={cn(
+                        "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                        period === p ? "bg-secondary text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        {p}
+                    </button>
+                ))}
+            </div>
         </div>
       </div>
 
-      {/* Primary Stats */}
+      {/* Main Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard 
-          title="Revenue" 
-          value={formatCurrency(stats.totalSales)} 
-          change="+14.2%" 
-          isPositive={true}
-          icon={DollarSign}
-          color="text-primary"
-          bg="bg-primary/10"
-        />
-        <StatCard 
-          title="Impressions" 
-          value={stats.impressions.toLocaleString()} 
-          change="+5.1%" 
-          isPositive={true}
-          icon={Eye}
-          color="text-blue-500"
-          bg="bg-blue-500/10"
-        />
-        <StatCard 
-          title="Click Rate (CTR)" 
-          value={`${ctr}%`} 
-          change="-0.4%" 
-          isPositive={false}
-          icon={MousePointer2}
-          color="text-purple-500"
-          bg="bg-purple-500/10"
-        />
-        <StatCard 
-          title="Conv. Rate" 
-          value={`${convRate}%`} 
-          change="+2.8%" 
-          isPositive={true}
-          icon={Target}
-          color="text-amber-500"
-          bg="bg-amber-500/10"
-        />
+        {stats.map((stat) => (
+          <div key={stat.name} className="p-6 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+            <div className="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                <stat.icon className="w-24 h-24" />
+            </div>
+            <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-6 text-sm font-bold shadow-inner", stat.bg, stat.color)}>
+              <stat.icon className="w-6 h-6" />
+            </div>
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">{stat.name}</p>
+            <h3 className="text-3xl font-black tracking-tight">{stat.value}</h3>
+          </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Revenue Chart */}
-        <div className="lg:col-span-2 p-8 bg-card border border-border rounded-[32px] shadow-sm">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-bold">Revenue Growth</h3>
-            <TrendingUp className="w-5 h-5 text-primary" />
+        {/* Growth Trends */}
+        <div className="lg:col-span-2 p-8 bg-card border border-border rounded-[40px] shadow-sm flex flex-col min-h-[500px]">
+          <div className="flex justify-between items-center mb-10">
+            <h3 className="text-xl font-bold flex items-center gap-3">
+              <TrendingUp className="w-6 h-6 text-primary" />
+              Performance Trends
+            </h3>
+            <div className="flex gap-4">
+               <div className="flex items-center gap-2">
+                 <div className="w-3 h-3 rounded-full bg-primary" />
+                 <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Revenue</span>
+               </div>
+            </div>
           </div>
-          <div className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data.dailyRevenue}>
-                <defs>
-                  <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(0.922 0 0)" />
-                <XAxis 
-                  dataKey="name" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: 'oklch(0.556 0 0)', fontSize: 12 }} 
-                  dy={10}
-                  tickFormatter={(val) => {
-                    const d = new Date(val);
-                    return d.toLocaleDateString('en-US', { weekday: 'short' });
-                  }}
-                />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: 'oklch(0.556 0 0)', fontSize: 12 }} 
-                />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'oklch(1 0 0)', 
-                    borderRadius: '16px', 
-                    border: '1px solid oklch(0.922 0 0)',
-                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' 
-                  }} 
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="revenue" 
-                  stroke="oklch(0.646 0.222 41.116)" 
-                  strokeWidth={4}
-                  fillOpacity={1} 
-                  fill="url(#colorRev)" 
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+          <div className="flex-1 w-full">
+            <AnalyticsChart 
+                data={(() => {
+                    const chartDataMap: Record<string, any> = {};
+                    const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
+                    for (let i = days - 1; i >= 0; i--) {
+                        const d = new Date();
+                        d.setDate(d.getDate() - i);
+                        const dateStr = d.toISOString().split('T')[0];
+                        chartDataMap[dateStr] = { name: dateStr, revenue: 0 };
+                    }
+                    (data?.dailyRevenue || []).forEach((item: any) => {
+                        if (chartDataMap[item.name]) chartDataMap[item.name].revenue = item.revenue;
+                    });
+                    return Object.values(chartDataMap).sort((a: any, b: any) => a.name.localeCompare(b.name));
+                })()} 
+                series={[{ key: 'revenue', name: 'Revenue', color: 'oklch(0.646 0.222 41.116)', gradient: true }]}
+                height={350}
+            />
           </div>
         </div>
 
-        {/* Conversion Funnel */}
-        <div className="p-8 bg-card border border-border rounded-[32px] shadow-sm flex flex-col">
-          <h3 className="text-xl font-bold mb-8">Conversion Funnel</h3>
-          <div className="flex-1 flex flex-col justify-center gap-8">
-            {funnelData.map((item, i) => (
-              <div key={item.name} className="relative">
-                <div className="flex justify-between items-end mb-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{item.name}</span>
-                  <span className="text-lg font-bold">{item.value.toLocaleString()}</span>
-                </div>
-                <div className="h-3 w-full bg-secondary rounded-full overflow-hidden">
-                  <div 
-                    className="h-full transition-all duration-1000 ease-out"
-                    style={{ 
-                      width: `${(item.value / funnelData[0].value) * 100}%`,
-                      backgroundColor: item.fill 
-                    }}
-                  />
-                </div>
-                {i < funnelData.length - 1 && (
-                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-muted-foreground/50">
-                    ▼ {((funnelData[i+1].value / item.value) * 100 || 0).toFixed(1)}% drop-off
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="mt-8 p-4 bg-secondary/50 rounded-2xl border border-border text-center">
-             <p className="text-xs text-muted-foreground">Overall conversion efficiency</p>
-             <p className="text-2xl font-black mt-1 text-primary">{((stats.conversions / stats.impressions) * 100 || 0).toFixed(2)}%</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Top Deals Table */}
-      <div className="p-8 bg-card border border-border rounded-[32px] shadow-sm overflow-hidden">
-        <h3 className="text-xl font-bold mb-8">Deal Performance Ranking</h3>
-        <div className="overflow-x-auto -mx-8 px-8">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-border text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                <th className="pb-4">Deal Details</th>
-                <th className="pb-4">Conversions</th>
-                <th className="pb-4">Revenue</th>
-                <th className="pb-4">ROI</th>
-                <th className="pb-4 text-right">Status</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm">
-              {data.topDeals.map((item: any) => (
-                <tr key={item._id} className="border-b border-border/50 group hover:bg-secondary/20 transition-colors">
-                  <td className="py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-secondary overflow-hidden border border-border">
-                        {item.dealInfo?.images?.[0] ? (
-                          <img src={item.dealInfo.images[0]} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="w-6 h-6 text-muted-foreground/30" /></div>
-                        )}
-                      </div>
-                      <div>
-                        <h4 className="font-bold truncate max-w-[200px]">{item.dealInfo?.title || 'Unknown Deal'}</h4>
-                        <p className="text-xs text-muted-foreground">ID: {item._id.slice(-8).toUpperCase()}</p>
-                      </div>
+        {/* Conversion Metrics */}
+        <div className="p-8 bg-card border border-border rounded-[40px] shadow-sm flex flex-col">
+            <h3 className="text-xl font-bold mb-10 flex items-center gap-2">
+                <BarChart3 className="w-6 h-6 text-primary" />
+                Funnel Overview
+            </h3>
+            
+            <div className="space-y-10 flex-1 flex flex-col justify-center">
+                {[
+                    { label: 'Impressions', value: data?.stats?.impressions || 0, color: 'bg-blue-500' },
+                    { label: 'Clicks', value: data?.stats?.clicks || 0, color: 'bg-purple-500' },
+                    { label: 'Conversions', value: data?.stats?.conversions || 0, color: 'bg-emerald-500' },
+                ].map((item, i, arr) => (
+                    <div key={item.label} className="relative">
+                        <div className="flex justify-between items-end mb-3">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{item.label}</span>
+                            <span className="text-lg font-black">{item.value.toLocaleString()}</span>
+                        </div>
+                        <div className="h-4 bg-secondary/50 rounded-full overflow-hidden p-0.5 border border-border/50">
+                            <div 
+                                className={cn("h-full rounded-full transition-all duration-1000 ease-out shadow-sm", item.color)}
+                                style={{ width: arr[0].value > 0 ? `${(item.value / arr[0].value) * 100}%` : '0%' }}
+                            />
+                        </div>
                     </div>
-                  </td>
-                  <td className="py-5">
-                    <span className="font-bold">{item.conversions}</span>
-                    <p className="text-[10px] text-muted-foreground">units sold</p>
-                  </td>
-                  <td className="py-5 font-bold">
-                    {formatCurrency(item.conversions * (item.dealInfo?.discountedPrice || 0))}
-                  </td>
-                  <td className="py-5 text-primary font-bold">
-                    +{(Math.random() * 20 + 5).toFixed(1)}x
-                  </td>
-                  <td className="py-5 text-right">
-                    <span className="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase">Active</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                ))}
+            </div>
+
+            <div className="mt-12 p-6 bg-premium-gradient text-white rounded-[32px] shadow-lg shadow-primary/20">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/70 mb-1">Conversion Efficiency</p>
+                <div className="flex items-baseline gap-3">
+                    <span className="text-4xl font-black">
+                        {data?.stats?.clicks > 0 ? ((data.stats.conversions / data.stats.clicks) * 100).toFixed(1) : '0.0'}%
+                    </span>
+                    <span className="text-xs font-medium text-white/80">Click-to-Convert</span>
+                </div>
+            </div>
         </div>
       </div>
     </div>
   );
 }
 
-function StatCard({ title, value, change, isPositive, icon: Icon, color, bg }: any) {
+export default function MerchantAnalytics() {
   return (
-    <div className="p-6 bg-card border border-border rounded-[28px] shadow-sm hover:shadow-md transition-all group">
-      <div className="flex justify-between items-start mb-4">
-        <div className={cn("p-3 rounded-xl transition-transform group-hover:scale-110", bg)}>
-          <Icon className={cn("w-6 h-6", color)} />
-        </div>
-        <div className={cn(
-          "flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-full",
-          isPositive ? "text-primary bg-primary/10" : "text-destructive bg-destructive/10"
-        )}>
-          {isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-          {change}
-        </div>
-      </div>
-      <div>
-        <p className="text-sm font-bold text-muted-foreground">{title}</p>
-        <h3 className="text-3xl font-black tracking-tighter mt-1">{value}</h3>
-      </div>
-    </div>
+    <Suspense fallback={<div className="flex items-center justify-center h-[60vh]"><div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
+      <MerchantAnalyticsContent />
+    </Suspense>
   );
 }

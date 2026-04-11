@@ -83,6 +83,12 @@ export default function PublicDocsPage() {
                   label="Tracking" 
                 />
                 <DocNavItem 
+                  active={activeTab === 'webhooks'} 
+                  onClick={() => setActiveTab('webhooks')}
+                  icon={Globe}
+                  label="Webhooks" 
+                />
+                <DocNavItem 
                   active={activeTab === 'sdk-widget'} 
                   onClick={() => setActiveTab('sdk-widget')}
                   icon={Code2}
@@ -163,6 +169,26 @@ x-api-key: YOUR_API_KEY`}
                   <div>
                     <EndpointLabel method="GET" path="/deals" />
                     <p className="text-sm text-muted-foreground mb-4">List all active deals. Support multiple filters (see Advanced Filtering).</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                      <div>
+                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Query Parameters</h5>
+                        <ul className="text-xs space-y-1 text-muted-foreground">
+                          <li><code className="text-primary">minDiscount</code> (number) - Filter by discount %</li>
+                          <li><code className="text-primary">activeNow</code> (boolean) - Currently valid deals</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
+                        <CodeBlock 
+                          language="json"
+                          code={`{
+  "page": 1,
+  "total": 120,
+  "deals": [{ "_id": "...", "title": "Buy 1 Get 1", "discountPercentage": 50 }]
+}`}
+                        />
+                      </div>
+                    </div>
                     <CodeBlock 
                       code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals"`}
                     />
@@ -171,6 +197,22 @@ x-api-key: YOUR_API_KEY`}
                   <div>
                     <EndpointLabel method="GET" path="/deals/[id]" />
                     <p className="text-sm text-muted-foreground mb-4">Retrieve details of a single deal by its ID.</p>
+                    <div className="mb-4">
+                      <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
+                      <CodeBlock 
+                        language="json"
+                        code={`{
+  "deal": {
+    "_id": "654a123f8b...",
+    "title": "Summer Flash Sale",
+    "description": "50% off all beverages",
+    "discountPercentage": 50,
+    "originalPrice": 20,
+    "discountedPrice": 10
+  }
+}`}
+                      />
+                    </div>
                     <CodeBlock 
                       code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals/654a123f8b..."`}
                     />
@@ -203,6 +245,18 @@ x-api-key: YOUR_API_KEY`}
               <DocSection title="Categories">
                 <p className="text-muted-foreground mb-8">Fetch all available deal categories to build your navigation or filters.</p>
                 <EndpointLabel method="GET" path="/categories" />
+                <div className="mb-8">
+                  <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
+                  <CodeBlock 
+                    language="json"
+                    code={`{
+  "count": 12,
+  "categories": [
+    { "_id": "...", "name": "Food & Drink", "slug": "food-drink" }
+  ]
+}`}
+                  />
+                </div>
                 <CodeBlock 
                   code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/categories"`}
                 />
@@ -216,7 +270,27 @@ x-api-key: YOUR_API_KEY`}
                 <div className="space-y-12">
                   <div>
                     <EndpointLabel method="POST" path="/partners/track-click" />
-                    <p className="text-sm text-muted-foreground mb-4">Track a user clicking on a deal.</p>
+                    <p className="text-sm text-muted-foreground mb-4">Track a user clicking on a deal. Returns a redemption code for the user.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                      <div>
+                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Payload (JSON)</h5>
+                        <ul className="text-xs space-y-1 text-muted-foreground">
+                          <li><code className="text-primary">dealId</code> (string, required)</li>
+                          <li><code className="text-primary">metadata</code> (object, optional)</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
+                        <CodeBlock 
+                          language="json"
+                          code={`{
+  "message": "Click tracked successfully",
+  "redeemCode": "AXTRE9",
+  "transactionId": "654b..."
+}`}
+                        />
+                      </div>
+                    </div>
                     <CodeBlock 
                       language="json"
                       code={`{
@@ -229,6 +303,27 @@ x-api-key: YOUR_API_KEY`}
                   <div>
                     <EndpointLabel method="POST" path="/partners/track-conversion" />
                     <p className="text-sm text-muted-foreground mb-4">Record a successful purchase or conversion.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                      <div>
+                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Payload (JSON)</h5>
+                        <ul className="text-xs space-y-1 text-muted-foreground">
+                          <li><code className="text-primary">dealId</code> (string, required)</li>
+                          <li><code className="text-primary">amount</code> (number, required)</li>
+                          <li><code className="text-primary">currency</code> (string)</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
+                        <CodeBlock 
+                          language="json"
+                          code={`{
+  "message": "Conversion tracked",
+  "transactionId": "654b...",
+  "status": "pending"
+}`}
+                        />
+                      </div>
+                    </div>
                     <CodeBlock 
                       language="json"
                       code={`{
@@ -237,6 +332,58 @@ x-api-key: YOUR_API_KEY`}
   "currency": "USD"
 }`}
                     />
+                  </div>
+                </div>
+              </DocSection>
+            )}
+
+            {activeTab === 'webhooks' && (
+              <DocSection title="Webhooks">
+                <p className="text-muted-foreground mb-8">Receive real-time notifications for automated deal redemption and commission updates.</p>
+                
+                <div className="space-y-12">
+                  <div>
+                    <h3 className="text-xl font-bold mb-4">1. Request Payload (Sent by Offrion)</h3>
+                    <p className="text-sm text-muted-foreground mb-4">All webhooks are sent as POST requests with a JSON body to your configured URL.</p>
+                    <CodeBlock 
+                      language="json"
+                      code={`{
+  "event": "deal.redeemed",
+  "timestamp": "2026-04-11T08:11:42.027Z",
+  "environment": "sandbox",
+  "data": {
+    "transactionId": "69da02275802637608455a50",
+    "dealId": "69da01fead9d9b4f5c0222e8",
+    "dealTitle": "Burj View Coffee & Pastry",
+    "amount": 30,
+    "partnerShare": 2.1,
+    "redeemedAt": "2026-04-11T08:11:41.515Z"
+  }
+}`}
+                    />
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-bold mb-4">2. Your Response (Expected)</h3>
+                    <p className="text-sm text-muted-foreground mb-4">Your server must respond with a 200 OK status to acknowledge receipt.</p>
+                    <CodeBlock 
+                      language="http"
+                      code={`HTTP/1.1 200 OK
+Content-Type: application/json
+
+{ "received": true }`}
+                    />
+                  </div>
+
+                  <div className="p-6 bg-secondary/50 rounded-2xl border border-border">
+                    <h3 className="text-lg font-bold mb-2">Security & Verification</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Each request includes an <code>X-Offrion-Signature</code> header. This is an HMAC-SHA256 hash of the raw request body using your Webhook Secret.
+                    </p>
+                    <div className="flex items-center gap-2 text-xs font-bold text-primary">
+                      <Shield className="w-4 h-4" />
+                      Verification is mandatory for production environments.
+                    </div>
                   </div>
                 </div>
               </DocSection>
@@ -304,6 +451,9 @@ function EndpointLabel({ method, path }: { method: string, path: string }) {
 }
 
 function DocNavItem({ active, onClick, icon: Icon, label }: any) {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
   return (
     <button 
       onClick={onClick}
@@ -314,7 +464,7 @@ function DocNavItem({ active, onClick, icon: Icon, label }: any) {
           : "text-muted-foreground hover:bg-secondary hover:text-foreground"
       )}
     >
-      <Icon className="w-4 h-4" />
+      {mounted ? <Icon className="w-4 h-4" /> : <div className="w-4 h-4" />}
       {label}
     </button>
   );

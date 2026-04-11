@@ -9,6 +9,7 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   role: UserRole;
+  roles: UserRole[];
   isActive: boolean;
   permissions: string[];
   stripeConnectId?: string;
@@ -26,6 +27,10 @@ const UserSchema: Schema = new Schema(
       enum: Object.values(UserRole),
       default: UserRole.PARTNER,
     },
+    roles: [{
+      type: String,
+      enum: Object.values(UserRole),
+    }],
     isActive: { type: Boolean, default: true },
     permissions: [{ type: String }],
     stripeConnectId: { type: String, unique: true, sparse: true },

@@ -3,7 +3,9 @@ import dbConnect from '@/lib/mongodb';
 import Commission from '@/models/Commission';
 import Transaction from '@/models/Transaction';
 import Payout from '@/models/Payout';
+import MerchantProfile from '@/models/MerchantProfile';
 import mongoose from 'mongoose';
+import { MerchantBillingPreference } from '@/lib/constants';
 
 export async function GET(req: Request) {
   try {
@@ -172,12 +174,16 @@ export async function GET(req: Request) {
           chartData.push({ name: dateStr, val: match ? match.val : 0 });
       }
 
+      const profile = await MerchantProfile.findOne({ userId: userObjectId });
+      
       return NextResponse.json({
         totalSales: sales,
         netRevenue: sales - comm.totalCommission,
         totalCommission: comm.totalCommission,
         pendingCommission: comm.pendingCommission,
         paidCommission: comm.paidCommission,
+        billingPreference: profile?.billingPreference || MerchantBillingPreference.PREPAID,
+        balance: profile?.balance || 0,
         chartData
       });
     }

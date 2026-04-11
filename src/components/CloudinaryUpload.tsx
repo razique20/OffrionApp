@@ -9,13 +9,15 @@ interface CloudinaryUploadProps {
   maxFiles?: number;
   existingImages?: string[];
   onRemoveImage?: (url: string) => void;
+  disabled?: boolean;
 }
 
 export function CloudinaryUpload({ 
   onUploadSuccess, 
   maxFiles = 3, 
   existingImages = [],
-  onRemoveImage
+  onRemoveImage,
+  disabled = false
 }: CloudinaryUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,10 +80,10 @@ export function CloudinaryUpload({
     <div className="space-y-4">
       {/* Upload Dropzone / Button */}
       <div 
-        onClick={() => !isUploading && fileInputRef.current?.click()}
+        onClick={() => !isUploading && !disabled && fileInputRef.current?.click()}
         className={cn(
           "w-full border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all",
-          isUploading ? "border-muted bg-secondary/50 cursor-not-allowed" : "border-border hover:border-primary/50 hover:bg-secondary/50",
+          (isUploading || disabled) ? "border-muted bg-secondary/50 cursor-not-allowed" : "border-border hover:border-primary/50 hover:bg-secondary/50",
           existingImages.length >= maxFiles && "opacity-50 pointer-events-none"
         )}
       >

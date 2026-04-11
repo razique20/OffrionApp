@@ -18,7 +18,10 @@ export async function GET(req: Request) {
     }
     const apiKey = await APIKey.findOne({ key: apiKeyHeader, isActive: true });
     if (!apiKey) {
-      return NextResponse.json({ error: 'Invalid or inactive API Key' }, { status: 401 });
+      return NextResponse.json({ 
+        error: 'Invalid or inactive API Key',
+        documentationUrl: '/docs/errors/403'
+      }, { status: 403 });
     }
 
     // Determine environment

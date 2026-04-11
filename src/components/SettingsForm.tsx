@@ -13,13 +13,18 @@ import {
   AlertCircle,
   Lock,
   CreditCard,
-  Check
+  Check,
+  Wallet
 } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 type TabType = 'personal_info' | 'security' | 'notifications' | 'billing';
 
 export default function SettingsForm() {
+  const pathname = usePathname();
+  const currentContextRole = pathname.startsWith('/merchant') ? 'merchant' : pathname.startsWith('/partner') ? 'partner' : '';
+  
   const [activeTab, setActiveTab] = useState<TabType>('personal_info');
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -31,6 +36,8 @@ export default function SettingsForm() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    businessName: '',
+    billingPreference: 'prepaid' as 'prepaid' | 'card_on_file',
   });
 
   // Password Data
@@ -68,16 +75,32 @@ export default function SettingsForm() {
   }, []);
 
   useEffect(() => {
-    Promise.all([
+    const requests = [
       fetch('/api/auth/me', { credentials: 'include' }).then(res => res.json()),
       fetch('/api/auth/profile/billing', { credentials: 'include' }).then(res => res.json())
-    ])
-    .then(([userData, billingData]) => {
+    ];
+
+    if (currentContextRole === 'merchant') {
+      requests.push(fetch('/api/merchant/profile', { credentials: 'include' }).then(res => res.json()));
+    }
+
+    Promise.all(requests)
+    .then(([userData, billingData, merchantData]) => {
       setUser(userData);
-      setFormData({
+      const baseData = {
         name: userData.name || '',
         email: userData.email || '',
-      });
+        businessName: '',
+        billingPreference: 'prepaid' as 'prepaid' | 'card_on_file',
+      };
+
+      if (merchantData && !merchantData.error) {
+        baseData.businessName = merchantData.businessName || '';
+        baseData.billingPreference = merchantData.billingPreference || 'prepaid';
+      }
+
+      setFormData(baseData);
+      
       if (billingData && billingData.subscription) {
         setSubscription(billingData.subscription);
       }
@@ -105,6 +128,25 @@ export default function SettingsForm() {
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || 'Failed to update profile');
+
+      if (currentContextRole === 'merchant') {
+        const profileRes = await fetch('/api/merchant/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            businessName: formData.businessName,
+            billingPreference: formData.billingPreference,
+            contactEmail: formData.email,
+            contactPhone: user?.phone || 'N/A', // Assuming phone exists or using fallback
+            address: user?.address || 'N/A',
+          }),
+        });
+        if (!profileRes.ok) {
+           const profileData = await profileRes.json();
+           throw new Error(profileData.error || 'Failed to update merchant profile');
+        }
+      }
 
       setUser(data.user);
       triggerSuccess();
@@ -282,7 +324,66 @@ export default function SettingsForm() {
                           />
                         </div>
                     </div>
+
+                    {currentContextRole === 'merchant' && (
+                      <div className="space-y-2">
+                          <label className="text-sm font-semibold ml-1">Business Name</label>
+                          <input 
+                            type="text" required
+                            className="w-full bg-secondary/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                            value={formData.businessName}
+                            onChange={(e) => setFormData({...formData, businessName: e.target.value})}
+                          />
+                      </div>
+                    )}
                   </div>
+
+                  {currentContextRole === 'merchant' && (
+                    <div className="pt-8 border-t border-border space-y-6">
+                       <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Billing Revenue Model</h4>
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <button
+                            type="button"
+                            onClick={() => setFormData({...formData, billingPreference: 'prepaid'})}
+                            className={cn(
+                              "p-6 rounded-2xl border text-left transition-all relative overflow-hidden",
+                              formData.billingPreference === 'prepaid' 
+                                ? "border-primary bg-primary/5 ring-2 ring-primary/20" 
+                                : "border-border bg-secondary/20 hover:bg-secondary/40"
+                            )}
+                          >
+                             <div className="flex justify-between items-start mb-4">
+                                <div className={cn("p-2 rounded-lg", formData.billingPreference === 'prepaid' ? "bg-primary text-white" : "bg-card text-muted-foreground")}>
+                                   <Wallet className="w-5 h-5" />
+                                </div>
+                                {formData.billingPreference === 'prepaid' && <CheckCircle2 className="w-5 h-5 text-primary" />}
+                             </div>
+                             <h5 className="font-bold">Opt 1: Pre-paid Wallet</h5>
+                             <p className="text-xs text-muted-foreground mt-1">Add funds in advance. Commissions are deducted per redemption.</p>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setFormData({...formData, billingPreference: 'card_on_file'})}
+                            className={cn(
+                              "p-6 rounded-2xl border text-left transition-all relative overflow-hidden",
+                              formData.billingPreference === 'card_on_file' 
+                                ? "border-primary bg-primary/5 ring-2 ring-primary/20" 
+                                : "border-border bg-secondary/20 hover:bg-secondary/40"
+                            )}
+                          >
+                             <div className="flex justify-between items-start mb-4">
+                                <div className={cn("p-2 rounded-lg", formData.billingPreference === 'card_on_file' ? "bg-primary text-white" : "bg-card text-muted-foreground")}>
+                                   <CreditCard className="w-5 h-5" />
+                                </div>
+                                {formData.billingPreference === 'card_on_file' && <CheckCircle2 className="w-5 h-5 text-primary" />}
+                             </div>
+                             <h5 className="font-bold">Opt 2: Card on File</h5>
+                             <p className="text-xs text-muted-foreground mt-1">Directly charge your attached payment method for commissions.</p>
+                          </button>
+                       </div>
+                    </div>
+                  )}
 
                   <div className="pt-6 flex justify-end">
                       <button 
@@ -300,9 +401,9 @@ export default function SettingsForm() {
                 <div className="p-6 bg-secondary/30 border border-border rounded-2xl flex flex-col justify-center items-center text-center">
                     <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground mb-4">Membership Role</p>
                     <div className="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center font-bold text-2xl mb-3 shadow-inner">
-                        {user?.role?.[0]?.toUpperCase()}
+                        {(currentContextRole || user?.role)?.[0]?.toUpperCase()}
                     </div>
-                    <span className="font-bold capitalize text-lg text-gradient">{user?.role}</span>
+                    <span className="font-bold capitalize text-lg text-gradient">{currentContextRole || user?.role}</span>
                 </div>
                 <div className="p-6 bg-secondary/30 border border-border rounded-2xl flex flex-col justify-center items-center text-center">
                     <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground mb-4">Member Since</p>
@@ -493,31 +594,32 @@ export default function SettingsForm() {
                              name: 'Starter', 
                              price: '$0',
                              desc: 'For individuals starting out.',
-                             features: user?.role === 'partner' 
+                             features: (currentContextRole || user?.role || 'partner') === 'partner' 
                                ? ['10k API Requests', 'Standard Analytics'] 
                                : ['Basic Deals', 'Email Support']
                            },
                            { 
                              id: 'pro', 
                              name: 'Professional', 
-                             price: user?.role === 'partner' ? '$29' : '$49',
+                             price: '$49',
                              desc: 'Scale your operations.',
                              popular: true,
-                             features: user?.role === 'partner'
+                             features: (currentContextRole || user?.role || 'partner') === 'partner'
                                ? ['100k API Requests', 'Full Analytics', 'API Key Mgmt']
                                : ['Unlimited Deals', 'Advanced Analytics', 'Custom Branding']
                            },
                            { 
                              id: 'enterprise', 
                              name: 'Enterprise', 
-                             price: 'Custom',
+                             price: (currentContextRole || user?.role || 'partner') === 'partner' ? '$399' : '$199',
                              desc: 'Dedicated infrastructure.',
-                             features: user?.role === 'partner'
+                             features: (currentContextRole || user?.role || 'partner') === 'partner'
                                ? ['Unlimited API', 'Webhooks', 'Dedicated Node']
                                : ['White-labeling', 'Dedicated Mgr', 'Custom Integrations']
                            }
                          ].map((plan) => {
-                           const rolePrefix = user?.role === 'partner' ? 'partner_' : 'merchant_';
+                           const contextRole = currentContextRole || user?.role || 'partner';
+                           const rolePrefix = contextRole === 'partner' ? 'partner_' : 'merchant_';
                            const fullId = `${rolePrefix}${plan.id}`;
                            const isCurrent = subscription.plan === plan.id || subscription.plan === fullId;
                            const isPaid = !subscription.plan.includes('free');
@@ -566,15 +668,15 @@ export default function SettingsForm() {
                            )
                          })}
                       </div>
-                   </div>
-                </div>
+                    </div>
 
                 <div className="p-8 bg-secondary/10 border-t border-border mt-4">
                     <p className="text-[10px] text-muted-foreground text-center uppercase tracking-widest font-black">Powered by Stripe & Offrion Billing Hub</p>
                 </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
         </main>
       </div>

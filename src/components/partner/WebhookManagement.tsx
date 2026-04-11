@@ -13,7 +13,8 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
-  Activity
+  Activity,
+  Info
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -147,6 +148,44 @@ export function WebhookManagement({ environment }: WebhookManagementProps) {
                   <Zap className="w-3.5 h-3.5 text-primary" />
                   <span>Instant delivery (sub-100ms)</span>
                </div>
+               <div className="flex items-center gap-2.5 text-[10px] text-muted-foreground">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>Expects HTTP 200 OK response</span>
+               </div>
+            </div>
+
+            <div className="mt-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
+              <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Info className="w-3 h-3" />
+                Endpoint Requirements
+              </h4>
+              <p className="text-[10px] text-muted-foreground leading-relaxed mb-4">
+                Your server must respond with a <span className="text-foreground font-bold">200 OK</span> within 5 seconds.
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2 text-primary/80">1. Request Payload (Sent by Offrion)</h4>
+                  <pre className="text-[9px] font-mono p-3 bg-slate-950 text-slate-300 rounded-xl overflow-x-auto">
+{`{
+  "event": "deal.redeemed",
+  "timestamp": "2026-04-11T...",
+  "environment": "${environment}",
+  "data": { "transactionId": "...", ... }
+}`}
+                  </pre>
+                </div>
+
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2 text-emerald-500/80">2. Your Response (Expected)</h4>
+                  <pre className="text-[9px] font-mono p-3 bg-slate-950 text-slate-300 rounded-xl overflow-x-auto">
+{`HTTP/1.1 200 OK
+Content-Type: application/json
+
+{ "received": true }`}
+                  </pre>
+                </div>
+              </div>
             </div>
           </div>
         </div>

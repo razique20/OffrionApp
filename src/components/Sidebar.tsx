@@ -25,7 +25,8 @@ import {
   ScanLine,
   Wallet,
   Moon,
-  Sun
+  Sun,
+  Briefcase
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/Logo';
@@ -122,7 +123,8 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
     );
   }
 
-  const isSuperAdmin = me?.role === 'super_admin';
+  const userRoles = me?.roles || (me?.role ? [me?.role] : []);
+  const isSuperAdmin = userRoles.includes('super_admin');
 
   const renderItems = (itemsToRender: SidebarItem[], label?: string) => (
     <nav className={cn("space-y-1 w-full", isMinimized ? "px-2" : "px-4")}>
@@ -200,6 +202,26 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
                 <ShieldCheck className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
                 {!isMinimized && <span className="font-bold">Admin Governance</span>}
              </Link>
+          </nav>
+        )}
+
+        {/* Multi-Role Switcher */}
+        {userRoles.includes('merchant') && userRoles.includes('partner') && (
+          <nav className={cn("space-y-1 w-full mt-8", isMinimized ? "px-2" : "px-4")}>
+            {!isMinimized && (
+              <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">
+                Switch Role
+              </p>
+            )}
+            <Link 
+              href={role === 'merchant' ? '/partner/dashboard' : '/merchant/dashboard'} 
+              className={cn(
+                "flex items-center rounded-lg text-sm font-medium transition-all border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10",
+                isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2"
+              )}>
+                {role === 'merchant' ? <Handshake className="w-5 h-5" /> : <Briefcase className="w-5 h-5" />}
+                {!isMinimized && <span>Switch to {role === 'merchant' ? 'Partner' : 'Merchant'}</span>}
+            </Link>
           </nav>
         )}
       </div>

@@ -3,6 +3,7 @@ import dbConnect from '@/lib/mongodb';
 import Transaction from '@/models/Transaction';
 import Deal from '@/models/Deal';
 import Commission from '@/models/Commission';
+import AnalyticsEvent from '@/models/AnalyticsEvent';
 import mongoose from 'mongoose';
 import { z } from 'zod';
 import { dispatchWebhook } from '@/lib/webhooks';
@@ -65,6 +66,16 @@ export async function POST(req: Request) {
     transaction.status = 'completed';
     transaction.redeemedAt = new Date();
     await transaction.save();
+
+    // --- Log Conversion Analytics Event ---
+    await AnalyticsEvent.create({
+      type: 'conversion',
+      dealId: deal._id,
+      partnerId: new mongoose.Types.ObjectId(transaction.partnerId.toString()),
+      merchantId: deal.merchantId,
+      environment: transaction.environment || 'production',
+      metadata: { transactionId: transaction._id },
+    });
 
     // --- Automated Commission Engine ---
     const commissionRate = deal.commissionPercentage / 100;

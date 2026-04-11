@@ -28,35 +28,34 @@ import { Logo } from '@/components/Logo';
 import { ApiUseCases } from '@/components/ApiUseCases';
 import { InteractivePricing } from '@/components/InteractivePricing';
 import { FomoTicker } from '@/components/FomoTicker';
-import { LastCallDeals } from '@/components/LastCallDeals';
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background selection:bg-primary/20">
       <Navbar />
-      <FomoTicker />
 
       <main>
         {/* Hero Section */}
-        <section className="relative pt-32 pb-16 overflow-hidden">
+        <section className="relative h-screen overflow-hidden flex items-center justify-center">
           {/* Background Blurs */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10 pointer-events-none opacity-20">
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full blur-[120px] -translate-y-1/2"></div>
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-400 to-primary rounded-full blur-[120px] translate-y-1/2"></div>
           </div>
 
-          <div className="max-w-5xl mx-auto px-6 flex flex-col items-center gap-12">
+          <div className="max-w-5xl w-full mx-auto px-6 z-10 relative">
             
-            {/* Text Content */}
-            <div className="flex flex-col items-center text-center mt-8 lg:mt-0">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
-                <Zap className="w-3 h-3 fill-primary" />
-                Next-Gen Deals Platform
-              </div>
-              
-              <h1 className="text-5xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1] text-foreground">
+            {/* Minimalist Hero Content */}
+            <div className="flex flex-col items-center justify-center text-center w-full">
+              <h1 className="text-5xl lg:text-7xl font-bold tracking-tight mb-4 leading-[1.1] text-foreground">
                 The Scalable <br className="hidden lg:block"/> <span className="text-gradient">Deals Architecture</span> <br className="hidden lg:block"/> for Modern Platforms.
               </h1>
+
+              <div className="flex items-center justify-center gap-4 mb-8">
+                <div className="h-px w-12 bg-border"></div>
+                <span className="text-xs font-mono uppercase tracking-widest font-bold text-gradient">Engineered by Aethyl</span>
+                <div className="h-px w-12 bg-border"></div>
+              </div>
               
               <p className="text-lg lg:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl">
                 Connect merchants with partners through a high-performance API. Publish deals in minutes, distribute via thousands of apps, and track everything in real-time.
@@ -66,77 +65,6 @@ export default function LandingPage() {
                 <HeroButtons />
               </div>
             </div>
-
-            {/* Hero Visual Right (Now Centered Bottom) */}
-            <div className="relative w-full flex justify-center items-center z-10 mt-8 mb-12">
-              <div className="relative w-full max-w-4xl h-auto">
-                <div className="relative bg-card border border-border rounded-[3rem] w-full flex flex-col items-center justify-center p-8 lg:p-16 transition-all duration-700 hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/5">
-                   
-                   <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-primary/30 transition-colors">
-                       <div className="p-2 bg-primary/20 text-primary rounded-lg shrink-0">
-                         <Zap className="w-5 h-5" />
-                       </div>
-                       <div>
-                         <div className="text-sm font-bold text-foreground">Latency</div>
-                         <div className="text-xs text-muted-foreground">&lt;80ms Edge Network</div>
-                       </div>
-                     </div>
-                     
-                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-blue-500/30 transition-colors">
-                       <div className="p-2 bg-blue-500/20 text-blue-500 rounded-lg shrink-0">
-                         <Globe className="w-5 h-5" />
-                       </div>
-                       <div>
-                         <div className="text-sm font-bold text-foreground">Geo-Spatial</div>
-                         <div className="text-xs text-muted-foreground">Hyper-local Targeting</div>
-                       </div>
-                     </div>
-
-                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-emerald-500/30 transition-colors">
-                       <div className="p-2 bg-emerald-500/20 text-emerald-500 rounded-lg shrink-0">
-                         <Shield className="w-5 h-5" />
-                       </div>
-                       <div>
-                         <div className="text-sm font-bold text-foreground">Security</div>
-                         <div className="text-xs text-muted-foreground">Fraud-proof Scanning</div>
-                       </div>
-                     </div>
-
-                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-orange-500/30 transition-colors">
-                       <div className="p-2 bg-orange-500/20 text-orange-500 rounded-lg shrink-0">
-                         <BarChart3 className="w-5 h-5" />
-                       </div>
-                       <div>
-                         <div className="text-sm font-bold text-foreground">Analytics</div>
-                         <div className="text-xs text-muted-foreground">Real-time Performance</div>
-                       </div>
-                     </div>
-
-                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-purple-500/30 transition-colors">
-                       <div className="p-2 bg-purple-500/20 text-purple-500 rounded-lg shrink-0">
-                         <ShoppingBag className="w-5 h-5" />
-                       </div>
-                       <div>
-                         <div className="text-sm font-bold text-foreground">Terminal</div>
-                         <div className="text-xs text-muted-foreground">Instant Redemption</div>
-                       </div>
-                     </div>
-
-                     <div className="flex items-center gap-3 bg-secondary/50 dark:bg-white/5 p-4 rounded-2xl border border-border hover:border-primary/30 transition-colors">
-                       <div className="p-2 bg-primary/20 text-primary rounded-lg shrink-0">
-                         <Users className="w-5 h-5" />
-                       </div>
-                       <div>
-                         <div className="text-sm font-bold text-foreground">Partners</div>
-                         <div className="text-xs text-muted-foreground">Automated Splits</div>
-                       </div>
-                     </div>
-                   </div>
-                </div>
-              </div>
-            </div>
-
           </div>
         </section>
 
@@ -154,10 +82,25 @@ export default function LandingPage() {
 
             {/* Feature 1: Merchant */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
-              <div className="order-2 lg:order-1 rounded-[2rem] shadow-2xl relative">
+              <div className="order-2 lg:order-1 rounded-[2rem] shadow-2xl relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-transparent blur-3xl -z-10 rounded-full"></div>
-                <div className="aspect-video w-full rounded-[2rem] overflow-hidden relative">
-                   <img src="/images/qr-vision.png" alt="Merchant Portal" className="w-full h-full object-cover" />
+                <div className="aspect-video w-full bg-secondary/30 border border-border rounded-[2rem] overflow-hidden relative flex items-center justify-center p-8 group-hover:border-blue-500/30 transition-colors">
+                   <div className="absolute top-4 left-4 flex gap-2">
+                     <div className="w-3 h-3 rounded-full bg-destructive/50"></div>
+                     <div className="w-3 h-3 rounded-full bg-amber-500/50"></div>
+                     <div className="w-3 h-3 rounded-full bg-emerald-500/50"></div>
+                   </div>
+                   <div className="relative">
+                     <div className="w-32 h-32 bg-blue-500/10 rounded-3xl flex items-center justify-center rotate-3 group-hover:rotate-6 transition-transform relative z-10 border border-blue-500/20 shadow-xl shadow-blue-500/10">
+                       <ShoppingBag className="w-16 h-16 text-blue-500" />
+                     </div>
+                     <div className="w-24 h-24 bg-card rounded-2xl flex items-center justify-center -rotate-6 absolute -bottom-6 -left-6 z-0 border border-border shadow-lg hidden md:flex">
+                        <BarChart3 className="w-10 h-10 text-muted-foreground opacity-50" />
+                     </div>
+                     <div className="w-20 h-20 bg-card rounded-2xl flex items-center justify-center rotate-12 absolute -top-4 -right-8 z-0 border border-border shadow-lg hidden md:flex">
+                        <Shield className="w-8 h-8 text-muted-foreground opacity-50" />
+                     </div>
+                   </div>
                 </div>
               </div>
               <div className="order-1 lg:order-2">
@@ -196,10 +139,25 @@ export default function LandingPage() {
                   ))}
                 </ul>
               </div>
-              <div className="rounded-[2rem] shadow-2xl relative">
+              <div className="rounded-[2rem] shadow-2xl relative group">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent blur-3xl -z-10 rounded-full"></div>
-                <div className="aspect-video w-full rounded-[2rem] overflow-hidden relative">
-                   <img src="/images/api-network.png" alt="API Network" className="w-full h-full object-cover" />
+                <div className="aspect-video w-full bg-secondary/30 border border-border rounded-[2rem] overflow-hidden relative flex items-center justify-center p-8 group-hover:border-primary/30 transition-colors">
+                   <div className="absolute top-4 left-4 flex gap-2">
+                     <div className="w-3 h-3 rounded-full bg-destructive/50"></div>
+                     <div className="w-3 h-3 rounded-full bg-amber-500/50"></div>
+                     <div className="w-3 h-3 rounded-full bg-emerald-500/50"></div>
+                   </div>
+                   <div className="relative">
+                     <div className="w-32 h-32 bg-primary/10 rounded-3xl flex items-center justify-center -rotate-3 group-hover:-rotate-6 transition-transform relative z-10 border border-primary/20 shadow-xl shadow-primary/10">
+                       <Code className="w-16 h-16 text-primary" />
+                     </div>
+                     <div className="w-24 h-24 bg-card rounded-2xl flex items-center justify-center rotate-6 absolute -bottom-6 right-[-20px] z-0 border border-border shadow-lg hidden md:flex">
+                        <Globe className="w-10 h-10 text-muted-foreground opacity-50" />
+                     </div>
+                     <div className="w-20 h-20 bg-card rounded-2xl flex items-center justify-center -rotate-12 absolute -top-4 -left-8 z-0 border border-border shadow-lg hidden md:flex">
+                        <Layers className="w-8 h-8 text-muted-foreground opacity-50" />
+                     </div>
+                   </div>
                 </div>
               </div>
             </div>
@@ -222,7 +180,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <LastCallDeals />
+
 
 
 
@@ -268,6 +226,11 @@ export default function LandingPage() {
         {/* CTA Section */}
         <section className="py-24 px-6 flex justify-center">
           <div className="max-w-5xl w-full bg-premium-gradient rounded-[40px] p-12 md:p-20 text-center text-white relative overflow-hidden shadow-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 border border-white/20 rounded-full mb-6 relative z-10">
+              <Zap className="w-3 h-3 text-white" />
+              <span className="text-xs font-bold uppercase tracking-wider text-white">Next-Gen Deals Platform</span>
+            </div>
+            
             <h2 className="text-4xl md:text-5xl font-bold mb-6 relative z-10">Start distributing rewards.</h2>
             <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto relative z-10 font-mono italic">
               "Scale from 1 to 1M deals without touching the infrastructure."

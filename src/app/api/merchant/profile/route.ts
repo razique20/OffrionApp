@@ -11,6 +11,7 @@ const profileSchema = z.object({
   contactEmail: z.string().email(),
   contactPhone: z.string(),
   address: z.string(),
+  billingPreference: z.enum(['prepaid', 'card_on_file']).optional(),
 });
 
 export async function GET(req: Request) {
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
     const profile = await MerchantProfile.findOneAndUpdate(
       { userId },
       { ...validatedData, userId },
-      { new: true, upsert: true }
+      { new: true, upsert: true, runValidators: true }
     );
 
     return NextResponse.json({ message: 'Profile updated successfully', profile });

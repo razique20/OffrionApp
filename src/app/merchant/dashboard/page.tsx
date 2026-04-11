@@ -3,19 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  AreaChart,
-  Area
-} from 'recharts';
-import { 
   TrendingUp, 
   Users, 
   ShoppingBag, 
@@ -23,19 +10,29 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   MoreVertical,
-  Tag
+  Tag,
+  AlertCircle, 
+  Flame, 
+  Clock, 
+  ArrowRight 
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
-import { AlertCircle, Flame, Clock, ArrowRight } from 'lucide-react';
-import { FomoTicker } from '@/components/FomoTicker';
+import dynamic from 'next/dynamic';
+
+const AnalyticsChart = dynamic(() => import('@/components/partner/AnalyticsChart'), { 
+  ssr: false,
+  loading: () => <div className="w-full h-[300px] bg-secondary/20 animate-pulse rounded-2xl" />
+});
 
 export default function MerchantDashboard() {
+  const [activeTab, setActiveTab] = useState<'production' | 'sandbox'>('production');
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/merchant/analytics', { credentials: 'include' })
+    setLoading(true);
+    fetch(`/api/merchant/analytics?environment=${activeTab}`, { credentials: 'include' })
       .then(async (res) => {
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'Failed to fetch analytics');
@@ -51,7 +48,7 @@ export default function MerchantDashboard() {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [activeTab]);
 
   if (loading) return <div className="flex items-center justify-center h-[50vh]">
     <div className="flex flex-col items-center gap-4">
@@ -87,8 +84,69 @@ export default function MerchantDashboard() {
 
   return (
     <div className="space-y-8">
-      <FomoTicker />
       
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Merchant Dashboard</h1>
+          <p className="text-muted-foreground italic flex items-center gap-1.5">
+            {activeTab === 'production' ? 'Live Production Environment' : (
+              <span className="flex items-center gap-1.5 text-amber-500 font-bold not-italic">
+                <AlertCircle className="w-3.5 h-3.5" /> Dev-Simulation Mode
+              </span>
+            )}
+          </p>
+        </div>
+        
+        <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border shrink-0 shadow-inner">
+          <button
+            onClick={() => setActiveTab('production')}
+            className={cn(
+              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
+              activeTab === 'production' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
+            )}
+          >
+            <div className={cn("w-1.5 h-1.5 rounded-full", activeTab === 'production' ? "bg-primary" : "bg-muted-foreground/30")} />
+            Production
+          </button>
+          <button
+            onClick={() => setActiveTab('sandbox')}
+            className={cn(
+              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
+              activeTab === 'sandbox' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
+            )}
+          >
+            <div className={cn("w-1.5 h-1.5 rounded-full", activeTab === 'sandbox' ? "bg-amber-500" : "bg-muted-foreground/30")} />
+            Sandbox
+          </button>
+        </div>
+      </div>
+      
+      {/* Verification Action Banner */}
+      {data.verificationStatus !== 'verified' && (
+        <div className="p-8 bg-premium-gradient text-white rounded-[32px] shadow-xl shadow-primary/20 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative group">
+          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+            <AlertCircle className="w-32 h-32" />
+          </div>
+          <div className="relative z-10 flex items-center gap-6">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/30">
+              <AlertCircle className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold">Verification Required</h3>
+              <p className="text-white/80 text-sm max-w-md mt-1">
+                Complete your business verification to start publishing live deals and clearing commissions to your bank account.
+              </p>
+            </div>
+          </div>
+          <Link 
+            href="/merchant/kyc" 
+            className="relative z-10 px-8 py-3 bg-white text-primary font-bold rounded-2xl hover:bg-white/90 transition-all shadow-lg active:scale-[0.98]"
+          >
+            Start Verification
+          </Link>
+        </div>
+      )}
+
       {/* Expiry Alerts Section */}
       {data.topDeals.some((d: any) => d.dealInfo?.validUntil && new Date(d.dealInfo.validUntil).getTime() < Date.now() + 72 * 60 * 60 * 1000) && (
         <div className="p-6 bg-red-500/5 border border-red-500/20 rounded-2xl flex items-center justify-between">
@@ -132,46 +190,25 @@ export default function MerchantDashboard() {
           </div>
           <div className="flex-1 w-full flex flex-col items-center justify-center">
             {data.dailyRevenue && data.dailyRevenue.length > 0 ? (
-              <div className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={data.dailyRevenue}>
-                    <defs>
-                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0.1}/>
-                        <stop offset="95%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(0.922 0 0)" />
-                    <XAxis 
-                      dataKey="name" 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{ fill: 'oklch(0.556 0 0)', fontSize: 12 }} 
-                      dy={10}
-                    />
-                    <YAxis 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{ fill: 'oklch(0.556 0 0)', fontSize: 12 }} 
-                    />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'oklch(1 0 0)', 
-                        borderRadius: '12px', 
-                        border: '1px solid oklch(0.922 0 0)',
-                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' 
-                      }} 
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="revenue" 
-                      stroke="oklch(0.646 0.222 41.116)" 
-                      strokeWidth={3}
-                      fillOpacity={1} 
-                      fill="url(#colorRevenue)" 
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+              <div className="w-full mt-4">
+                <AnalyticsChart 
+                  data={(() => {
+                    const chartDataMap: Record<string, any> = {};
+                    // Dashboard is always 7 days
+                    for (let i = 6; i >= 0; i--) {
+                      const d = new Date();
+                      d.setDate(d.getDate() - i);
+                      const dateStr = d.toISOString().split('T')[0];
+                      chartDataMap[dateStr] = { name: dateStr, revenue: 0 };
+                    }
+                    (data.dailyRevenue || []).forEach((item: any) => {
+                      if (chartDataMap[item.name]) chartDataMap[item.name].revenue = item.revenue;
+                    });
+                    return Object.values(chartDataMap).sort((a: any, b: any) => a.name.localeCompare(b.name));
+                  })()} 
+                  series={[{ key: 'revenue', name: 'Revenue', color: 'oklch(0.646 0.222 41.116)', gradient: true }]}
+                  height={300}
+                />
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center">

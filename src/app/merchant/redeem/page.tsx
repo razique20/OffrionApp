@@ -15,6 +15,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
+import Link from 'next/link';
 
 type RedeemState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -39,10 +40,16 @@ export default function MerchantRedeemPage() {
   const [state, setState] = useState<RedeemState>('idle');
   const [result, setResult] = useState<RedeemResult | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [kycStatus, setKycStatus] = useState<string>('loading');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Focus first input on mount
   useEffect(() => {
+    fetch('/api/merchant/kyc')
+      .then(res => res.json())
+      .then(data => setKycStatus(data.status || 'none'))
+      .catch(() => setKycStatus('none'));
+
     inputRefs.current[0]?.focus();
   }, []);
 
@@ -124,6 +131,41 @@ export default function MerchantRedeemPage() {
 
   const codeChars = code.padEnd(6, ' ').split('');
 
+  if (kycStatus === 'loading') {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (kycStatus !== 'verified') {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-120px)] p-6">
+        <div className="w-full max-w-lg bg-card border border-border rounded-[40px] p-12 text-center space-y-8 shadow-sm">
+          <div className="w-24 h-24 bg-primary/10 text-primary rounded-[32px] flex items-center justify-center mx-auto shadow-lg shadow-primary/5">
+            <ScanLine className="w-12 h-12" />
+          </div>
+          <div className="space-y-3">
+            <h2 className="text-3xl font-bold tracking-tight">Access Restricted</h2>
+            <p className="text-muted-foreground">
+              You must complete your KYC verification to scan vouchers and redeem deals.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3">
+             <button 
+                onClick={() => window.location.href = '/merchant/kyc'}
+                className="w-full py-4 bg-premium-gradient text-white font-bold rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+             >
+                Verify Business Account
+             </button>
+             <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground opacity-50">Secure Merchant Terminal</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-120px)]">
       <div className="w-full max-w-lg">
@@ -140,6 +182,13 @@ export default function MerchantRedeemPage() {
               <p className="text-sm text-muted-foreground max-w-xs mx-auto">
                 Enter the 6-digit redemption code from the customer&apos;s deal voucher.
               </p>
+              <Link 
+                href="/merchant/redeem/sandbox"
+                className="inline-flex items-center gap-2 text-xs font-bold text-primary px-3 py-1.5 bg-primary/10 rounded-full hover:bg-primary/20 transition-colors mt-2"
+              >
+                <Sparkles className="w-3 h-3" />
+                Open Sandbox Terminal Simulator
+              </Link>
             </div>
 
             {/* Code Input Grid */}

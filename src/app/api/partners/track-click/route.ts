@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
+import SandboxDeal from '@/models/SandboxDeal';
 import Transaction from '@/models/Transaction';
+import SandboxTransaction from '@/models/SandboxTransaction';
 import APIKey from '@/models/APIKey';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import { z } from 'zod';
@@ -29,13 +31,18 @@ export async function POST(req: Request) {
     }
 
     const { dealId, metadata } = trackSchema.parse(body);
+    const isSandbox = apiKey.environment === 'sandbox';
 
-    const deal = await Deal.findById(dealId);
+    // 1. Fetch Deal (from correct collection)
+    const deal = isSandbox 
+      ? await SandboxDeal.findById(dealId)
+      : await Deal.findById(dealId);
+
     if (!deal) {
       return NextResponse.json({ error: 'Deal not found' }, { status: 404 });
     }
 
-    // 1. Log Click Event
+    // 2. Log Click Event
     await AnalyticsEvent.create({
       type: 'click',
       dealId: new mongoose.Types.ObjectId(dealId),
@@ -45,23 +52,36 @@ export async function POST(req: Request) {
       metadata,
     });
 
-    // 2. Generate a Transaction (Pending)
-    // This simulates the user "claiming" the deal in the partner app
+    // 3. Generate a Transaction (from correct collection)
     const qrCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     
-    const transaction = await Transaction.create({
-      partnerId: apiKey.partnerId,
-      dealId: deal._id,
-      amount: deal.discountedPrice,
-      status: 'pending',
-      qrCode,
-      environment: apiKey.environment,
-    });
+    let transaction;
+    if (isSandbox) {
+      transaction = await SandboxTransaction.create({
+        partnerId: apiKey.partnerId,
+        merchantId: deal.merchantId,
+        dealId: deal._id,
+        amount: deal.discountedPrice,
+        status: 'pending',
+        qrCode,
+      });
+    } else {
+      transaction = await Transaction.create({
+        partnerId: apiKey.partnerId,
+        merchantId: deal.merchantId,
+        dealId: deal._id,
+        amount: deal.discountedPrice,
+        status: 'pending',
+        qrCode,
+        environment: 'production',
+      });
+    }
 
     return NextResponse.json({ 
       message: 'Click tracked successfully',
       redeemCode: qrCode,
-      transactionId: transaction._id
+      transactionId: transaction._id,
+      environment: apiKey.environment
     });
 
   } catch (error: any) {

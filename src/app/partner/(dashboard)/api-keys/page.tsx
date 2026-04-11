@@ -191,12 +191,26 @@ export default function ApiKeysPage() {
           )}
 
           {filteredKeys.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-20 bg-card border border-border border-dashed rounded-[40px] text-center">
-              <div className="w-20 h-20 bg-secondary rounded-3xl flex items-center justify-center mb-6">
-                <Key className="w-10 h-10 text-muted-foreground/30" />
+            <div className="relative group/tour">
+              <div className="flex flex-col items-center justify-center p-20 bg-card border border-border border-dashed rounded-[40px] text-center">
+                <div className="w-20 h-20 bg-secondary rounded-3xl flex items-center justify-center mb-6">
+                  <Key className="w-10 h-10 text-muted-foreground/30" />
+                </div>
+                <h3 className="text-xl font-bold">No {environment === 'production' ? 'Production' : 'Sandbox'} Keys</h3>
+                <p className="text-muted-foreground mt-2 max-w-xs">Generate your first {environment} key to start your integration.</p>
               </div>
-              <h3 className="text-xl font-bold">No {environment === 'production' ? 'Production' : 'Sandbox'} Keys</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs">Generate your first {environment} key to start your integration.</p>
+              
+              {/* Quick Start Tour Overlay */}
+              <div className="absolute -top-12 -left-8 md:-left-12 p-6 bg-premium-gradient text-white rounded-[32px] shadow-2xl shadow-primary/40 max-w-[280px] animate-bounce-slow z-20 hidden group-hover/tour:block lg:block">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap className="w-4 h-4 fill-white" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Quick Start Guide</span>
+                </div>
+                <p className="text-xs font-bold leading-relaxed">
+                  To begin your integration, use the form on the left to name and generate your first {environment} API key.
+                </p>
+                <div className="absolute -bottom-2 translate-x-12 w-4 h-4 bg-primary rotate-45 shadow-xl"></div>
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

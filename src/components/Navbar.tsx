@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { 
   ArrowRight, 
   ShoppingBag, 
@@ -17,9 +18,11 @@ import { Logo } from '@/components/Logo';
 import { useUser } from '@/hooks/useUser';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
+import { UserRole } from '@/lib/constants';
 
 export const Navbar = () => {
   const { user, loading, logout } = useUser();
+  const pathname = usePathname();
   const [showDropdown, setShowDropdown] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -63,7 +66,14 @@ export const Navbar = () => {
                 </div>
                 <div className="hidden sm:block text-left">
                   <p className="text-xs font-bold leading-none">{user.name}</p>
-                  <p className="text-[10px] text-muted-foreground capitalize">{user.role}</p>
+                  <p className="text-[10px] text-muted-foreground capitalize">
+                    {pathname.startsWith('/admin') ? 'Platform Admin' : 
+                     pathname.startsWith('/merchant') ? 'Merchant' : 
+                     pathname.startsWith('/partner') ? 'Partner' : 
+                     (user.roles && user.roles.length > 1 
+                        ? user.roles.filter((r: string) => r !== 'user').join(' + ') 
+                        : user.role)}
+                  </p>
                 </div>
                 <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", showDropdown && "rotate-180")} />
               </button>
@@ -73,7 +83,10 @@ export const Navbar = () => {
                   <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)}></div>
                   <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-2xl shadow-2xl z-20 py-2 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
                     <Link 
-                      href={`/${user.role}/dashboard`}
+                      href={pathname.startsWith('/merchant') ? '/merchant/dashboard' : 
+                            pathname.startsWith('/admin') ? '/admin/dashboard' : 
+                            pathname.startsWith('/partner') ? '/partner/dashboard' : 
+                            `/${user.role}/dashboard`}
                       className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-secondary transition-colors"
                       onClick={() => setShowDropdown(false)}
                     >
@@ -81,34 +94,36 @@ export const Navbar = () => {
                       Dashboard
                     </Link>
 
-                    {/* Role Switcher Section */}
-                    <div className="border-t border-border my-1 pt-1">
-                      <p className="px-4 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Switch View</p>
-                      <Link 
-                        href="/merchant/dashboard"
-                        className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-secondary transition-colors"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        <User className="w-4 h-4 text-blue-500" />
-                        Merchant
-                      </Link>
-                      <Link 
-                        href="/partner/dashboard"
-                        className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-secondary transition-colors"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        <User className="w-4 h-4 text-purple-500" />
-                        Partner
-                      </Link>
-                      <Link 
-                        href="/admin/dashboard"
-                        className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-secondary transition-colors"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        <ShieldCheck className="w-4 h-4 text-primary" />
-                        Platform Admin
-                      </Link>
-                    </div>
+                    {(() => {
+                      const availableViews = [
+                        { role: UserRole.MERCHANT, label: 'Merchant', href: '/merchant/dashboard', color: 'text-blue-500', icon: User },
+                        { role: UserRole.PARTNER, label: 'Partner', href: '/partner/dashboard', color: 'text-purple-500', icon: User },
+                        { role: UserRole.ADMIN, label: 'Platform Admin', href: '/admin/dashboard', color: 'text-primary', icon: ShieldCheck },
+                      ].filter(view => {
+                        const userRoles = (user?.roles && user.roles.length > 0) ? user.roles : (user?.role ? [user.role] : []);
+                        if (userRoles.includes(UserRole.SUPER_ADMIN) || userRoles.includes(UserRole.ADMIN)) return true;
+                        return userRoles.includes(view.role);
+                      });
+
+                      if (availableViews.length <= 1) return null;
+
+                      return (
+                        <div className="border-t border-border my-1 pt-1">
+                          <p className="px-4 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Switch View</p>
+                          {availableViews.map((view) => (
+                            <Link 
+                              key={view.href}
+                              href={view.href}
+                              className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-secondary transition-colors"
+                              onClick={() => setShowDropdown(false)}
+                            >
+                              <view.icon className={cn("w-4 h-4", view.color)} />
+                              {view.label}
+                            </Link>
+                          ))}
+                        </div>
+                      );
+                    })()}
 
                     <div className="border-t border-border my-1"></div>
                     <button 

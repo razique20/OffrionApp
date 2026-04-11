@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Commission from '@/models/Commission';
+import SandboxCommission from '@/models/SandboxCommission';
 import mongoose from 'mongoose';
 
 export async function GET(req: Request) {
@@ -22,8 +23,9 @@ export async function GET(req: Request) {
 
     const partnerId = new mongoose.Types.ObjectId(userId);
 
-    // Build filter
-    const query: any = { partnerId, environment };
+    // Build filter — sandbox collections are already environment-scoped, no environment field
+    const query: any = { partnerId };
+    if (environment === 'production') query.environment = 'production';
     if (status) query.status = status;
     if (from || to) {
       query.createdAt = {};
@@ -31,9 +33,14 @@ export async function GET(req: Request) {
       if (to) query.createdAt.$lte = new Date(to);
     }
 
+    const commissionModel = environment === 'sandbox' ? SandboxCommission : Commission;
+    const txRef = environment === 'sandbox' ? 'SandboxTransaction' : 'Transaction';
+
     // Summary totals
-    const summary = await Commission.aggregate([
-      { $match: { partnerId } },
+    const summaryMatch: any = { partnerId };
+    if (environment === 'production') summaryMatch.environment = 'production';
+    const summary = await commissionModel.aggregate([
+      { $match: summaryMatch },
       {
         $group: {
           _id: '$status',
@@ -53,7 +60,7 @@ export async function GET(req: Request) {
 
     // Paginated records
     const [commissions, total] = await Promise.all([
-      Commission.find(query)
+      commissionModel.find(query)
         .populate({
           path: 'transactionId',
           populate: { path: 'dealId', select: 'title' },
@@ -61,7 +68,7 @@ export async function GET(req: Request) {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
-      Commission.countDocuments(query),
+      commissionModel.countDocuments(query),
     ]);
 
     return NextResponse.json({

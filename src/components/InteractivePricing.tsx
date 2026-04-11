@@ -48,10 +48,10 @@ export function InteractivePricing() {
   const activeTier = TIERS[activeTierIndex];
 
   return (
-    <div className="w-full relative max-w-5xl mx-auto mt-12 bg-card border border-slate-200 dark:border-white/10 rounded-[2.5rem] p-4 lg:p-8 flex flex-col items-center">
+    <div className="w-full relative max-w-5xl mx-auto mt-12 bg-card rounded-[2.5rem] p-4 lg:p-8 flex flex-col items-center shadow-2xl">
       
       {/* Tier Selector Toggle */}
-      <div className="inline-flex items-center p-1.5 bg-secondary/50 border border-slate-200 dark:border-white/10 rounded-2xl mb-12 w-full lg:w-auto overflow-x-auto">
+      <div className="inline-flex items-center p-1.5 bg-secondary/30 rounded-2xl mb-12 w-full lg:w-auto overflow-x-auto ring-1 ring-border/50">
         {TIERS.map((tier, idx) => {
           const isActive = idx === activeTierIndex;
           const Icon = tier.icon;
@@ -63,7 +63,7 @@ export function InteractivePricing() {
                 "flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap",
                 isActive 
                   ? "bg-background shadow-md text-foreground" 
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
               )}
             >
               <Icon className={cn("w-4 h-4", isActive ? tier.color : "opacity-50")} />
@@ -76,7 +76,7 @@ export function InteractivePricing() {
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         
         {/* Left Side: Dynamic Visualization */}
-        <div className="order-2 lg:order-1 flex flex-col items-center justify-center p-8 bg-secondary/20 rounded-[2rem] border border-slate-200 dark:border-white/5">
+        <div className="order-2 lg:order-1 flex flex-col items-center justify-center p-8 bg-secondary/20 rounded-[2rem]">
           <div className="text-center mb-8">
             <div className="text-5xl font-black mb-2 animate-in slide-in-from-bottom-4 duration-500 fade-in" key={activeTier.price}>
               {activeTier.price}
@@ -85,7 +85,7 @@ export function InteractivePricing() {
           </div>
 
           {/* Revenue Split Bar */}
-          <div className="w-full max-w-xs relative h-16 rounded-full overflow-hidden flex bg-secondary border border-slate-200 dark:border-white/10 shadow-inner">
+          <div className="w-full max-w-xs relative h-16 rounded-full overflow-hidden flex bg-secondary shadow-inner ring-1 ring-black/5 dark:ring-white/5">
             {/* User Retention */}
             <div 
               className={cn("h-full flex items-center justify-center font-bold text-white transition-all duration-700 ease-out", activeTier.bg)}
@@ -124,7 +124,7 @@ export function InteractivePricing() {
             ))}
           </ul>
           
-          <div className="mt-4 pt-8 border-t border-border">
+          <div className="mt-4 pt-8 border-t border-border/50">
             <button className={cn(
               "w-full lg:w-auto px-8 py-4 rounded-xl text-white font-bold shadow-lg transition-transform hover:scale-105 flex items-center justify-center gap-2",
               activeTier.bg,

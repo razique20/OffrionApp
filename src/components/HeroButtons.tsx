@@ -10,7 +10,7 @@ export const HeroButtons = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         <div className="w-full sm:w-48 h-14 bg-secondary animate-pulse rounded-2xl"></div>
         <div className="w-full sm:w-48 h-14 bg-secondary animate-pulse rounded-2xl"></div>
       </div>
@@ -19,7 +19,7 @@ export const HeroButtons = () => {
 
   if (user) {
     return (
-      <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         <Link 
           href={`/${user.role}/dashboard`}
           className="w-full sm:w-auto px-8 py-4 bg-premium-gradient text-white rounded-2xl text-lg font-bold shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"

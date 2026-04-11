@@ -26,7 +26,23 @@ export async function POST(req: Request) {
 
   if (event.type === 'checkout.session.completed') {
     const session: any = event.data.object;
-    const { userId, plan } = session.metadata;
+    const { userId, plan, type, amount } = session.metadata;
+
+    if (type === 'wallet_topup') {
+      if (!userId || !amount) {
+        console.error('Missing userId or amount in top-up session metadata');
+        return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
+      }
+
+      const MerchantProfile = (await import('@/models/MerchantProfile')).default;
+      await MerchantProfile.findOneAndUpdate(
+        { userId },
+        { $inc: { balance: Number(amount) } }
+      );
+
+      console.log(`Successfully topped up wallet for user ${userId} with $${amount}`);
+      return NextResponse.json({ received: true });
+    }
 
     if (!userId || !plan) {
       console.error('Missing userId or plan in session metadata');
@@ -67,6 +83,25 @@ export async function POST(req: Request) {
     );
     
     console.log(`Successfully upgraded user ${userId} to ${plan}`);
+  } else if (event.type === 'account.updated') {
+    const account: any = event.data.object;
+    const stripeConnectId = account.id;
+    const payoutsEnabled = account.payouts_enabled;
+    const detailsSubmitted = account.details_submitted;
+
+    if (payoutsEnabled && detailsSubmitted) {
+      // Find user by stripeConnectId
+      const user = await User.findOne({ stripeConnectId });
+      if (user) {
+        // Update merchant profile if it exists
+        const MerchantProfile = (await import('@/models/MerchantProfile')).default;
+        await MerchantProfile.findOneAndUpdate(
+          { userId: user._id },
+          { status: 'verified' }
+        );
+        console.log(`Merchant ${user.email} verified via Stripe Connect. Status: Payouts Enabled.`);
+      }
+    }
   }
 
   return NextResponse.json({ received: true });

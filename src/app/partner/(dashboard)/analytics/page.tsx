@@ -1,19 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell
-} from 'recharts';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { 
   TrendingUp, 
   Users, 
@@ -26,15 +14,27 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
+import dynamic from 'next/dynamic';
+
+const AnalyticsChart = dynamic(() => import('@/components/partner/AnalyticsChart'), { 
+  ssr: false,
+  loading: () => <div className="w-full h-[400px] bg-secondary/20 animate-pulse rounded-2xl" />
+});
 
 function AnalyticsContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const envParam = searchParams.get('env') === 'sandbox' ? 'sandbox' : 'production';
   
+  const [isMounted, setIsMounted] = useState(false);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('7d');
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -83,13 +83,25 @@ function AnalyticsContent() {
     { name: 'Conversions', value: data.summary.conversions, fill: 'oklch(0.646 0.222 41.116)' },
   ];
 
-  // Prepare Time Series Data (Group by date)
+  // Prepare Time Series Data with Gap Filling
   const chartDataMap: Record<string, any> = {};
+  
+  // 1. Initialize all dates in the period with zeros
+  const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
+  for (let i = 0; i < days; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    chartDataMap[dateStr] = { name: dateStr, impression: 0, click: 0, conversion: 0 };
+  }
+
+  // 2. Overlay actual data
   data.timeSeries.forEach((item: any) => {
     const date = item._id.date;
     if (!chartDataMap[date]) chartDataMap[date] = { name: date, impression: 0, click: 0, conversion: 0 };
     chartDataMap[date][item._id.type] = item.count;
   });
+
   const chartData = Object.values(chartDataMap).sort((a: any, b: any) => a.name.localeCompare(b.name));
 
   return (
@@ -116,35 +128,33 @@ function AnalyticsContent() {
           </div>
         </div>
 
-        <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border w-fit">
+        <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border w-fit shrink-0">
           <button
             onClick={() => {
-              const params = new URLSearchParams(searchParams);
+              const params = new URLSearchParams(searchParams.toString());
               params.set('env', 'production');
-              window.history.pushState(null, '', `?${params.toString()}`);
+              router.push(`?${params.toString()}`);
             }}
             className={cn(
-              "px-6 py-2 rounded-xl text-xs font-bold transition-all",
-              envParam === 'production' 
-                ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
-                : "text-muted-foreground hover:text-foreground"
+              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
+              envParam === 'production' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
             )}
           >
+            <div className={cn("w-1.5 h-1.5 rounded-full", envParam === 'production' ? "bg-primary" : "bg-muted-foreground/30")} />
             Production
           </button>
           <button
             onClick={() => {
-              const params = new URLSearchParams(searchParams);
+              const params = new URLSearchParams(searchParams.toString());
               params.set('env', 'sandbox');
-              window.history.pushState(null, '', `?${params.toString()}`);
+              router.push(`?${params.toString()}`);
             }}
             className={cn(
-              "px-6 py-2 rounded-xl text-xs font-bold transition-all",
-              envParam === 'sandbox' 
-                ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
-                : "text-muted-foreground hover:text-foreground"
+              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
+              envParam === 'sandbox' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
             )}
           >
+            <div className={cn("w-1.5 h-1.5 rounded-full", envParam === 'sandbox' ? "bg-amber-500" : "bg-muted-foreground/30")} />
             Sandbox
           </button>
         </div>
@@ -172,54 +182,13 @@ function AnalyticsContent() {
               Growth Trends
             </h3>
           </div>
-          <div className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="colorImp" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="oklch(0.646 0.222 41.116)" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(0.922 0 0)" />
-                <XAxis 
-                  dataKey="name" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: 'oklch(0.556 0 0)', fontSize: 11 }} 
-                  dy={15}
-                />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: 'oklch(0.556 0 0)', fontSize: 11 }} 
-                />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'white', 
-                    borderRadius: '16px', 
-                    border: '1px solid oklch(0.922 0 0)',
-                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' 
-                  }} 
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="impression" 
-                  stroke="oklch(0.646 0.222 41.116)" 
-                  strokeWidth={3}
-                  fillOpacity={1} 
-                  fill="url(#colorImp)" 
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="conversion" 
-                  stroke="oklch(0.55 0.15 150)" 
-                  strokeWidth={3}
-                  fillOpacity={0}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+          <AnalyticsChart 
+            data={chartData} 
+            series={[
+              { key: 'impression', name: 'Impressions', color: 'oklch(0.646 0.222 41.116)', gradient: true },
+              { key: 'conversion', name: 'Conversions', color: 'oklch(0.55 0.15 150)', gradient: false }
+            ]}
+          />
         </div>
 
         {/* Conversion Funnel */}
@@ -239,7 +208,7 @@ function AnalyticsContent() {
                   <div 
                     className="h-full bg-primary transition-all duration-1000 ease-out shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]"
                     style={{ 
-                      width: `${(item.value / funnelData[0].value) * 100}%`,
+                      width: funnelData[0].value > 0 ? `${(item.value / funnelData[0].value) * 100}%` : '0%',
                       opacity: 1 - (i * 0.25)
                     }}
                   />

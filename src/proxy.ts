@@ -67,8 +67,11 @@ export default async function proxy(request: NextRequest) {
   }
 
   // 4. Role-based Access Control
+  const userRoles = decoded.roles || (decoded.role ? [decoded.role] : []);
+  const isSuperAdmin = userRoles.includes(UserRole.SUPER_ADMIN);
+
   // Super Admin has bypass access to all dashboards
-  if (decoded.role === UserRole.SUPER_ADMIN) {
+  if (isSuperAdmin) {
     return NextResponse.next({
       request: {
         headers: new Headers({
@@ -81,7 +84,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   if (pathname.startsWith('/api/admin') || pathname.startsWith('/admin')) {
-    if (decoded.role !== UserRole.ADMIN) {
+    if (!userRoles.includes(UserRole.ADMIN)) {
       if (pathname.startsWith('/api/')) {
         return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
       }
@@ -90,7 +93,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   if (pathname.startsWith('/api/merchant') || pathname.startsWith('/merchant')) {
-    if (decoded.role !== UserRole.MERCHANT) {
+    if (!userRoles.includes(UserRole.MERCHANT)) {
       if (pathname.startsWith('/api/')) {
         return NextResponse.json({ error: 'Forbidden: Merchant access required' }, { status: 403 });
       }
@@ -99,7 +102,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   if (pathname.startsWith('/api/partner') || pathname.startsWith('/partner')) {
-    if (decoded.role !== UserRole.PARTNER) {
+    if (!userRoles.includes(UserRole.PARTNER)) {
       if (pathname.startsWith('/api/')) {
         return NextResponse.json({ error: 'Forbidden: Partner access required' }, { status: 403 });
       }
@@ -107,10 +110,11 @@ export default async function proxy(request: NextRequest) {
     }
   }
 
-  // Inject user info into headers for downstream routes (optional but helpful)
+  // Inject user info into headers for downstream routes
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-user-id', decoded.userId);
   requestHeaders.set('x-user-role', decoded.role);
+  requestHeaders.set('x-user-roles', JSON.stringify(userRoles));
 
   return NextResponse.next({
     request: {

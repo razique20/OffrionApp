@@ -17,9 +17,9 @@ import { CloudinaryUpload } from '@/components/CloudinaryUpload';
 export default function NewDealPage() {
   const router = useRouter();
   const [categories, setCategories] = useState<any[]>([]);
+  const [kycStatus, setKycStatus] = useState<string>('loading');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -36,6 +36,11 @@ export default function NewDealPage() {
   });
 
   useEffect(() => {
+    fetch('/api/merchant/kyc')
+      .then(res => res.json())
+      .then(data => setKycStatus(data.status || 'none'))
+      .catch(() => setKycStatus('none'));
+
     fetch('/api/categories')
       .then(res => res.json())
       .then(data => {
@@ -97,6 +102,38 @@ export default function NewDealPage() {
         </div>
         <h2 className="text-2xl font-bold">Deal Created Successfully!</h2>
         <p className="text-muted-foreground mt-2">Redirecting to your deals list...</p>
+      </div>
+    );
+  }
+
+  if (kycStatus === 'loading') {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (kycStatus !== 'verified') {
+    return (
+      <div className="max-w-4xl mx-auto py-12">
+        <div className="bg-card border border-border rounded-[40px] p-12 text-center space-y-6 shadow-sm border-dashed">
+          <div className="w-24 h-24 bg-primary/10 text-primary rounded-[32px] flex items-center justify-center mx-auto shadow-lg shadow-primary/5">
+            <Upload className="w-12 h-12" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-3xl font-bold tracking-tight">Verification Required</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              To publish deals and reach customers, you must first complete your business KYC verification.
+            </p>
+          </div>
+          <button 
+            onClick={() => router.push('/merchant/kyc')}
+            className="px-8 py-4 bg-premium-gradient text-white font-bold rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+          >
+            Complete KYC Now
+          </button>
+        </div>
       </div>
     );
   }

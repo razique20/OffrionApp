@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
+import SandboxDeal from '@/models/SandboxDeal';
 
 export async function GET(req: Request) {
   try {
@@ -13,8 +14,12 @@ export async function GET(req: Request) {
     const radiusInKm = parseFloat(searchParams.get('radius') || '10');
     const limit = parseInt(searchParams.get('limit') || '20');
     const categoryId = searchParams.get('categoryId');
+    const environment = searchParams.get('environment') || 'production';
 
-    // 1. Build Aggregation Pipeline for $geoNear
+    // 1. Determine Model
+    const Model = environment === 'sandbox' ? SandboxDeal : (Deal as any);
+
+    // 2. Build Aggregation Pipeline for $geoNear
     const pipeline: any[] = [
       {
         $geoNear: {
@@ -68,10 +73,10 @@ export async function GET(req: Request) {
       }
     ];
 
-    const deals = await Deal.aggregate(pipeline);
+    const deals = await Model.aggregate(pipeline);
 
     // Map to the format expected by the frontend
-    const dealsFormatted = deals.map(d => ({
+    const dealsFormatted = deals.map((d: any) => ({
       ...d,
       merchantId: { name: d.merchant.name },
       categoryId: { name: d.category.name }
