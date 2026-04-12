@@ -300,6 +300,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
           {!isMinimized && <span>Collapse</span>}
         </button>
       </div>
+    </div>
 
       {/* Logout Confirmation Modal */}
       {isLogoutConfirmOpen && (
@@ -332,7 +333,6 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
           </div>
         </div>
       )}
-    </div>
     </>
   );
 }
