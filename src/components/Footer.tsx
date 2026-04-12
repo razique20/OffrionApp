@@ -21,7 +21,7 @@ export const Footer = () => {
           </div>
 
           {/* Navigation Links */}
-          <div className="flex gap-16">
+          <div className="flex gap-8 md:gap-16">
             <div className="space-y-3">
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Platform</p>
               <div className="flex flex-col gap-2">

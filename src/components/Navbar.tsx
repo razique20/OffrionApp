@@ -12,7 +12,9 @@ import {
   ChevronDown,
   Moon,
   Sun,
-  ShieldCheck
+  ShieldCheck,
+  Menu,
+  X
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useUser } from '@/hooks/useUser';
@@ -25,6 +27,7 @@ export const Navbar = () => {
   const pathname = usePathname();
   const [showDropdown, setShowDropdown] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
   React.useEffect(() => {
@@ -140,18 +143,53 @@ export const Navbar = () => {
               )}
             </div>
           ) : (
-            <>
-              <Link href="/auth/login" className="text-sm font-medium hover:text-primary transition-colors pr-2">Sign In</Link>
+            <div className="hidden md:flex items-center">
+              <Link href="/auth/login" className="text-sm font-medium hover:text-primary transition-colors pr-5">Sign In</Link>
               <Link 
                 href="/auth/register" 
                 className="px-4 py-2 bg-premium-gradient text-white rounded-xl text-sm font-bold shadow-sm hover:opacity-90 transition-all flex items-center gap-2"
               >
                 Get Started <ArrowRight className="w-4 h-4" />
               </Link>
-            </>
+            </div>
           )}
+          
+          <button 
+            className="md:hidden p-2 rounded-full hover:bg-secondary transition-colors text-foreground ml-1"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-16 left-0 w-full bg-background/98 backdrop-blur-xl border-b border-border shadow-2xl p-6 flex flex-col gap-6 animate-in slide-in-from-top-2">
+          <Link href="/ecosystem" className="text-lg font-bold text-muted-foreground hover:text-foreground transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Ecosystem</Link>
+          <Link href="/docs" className="text-lg font-bold text-muted-foreground hover:text-foreground transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Docs</Link>
+          <Link href="/#pricing" className="text-lg font-bold text-muted-foreground hover:text-foreground transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Pricing</Link>
+          
+          {!user && (
+            <div className="flex flex-col gap-3 pt-6 mt-2 border-t border-border">
+              <Link 
+                href="/auth/login" 
+                className="w-full py-3.5 text-center rounded-xl bg-secondary font-bold hover:bg-secondary/80 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Sign In
+              </Link>
+              <Link 
+                href="/auth/register" 
+                className="w-full py-3.5 text-center rounded-xl bg-premium-gradient text-white font-bold shadow-md hover:opacity-90 transition-opacity"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Get Started
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
     </nav>
   );
 };

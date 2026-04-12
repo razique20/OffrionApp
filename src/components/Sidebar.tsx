@@ -7,6 +7,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Menu,
+  X,
   LogOut,
   BarChart3,
   LayoutDashboard,
@@ -72,6 +73,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
   const [me, setMe] = useState<any>(null);
@@ -143,19 +145,19 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
             title={isMinimized ? item.name : undefined}
             className={cn(
               "flex items-center rounded-lg text-sm font-medium transition-all group",
-              isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2",
+              isMinimized ? "md:justify-center p-3" : "gap-3 px-3 py-2",
               isActive 
                 ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
                 : "text-muted-foreground hover:bg-secondary hover:text-foreground"
             )}
           >
-            <Icon className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
-            {!isMinimized && (
+            <Icon className={cn("flex-shrink-0", isMinimized ? "md:w-6 md:h-6 w-5 h-5" : "w-5 h-5")} />
+            {(!isMinimized || isMobileOpen) && (
               <div className="flex-1 flex items-center justify-between">
                 <span className="truncate">{item.name}</span>
               </div>
             )}
-            {!isMinimized && isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+            {(!isMinimized || isMobileOpen) && isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
           </Link>
         );
       })}
@@ -163,21 +165,50 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   );
 
   return (
-    <div className={cn(
-      "bg-card/40 border-r border-border h-screen flex flex-col sticky top-0 overflow-y-auto custom-scrollbar z-50 transition-all duration-300 frost-glass",
-      isMinimized ? "w-20 items-center px-2" : "w-64"
-    )}>
-      <div className={cn("p-6 flex items-center relative", isMinimized ? "justify-center" : "justify-between")}>
-        {!isMinimized && (
+    <>
+      {/* Mobile Hamburger Toggle */}
+      <button 
+        className="md:hidden fixed top-4 right-4 z-[60] p-2 bg-card rounded-md border border-border shadow-md text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+        onClick={() => setIsMobileOpen(true)}
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-background/80 backdrop-blur-sm z-[70] animate-in fade-in"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+
+      {/* Sidebar Container */}
+      <div className={cn(
+        "bg-card/40 border-r border-border h-[100svh] flex-col z-[80] transition-transform duration-300 frost-glass",
+        // Desktop
+        "md:sticky md:top-0 md:translate-x-0 hidden md:flex",
+        isMinimized ? "md:w-20 md:items-center md:px-2" : "md:w-64",
+        // Mobile
+        "fixed top-0 left-0 w-64 shadow-2xl md:shadow-none flex",
+        isMobileOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+      <div className={cn("p-6 flex items-center relative", isMinimized ? "md:justify-center justify-between" : "justify-between")}>
+        {(!isMinimized || isMobileOpen) && (
           <Link href="/" className="hover:opacity-90 transition-opacity">
             <Logo size="sm" />
           </Link>
         )}
-        {isMinimized && (
+        {isMinimized && !isMobileOpen && (
           <Link href="/" className="hover:opacity-90 transition-opacity font-bold text-2xl text-primary mt-2">
             O.
           </Link>
         )}
+        <button 
+          className="md:hidden p-1.5 rounded-md hover:bg-secondary text-muted-foreground"
+          onClick={() => setIsMobileOpen(false)}
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
       <div className={cn("flex-1 space-y-2 w-full", isMinimized ? "px-0" : "px-0")}>
@@ -302,5 +333,6 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
         </div>
       )}
     </div>
+    </>
   );
 }

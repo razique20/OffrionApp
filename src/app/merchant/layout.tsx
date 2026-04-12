@@ -22,8 +22,8 @@ export default function MerchantLayout({
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar items={merchantMenuItems} role="merchant" />
-      <main className="flex-1 p-8 overflow-y-auto">
-        <header className="flex justify-between items-center mb-8">
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pt-8 md:pt-0 pr-12 md:pr-0">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Merchant Dashboard</h1>
             <p className="text-muted-foreground">Manage your deals and track performance.</p>

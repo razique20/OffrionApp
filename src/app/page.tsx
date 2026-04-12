@@ -36,7 +36,7 @@ export default function LandingPage() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative h-screen overflow-hidden flex items-center justify-center">
+        <section className="relative min-h-[100svh] overflow-hidden flex items-center justify-center py-20">
           {/* ── Frosted Aura Background Blurs ── */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10 pointer-events-none opacity-15">
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[#5C7E8F] to-[#A2A2A2] rounded-full blur-[120px] -translate-y-1/2"></div>
@@ -53,7 +53,7 @@ export default function LandingPage() {
             
             {/* Minimalist Hero Content */}
             <div className="flex flex-col items-center justify-center text-center w-full">
-              <h1 className="text-5xl lg:text-7xl font-bold tracking-tight mb-4 leading-[1.1] text-foreground">
+              <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-4 leading-[1.1] text-foreground">
                 The Scalable <br className="hidden lg:block"/> <span className="text-gradient">Deals Architecture</span> <br className="hidden lg:block"/> for Modern Platforms.
               </h1>
 
@@ -63,7 +63,7 @@ export default function LandingPage() {
                 <div className="h-px w-12 bg-border"></div>
               </div>
               
-              <p className="text-lg lg:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl">
+              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl px-4 sm:px-0">
                 Connect merchants with partners through a high-performance API. Publish deals in minutes, distribute via thousands of apps, and track everything in real-time.
               </p>
               
@@ -77,11 +77,11 @@ export default function LandingPage() {
 
 
         {/* Features Section */}
-        <section id="process" className="py-24 bg-background">
+        <section id="process" className="py-16 md:py-24 bg-background">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-24">
+            <div className="text-center mb-16 md:mb-24">
               <h2 className="text-3xl md:text-5xl font-bold mb-4">Built for scale. Designed for speed.</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
                 Everything you need to launch a deals network or monetize your existing audience.
               </p>
             </div>
@@ -113,8 +113,8 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6">
                   <ShoppingBag className="w-6 h-6" />
                 </div>
-                <h3 className="text-3xl font-bold mb-4">Merchant Control Center</h3>
-                <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
+                <h3 className="text-2xl md:text-3xl font-bold mb-4">Merchant Control Center</h3>
+                <p className="text-muted-foreground text-base md:text-lg mb-6 leading-relaxed">
                   Provide local businesses with a powerful dashboard to publish deals, configure Geo-spatial constraints, and track performance in real-time. Say goodbye to complex onboarding and manual deal validation.
                 </p>
                 <ul className="space-y-3">
@@ -133,8 +133,8 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6">
                   <Code className="w-6 h-6" />
                 </div>
-                <h3 className="text-3xl font-bold mb-4">Developer-First Platform API</h3>
-                <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
+                <h3 className="text-2xl md:text-3xl font-bold mb-4">Developer-First Platform API</h3>
+                <p className="text-muted-foreground text-base md:text-lg mb-6 leading-relaxed">
                   Integrate seamlessly into any fintech app, map service, or social network. Query rewards by location, perfectly matching your users to relevant nearby discounts in milliseconds.
                 </p>
                 <ul className="space-y-3">
@@ -190,13 +190,13 @@ export default function LandingPage() {
 
 
         {/* Pricing Section */}
-        <section id="pricing" className="py-24 relative overflow-hidden">
+        <section id="pricing" className="py-16 md:py-24 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-secondary/50 to-transparent pointer-events-none -z-10"></div>
           
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-8">
               <h2 className="text-3xl md:text-5xl font-bold mb-4 text-gradient">We grow when you grow.</h2>
-              <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+              <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto">
                 No fixed API limits. No complex enterprise silos. Your revenue share aggressively scales in your favor.
               </p>
             </div>
@@ -228,15 +228,15 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-24 px-6 flex justify-center">
-          <div className="max-w-5xl w-full bg-premium-gradient rounded-[40px] p-12 md:p-20 text-center text-white relative overflow-hidden shadow-2xl">
+        <section className="py-16 md:py-24 px-4 sm:px-6 flex justify-center">
+          <div className="max-w-5xl w-full bg-premium-gradient rounded-[2rem] md:rounded-[40px] p-8 md:p-20 text-center text-white relative overflow-hidden shadow-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 border border-white/20 rounded-full mb-6 relative z-10">
               <Zap className="w-3 h-3 text-white" />
               <span className="text-xs font-bold uppercase tracking-wider text-white">Next-Gen Deals Platform</span>
             </div>
             
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 relative z-10">Start distributing rewards.</h2>
-            <p className="text-white/80 text-lg mb-10 max-w-xl mx-auto relative z-10 font-mono italic">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 relative z-10">Start distributing rewards.</h2>
+            <p className="text-white/80 text-base md:text-lg mb-10 max-w-xl mx-auto relative z-10 font-mono italic">
               "Scale from 1 to 1M deals without touching the infrastructure."
             </p>
             <AppCTA />

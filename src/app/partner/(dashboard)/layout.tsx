@@ -22,8 +22,8 @@ export default function PartnerDashboardLayout({
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar items={partnerMenuItems} role="partner" />
-      <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-        <header className="flex justify-between items-center mb-8">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pt-8 md:pt-0 pr-12 md:pr-0">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Partner Dashboard</h1>
             <p className="text-muted-foreground">Monitor API usage and integrate Deals-as-a-Service.</p>
