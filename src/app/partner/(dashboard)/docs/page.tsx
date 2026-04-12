@@ -384,7 +384,6 @@ x-api-key: YOUR_API_KEY`}
               title="Query Parameters"
               params={[
                 { name: 'period', type: 'string', desc: '7d, 30d (default), or 90d.' },
-                { name: 'environment', type: 'string', desc: 'production (default) or sandbox.' },
               ]}
             />
             <div className="mt-8">
@@ -412,7 +411,7 @@ x-api-key: YOUR_API_KEY`}
             <div className="space-y-8">
               <div>
                 <EndpointLabel method="GET" path="/partner/transactions" />
-                <p className="text-sm text-muted-foreground mb-4">Partner transaction history. Support ?environment=sandbox</p>
+                <p className="text-sm text-muted-foreground mb-4">Partner transaction history.</p>
                 <div className="mb-4">
                   <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
                   <CodeBlock 
@@ -428,7 +427,7 @@ x-api-key: YOUR_API_KEY`}
               </div>
               <div>
                 <EndpointLabel method="GET" path="/partner/commissions" />
-                <p className="text-sm text-muted-foreground mb-4">Individual commission records (pending/paid). Support ?environment=sandbox</p>
+                <p className="text-sm text-muted-foreground mb-4">Individual commission records (pending/paid).</p>
                 <div className="mb-4">
                   <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
                   <CodeBlock 
@@ -459,7 +458,6 @@ x-api-key: YOUR_API_KEY`}
                   code={`{
   "event": "deal.redeemed",
   "timestamp": "2026-04-11T08:11:42.027Z",
-  "environment": "sandbox",
   "data": {
     "transactionId": "69da02275802637608455a50",
     "dealId": "69da01fead9d9b4f5c0222e8",

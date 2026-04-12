@@ -33,7 +33,7 @@ export default function Error403Page() {
                     <div className="p-2 bg-secondary rounded-lg h-fit text-muted-foreground"><Key className="w-4 h-4" /></div>
                     <div>
                        <h4 className="font-bold text-sm">Missing or Malformed Header</h4>
-                       <p className="text-xs text-muted-foreground mt-1">Ensure your request includes the `x-api-key` header with your valid production or sandbox key.</p>
+                       <p className="text-xs text-muted-foreground mt-1">Ensure your request includes the `x-api-key` header with your valid production key.</p>
                     </div>
                  </div>
                  <div className="flex gap-4">
@@ -46,8 +46,8 @@ export default function Error403Page() {
                  <div className="flex gap-4">
                     <div className="p-2 bg-secondary rounded-lg h-fit text-muted-foreground"><CheckCircle2 className="w-4 h-4" /></div>
                     <div>
-                       <h4 className="font-bold text-sm">Environment Mismatch</h4>
-                       <p className="text-xs text-muted-foreground mt-1">Using a Sandbox key against a Production endpoint (or vice versa) will result in a 403 Forbidden error.</p>
+                       <h4 className="font-bold text-sm">Restricted Access</h4>
+                       <p className="text-xs text-muted-foreground mt-1">Your account may not have the necessary permissions to access this specific endpoint or resource.</p>
                     </div>
                  </div>
               </div>

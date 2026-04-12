@@ -19,6 +19,8 @@ export interface IMerchantProfile extends Document {
   };
   billingPreference: MerchantBillingPreference;
   balance: number; // For Pre-paid wallet (Opt 1)
+  accruedLiability: number; // For Card-on-file (Opt 2) - unbilled commissions
+  lastBillingDate?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,6 +53,8 @@ const MerchantProfileSchema: Schema = new Schema(
       default: MerchantBillingPreference.PREPAID,
     },
     balance: { type: Number, default: 0 },
+    accruedLiability: { type: Number, default: 0 },
+    lastBillingDate: { type: Date },
   },
   { timestamps: true }
 );

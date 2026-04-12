@@ -8,9 +8,9 @@ const USE_CASES = [
   {
     id: 'mobility',
     icon: Car,
-    color: 'text-blue-500 dark:text-blue-400',
-    darkColor: 'text-blue-400',
-    bgColor: 'bg-blue-500/20',
+    color: 'text-primary',
+    darkColor: 'text-primary',
+    bgColor: 'bg-primary/20',
     title: 'Ride-Sharing & Mobility',
     description: "Query the API using the rider's drop-off coordinates. Display targeted restaurant and activity discounts perfectly timed for arrival.",
     request: `GET /api/deals
@@ -34,9 +34,9 @@ const USE_CASES = [
   {
     id: 'wallet',
     icon: Wallet,
-    color: 'text-emerald-500 dark:text-emerald-400',
-    darkColor: 'text-emerald-400',
-    bgColor: 'bg-emerald-500/20',
+    color: 'text-primary/80',
+    darkColor: 'text-primary/70',
+    bgColor: 'bg-secondary/40',
     title: 'Neo-banks & Wallets',
     description: "Embed a high-converting rewards tab. Offrion handles the merchant acquisition while you capture the transaction commission.",
     request: `POST /api/partners/track-conversion
@@ -58,9 +58,9 @@ const USE_CASES = [
   {
     id: 'travel',
     icon: Plane,
-    color: 'text-purple-500 dark:text-purple-400',
-    darkColor: 'text-purple-400',
-    bgColor: 'bg-purple-500/20',
+    color: 'text-primary/90',
+    darkColor: 'text-primary/80',
+    bgColor: 'bg-primary/10',
     title: 'Travel & Hospitality',
     description: "Enhance booking confirmations with local perks. Automatically fetch deals within a 2-mile radius of the booked hotel.",
     request: `GET /api/deals
@@ -84,9 +84,9 @@ const USE_CASES = [
   {
     id: 'superapp',
     icon: Layers,
-    color: 'text-amber-500 dark:text-amber-400',
-    darkColor: 'text-amber-400',
-    bgColor: 'bg-amber-500/20',
+    color: 'text-primary',
+    darkColor: 'text-primary/90',
+    bgColor: 'bg-secondary/30',
     title: 'Super Apps',
     description: "Create an infinite-scrolling deals marketplace powered entirely by our backend infrastructure. Leverage our global network instantly.",
     request: `GET /api/deals

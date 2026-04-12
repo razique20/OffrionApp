@@ -18,11 +18,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface WebhookManagementProps {
-  environment: 'production' | 'sandbox';
-}
-
-export function WebhookManagement({ environment }: WebhookManagementProps) {
+export function WebhookManagement() {
   const [webhooks, setWebhooks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -32,7 +28,6 @@ export function WebhookManagement({ environment }: WebhookManagementProps) {
   // New Webhook Form
   const [newWebhook, setNewWebhook] = useState({
     url: '',
-    environment: environment,
     events: ['deal.redeemed', 'commission.earned']
   });
 
@@ -40,12 +35,12 @@ export function WebhookManagement({ environment }: WebhookManagementProps) {
 
   useEffect(() => {
     fetchWebhooks();
-  }, [environment]);
+  }, []);
 
   const fetchWebhooks = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/partner/webhooks?environment=${environment}`);
+      const res = await fetch(`/api/partner/webhooks`);
       if (!res.ok) throw new Error('Failed to fetch webhooks');
       const data = await res.json();
       setWebhooks(data);
@@ -64,12 +59,12 @@ export function WebhookManagement({ environment }: WebhookManagementProps) {
       const res = await fetch('/api/partner/webhooks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...newWebhook, environment })
+        body: JSON.stringify(newWebhook)
       });
       if (!res.ok) throw new Error('Failed to create webhook');
       
       setSuccess('Webhook configured successfully');
-      setNewWebhook({ url: '', environment: environment, events: ['deal.redeemed', 'commission.earned'] });
+      setNewWebhook({ url: '', events: ['deal.redeemed', 'commission.earned'] });
       fetchWebhooks();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
@@ -114,20 +109,6 @@ export function WebhookManagement({ environment }: WebhookManagementProps) {
                 />
               </div>
 
-              <div className="space-y-1.5 p-3 bg-secondary/30 rounded-xl border border-border/50">
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Target Environment</label>
-                  <span className={cn(
-                    "text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter",
-                    environment === 'sandbox' ? "bg-amber-500/20 text-amber-500" : "bg-primary/20 text-primary"
-                  )}>
-                    {environment}
-                  </span>
-                </div>
-                <p className="text-[10px] text-muted-foreground leading-relaxed">
-                  This endpoint will strictly receive events from the <span className="font-bold text-foreground capitalize">{environment}</span> environment.
-                </p>
-              </div>
 
 
               <button
@@ -170,7 +151,6 @@ export function WebhookManagement({ environment }: WebhookManagementProps) {
 {`{
   "event": "deal.redeemed",
   "timestamp": "2026-04-11T...",
-  "environment": "${environment}",
   "data": { "transactionId": "...", ... }
 }`}
                   </pre>
@@ -224,21 +204,12 @@ Content-Type: application/json
                 <div key={webhook._id} className="p-6 bg-card border border-border rounded-3xl hover:border-primary/30 transition-all relative overflow-hidden group">
                   <div className="flex items-start justify-between relative z-10">
                     <div className="flex gap-4">
-                      <div className={cn(
-                        "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0",
-                        webhook.environment === 'sandbox' ? "bg-amber-500/10 text-amber-500" : "bg-primary/10 text-primary"
-                      )}>
+                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-primary/10 text-primary">
                         <Activity className="w-6 h-6" />
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h4 className="font-bold text-base truncate max-w-[300px]">{webhook.url}</h4>
-                          <span className={cn(
-                            "text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full",
-                            webhook.environment === 'sandbox' ? "bg-amber-500/10 text-amber-500" : "bg-primary/10 text-primary"
-                          )}>
-                            {webhook.environment}
-                          </span>
                         </div>
                         <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
                           <span className="flex items-center gap-1">

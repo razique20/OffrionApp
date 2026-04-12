@@ -9,11 +9,7 @@ export async function GET(req: Request) {
     const userId = req.headers.get('x-user-id');
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { searchParams } = new URL(req.url);
-    const environment = searchParams.get('environment');
-
     const query: any = { partnerId: userId };
-    if (environment) query.environment = environment;
 
     const webhooks = await PartnerWebhook.find(query).sort({ createdAt: -1 });
     return NextResponse.json(webhooks);
@@ -29,7 +25,7 @@ export async function POST(req: Request) {
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
-    const { url, environment, events } = body;
+    const { url, events } = body;
 
     if (!url) {
       return NextResponse.json({ error: 'URL is required' }, { status: 400 });
@@ -38,7 +34,6 @@ export async function POST(req: Request) {
     const webhook = await PartnerWebhook.create({
       partnerId: userId,
       url,
-      environment: environment || 'production',
       enabledEvents: events || ['deal.redeemed', 'commission.earned'],
       secret: 'whsec_' + crypto.randomBytes(16).toString('hex'),
       isActive: true

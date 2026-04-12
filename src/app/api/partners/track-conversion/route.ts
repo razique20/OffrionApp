@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
-import SandboxDeal from '@/models/SandboxDeal';
 import APIKey from '@/models/APIKey';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import Transaction from '@/models/Transaction';
-import SandboxTransaction from '@/models/SandboxTransaction';
 import Commission from '@/models/Commission';
 import { z } from 'zod';
 import mongoose from 'mongoose';
@@ -35,11 +33,8 @@ export async function POST(req: Request) {
 
     const { dealId, amount, currency, metadata } = conversionSchema.parse(body);
 
-    const isSandbox = apiKey.environment === 'sandbox';
 
-    const deal = isSandbox 
-      ? await SandboxDeal.findById(dealId)
-      : await Deal.findById(dealId);
+    const deal = await Deal.findById(dealId);
 
     if (!deal) {
       return NextResponse.json({ error: 'Deal not found' }, { status: 404 });
@@ -58,29 +53,15 @@ export async function POST(req: Request) {
     const redeemCode = generateRedeemCode();
 
     // 1. Create Transaction (as Pending)
-    let transaction;
-    if (isSandbox) {
-      transaction = await SandboxTransaction.create({
-        dealId: new mongoose.Types.ObjectId(dealId),
-        merchantId: deal.merchantId,
-        partnerId: new mongoose.Types.ObjectId(apiKey.partnerId.toString()),
-        amount,
-        currency,
-        status: 'pending',
-        qrCode: redeemCode,
-      });
-    } else {
-      transaction = await Transaction.create({
-        dealId: new mongoose.Types.ObjectId(dealId),
-        merchantId: deal.merchantId,
-        partnerId: new mongoose.Types.ObjectId(apiKey.partnerId.toString()),
-        amount,
-        currency,
-        environment: 'production',
-        status: 'pending',
-        qrCode: redeemCode,
-      });
-    }
+    const transaction = await Transaction.create({
+      dealId: new mongoose.Types.ObjectId(dealId),
+      merchantId: deal.merchantId,
+      partnerId: new mongoose.Types.ObjectId(apiKey.partnerId.toString()),
+      amount,
+      currency,
+      status: 'pending',
+      qrCode: redeemCode,
+    });
 
     // 2. Log Conversion Event
     await AnalyticsEvent.create({
@@ -88,7 +69,6 @@ export async function POST(req: Request) {
       dealId,
       partnerId: apiKey.partnerId,
       merchantId: deal.merchantId,
-      environment: apiKey.environment,
       metadata: {
         ...metadata,
         transactionId: transaction._id,
@@ -98,18 +78,13 @@ export async function POST(req: Request) {
     });
 
     // 3. Update Deal Usage
-    if (isSandbox) {
-      await SandboxDeal.findByIdAndUpdate(dealId, { $inc: { currentUsage: 1 } });
-    } else {
-      await Deal.findByIdAndUpdate(dealId, { $inc: { currentUsage: 1 } });
-    }
+    await Deal.findByIdAndUpdate(dealId, { $inc: { currentUsage: 1 } });
 
     return NextResponse.json({ 
       message: 'Conversion tracked. Redemption code generated.',
       transactionId: transaction._id,
       redeemCode: transaction.qrCode,
-      status: 'pending',
-      environment: apiKey.environment
+      status: 'pending'
     });
 
   } catch (error: any) {

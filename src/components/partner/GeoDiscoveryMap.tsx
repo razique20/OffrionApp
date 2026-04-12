@@ -48,8 +48,7 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
   const fetchNearbyDeals = async () => {
     setLoading(true);
     try {
-      const env = trackingKey ? 'sandbox' : 'production';
-      const res = await fetch(`/api/deals/search?lat=${userLocation.lat}&lng=${userLocation.lng}&radius=${radius}&environment=${env}`);
+      const res = await fetch(`/api/deals/search?lat=${userLocation.lat}&lng=${userLocation.lng}&radius=${radius}`);
       if (res.ok) {
         const data = await res.json();
         setDeals(data);
@@ -105,23 +104,6 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
 
   return (
     <div className="space-y-4">
-      {/* Sandbox Simulation Banner */}
-      <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-            <FlaskConical className="w-4 h-4" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-foreground">Developer Simulation Mode</p>
-            <p className="text-[10px] text-muted-foreground">Transactions created here use your Sandbox API key and will not trigger production payouts.</p>
-          </div>
-        </div>
-        {!trackingKey && (
-          <div className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-[9px] font-bold text-amber-600 uppercase tracking-widest animate-pulse">
-            Sandbox Key Required
-          </div>
-        )}
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-8 bg-card border border-border rounded-[40px] shadow-2xl relative overflow-hidden group">
       {/* Background Glow */}
@@ -324,8 +306,8 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
             <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-8">
               <CheckCircle2 className="w-10 h-10 text-primary" />
             </div>
-            <h4 className="text-2xl font-bold mb-3 tracking-tight">Sandbox Claim Initialized!</h4>
-            <p className="text-sm text-muted-foreground mb-10 leading-relaxed">A <strong>Sandbox Transaction</strong> has been created in your account. Use the code below in the Merchant Terminal to complete the testing loop.</p>
+            <h4 className="text-2xl font-bold mb-3 tracking-tight">Claim Initialized!</h4>
+            <p className="text-sm text-muted-foreground mb-10 leading-relaxed">A <strong>Live Transaction</strong> has been created in your account. Use the code below in the Merchant Terminal to complete the testing loop.</p>
             
             <div className="bg-secondary/50 rounded-[32px] p-8 border border-border/50 shadow-inner">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-4">Merchant Verify Code</p>
@@ -335,7 +317,7 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
             <div className="mt-10 p-5 bg-primary/5 rounded-3xl border border-primary/10 flex items-start gap-4 text-left">
               <Zap className="w-6 h-6 text-primary shrink-0 mt-0.5" />
               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                <strong className="text-foreground">Test the Webhook</strong>: Copy this code and use it in the <span className="text-primary font-bold">Sandbox Redemption Terminal</span> (under Merchant Dashboard) to trigger your real-time webhook notification.
+                <strong className="text-foreground">Test the Webhook</strong>: Copy this code and use it in the <span className="text-primary font-bold">Redemption Terminal</span> (under Merchant Dashboard) to trigger your real-time webhook notification.
               </p>
             </div>
           </div>

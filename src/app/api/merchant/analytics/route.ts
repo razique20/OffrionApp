@@ -17,21 +17,15 @@ export async function GET(req: Request) {
     }
 
     const merchantId = new mongoose.Types.ObjectId(userId);
-    const { searchParams } = new URL(req.url);
-    const environment = searchParams.get('environment') || 'production';
-    const isSandbox = environment === 'sandbox';
-
-    // Import sandbox models dynamically if needed, or use them if already imported
-    // For now, let's assume they are imported. I'll add imports at the top.
-    const TransactionModel = isSandbox ? (await import('@/models/SandboxTransaction')).default : Transaction;
-    const CommissionModel = isSandbox ? (await import('@/models/SandboxCommission')).default : Commission;
-    const DealModel = isSandbox ? (await import('@/models/SandboxDeal')).default : Deal;
+    const TransactionModel = Transaction;
+    const CommissionModel = Commission;
+    const DealModel = Deal;
 
     // 1. Aggregate Analytics Events (Impressions, Clicks, Conversions)
     // Note: AnalyticsEvent could be env-agnostic or we could add an env field. 
     // For now, we'll keep it as is, but filter by merchantId.
     const eventsAggregation = await AnalyticsEvent.aggregate([
-      { $match: { merchantId, environment } },
+      { $match: { merchantId } },
       {
         $group: {
           _id: '$type',
@@ -66,14 +60,19 @@ export async function GET(req: Request) {
     const transactionAggregation = await TransactionModel.aggregate([
         {
             $lookup: {
-                from: isSandbox ? 'sandboxdeals' : 'deals',
+                from: 'deals',
                 localField: 'dealId',
                 foreignField: '_id',
                 as: 'deal'
             }
         },
         { $unwind: '$deal' },
-        { $match: { 'deal.merchantId': merchantId } },
+        { 
+            $match: { 
+                'deal.merchantId': merchantId,
+                status: 'completed'
+            } 
+        },
         {
             $group: {
                 _id: null,
@@ -88,7 +87,7 @@ export async function GET(req: Request) {
 
     // 3. Top Deals
     const topDeals = await AnalyticsEvent.aggregate([
-      { $match: { merchantId, type: 'conversion', environment } },
+      { $match: { merchantId, type: 'conversion' } },
       {
         $group: {
           _id: '$dealId',
@@ -99,7 +98,7 @@ export async function GET(req: Request) {
       { $limit: 5 },
       {
         $lookup: {
-          from: isSandbox ? 'sandboxdeals' : 'deals',
+          from: 'deals',
           localField: '_id',
           foreignField: '_id',
           as: 'dealInfo',
@@ -123,7 +122,7 @@ export async function GET(req: Request) {
     const dailyRevenueAggregation = await TransactionModel.aggregate([
       {
         $lookup: {
-          from: isSandbox ? 'sandboxdeals' : 'deals',
+          from: 'deals',
           localField: 'dealId',
           foreignField: '_id',
           as: 'deal'
@@ -133,6 +132,7 @@ export async function GET(req: Request) {
       { 
         $match: { 
           'deal.merchantId': merchantId,
+          status: 'completed',
           createdAt: { $gte: sevenDaysAgo }
         } 
       },

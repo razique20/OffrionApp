@@ -182,13 +182,6 @@ export default function MerchantRedeemPage() {
               <p className="text-sm text-muted-foreground max-w-xs mx-auto">
                 Enter the 6-digit redemption code from the customer&apos;s deal voucher.
               </p>
-              <Link 
-                href="/merchant/redeem/sandbox"
-                className="inline-flex items-center gap-2 text-xs font-bold text-primary px-3 py-1.5 bg-primary/10 rounded-full hover:bg-primary/20 transition-colors mt-2"
-              >
-                <Sparkles className="w-3 h-3" />
-                Open Sandbox Terminal Simulator
-              </Link>
             </div>
 
             {/* Code Input Grid */}

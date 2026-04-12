@@ -111,7 +111,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   if (!mounted) {
     return (
       <div className={cn(
-        "bg-card border-r border-border h-screen flex flex-col sticky top-0 transition-all duration-300",
+        "bg-card/40 border-r border-border h-screen flex flex-col sticky top-0 transition-all duration-300 frost-glass",
         isMinimized ? "w-20" : "w-64"
       )}>
         <div className="p-6">
@@ -153,9 +153,6 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
             {!isMinimized && (
               <div className="flex-1 flex items-center justify-between">
                 <span className="truncate">{item.name}</span>
-                {item.href.includes('sandbox') && !isActive && (
-                  <span className="text-[8px] px-1 py-0.5 rounded bg-amber-500/10 text-amber-500 font-bold uppercase">Test</span>
-                )}
               </div>
             )}
             {!isMinimized && isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
@@ -167,7 +164,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
 
   return (
     <div className={cn(
-      "bg-card border-r border-border h-screen flex flex-col sticky top-0 overflow-y-auto custom-scrollbar z-50 transition-all duration-300",
+      "bg-card/40 border-r border-border h-screen flex flex-col sticky top-0 overflow-y-auto custom-scrollbar z-50 transition-all duration-300 frost-glass",
       isMinimized ? "w-20 items-center px-2" : "w-64"
     )}>
       <div className={cn("p-6 flex items-center relative", isMinimized ? "justify-center" : "justify-between")}>
@@ -186,7 +183,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
       <div className={cn("flex-1 space-y-2 w-full", isMinimized ? "px-0" : "px-0")}>
         {renderItems(items.filter(i => !['docs', 'support', 'settings', 'api-keys', 'playground'].some(k => i.href.includes(k))), "Insights")}
         {renderItems(items.filter(i => i.href.includes('api-keys')), "Connectivity")}
-        {renderItems(items.filter(i => ['playground', 'docs'].some(k => i.href.includes(k))), "Development")}
+        {renderItems(items.filter(i => ['docs'].some(k => i.href.includes(k))), "Development")}
         {renderItems(items.filter(i => ['settings', 'support'].some(k => i.href.includes(k))), "Account")}
 
         {isSuperAdmin && role !== 'admin' && (
@@ -278,7 +275,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-background/80 backdrop-blur-md" onClick={() => setIsLogoutConfirmOpen(false)} />
           <div className="bg-card w-full max-w-sm border border-border rounded-[40px] shadow-2xl relative z-[10000] overflow-hidden p-8 text-center space-y-6 animate-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-red-500/10">
+            <div className="w-16 h-16 bg-destructive/10 text-destructive rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-destructive/10">
               <LogOut className="w-8 h-8" />
             </div>
             <div>
@@ -296,7 +293,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
               </button>
               <button 
                 onClick={actualLogout} 
-                className="flex-1 py-3 text-xs font-bold bg-red-500 text-white rounded-xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3 text-xs font-bold bg-destructive text-destructive-foreground rounded-xl shadow-lg shadow-destructive/20 hover:bg-destructive/90 transition-all flex items-center justify-center gap-2"
               >
                 Logout
               </button>

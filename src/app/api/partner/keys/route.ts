@@ -6,7 +6,6 @@ import { z } from 'zod';
 
 const apiKeySchema = z.object({
   name: z.string().min(2),
-  environment: z.enum(['production', 'sandbox']).default('sandbox'),
 });
 
 export async function GET(req: Request) {
@@ -25,10 +24,6 @@ export async function GET(req: Request) {
       _id: k._id,
       name: k.name,
       key: k.key,
-      environment: k.environment || 'production',
-      isActive: k.isActive,
-      rateLimit: k.rateLimit,
-      lastUsedAt: k.lastUsedAt,
       createdAt: k.createdAt
     }));
 
@@ -48,16 +43,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { name, environment } = apiKeySchema.parse(body);
+    const { name } = apiKeySchema.parse(body);
 
-    const prefix = environment === 'sandbox' ? 'offrion_sandbox_' : 'offrion_live_';
-    const key = `${prefix}${crypto.randomBytes(24).toString('hex')}`;
+    const key = `offrion_${crypto.randomBytes(24).toString('hex')}`;
 
     const apiKey = await APIKey.create({
       partnerId: userId,
       key,
       name,
-      environment,
     });
 
     return NextResponse.json({ 
@@ -67,7 +60,6 @@ export async function POST(req: Request) {
         id: apiKey._id,
         key: apiKey.key,
         name: name,
-        environment: environment,
         isActive: apiKey.isActive,
         createdAt: apiKey.createdAt,
       }

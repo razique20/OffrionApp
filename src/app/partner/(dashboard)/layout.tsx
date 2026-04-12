@@ -30,13 +30,6 @@ export default function PartnerDashboardLayout({
           </div>
           <div className="flex items-center gap-4">
             <Link 
-              href="/partner/playground"
-              className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 text-amber-600 rounded-xl text-xs font-bold hover:bg-amber-500/20 transition-all"
-            >
-              <Zap className="w-3.5 h-3.5 fill-amber-500" />
-              Sandbox Playground
-            </Link>
-            <Link 
               href="/partner/docs"
               className="flex items-center gap-2 px-4 py-2 bg-secondary border border-border text-muted-foreground rounded-xl text-xs font-bold hover:bg-secondary/80 transition-all"
             >

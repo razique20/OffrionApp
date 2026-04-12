@@ -32,7 +32,6 @@ export default function PartnerDashboard() {
   const [totalEarned, setTotalEarned] = useState<number>(0);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [transLoading, setTransLoading] = useState(true);
-  const [activeEnv, setActiveEnv] = useState<'production' | 'sandbox'>('production');
 
   useEffect(() => {
     fetch('/api/partner/keys')
@@ -60,7 +59,7 @@ export default function PartnerDashboard() {
 
   // Fetch analytics stats
   useEffect(() => {
-    fetch(`/api/partner/analytics?period=7d&environment=${activeEnv}`)
+    fetch(`/api/partner/analytics?period=7d`)
       .then(async (res) => {
         if (!res.ok) return;
         const data = await res.json();
@@ -75,12 +74,12 @@ export default function PartnerDashboard() {
         }
       })
       .catch(() => {});
-  }, [activeEnv]);
+  }, []);
 
   // Fetch transactions
   useEffect(() => {
     setTransLoading(true);
-    fetch(`/api/partner/transactions?limit=5&environment=${activeEnv}`)
+    fetch(`/api/partner/transactions?limit=5`)
       .then(async (res) => {
         if (!res.ok) return;
         const data = await res.json();
@@ -88,7 +87,7 @@ export default function PartnerDashboard() {
       })
       .catch(console.error)
       .finally(() => setTransLoading(false));
-  }, [activeEnv]);
+  }, []);
 
   const generateKey = async () => {
     setGenerating(true);
@@ -98,8 +97,7 @@ export default function PartnerDashboard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          name: `Key_${Date.now()}`,
-          environment: activeEnv 
+          name: `Key_${Date.now()}`
         }),
       });
       const json = await res.json();
@@ -136,36 +134,7 @@ export default function PartnerDashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Partner Dashboard</h1>
-          <p className="text-muted-foreground italic flex items-center gap-1.5">
-            {activeEnv === 'production' ? 'Live Production Environment' : (
-              <span className="flex items-center gap-1.5 text-amber-500 font-bold not-italic">
-                <AlertCircle className="w-3.5 h-3.5" /> Dev-Simulation Mode
-              </span>
-            )}
-          </p>
-        </div>
-
-        <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border shadow-inner shrink-0">
-          <button
-            onClick={() => setActiveEnv('production')}
-            className={cn(
-              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
-              activeEnv === 'production' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
-            )}
-          >
-            <div className={cn("w-1.5 h-1.5 rounded-full", activeEnv === 'production' ? "bg-primary" : "bg-muted-foreground/30")} />
-            Production
-          </button>
-          <button
-            onClick={() => setActiveEnv('sandbox')}
-            className={cn(
-              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
-              activeEnv === 'sandbox' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
-            )}
-          >
-            <div className={cn("w-1.5 h-1.5 rounded-full", activeEnv === 'sandbox' ? "bg-amber-500" : "bg-muted-foreground/30")} />
-            Sandbox
-          </button>
+          <p className="text-sm text-muted-foreground italic">Welcome back to your partner portal.</p>
         </div>
       </div>
       {/* Stats */}
@@ -224,12 +193,12 @@ export default function PartnerDashboard() {
           )}
 
           <div className="space-y-4">
-            {keys.filter(k => (k.environment || 'production') === activeEnv).length === 0 ? (
+            {keys.length === 0 ? (
               <div className="p-12 text-center bg-secondary/50 border border-dashed border-border rounded-2xl">
-                <p className="text-muted-foreground italic">No {activeEnv} keys generated yet.</p>
+                <p className="text-muted-foreground italic">No API keys generated yet.</p>
               </div>
             ) : (
-              keys.filter(k => (k.environment || 'production') === activeEnv).map((k) => (
+              keys.map((k) => (
                 <div key={k.id || k._id} className="p-5 bg-card border border-border rounded-2xl group hover:border-primary/30 transition-all">
                   <div className="flex justify-between items-start mb-4">
                     <div>

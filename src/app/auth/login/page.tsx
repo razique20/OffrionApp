@@ -63,10 +63,10 @@ export default function LoginPage() {
       <main className="flex-1 w-full pt-20">
         <div className="flex w-full h-[calc(100vh-80px)]">
           {/* Informative Side (Hidden on Mobile) */}
-          <div className="hidden lg:flex w-1/2 bg-secondary/30 border-r border-border p-8 lg:p-12 flex-col justify-between relative overflow-hidden">
+          <div className="hidden lg:flex w-1/2 bg-secondary/30 border-r border-border p-8 lg:p-12 flex-col justify-between relative overflow-hidden frost-glass">
             {/* Background Decorations */}
             <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[100px] rounded-full" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/20 blur-[100px] rounded-full" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/30 blur-[100px] rounded-full" />
             
             <div className="relative z-10 space-y-8 max-w-lg">
               <div className="space-y-4">
@@ -91,13 +91,13 @@ export default function LoginPage() {
                   </div>
                   <div>
                     <h3 className="font-bold mb-1">Real-Time Infrastructure</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">Experience a strictly decoupled sandbox to test end-to-end webhook flows securely before going live.</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">Experience a strictly production-ready infrastructure to manage and scale your hyper-local deal redemptions securely.</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-emerald-500/10 rounded-2xl">
-                    <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                  <div className="p-3 bg-primary/20 rounded-2xl">
+                    <CheckCircle2 className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-bold mb-1">Automated 70/30 Ledger</h3>
@@ -106,8 +106,8 @@ export default function LoginPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-blue-500/10 rounded-2xl">
-                    <ShieldCheck className="w-6 h-6 text-blue-500" />
+                  <div className="p-3 bg-secondary/80 rounded-2xl">
+                    <ShieldCheck className="w-6 h-6 text-primary/80" />
                   </div>
                   <div>
                     <h3 className="font-bold mb-1">Enterprise-Grade Architecture</h3>

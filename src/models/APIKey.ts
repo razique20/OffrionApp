@@ -2,7 +2,6 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IAPIKey extends Document {
   partnerId: mongoose.Types.ObjectId;
-  environment: 'production' | 'sandbox';
   key: string;
   name: string;
   isActive: boolean;
@@ -15,13 +14,6 @@ export interface IAPIKey extends Document {
 const APIKeySchema: Schema = new Schema(
   {
     partnerId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-    environment: { 
-      type: String, 
-      enum: ['production', 'sandbox'], 
-      default: 'production',
-      required: true,
-      index: true 
-    },
     key: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
     isActive: { type: Boolean, default: true },

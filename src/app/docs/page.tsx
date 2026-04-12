@@ -126,7 +126,7 @@ export default function PublicDocsPage() {
                       <div className="w-6 h-6 rounded-full bg-premium-gradient text-white text-xs flex items-center justify-center shrink-0">2</div>
                       <div>
                         <p className="font-bold">Generate API Key</p>
-                        <p className="text-sm text-muted-foreground">Go to your Connectivity dashboard and create a sandbox or production key.</p>
+                        <p className="text-sm text-muted-foreground">Go to your Connectivity dashboard and create your production API key.</p>
                       </div>
                     </li>
                     <li className="flex gap-4">
@@ -155,7 +155,7 @@ x-api-key: YOUR_API_KEY`}
                 <div className="mt-8 p-6 bg-blue-500/5 border border-blue-500/20 rounded-2xl flex gap-4">
                    <Shield className="w-5 h-5 text-blue-500 shrink-0 mt-1" />
                    <p className="text-sm text-muted-foreground leading-relaxed">
-                     Keys come in two flavors: <strong>Sandbox</strong> (for testing) and <strong>Production</strong>. Webhooks and payouts are only processed for production-stamped transactions.
+                     All requests are processed using your production-stamped API key. Webhooks and payouts are triggered upon successful redemption of a validated deal.
                    </p>
                 </div>
               </DocSection>
@@ -350,7 +350,6 @@ x-api-key: YOUR_API_KEY`}
                       code={`{
   "event": "deal.redeemed",
   "timestamp": "2026-04-11T08:11:42.027Z",
-  "environment": "sandbox",
   "data": {
     "transactionId": "69da02275802637608455a50",
     "dealId": "69da01fead9d9b4f5c0222e8",

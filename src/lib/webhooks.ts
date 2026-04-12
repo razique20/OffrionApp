@@ -7,20 +7,18 @@ import PartnerWebhook from '@/models/PartnerWebhook';
 export async function dispatchWebhook(
   partnerId: string, 
   event: 'deal.redeemed' | 'commission.earned' | 'payout.processed', 
-  payload: any,
-  environment: 'production' | 'sandbox' = 'production'
+  payload: any
 ) {
   try {
     // 1. Find active webhooks for the partner that listens for this event in the correct environment.
     const webhooks = await PartnerWebhook.find({ 
       partnerId, 
       isActive: true,
-      environment,
       enabledEvents: event
     });
 
     if (!webhooks || webhooks.length === 0) {
-      console.log(`[Webhook] No active subscription found for partner ${partnerId} on event ${event} in ${environment}`);
+      console.log(`[Webhook] No active subscription found for partner ${partnerId} on event ${event}`);
       return;
     }
 
@@ -28,7 +26,6 @@ export async function dispatchWebhook(
     const fullPayload = {
       event,
       timestamp: new Date().toISOString(),
-      environment,
       data: payload
     };
 
@@ -42,7 +39,7 @@ export async function dispatchWebhook(
         .update(body)
         .digest('hex');
 
-      console.log(`[Webhook] Dispatching ${event} to ${webhook.url} (${environment})...`);
+      console.log(`[Webhook] Dispatching ${event} to ${webhook.url}...`);
       
       const response = await fetch(webhook.url, {
         method: 'POST',

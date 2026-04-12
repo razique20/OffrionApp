@@ -22,10 +22,6 @@ const AnalyticsChart = dynamic(() => import('@/components/partner/AnalyticsChart
 });
 
 function AnalyticsContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const envParam = searchParams.get('env') === 'sandbox' ? 'sandbox' : 'production';
-  
   const [isMounted, setIsMounted] = useState(false);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +34,7 @@ function AnalyticsContent() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/partner/analytics?period=${period}&environment=${envParam}`)
+    fetch(`/api/partner/analytics?period=${period}`)
       .then(async (res) => {
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'Failed to fetch analytics');
@@ -54,7 +50,7 @@ function AnalyticsContent() {
       .finally(() => {
         setLoading(false);
       });
-  }, [period, envParam]);
+  }, [period]);
 
   if (loading && !data) return (
     <div className="flex items-center justify-center h-[60vh]">
@@ -126,37 +122,6 @@ function AnalyticsContent() {
               </button>
             ))}
           </div>
-        </div>
-
-        <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border w-fit shrink-0">
-          <button
-            onClick={() => {
-              const params = new URLSearchParams(searchParams.toString());
-              params.set('env', 'production');
-              router.push(`?${params.toString()}`);
-            }}
-            className={cn(
-              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
-              envParam === 'production' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
-            )}
-          >
-            <div className={cn("w-1.5 h-1.5 rounded-full", envParam === 'production' ? "bg-primary" : "bg-muted-foreground/30")} />
-            Production
-          </button>
-          <button
-            onClick={() => {
-              const params = new URLSearchParams(searchParams.toString());
-              params.set('env', 'sandbox');
-              router.push(`?${params.toString()}`);
-            }}
-            className={cn(
-              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
-              envParam === 'sandbox' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
-            )}
-          >
-            <div className={cn("w-1.5 h-1.5 rounded-full", envParam === 'sandbox' ? "bg-amber-500" : "bg-muted-foreground/30")} />
-            Sandbox
-          </button>
         </div>
       </div>
 

@@ -1,72 +1,107 @@
 @import 'tailwindcss';
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  /* Primary Emerald-600 */
-  --primary: oklch(0.6 0.15 160);
-  --primary-gradient: linear-gradient(135deg, oklch(0.6 0.15 160) 0%, oklch(0.6 0.18 250) 100%);
-  --primary-foreground: oklch(0.985 0 0);
-  /* Secondary Slate-100 */
-  --secondary: oklch(0.967 0.003 264.542);
-  --secondary-foreground: oklch(0.145 0 0);
-  --muted: oklch(0.967 0.003 264.542);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.967 0.003 264.542);
-  --accent-foreground: oklch(0.145 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.6 0.15 160);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  /* ── Frosted Aura Light Theme ── */
+  --background: #FFFFFF;
+  --foreground: #1A2B33;
+  --card: #FFFFFF;
+  --card-foreground: #1A2B33;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A2B33;
+
+  /* Primary — Steel Blue #5C7E8F */
+  --primary: #5C7E8F;
+  --primary-gradient: linear-gradient(135deg, #5C7E8F 0%, #4A6B7D 50%, #3D5A6B 100%);
+  --primary-foreground: #FFFFFF;
+
+  /* Secondary — Ice Blue #D4DDE2 */
+  --secondary: #D4DDE2;
+  --secondary-foreground: #1A2B33;
+
+  /* Muted — Pewter Gray #A2A2A2 */
+  --muted: #EDF1F4;
+  --muted-foreground: #6B7D87;
+
+  /* Accent — Frosted glass tint */
+  --accent: #E8EEF2;
+  --accent-foreground: #1A2B33;
+
+  --destructive: #D45A5A;
+  --destructive-foreground: #FFFFFF;
+
+  --border: #D4DDE2;
+  --input: #D4DDE2;
+  --ring: #5C7E8F;
+
+  /* Charts — Frosted Aura palette harmonics */
+  --chart-1: #5C7E8F;
+  --chart-2: #7A9BAB;
+  --chart-3: #3D5A6B;
+  --chart-4: #A2C0CE;
+  --chart-5: #8FAAB8;
+
   --radius: 0.75rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.6 0.15 160);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.967 0.003 264.542);
-  --sidebar-accent-foreground: oklch(0.145 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.6 0.15 160);
+
+  /* Sidebar */
+  --sidebar: #F7F9FB;
+  --sidebar-foreground: #1A2B33;
+  --sidebar-primary: #5C7E8F;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E8EEF2;
+  --sidebar-accent-foreground: #1A2B33;
+  --sidebar-border: #D4DDE2;
+  --sidebar-ring: #5C7E8F;
 }
 
 .dark {
-  --background: #0A0A0B;
-  --foreground: #FAFAFA;
-  --card: #141415;
-  --card-foreground: #FAFAFA;
-  --popover: #141415;
-  --popover-foreground: #FAFAFA;
-  --primary: #10B981;
+  /* ── Frosted Aura Dark Theme ── */
+  --background: #0D1317;
+  --foreground: #E8EEF2;
+  --card: #141C22;
+  --card-foreground: #E8EEF2;
+  --popover: #141C22;
+  --popover-foreground: #E8EEF2;
+
+  /* Primary — Luminous Steel Blue */
+  --primary: #7A9BAB;
+  --primary-gradient: linear-gradient(135deg, #7A9BAB 0%, #5C7E8F 50%, #4A6B7D 100%);
   --primary-foreground: #FFFFFF;
-  --secondary: #1F2937;
-  --secondary-foreground: #FAFAFA;
-  --muted: #1F2937;
-  --muted-foreground: #A1A1AA;
-  --accent: #1F2937;
-  --accent-foreground: #FAFAFA;
-  --destructive: #EF4444;
-  --destructive-foreground: #FAFAFA;
-  --border: #27272A;
-  --input: #27272A;
-  --ring: #10B981;
-  --sidebar: #0A0A0B;
-  --sidebar-foreground: #FAFAFA;
-  --sidebar-primary: #10B981;
+
+  /* Secondary — Deep Frost */
+  --secondary: #1C2830;
+  --secondary-foreground: #E8EEF2;
+
+  /* Muted — Dark Pewter */
+  --muted: #1C2830;
+  --muted-foreground: #8A9BA5;
+
+  /* Accent — Frosted glass dark */
+  --accent: #1C2830;
+  --accent-foreground: #E8EEF2;
+
+  --destructive: #E06060;
+  --destructive-foreground: #FFFFFF;
+
+  --border: #243038;
+  --input: #243038;
+  --ring: #7A9BAB;
+
+  /* Charts */
+  --chart-1: #7A9BAB;
+  --chart-2: #5C7E8F;
+  --chart-3: #A2C0CE;
+  --chart-4: #4A6B7D;
+  --chart-5: #8FAAB8;
+
+  /* Sidebar */
+  --sidebar: #0D1317;
+  --sidebar-foreground: #E8EEF2;
+  --sidebar-primary: #7A9BAB;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #1F2937;
-  --sidebar-accent-foreground: #FAFAFA;
-  --sidebar-border: #27272A;
-  --sidebar-ring: #10B981;
+  --sidebar-accent: #1C2830;
+  --sidebar-accent-foreground: #E8EEF2;
+  --sidebar-border: #243038;
+  --sidebar-ring: #7A9BAB;
 }
 
 @theme inline {
@@ -125,12 +160,19 @@
   }
 }
 
+/* ── Glassmorphism Utilities ── */
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(92, 126, 143, 0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(92, 126, 143, 0.12);
 }
 
+.dark .glassmorphism {
+  background: rgba(122, 155, 171, 0.08);
+  border: 1px solid rgba(122, 155, 171, 0.12);
+}
+
+/* ── Premium Gradient Utilities ── */
 .premium-gradient,
 .bg-premium-gradient {
   background: var(--primary-gradient);
@@ -144,7 +186,20 @@
   background-clip: text;
 }
 
-/* Image Blending Utilities */
+/* ── Frosted Aura Specific Effects ── */
+.frost-glass {
+  background: rgba(212, 221, 226, 0.3);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid rgba(212, 221, 226, 0.4);
+}
+
+.dark .frost-glass {
+  background: rgba(28, 40, 48, 0.6);
+  border: 1px solid rgba(36, 48, 56, 0.6);
+}
+
+/* ── Image Blending Utilities ── */
 .blend-to-bottom {
   mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
@@ -170,4 +225,15 @@
   inset: 0;
   box-shadow: inset 0 0 100px 20px var(--background);
   pointer-events: none;
+}
+
+/* ── Frost Shimmer Animation ── */
+@keyframes frost-shimmer {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+  100% { opacity: 0.4; }
+}
+
+.frost-shimmer {
+  animation: frost-shimmer 4s ease-in-out infinite;
 }

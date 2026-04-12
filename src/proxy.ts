@@ -9,8 +9,6 @@ const publicRoutes = [
   '/api/auth/register',
   '/api/deals/public',
   '/docs',
-  '/sandbox',
-  '/api/sandbox',
 ];
 
 // Role-based route prefixes

@@ -1,5 +1,6 @@
 import React from 'react';
 import Sidebar, { SidebarItem } from '@/components/Sidebar';
+import BillingAlert from '@/components/merchant/BillingAlert';
 
 const merchantMenuItems: SidebarItem[] = [
   { name: 'Dashboard', icon: 'dashboard', href: '/merchant/dashboard' },
@@ -33,6 +34,7 @@ export default function MerchantLayout({
             </div>
           </div>
         </header>
+        <BillingAlert />
         {children}
       </main>
     </div>

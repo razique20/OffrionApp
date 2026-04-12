@@ -4,9 +4,6 @@ import bcrypt from 'bcryptjs';
 import User, { UserRole } from '../src/models/User';
 import Category from '../src/models/Category';
 import Deal from '../src/models/Deal';
-import SandboxDeal from '../src/models/SandboxDeal';
-import SandboxTransaction from '../src/models/SandboxTransaction';
-import SandboxCommission from '../src/models/SandboxCommission';
 import MerchantProfile from '../src/models/MerchantProfile';
 import AnalyticsEvent from '../src/models/AnalyticsEvent';
 import Transaction from '../src/models/Transaction';
@@ -30,11 +27,8 @@ async function seed() {
     await User.deleteMany({});
     await Category.deleteMany({});
     await Deal.deleteMany({});
-    await SandboxDeal.deleteMany({});
     await Transaction.deleteMany({});
     await Commission.deleteMany({});
-    await SandboxTransaction.deleteMany({});
-    await SandboxCommission.deleteMany({});
     await AnalyticsEvent.deleteMany({});
     console.log('Cleared existing data');
 
@@ -173,56 +167,52 @@ async function seed() {
     }
 
     await Deal.insertMany(sampleDeals);
-    const seededSandboxDeals = await SandboxDeal.insertMany(sampleDeals);
-    console.log('Created Extensive Sample Deals (Production & Sandbox)');
+    console.log('Created Extensive Sample Deals');
 
-    // 6. Create some dummy Transactions & Commissions for Analytics
+    // 6. Create some dummy Transactions & Commissions for Analytics (Production)
     const partner = partners[0];
     const merchant = merchants[0];
-    const sandboxDeal = seededSandboxDeals[0];
+    const deal = await Deal.findOne({ merchantId: merchant._id });
 
-    const dummyTransactions = [];
-    const dummyCommissions = [];
-    const dummyEvents = [];
+    if (deal) {
+      const dummyTransactions = [];
+      const dummyCommissions = [];
+      const dummyEvents = [];
 
-    // Create 10 transactions over the last 5 days
-    for (let i = 0; i < 10; i++) {
+      // Create 20 transactions over the last 10 days
+      for (let i = 0; i < 20; i++) {
         const date = new Date();
         date.setDate(date.getDate() - Math.floor(i / 2));
         
-        const trans = {
-            dealId: sandboxDeal._id,
-            partnerId: partner._id,
-            amount: 150,
-            status: 'completed',
-            createdAt: date
-        };
-        dummyTransactions.push(trans);
+        const trans = await Transaction.create({
+          dealId: deal._id,
+          partnerId: partner._id,
+          amount: deal.discountedPrice || 100,
+          status: 'completed',
+          createdAt: date
+        });
 
-        const comm = {
-            transactionId: new mongoose.Types.ObjectId(), // placeholder
-            partnerId: partner._id,
-            merchantId: merchant._id,
-            amount: 30, // 20% of 150
-            partnerShare: 22.5, // 75% of 30
-            platformShare: 7.5, // 25% of 30
-            status: 'pending',
-            createdAt: date
-        };
-        dummyCommissions.push(comm);
+        await Commission.create({
+          transactionId: trans._id,
+          partnerId: partner._id,
+          merchantId: merchant._id,
+          amount: (deal.discountedPrice || 100) * (deal.commissionPercentage || 10) / 100,
+          partnerShare: ((deal.discountedPrice || 100) * (deal.commissionPercentage || 10) / 100) * 0.75,
+          platformShare: ((deal.discountedPrice || 100) * (deal.commissionPercentage || 10) / 100) * 0.25,
+          status: i % 5 === 0 ? 'paid' : 'pending',
+          createdAt: date
+        });
 
         // Add some events
         dummyEvents.push(
-            { type: 'impression', dealId: sandboxDeal._id, merchantId: merchant._id, partnerId: partner._id, createdAt: date },
-            { type: 'click', dealId: sandboxDeal._id, merchantId: merchant._id, partnerId: partner._id, createdAt: date },
-            { type: 'conversion', dealId: sandboxDeal._id, merchantId: merchant._id, partnerId: partner._id, createdAt: date }
+          { type: 'impression', dealId: deal._id, merchantId: merchant._id, partnerId: partner._id, createdAt: date },
+          { type: 'click', dealId: deal._id, merchantId: merchant._id, partnerId: partner._id, createdAt: date },
+          { type: 'conversion', dealId: deal._id, merchantId: merchant._id, partnerId: partner._id, createdAt: date }
         );
+      }
+      await AnalyticsEvent.insertMany(dummyEvents);
+      console.log('Created Production Demo Analytics Data');
     }
-
-    await SandboxTransaction.insertMany(dummyTransactions);
-    await SandboxCommission.insertMany(dummyCommissions);
-    await AnalyticsEvent.insertMany(dummyEvents);
-    console.log('Created Sandbox Demo Analytics Data');
 
     console.log('Seeding completed successfully!');
     process.exit(0);

@@ -25,14 +25,13 @@ const AnalyticsChart = dynamic(() => import('@/components/partner/AnalyticsChart
 });
 
 export default function MerchantDashboard() {
-  const [activeTab, setActiveTab] = useState<'production' | 'sandbox'>('production');
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/merchant/analytics?environment=${activeTab}`, { credentials: 'include' })
+    fetch(`/api/merchant/analytics`, { credentials: 'include' })
       .then(async (res) => {
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'Failed to fetch analytics');
@@ -48,7 +47,7 @@ export default function MerchantDashboard() {
       .finally(() => {
         setLoading(false);
       });
-  }, [activeTab]);
+  }, []);
 
   if (loading) return <div className="flex items-center justify-center h-[50vh]">
     <div className="flex flex-col items-center gap-4">
@@ -88,36 +87,7 @@ export default function MerchantDashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Merchant Dashboard</h1>
-          <p className="text-muted-foreground italic flex items-center gap-1.5">
-            {activeTab === 'production' ? 'Live Production Environment' : (
-              <span className="flex items-center gap-1.5 text-amber-500 font-bold not-italic">
-                <AlertCircle className="w-3.5 h-3.5" /> Dev-Simulation Mode
-              </span>
-            )}
-          </p>
-        </div>
-        
-        <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border shrink-0 shadow-inner">
-          <button
-            onClick={() => setActiveTab('production')}
-            className={cn(
-              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
-              activeTab === 'production' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
-            )}
-          >
-            <div className={cn("w-1.5 h-1.5 rounded-full", activeTab === 'production' ? "bg-primary" : "bg-muted-foreground/30")} />
-            Production
-          </button>
-          <button
-            onClick={() => setActiveTab('sandbox')}
-            className={cn(
-              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
-              activeTab === 'sandbox' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
-            )}
-          >
-            <div className={cn("w-1.5 h-1.5 rounded-full", activeTab === 'sandbox' ? "bg-amber-500" : "bg-muted-foreground/30")} />
-            Sandbox
-          </button>
+          <p className="text-sm text-muted-foreground italic">Welcome back to your business portal.</p>
         </div>
       </div>
       

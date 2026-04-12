@@ -9,12 +9,11 @@ export default function PartnerTransactionsPage() {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeEnv, setActiveEnv] = useState<'production' | 'sandbox'>('production');
 
   const fetchTransactions = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/partner/transactions?environment=${activeEnv}`);
+      const res = await fetch(`/api/partner/transactions`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to fetch transactions');
       setTransactions(data.transactions || []);
@@ -27,46 +26,18 @@ export default function PartnerTransactionsPage() {
 
   useEffect(() => {
     fetchTransactions();
-  }, [activeEnv]);
+  }, []);
 
   return (
     <div className="space-y-8 pb-10 transition-all duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
-          <p className="text-muted-foreground flex items-center gap-2 mt-1">
-            {activeEnv === 'production' ? (
-              <>Monitor all partner-referred transaction flows.</>
-            ) : (
-              <span className="flex items-center gap-1.5 text-amber-500 font-bold">
-                <AlertCircle className="w-4 h-4" /> Sandbox / Developer Simulation Mode
-              </span>
-            )}
+          <p className="text-muted-foreground mt-1">
+            Monitor all partner-referred transaction flows.
           </p>
         </div>
 
-        <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border shrink-0">
-          <button
-            onClick={() => setActiveEnv('production')}
-            className={cn(
-              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
-              activeEnv === 'production' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
-            )}
-          >
-            <div className={cn("w-1.5 h-1.5 rounded-full", activeEnv === 'production' ? "bg-primary" : "bg-muted-foreground/30")} />
-            Production
-          </button>
-          <button
-            onClick={() => setActiveEnv('sandbox')}
-            className={cn(
-              "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
-              activeEnv === 'sandbox' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
-            )}
-          >
-            <div className={cn("w-1.5 h-1.5 rounded-full", activeEnv === 'sandbox' ? "bg-amber-500" : "bg-muted-foreground/30")} />
-            Sandbox
-          </button>
-        </div>
       </div>
 
       <div className="bg-card border border-border rounded-[32px] overflow-hidden shadow-sm">
@@ -98,7 +69,7 @@ export default function PartnerTransactionsPage() {
             </div>
             <h3 className="text-xl font-bold mb-2">No Transactions Found</h3>
             <p className="text-muted-foreground text-sm max-w-sm mb-6">
-              There are no {activeEnv === 'sandbox' ? 'test ' : ''}transactions referred by your integration yet.
+              There are no transactions referred by your integration yet.
             </p>
           </div>
         ) : (

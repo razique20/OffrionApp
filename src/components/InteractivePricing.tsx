@@ -12,8 +12,8 @@ const TIERS = [
     price: 'Free',
     fee: 15, // 15% platform fee
     retention: 85,
-    color: 'text-blue-500',
-    bg: 'bg-blue-500',
+    color: 'text-muted-foreground',
+    bg: 'bg-muted',
     features: ['Geo-Spatial Search API', 'Up to 10 Active Deals', 'Basic Partner Dashboard', 'Standard Support'],
     description: "Perfect for indie hackers and local marketplaces testing the waters."
   },
@@ -36,8 +36,8 @@ const TIERS = [
     price: 'Custom',
     fee: 5, // 5% platform fee
     retention: 95,
-    color: 'text-emerald-500',
-    bg: 'bg-emerald-500',
+    color: 'text-primary/70',
+    bg: 'bg-primary/70',
     features: ['White-label Merchant Portal', 'Dedicated Node Cluster', 'Custom SLA Guarantee', 'On-premise Database Sync'],
     description: "Mission-critical deals infrastructure for globally massive Super Apps."
   }

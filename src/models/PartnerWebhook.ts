@@ -6,7 +6,6 @@ export interface IPartnerWebhook extends Document {
   secret: string;
   isActive: boolean;
   enabledEvents: string[];
-  environment: 'production' | 'sandbox';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,12 +20,6 @@ const PartnerWebhookSchema: Schema = new Schema(
       type: [String], 
       default: ['deal.redeemed', 'commission.earned'],
       enum: ['deal.redeemed', 'commission.earned', 'payout.processed']
-    },
-    environment: { 
-      type: String, 
-      enum: ['production', 'sandbox'], 
-      default: 'production',
-      index: true
     },
   },
   { timestamps: true }

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Commission from '@/models/Commission';
-import SandboxCommission from '@/models/SandboxCommission';
 import mongoose from 'mongoose';
 
 export async function GET(req: Request) {
@@ -16,16 +15,14 @@ export async function GET(req: Request) {
     const status = searchParams.get('status'); // pending | paid
     const from = searchParams.get('from');
     const to = searchParams.get('to');
-    const environment = searchParams.get('environment') || 'production';
     const page = Math.max(1, Number(searchParams.get('page') || 1));
     const limit = Math.min(Number(searchParams.get('limit') || 20), 100);
     const skip = (page - 1) * limit;
 
     const partnerId = new mongoose.Types.ObjectId(userId);
 
-    // Build filter — sandbox collections are already environment-scoped, no environment field
+    // Build filter
     const query: any = { partnerId };
-    if (environment === 'production') query.environment = 'production';
     if (status) query.status = status;
     if (from || to) {
       query.createdAt = {};
@@ -33,12 +30,11 @@ export async function GET(req: Request) {
       if (to) query.createdAt.$lte = new Date(to);
     }
 
-    const commissionModel = environment === 'sandbox' ? SandboxCommission : Commission;
-    const txRef = environment === 'sandbox' ? 'SandboxTransaction' : 'Transaction';
+    const commissionModel = Commission;
+    const txRef = 'Transaction';
 
     // Summary totals
     const summaryMatch: any = { partnerId };
-    if (environment === 'production') summaryMatch.environment = 'production';
     const summary = await commissionModel.aggregate([
       { $match: summaryMatch },
       {

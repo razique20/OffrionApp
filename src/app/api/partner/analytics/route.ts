@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import Commission from '@/models/Commission';
-import SandboxCommission from '@/models/SandboxCommission';
 
 export async function GET(req: Request) {
   try {
@@ -14,7 +13,7 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const period = searchParams.get('period') || '30d';
-    const environment = searchParams.get('environment') || 'production';
+    const environment = 'production';
 
     const periodMap: Record<string, number> = {
       '7d': 7,
@@ -29,7 +28,7 @@ export async function GET(req: Request) {
 
     // Aggregate event counts by type
     const eventCounts = await AnalyticsEvent.aggregate([
-      { $match: { partnerId, environment, createdAt: { $gte: since } } },
+      { $match: { partnerId, createdAt: { $gte: since } } },
       { $group: { _id: '$type', count: { $sum: 1 } } },
     ]);
 
@@ -41,7 +40,7 @@ export async function GET(req: Request) {
     const ctr = stats.impression > 0 ? ((stats.click / stats.impression) * 100).toFixed(2) : '0.00';
     const conversionRate = stats.click > 0 ? ((stats.conversion / stats.click) * 100).toFixed(2) : '0.00';
 
-    const commissionModel = environment === 'sandbox' ? SandboxCommission : Commission;
+    const commissionModel = Commission;
 
     // Aggregate commissions for selected period
     const commissionStats = await commissionModel.aggregate([
@@ -68,7 +67,7 @@ export async function GET(req: Request) {
 
     // Time-series data (daily breakdown)
     const timeSeries = await AnalyticsEvent.aggregate([
-      { $match: { partnerId, environment, createdAt: { $gte: since } } },
+      { $match: { partnerId, createdAt: { $gte: since } } },
       {
         $group: {
           _id: {

@@ -7,7 +7,6 @@ export interface ITransaction extends Document {
   userId?: mongoose.Types.ObjectId; // End user if tracked
   amount: number;
   currency: string;
-  environment: 'production' | 'sandbox';
   status: 'pending' | 'completed' | 'cancelled' | 'refunded';
   redeemedAt?: Date;
   qrCode?: string;
@@ -23,13 +22,6 @@ const TransactionSchema: Schema = new Schema(
     userId: { type: Schema.Types.ObjectId, ref: 'User' },
     amount: { type: Number, required: true },
     currency: { type: String, default: 'USD' },
-    environment: { 
-      type: String, 
-      enum: ['production', 'sandbox'], 
-      default: 'production',
-      required: true,
-      index: true 
-    },
     status: {
       type: String,
       enum: ['pending', 'completed', 'cancelled', 'refunded'],

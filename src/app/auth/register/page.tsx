@@ -215,10 +215,10 @@ export default function RegisterPage() {
           </div>
           
           {/* Informative Side (Hidden on Mobile) */}
-          <div className="hidden lg:flex w-1/2 bg-secondary/30 border-l border-border p-8 lg:p-12 flex-col justify-between relative overflow-hidden">
+          <div className="hidden lg:flex w-1/2 bg-secondary/30 border-l border-border p-8 lg:p-12 flex-col justify-between relative overflow-hidden frost-glass">
             {/* Background Decorations */}
             <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[100px] rounded-full" />
-            <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/20 blur-[100px] rounded-full" />
+            <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/30 blur-[100px] rounded-full" />
             
             <div className="relative z-10 space-y-8 max-w-lg">
               <div className="space-y-4">
@@ -232,8 +232,8 @@ export default function RegisterPage() {
 
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-amber-500/10 rounded-2xl">
-                    <TrendingUp className="w-6 h-6 text-amber-500" />
+                  <div className="p-3 bg-primary/20 rounded-2xl">
+                    <TrendingUp className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-bold mb-1">For Merchants</h3>
@@ -242,8 +242,8 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-purple-500/10 rounded-2xl">
-                    <Layers className="w-6 h-6 text-purple-500" />
+                  <div className="p-3 bg-secondary/80 rounded-2xl">
+                    <Layers className="w-6 h-6 text-primary/80" />
                   </div>
                   <div>
                     <h3 className="font-bold mb-1">For Partners</h3>

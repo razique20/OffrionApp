@@ -40,7 +40,6 @@ export const Navbar = () => {
         <div className="hidden md:flex items-center gap-8">
           <Link href="/ecosystem" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Ecosystem</Link>
           <Link href="/docs" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Docs</Link>
-          <Link href="/sandbox" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Sandbox</Link>
           <Link href="/#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
         </div>
         <div className="flex items-center gap-3">
@@ -96,8 +95,8 @@ export const Navbar = () => {
 
                     {(() => {
                       const availableViews = [
-                        { role: UserRole.MERCHANT, label: 'Merchant', href: '/merchant/dashboard', color: 'text-blue-500', icon: User },
-                        { role: UserRole.PARTNER, label: 'Partner', href: '/partner/dashboard', color: 'text-purple-500', icon: User },
+                        { role: UserRole.MERCHANT, label: 'Merchant', href: '/merchant/dashboard', color: 'text-primary', icon: User },
+                        { role: UserRole.PARTNER, label: 'Partner', href: '/partner/dashboard', color: 'text-primary/80', icon: User },
                         { role: UserRole.ADMIN, label: 'Platform Admin', href: '/admin/dashboard', color: 'text-primary', icon: ShieldCheck },
                       ].filter(view => {
                         const userRoles = (user?.roles && user.roles.length > 0) ? user.roles : (user?.role ? [user.role] : []);
@@ -131,7 +130,7 @@ export const Navbar = () => {
                         logout();
                         setShowDropdown(false);
                       }}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-500/5 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       Logout

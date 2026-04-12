@@ -5,22 +5,46 @@ import { Globe } from 'lucide-react';
 export const Footer = () => {
   return (
     <footer className="py-12 border-t border-border bg-card/30">
-      <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-premium-gradient flex items-center justify-center">
-            <span className="text-white text-[10px] font-bold">O</span>
+      <div className="max-w-7xl mx-auto px-6 space-y-8">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-8">
+          {/* Brand */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-premium-gradient flex items-center justify-center">
+                <span className="text-white text-[10px] font-bold">O</span>
+              </div>
+              <span className="text-lg font-bold tracking-tight">Offrion</span>
+            </div>
+            <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">
+              The scalable deals architecture for modern platforms. Connect merchants with partners through a high-performance API.
+            </p>
           </div>
-          <span className="text-lg font-bold tracking-tight">Offrion</span>
+
+          {/* Navigation Links */}
+          <div className="flex gap-16">
+            <div className="space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Platform</p>
+              <div className="flex flex-col gap-2">
+                <Link href="/features" className="text-xs text-muted-foreground hover:text-primary transition-colors">Features</Link>
+                <Link href="/partners" className="text-xs text-muted-foreground hover:text-primary transition-colors">Partners</Link>
+                <Link href="/partner/docs" className="text-xs text-muted-foreground hover:text-primary transition-colors">API Docs</Link>
+                <Link href="/auth/register?role=merchant" className="text-xs text-muted-foreground hover:text-primary transition-colors">Join as Merchant</Link>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Legal</p>
+              <div className="flex flex-col gap-2">
+                <Link href="/legal/privacy" className="text-xs text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
+                <Link href="/legal/terms" className="text-xs text-muted-foreground hover:text-primary transition-colors">Terms & Conditions</Link>
+                <Link href="/legal/governance" className="text-xs text-muted-foreground hover:text-primary transition-colors">Governance Policy</Link>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-8">
-           <Link href="/features" className="text-xs text-muted-foreground hover:text-primary transition-colors">Features</Link>
-           <Link href="/partners" className="text-xs text-muted-foreground hover:text-primary transition-colors">Partners</Link>
-           <Link href="/partner/docs" className="text-xs text-muted-foreground hover:text-primary transition-colors">API Docs</Link>
-           <Link href="/auth/register?role=merchant" className="text-xs text-muted-foreground hover:text-primary transition-colors">Join as Merchant</Link>
-        </div>
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mt-8 md:mt-0">
+
+        {/* Bottom Bar */}
+        <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">© 2026 Offrion Platform. All rights reserved.</p>
-          <div className="hidden sm:block w-1 h-1 rounded-full bg-border"></div>
           <p className="text-xs text-muted-foreground flex items-center gap-1.5 font-medium">
             <Globe className="w-3 h-3" /> A product from Aethyl Group
           </p>

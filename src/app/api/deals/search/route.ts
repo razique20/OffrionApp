@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
-import SandboxDeal from '@/models/SandboxDeal';
 
 export async function GET(req: Request) {
   try {
@@ -14,10 +13,8 @@ export async function GET(req: Request) {
     const radiusInKm = parseFloat(searchParams.get('radius') || '10');
     const limit = parseInt(searchParams.get('limit') || '20');
     const categoryId = searchParams.get('categoryId');
-    const environment = searchParams.get('environment') || 'production';
 
-    // 1. Determine Model
-    const Model = environment === 'sandbox' ? SandboxDeal : (Deal as any);
+    const Model = Deal;
 
     // 2. Build Aggregation Pipeline for $geoNear
     const pipeline: any[] = [

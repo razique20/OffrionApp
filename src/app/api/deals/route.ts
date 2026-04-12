@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
-import SandboxDeal from '@/models/SandboxDeal';
 import APIKey from '@/models/APIKey';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import mongoose from 'mongoose';
@@ -25,8 +24,7 @@ export async function GET(req: Request) {
     }
 
     // Determine environment
-    const isSandbox = apiKey.environment === 'sandbox';
-    const DealModel = isSandbox ? SandboxDeal : (Deal as any);
+    const DealModel = Deal;
 
     // Update last used
     apiKey.lastUsedAt = new Date();
@@ -147,7 +145,6 @@ export async function GET(req: Request) {
         dealId: deal._id,
         partnerId: apiKey.partnerId,
         merchantId: deal.merchantId,
-        environment: apiKey.environment,
       }));
       AnalyticsEvent.insertMany(impressionEvents).catch((err) =>
         console.error('Failed to log impressions:', err)

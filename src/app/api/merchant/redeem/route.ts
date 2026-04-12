@@ -4,6 +4,7 @@ import Transaction from '@/models/Transaction';
 import Deal from '@/models/Deal';
 import Commission from '@/models/Commission';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
+import MerchantProfile from '@/models/MerchantProfile';
 import mongoose from 'mongoose';
 import { z } from 'zod';
 import { dispatchWebhook } from '@/lib/webhooks';
@@ -43,13 +44,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
     }
 
-    // --- Environment Segregation ---
-    // Prevent sandbox transactions from being redeemed in the production terminal
-    if (transaction.environment === 'sandbox') {
-      return NextResponse.json({ 
-        error: 'This is a sandbox transaction and cannot be redeemed in the production terminal.' 
-      }, { status: 400 });
-    }
 
     const deal = transaction.dealId as any;
     
@@ -73,7 +67,6 @@ export async function POST(req: Request) {
       dealId: deal._id,
       partnerId: new mongoose.Types.ObjectId(transaction.partnerId.toString()),
       merchantId: deal.merchantId,
-      environment: transaction.environment || 'production',
       metadata: { transactionId: transaction._id },
     });
 
@@ -83,6 +76,34 @@ export async function POST(req: Request) {
     const partnerShare = Math.round(totalCommission * 0.70 * 100) / 100;
     const platformShare = Math.round(totalCommission * 0.30 * 100) / 100;
 
+    // --- Wallet Deduction Logic ---
+    const profile = await MerchantProfile.findOne({ userId: deal.merchantId });
+    if (!profile) {
+      return NextResponse.json({ error: 'Merchant profile not found' }, { status: 404 });
+    }
+
+    let commissionStatus: 'pending' | 'cleared' = 'pending';
+
+    if (profile.billingPreference === 'prepaid') {
+      if (profile.balance < totalCommission) {
+        return NextResponse.json({ 
+          error: 'Insufficient wallet balance', 
+          required: totalCommission,
+          current: profile.balance
+        }, { status: 402 });
+      }
+      
+      // Deduct balance
+      profile.balance = Math.max(0, profile.balance - totalCommission);
+      commissionStatus = 'cleared';
+    } else if (profile.billingPreference === 'card_on_file') {
+      // Increment accrued liability
+      profile.accruedLiability = (profile.accruedLiability || 0) + totalCommission;
+      commissionStatus = 'pending'; // Stays pending until admin settles it
+    }
+
+    await profile.save();
+
     const commission = await Commission.create({
       transactionId: transaction._id,
       partnerId: new mongoose.Types.ObjectId(transaction.partnerId.toString()),
@@ -90,8 +111,7 @@ export async function POST(req: Request) {
       amount: Math.round(totalCommission * 100) / 100,
       partnerShare,
       platformShare,
-      environment: transaction.environment || 'production',
-      status: 'pending',
+      status: commissionStatus,
     });
 
     // --- Dispatch Real-Time Webhook (Fire-and-forget) ---
@@ -105,8 +125,7 @@ export async function POST(req: Request) {
         amount: deal.discountedPrice,
         partnerShare: commission.partnerShare,
         redeemedAt: transaction.redeemedAt,
-      },
-      transaction.environment || 'production'
+      }
     ).catch(err => console.error('[Webhook Trigger Error]:', err));
 
     return NextResponse.json({ 

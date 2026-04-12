@@ -37,10 +37,16 @@ export default function LandingPage() {
       <main>
         {/* Hero Section */}
         <section className="relative h-screen overflow-hidden flex items-center justify-center">
-          {/* Background Blurs */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10 pointer-events-none opacity-20">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full blur-[120px] -translate-y-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-400 to-primary rounded-full blur-[120px] translate-y-1/2"></div>
+          {/* ── Frosted Aura Background Blurs ── */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10 pointer-events-none opacity-15">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[#5C7E8F] to-[#A2A2A2] rounded-full blur-[120px] -translate-y-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-[#D4DDE2] to-[#5C7E8F] rounded-full blur-[120px] translate-y-1/2"></div>
+          </div>
+          {/* ── Subtle frost particles ── */}
+          <div className="absolute inset-0 -z-10 pointer-events-none">
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary/20 rounded-full frost-shimmer"></div>
+            <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-primary/15 rounded-full frost-shimmer" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute bottom-1/3 left-1/2 w-1 h-1 bg-primary/25 rounded-full frost-shimmer" style={{ animationDelay: '2s' }}></div>
           </div>
 
           <div className="max-w-5xl w-full mx-auto px-6 z-10 relative">
@@ -83,16 +89,16 @@ export default function LandingPage() {
             {/* Feature 1: Merchant */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
               <div className="order-2 lg:order-1 rounded-[2rem] shadow-2xl relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-transparent blur-3xl -z-10 rounded-full"></div>
-                <div className="aspect-video w-full bg-secondary/30 border border-border rounded-[2rem] overflow-hidden relative flex items-center justify-center p-8 group-hover:border-blue-500/30 transition-colors">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent blur-3xl -z-10 rounded-full"></div>
+                <div className="aspect-video w-full bg-secondary/30 border border-border rounded-[2rem] overflow-hidden relative flex items-center justify-center p-8 group-hover:border-primary/30 transition-colors">
                    <div className="absolute top-4 left-4 flex gap-2">
                      <div className="w-3 h-3 rounded-full bg-destructive/50"></div>
                      <div className="w-3 h-3 rounded-full bg-amber-500/50"></div>
-                     <div className="w-3 h-3 rounded-full bg-emerald-500/50"></div>
+                     <div className="w-3 h-3 rounded-full bg-primary/50"></div>
                    </div>
                    <div className="relative">
-                     <div className="w-32 h-32 bg-blue-500/10 rounded-3xl flex items-center justify-center rotate-3 group-hover:rotate-6 transition-transform relative z-10 border border-blue-500/20 shadow-xl shadow-blue-500/10">
-                       <ShoppingBag className="w-16 h-16 text-blue-500" />
+                     <div className="w-32 h-32 bg-primary/10 rounded-3xl flex items-center justify-center rotate-3 group-hover:rotate-6 transition-transform relative z-10 border border-primary/20 shadow-xl shadow-primary/10">
+                       <ShoppingBag className="w-16 h-16 text-primary" />
                      </div>
                      <div className="w-24 h-24 bg-card rounded-2xl flex items-center justify-center -rotate-6 absolute -bottom-6 -left-6 z-0 border border-border shadow-lg hidden md:flex">
                         <BarChart3 className="w-10 h-10 text-muted-foreground opacity-50" />
@@ -104,7 +110,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="order-1 lg:order-2">
-                <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-6">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6">
                   <ShoppingBag className="w-6 h-6" />
                 </div>
                 <h3 className="text-3xl font-bold mb-4">Merchant Control Center</h3>
@@ -114,7 +120,7 @@ export default function LandingPage() {
                 <ul className="space-y-3">
                   {['Instant Deal Publication', 'Cryptographic QR Validation', 'Real-time Analytics Dashboard'].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm font-medium">
-                      <CheckCircle2 className="w-5 h-5 text-blue-500 flex-shrink-0" /> <span className="text-foreground">{item}</span>
+                      <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" /> <span className="text-foreground">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -145,7 +151,7 @@ export default function LandingPage() {
                    <div className="absolute top-4 left-4 flex gap-2">
                      <div className="w-3 h-3 rounded-full bg-destructive/50"></div>
                      <div className="w-3 h-3 rounded-full bg-amber-500/50"></div>
-                     <div className="w-3 h-3 rounded-full bg-emerald-500/50"></div>
+                     <div className="w-3 h-3 rounded-full bg-primary/50"></div>
                    </div>
                    <div className="relative">
                      <div className="w-32 h-32 bg-primary/10 rounded-3xl flex items-center justify-center -rotate-3 group-hover:-rotate-6 transition-transform relative z-10 border border-primary/20 shadow-xl shadow-primary/10">
@@ -167,7 +173,7 @@ export default function LandingPage() {
 
         {/* API Use Cases Section */}
         <section className="py-16 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-full h-[800px] dark:from-primary/20 dark:to-blue-500/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-full h-[800px] bg-gradient-to-b from-primary/5 to-transparent rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-8">
               <h2 className="text-3xl md:text-5xl font-bold mb-6">Integrate Anywhere. <span className="text-gradient">Monetize Every Audience.</span></h2>
@@ -179,8 +185,6 @@ export default function LandingPage() {
             <ApiUseCases />
           </div>
         </section>
-
-
 
 
 
@@ -211,7 +215,7 @@ export default function LandingPage() {
                 { q: "How are commissions distributed?", a: "The partner who referred the customer gets 70% of the commission, and the platform retains 30%. This is calculated instantly." },
                 { q: "Can we use custom domain for deals?", a: "Merchant Pro and Enterprise tiers support white-label portals with custom CNAME mapping." },
               ].map((faq, i) => (
-                <div key={i} className="p-6 bg-secondary/30 rounded-2xl border border-border">
+                <div key={i} className="p-6 bg-secondary/30 rounded-2xl border border-border hover:border-primary/20 transition-colors">
                   <h5 className="font-bold mb-2 flex items-center gap-2">
                     <span className="w-1.5 h-6 bg-premium-gradient rounded-full"></span>
                     {faq.q}

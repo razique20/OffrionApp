@@ -7,7 +7,6 @@ export interface ICommission extends Document {
   amount: number;
   partnerShare: number;
   platformShare: number;
-  environment: 'production' | 'sandbox';
   status: 'pending' | 'cleared' | 'paid';
   createdAt: Date;
   updatedAt: Date;
@@ -21,13 +20,6 @@ const CommissionSchema: Schema = new Schema(
     amount: { type: Number, required: true },
     partnerShare: { type: Number, required: true }, // Partner share in currency
     platformShare: { type: Number, required: true }, // Platform share in currency
-    environment: { 
-      type: String, 
-      enum: ['production', 'sandbox'], 
-      default: 'production',
-      required: true,
-      index: true 
-    },
     status: {
       type: String,
       enum: ['pending', 'cleared', 'paid'],

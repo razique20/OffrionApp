@@ -22,7 +22,6 @@ const AnalyticsChart = dynamic(() => import('@/components/partner/AnalyticsChart
 });
 
 function MerchantAnalyticsContent() {
-  const [activeEnv, setActiveEnv] = useState<'production' | 'sandbox'>('production');
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +29,7 @@ function MerchantAnalyticsContent() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/merchant/analytics?environment=${activeEnv}&period=${period}`, { credentials: 'include' })
+    fetch(`/api/merchant/analytics?period=${period}`, { credentials: 'include' })
       .then(async (res) => {
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'Failed to fetch analytics');
@@ -46,7 +45,7 @@ function MerchantAnalyticsContent() {
       .finally(() => {
         setLoading(false);
       });
-  }, [activeEnv, period]);
+  }, [period]);
 
   if (loading && !data) return (
     <div className="flex items-center justify-center h-[60vh]">
@@ -78,39 +77,11 @@ function MerchantAnalyticsContent() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Analytics & Insights</h1>
           <p className="text-muted-foreground flex items-center gap-2 mt-1">
-            {activeEnv === 'production' ? (
-              <>Live business performance and conversion metrics.</>
-            ) : (
-              <span className="flex items-center gap-1.5 text-amber-500 font-bold">
-                <AlertCircle className="w-4 h-4" /> Sandbox / Developer Simulation Mode
-              </span>
-            )}
+            Live business performance and conversion metrics.
           </p>
         </div>
 
         <div className="flex flex-col gap-3 items-end">
-            <div className="flex bg-secondary/50 p-1 rounded-2xl border border-border shrink-0">
-              <button
-                onClick={() => setActiveEnv('production')}
-                className={cn(
-                  "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
-                  activeEnv === 'production' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
-                )}
-              >
-                <div className={cn("w-1.5 h-1.5 rounded-full", activeEnv === 'production' ? "bg-primary" : "bg-muted-foreground/30")} />
-                Production
-              </button>
-              <button
-                onClick={() => setActiveEnv('sandbox')}
-                className={cn(
-                  "px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
-                  activeEnv === 'sandbox' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:bg-secondary"
-                )}
-              >
-                <div className={cn("w-1.5 h-1.5 rounded-full", activeEnv === 'sandbox' ? "bg-amber-500" : "bg-muted-foreground/30")} />
-                Sandbox
-              </button>
-            </div>
             <div className="flex items-center gap-2 bg-card border border-border p-1 rounded-xl shadow-sm">
                 {['7d', '30d', '90d'].map((p) => (
                     <button

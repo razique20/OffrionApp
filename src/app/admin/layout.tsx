@@ -5,6 +5,7 @@ import React from 'react';
 
 const adminMenuItems: SidebarItem[] = [
   { name: 'Governance', icon: 'analytics', href: '/admin/dashboard' },
+  { name: 'Fund Management', icon: 'wallet', href: '/admin/billing' },
   { name: 'Moderation', icon: 'security', href: '/admin/moderation' },
   { name: 'Support', icon: 'support', href: '/admin/support' },
   { name: 'System Settings', icon: 'settings', href: '/admin/settings' },

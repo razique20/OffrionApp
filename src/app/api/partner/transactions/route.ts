@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Transaction from '@/models/Transaction';
-import SandboxTransaction from '@/models/SandboxTransaction';
 import '@/models/Deal';
-import '@/models/SandboxDeal';
 import mongoose from 'mongoose';
 
 export async function GET(req: Request) {
@@ -18,7 +16,6 @@ export async function GET(req: Request) {
     const status = searchParams.get('status');
     const from = searchParams.get('from');
     const to = searchParams.get('to');
-    const environment = searchParams.get('environment') || 'production';
     const page = Math.max(1, Number(searchParams.get('page') || 1));
     const limit = Math.min(Number(searchParams.get('limit') || 20), 100);
     const skip = (page - 1) * limit;
@@ -34,7 +31,7 @@ export async function GET(req: Request) {
       if (to) query.createdAt.$lte = new Date(to);
     }
     
-    const tModel = environment === 'sandbox' ? SandboxTransaction : Transaction;
+    const tModel = Transaction;
 
     const [transactions, total] = await Promise.all([
       tModel.find(query)

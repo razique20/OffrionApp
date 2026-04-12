@@ -5,7 +5,6 @@ export interface IAnalyticsEvent extends Document {
   dealId: mongoose.Types.ObjectId;
   partnerId?: mongoose.Types.ObjectId;
   merchantId: mongoose.Types.ObjectId;
-  environment: 'production' | 'sandbox';
   metadata?: any;
   createdAt: Date;
 }
@@ -21,13 +20,6 @@ const AnalyticsEventSchema: Schema = new Schema(
     dealId: { type: Schema.Types.ObjectId, ref: 'Deal', required: true, index: true },
     partnerId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
     merchantId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-    environment: { 
-      type: String, 
-      enum: ['production', 'sandbox'], 
-      default: 'production',
-      required: true,
-      index: true 
-    },
     metadata: { type: Schema.Types.Mixed },
   },
   {
