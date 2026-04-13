@@ -1,111 +1,112 @@
 @import 'tailwindcss';
 
 :root {
-  /* ── Frosted Aura Light Theme ── */
-  --background: #FFFFFF;
+  /* ── Yacht Club Light Theme ── */
+  --background: #F2F0EF;
   --foreground: #1A2B33;
   --card: #FFFFFF;
   --card-foreground: #1A2B33;
   --popover: #FFFFFF;
   --popover-foreground: #1A2B33;
 
-  /* Primary — Steel Blue #5C7E8F */
-  --primary: #5C7E8F;
-  --primary-gradient: linear-gradient(135deg, #5C7E8F 0%, #4A6B7D 50%, #3D5A6B 100%);
+  /* Primary — Rich Indigo #245F73 */
+  --primary: #245F73;
+  --primary-gradient: linear-gradient(135deg, #245F73 0%, #1F5162 50%, #194452 100%);
   --primary-foreground: #FFFFFF;
 
-  /* Secondary — Ice Blue #D4DDE2 */
-  --secondary: #D4DDE2;
+  /* Secondary — Cool Gray #BBBDBC */
+  --secondary: #BBBDBC;
   --secondary-foreground: #1A2B33;
 
-  /* Muted — Pewter Gray #A2A2A2 */
-  --muted: #EDF1F4;
+  /* Muted */
+  --muted: #E5E3E2;
   --muted-foreground: #6B7D87;
 
-  /* Accent — Frosted glass tint */
-  --accent: #E8EEF2;
-  --accent-foreground: #1A2B33;
+  /* Accent — Mahogany #733E24 */
+  --accent: #733E24;
+  --accent-foreground: #FFFFFF;
 
   --destructive: #D45A5A;
   --destructive-foreground: #FFFFFF;
 
-  --border: #D4DDE2;
-  --input: #D4DDE2;
-  --ring: #5C7E8F;
+  --border: #BBBDBC;
+  --input: #BBBDBC;
+  --ring: #245F73;
 
-  /* Charts — Frosted Aura palette harmonics */
-  --chart-1: #5C7E8F;
-  --chart-2: #7A9BAB;
-  --chart-3: #3D5A6B;
-  --chart-4: #A2C0CE;
+  /* Charts */
+  --chart-1: #245F73;
+  --chart-2: #733E24;
+  --chart-3: #BBBDBC;
+  --chart-4: #4A6B7D;
   --chart-5: #8FAAB8;
 
   --radius: 0.75rem;
 
   /* Sidebar */
-  --sidebar: #F7F9FB;
+  --sidebar: #F2F0EF;
   --sidebar-foreground: #1A2B33;
-  --sidebar-primary: #5C7E8F;
+  --sidebar-primary: #245F73;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E8EEF2;
+  --sidebar-accent: #BBBDBC;
   --sidebar-accent-foreground: #1A2B33;
-  --sidebar-border: #D4DDE2;
-  --sidebar-ring: #5C7E8F;
+  --sidebar-border: #BBBDBC;
+  --sidebar-ring: #245F73;
 }
 
 .dark {
-  /* ── Frosted Aura Dark Theme ── */
+  /* ── Yacht Club Dark Theme ── */
   --background: #0D1317;
-  --foreground: #E8EEF2;
+  --foreground: #F2F0EF;
   --card: #141C22;
-  --card-foreground: #E8EEF2;
+  --card-foreground: #F2F0EF;
   --popover: #141C22;
-  --popover-foreground: #E8EEF2;
+  --popover-foreground: #F2F0EF;
 
-  /* Primary — Luminous Steel Blue */
-  --primary: #7A9BAB;
-  --primary-gradient: linear-gradient(135deg, #7A9BAB 0%, #5C7E8F 50%, #4A6B7D 100%);
+  /* Primary — Rich Indigo */
+  --primary: #448FA6;
+  --primary-gradient: linear-gradient(135deg, #448FA6 0%, #245F73 50%, #1F5162 100%);
   --primary-foreground: #FFFFFF;
 
-  /* Secondary — Deep Frost */
-  --secondary: #1C2830;
-  --secondary-foreground: #E8EEF2;
+  /* Secondary — Cool Gray */
+  --secondary: #2C353A;
+  --secondary-foreground: #F2F0EF;
 
-  /* Muted — Dark Pewter */
+  /* Muted */
   --muted: #1C2830;
-  --muted-foreground: #8A9BA5;
+  --muted-foreground: #BBBDBC;
 
-  /* Accent — Frosted glass dark */
-  --accent: #1C2830;
-  --accent-foreground: #E8EEF2;
+  /* Accent — Mahogany */
+  --accent: #A66547;
+  --accent-foreground: #FFFFFF;
 
   --destructive: #E06060;
   --destructive-foreground: #FFFFFF;
 
-  --border: #243038;
-  --input: #243038;
-  --ring: #7A9BAB;
+  --border: #2C353A;
+  --input: #2C353A;
+  --ring: #448FA6;
 
   /* Charts */
-  --chart-1: #7A9BAB;
-  --chart-2: #5C7E8F;
-  --chart-3: #A2C0CE;
-  --chart-4: #4A6B7D;
+  --chart-1: #448FA6;
+  --chart-2: #A66547;
+  --chart-3: #BBBDBC;
+  --chart-4: #5C7E8F;
   --chart-5: #8FAAB8;
 
   /* Sidebar */
   --sidebar: #0D1317;
-  --sidebar-foreground: #E8EEF2;
-  --sidebar-primary: #7A9BAB;
+  --sidebar-foreground: #F2F0EF;
+  --sidebar-primary: #448FA6;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #1C2830;
-  --sidebar-accent-foreground: #E8EEF2;
+  --sidebar-accent-foreground: #F2F0EF;
   --sidebar-border: #243038;
-  --sidebar-ring: #7A9BAB;
+  --sidebar-ring: #448FA6;
 }
 
 @theme inline {
-  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

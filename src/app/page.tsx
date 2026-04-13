@@ -36,11 +36,11 @@ export default function LandingPage() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative min-h-[100svh] overflow-hidden flex items-center justify-center py-20">
-          {/* ── Frosted Aura Background Blurs ── */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full -z-10 pointer-events-none opacity-15">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[#5C7E8F] to-[#A2A2A2] rounded-full blur-[120px] -translate-y-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-[#D4DDE2] to-[#5C7E8F] rounded-full blur-[120px] translate-y-1/2"></div>
+        <section className="relative min-h-[100svh] overflow-hidden flex flex-col items-center justify-center pt-24 pb-12">
+          {/* ── Background Blurs ── */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1400px] h-full -z-10 pointer-events-none opacity-20">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-[#245F73] to-[#BBBDBC] rounded-full blur-[140px] -translate-y-1/3"></div>
+            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-[#F2F0EF] to-[#245F73] rounded-full blur-[140px] translate-y-1/3"></div>
           </div>
           {/* ── Subtle frost particles ── */}
           <div className="absolute inset-0 -z-10 pointer-events-none">
@@ -49,25 +49,25 @@ export default function LandingPage() {
             <div className="absolute bottom-1/3 left-1/2 w-1 h-1 bg-primary/25 rounded-full frost-shimmer" style={{ animationDelay: '2s' }}></div>
           </div>
 
-          <div className="max-w-5xl w-full mx-auto px-6 z-10 relative">
+          <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 z-10 relative flex-1 flex flex-col items-center justify-center">
             
             {/* Minimalist Hero Content */}
-            <div className="flex flex-col items-center justify-center text-center w-full">
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-4 leading-[1.1] text-foreground">
-                The Scalable <br className="hidden lg:block"/> <span className="text-gradient">Deals Architecture</span> <br className="hidden lg:block"/> for Modern Platforms.
+            <div className="flex flex-col items-center justify-center text-center w-full max-w-5xl mx-auto">
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] font-bold tracking-tighter mb-6 leading-[1.05] text-foreground">
+                The Scalable <br className="hidden md:block"/> <span className="text-gradient">Deals Architecture</span> <br className="hidden md:block"/> for Modern Platforms.
               </h1>
 
-              <div className="flex items-center justify-center gap-4 mb-8">
-                <div className="h-px w-12 bg-border"></div>
-                <span className="text-xs font-mono uppercase tracking-widest font-bold text-gradient">Engineered by Aethyl</span>
-                <div className="h-px w-12 bg-border"></div>
+              <div className="flex items-center justify-center gap-4 mb-8 w-full max-w-sm">
+                <div className="h-px flex-1 bg-border/60"></div>
+                <span className="text-sm font-mono uppercase tracking-[0.2em] font-bold text-gradient whitespace-nowrap">Engineered by Aethyl</span>
+                <div className="h-px flex-1 bg-border/60"></div>
               </div>
               
-              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl px-4 sm:px-0">
+              <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-12 leading-relaxed max-w-2xl px-2">
                 Connect merchants with partners through a high-performance API. Publish deals in minutes, distribute via thousands of apps, and track everything in real-time.
               </p>
               
-              <div className="w-full flex justify-center sm:w-auto">
+              <div className="w-full flex justify-center mt-2 scale-100 sm:scale-110 origin-top">
                 <HeroButtons />
               </div>
             </div>
