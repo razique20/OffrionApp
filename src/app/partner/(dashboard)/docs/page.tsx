@@ -120,8 +120,8 @@ export default function PartnerDocsPage() {
             
             <h3 className="text-2xl font-bold mb-4">Base URL</h3>
             <div className="p-4 bg-secondary font-mono rounded-xl border border-border flex items-center justify-between mb-8">
-              <span>https://api.offrion.com/api</span>
-              <span className="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded">Dev: localhost:3000/api</span>
+              <span>https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api</span>
+              <span className="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded">PROD API</span>
             </div>
 
             <div className="space-y-6">
@@ -161,7 +161,7 @@ export default function PartnerDocsPage() {
             <CodeBlock 
               language="http"
               code={`GET /api/deals HTTP/1.1
-Host: api.offrion.com
+Host: offrion-app-kx5c-git-main-raziquemks-projects.vercel.app
 x-api-key: YOUR_API_KEY`}
             />
             <div className="mt-8 p-6 bg-blue-500/5 border border-blue-500/20 rounded-2xl flex gap-4">
@@ -202,7 +202,7 @@ x-api-key: YOUR_API_KEY`}
                   </div>
                 </div>
                 <CodeBlock 
-                  code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals"`}
+                  code={`curl -H "x-api-key: YOUR_KEY" "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/deals"`}
                 />
               </div>
 
@@ -226,7 +226,7 @@ x-api-key: YOUR_API_KEY`}
                   />
                 </div>
                 <CodeBlock 
-                  code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals/654a123f8b..."`}
+                  code={`curl -H "x-api-key: YOUR_KEY" "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/deals/654a123f8b..."`}
                 />
               </div>
 
@@ -243,7 +243,7 @@ x-api-key: YOUR_API_KEY`}
                   />
                 </div>
                 <CodeBlock 
-                  code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals/654a123f8b/similar"`}
+                  code={`curl -H "x-api-key: YOUR_KEY" "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/deals/654a123f8b/similar"`}
                 />
               </div>
             </div>
@@ -272,7 +272,7 @@ x-api-key: YOUR_API_KEY`}
             
             <h4 className="text-lg font-bold mt-12 mb-4">Advanced Example</h4>
             <CodeBlock 
-              code={`https://api.offrion.com/api/deals?activeNow=true&minDiscount=30&eventType=flash&audience=student`}
+              code={`https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/deals?activeNow=true&minDiscount=30&eventType=flash&audience=student`}
             />
           </DocSection>
         )}
@@ -294,7 +294,7 @@ x-api-key: YOUR_API_KEY`}
               />
             </div>
             <CodeBlock 
-              code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/categories"`}
+              code={`curl -H "x-api-key: YOUR_KEY" "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/categories"`}
             />
           </DocSection>
         )}
@@ -518,7 +518,7 @@ Content-Type: application/json
             <p className="text-sm text-muted-foreground mb-4">Place this in your <code>&lt;head&gt;</code> or at the end of your <code>&lt;body&gt;</code>.</p>
             <CodeBlock 
               language="html"
-              code={`<script src="https://api.offrion.com/sdk/widget.js" defer></script>`}
+              code={`<script src="https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/sdk/widget.js" defer></script>`}
             />
 
             <h3 className="text-xl font-bold mt-12 mb-4">2. Place the Container</h3>
@@ -542,7 +542,7 @@ Content-Type: application/json
                
                {/* Internal Simulator of the SDK UI */}
                <div className="space-y-4 max-w-lg mx-auto">
-                  <div className="p-5 bg-white/80 backdrop-blur-md border border-black/5 rounded-[24px] flex items-center gap-5 shadow-sm">
+                  <div className="p-5 bg-background/80 backdrop-blur-md border border-black/5 rounded-[24px] flex items-center gap-5 shadow-sm">
                     <div className="w-16 h-16 bg-secondary rounded-2xl shrink-0" />
                     <div className="flex-1">
                       <div className="w-20 h-2 bg-primary/20 rounded mb-2" />
@@ -550,7 +550,7 @@ Content-Type: application/json
                     </div>
                     <ChevronRight className="w-5 h-5 text-muted-foreground" />
                   </div>
-                  <div className="p-5 bg-white/80 backdrop-blur-md border border-black/5 rounded-[24px] flex items-center gap-5 shadow-sm opacity-60">
+                  <div className="p-5 bg-background/80 backdrop-blur-md border border-black/5 rounded-[24px] flex items-center gap-5 shadow-sm opacity-60">
                     <div className="w-16 h-16 bg-secondary rounded-2xl shrink-0" />
                     <div className="flex-1">
                       <div className="w-20 h-2 bg-primary/20 rounded mb-2" />

@@ -98,7 +98,7 @@ export default function MerchantDashboard() {
             <AlertCircle className="w-32 h-32" />
           </div>
           <div className="relative z-10 flex items-center gap-6">
-            <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/30">
+            <div className="w-16 h-16 bg-background/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/30">
               <AlertCircle className="w-8 h-8 text-white" />
             </div>
             <div>
@@ -110,7 +110,7 @@ export default function MerchantDashboard() {
           </div>
           <Link 
             href="/merchant/kyc" 
-            className="relative z-10 px-8 py-3 bg-white text-primary font-bold rounded-2xl hover:bg-white/90 transition-all shadow-lg active:scale-[0.98]"
+            className="relative z-10 px-8 py-3 bg-background text-primary border border-primary/10 font-bold rounded-2xl hover:bg-background/90 transition-all shadow-lg active:scale-[0.98]"
           >
             Start Verification
           </Link>

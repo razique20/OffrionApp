@@ -290,7 +290,7 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
               <h3 className="text-xl font-bold mb-4">Payout Method</h3>
               <div className="p-4 bg-secondary/50 rounded-2xl border border-border mb-6">
                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-border shadow-sm">
+                    <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center border border-border shadow-sm">
                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-3" />
                     </div>
                     <span className="text-sm font-bold">{bankStatus?.bankInfo ? `${bankStatus.bankInfo.bankName} (**** ${bankStatus.bankInfo.last4})` : 'Stripe Connect'}</span>

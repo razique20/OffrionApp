@@ -17,6 +17,9 @@ import {
   Car,
   Wallet,
   Plane,
+  Tag,
+  Ticket,
+  TrendingUp,
   Layers
 } from 'lucide-react';
 
@@ -49,6 +52,22 @@ export default function LandingPage() {
             <div className="absolute bottom-1/3 left-1/2 w-1 h-1 bg-primary/25 rounded-full frost-shimmer" style={{ animationDelay: '2s' }}></div>
           </div>
 
+          {/* ── Hero Watermark Icons ── */}
+          <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden opacity-[0.45] dark:opacity-[0.25]">
+            <ShoppingBag className="absolute top-[12%] left-[8%] w-24 h-24 -rotate-12 animate-float text-foreground/40" style={{ animationDelay: '0s' }} />
+            <Plane className="absolute top-[22%] right-[10%] w-28 h-28 rotate-12 animate-float text-primary/40 dark:text-primary/20" style={{ animationDelay: '1s' }} />
+            <Wallet className="absolute bottom-[22%] left-[10%] w-20 h-20 -rotate-6 animate-float text-foreground/40" style={{ animationDelay: '2s' }} />
+            <Car className="absolute bottom-[20%] right-[6%] w-24 h-24 rotate-6 animate-float text-foreground/40" style={{ animationDelay: '3s' }} />
+            <Zap className="absolute top-[38%] left-[2%] w-16 h-16 rotate-45 animate-float text-primary/30" style={{ animationDelay: '1.5s' }} />
+            <Globe className="absolute bottom-[45%] right-[2%] w-20 h-20 -rotate-12 animate-float text-foreground/40" style={{ animationDelay: '2.5s' }} />
+            <TrendingUp className="absolute top-[65%] left-[15%] w-16 h-16 -rotate-3 animate-float text-foreground/40" style={{ animationDelay: '0.5s' }} />
+            <Users className="absolute bottom-[65%] right-[15%] w-16 h-16 rotate-12 animate-float text-foreground/40" style={{ animationDelay: '3.5s' }} />
+            
+            {/* Prominent Deal Icons */}
+            <Tag className="absolute top-[8%] right-[28%] w-20 h-20 -rotate-[15deg] animate-float text-primary/80" style={{ animationDelay: '4s' }} />
+            <Ticket className="absolute bottom-[10%] left-[30%] w-24 h-24 rotate-[20deg] animate-float text-primary/60" style={{ animationDelay: '1.2s' }} />
+          </div>
+
           <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 z-10 relative flex-1 flex flex-col items-center justify-center">
             
             {/* Minimalist Hero Content */}
@@ -67,9 +86,7 @@ export default function LandingPage() {
                 Connect merchants with partners through a high-performance API. Publish deals in minutes, distribute via thousands of apps, and track everything in real-time.
               </p>
               
-              <div className="w-full flex justify-center mt-2 scale-100 sm:scale-110 origin-top">
-                <HeroButtons />
-              </div>
+              
             </div>
           </div>
         </section>
@@ -80,8 +97,8 @@ export default function LandingPage() {
         <section id="process" className="py-16 md:py-24 bg-background">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16 md:mb-24">
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">Built for scale. Designed for speed.</h2>
-              <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
+              <h2 className="text-2xl md:text-4xl font-bold mb-4">Built for scale. Designed for speed.</h2>
+              <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
                 Everything you need to launch a deals network or monetize your existing audience.
               </p>
             </div>
@@ -113,8 +130,8 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6">
                   <ShoppingBag className="w-6 h-6" />
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold mb-4">Merchant Control Center</h3>
-                <p className="text-muted-foreground text-base md:text-lg mb-6 leading-relaxed">
+                <h3 className="text-xl md:text-2xl font-bold mb-4">Merchant Control Center</h3>
+                <p className="text-muted-foreground text-sm md:text-base mb-6 leading-relaxed">
                   Provide local businesses with a powerful dashboard to publish deals, configure Geo-spatial constraints, and track performance in real-time. Say goodbye to complex onboarding and manual deal validation.
                 </p>
                 <ul className="space-y-3">
@@ -133,8 +150,8 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6">
                   <Code className="w-6 h-6" />
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold mb-4">Developer-First Platform API</h3>
-                <p className="text-muted-foreground text-base md:text-lg mb-6 leading-relaxed">
+                <h3 className="text-xl md:text-2xl font-bold mb-4">Developer-First Platform API</h3>
+                <p className="text-muted-foreground text-sm md:text-base mb-6 leading-relaxed">
                   Integrate seamlessly into any fintech app, map service, or social network. Query rewards by location, perfectly matching your users to relevant nearby discounts in milliseconds.
                 </p>
                 <ul className="space-y-3">
@@ -176,8 +193,8 @@ export default function LandingPage() {
           <div className="absolute top-0 right-0 w-full h-[800px] bg-gradient-to-b from-primary/5 to-transparent rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-5xl font-bold mb-6">Integrate Anywhere. <span className="text-gradient">Monetize Every Audience.</span></h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+              <h2 className="text-2xl md:text-4xl font-bold mb-6">Integrate Anywhere. <span className="text-gradient">Monetize Every Audience.</span></h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto text-base leading-relaxed">
                 The Offrion API is completely agnostic. Fetch hyper-local deals and inject them seamlessly wherever your users are making decisions.
               </p>
             </div>
@@ -195,8 +212,8 @@ export default function LandingPage() {
           
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-5xl font-bold mb-4 text-gradient">We grow when you grow.</h2>
-              <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto">
+              <h2 className="text-2xl md:text-4xl font-bold mb-4 text-gradient">We grow when you grow.</h2>
+              <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
                 No fixed API limits. No complex enterprise silos. Your revenue share aggressively scales in your favor.
               </p>
             </div>
@@ -235,8 +252,8 @@ export default function LandingPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-white">Next-Gen Deals Platform</span>
             </div>
             
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 relative z-10">Start distributing rewards.</h2>
-            <p className="text-white/80 text-base md:text-lg mb-10 max-w-xl mx-auto relative z-10 font-mono italic">
+            <h2 className="text-2xl md:text-4xl font-bold mb-6 relative z-10">Start distributing rewards.</h2>
+            <p className="text-white/80 text-sm md:text-base mb-10 max-w-xl mx-auto relative z-10 font-mono italic">
               "Scale from 1 to 1M deals without touching the infrastructure."
             </p>
             <AppCTA />

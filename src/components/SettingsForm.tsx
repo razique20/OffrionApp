@@ -509,7 +509,7 @@ export default function SettingsForm() {
                        <span
                           aria-hidden="true"
                           className={cn(
-                            "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                            "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-background shadow ring-0 transition duration-200 ease-in-out",
                             notifications[item.id as keyof typeof notifications] ? "translate-x-5" : "translate-x-0"
                           )}
                         />
@@ -645,7 +645,7 @@ export default function SettingsForm() {
                                <ul className="space-y-2 mb-6 flex-grow">
                                   {plan.features.map(f => (
                                     <li key={f} className="text-xs flex items-center gap-2 font-medium opacity-80">
-                                      <div className="w-1.5 h-1.5 rounded-full bg-primary/40" /> {f}
+                                      <span className={cn("w-1.5 h-1.5 rounded-full bg-background", isSuperAdmin && "animate-pulse")}></span> {f}
                                     </li>
                                   ))}
                                </ul>

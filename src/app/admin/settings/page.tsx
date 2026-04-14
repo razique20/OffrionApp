@@ -24,7 +24,7 @@ export default function AdminSettingsPage() {
             </div>
             <h3 className="text-lg font-bold mb-2 relative z-10">Super Admin</h3>
             <p className="text-xs opacity-80 leading-relaxed mb-6 relative z-10">You have full read/write access to platform-wide models and settings.</p>
-            <div className="flex items-center gap-2 relative z-10 bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-xl w-fit text-[10px] uppercase font-bold tracking-widest">
+            <div className="flex items-center gap-2 relative z-10 bg-background/20 backdrop-blur-md px-3 py-1.5 rounded-xl w-fit text-[10px] uppercase font-bold tracking-widest">
                Active Session
             </div>
           </div>

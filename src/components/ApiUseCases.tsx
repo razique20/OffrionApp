@@ -162,7 +162,7 @@ export function ApiUseCases() {
                 {/* ALWAYS DARK TERMINAL WINDOW */}
                 <div className="bg-[#0A0A0B] border border-white/10 rounded-xl overflow-hidden font-mono text-sm flex-1 flex flex-col shadow-2xl">
                   {/* Editor Header */}
-                  <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/5">
+                  <div className="flex items-center gap-2 px-4 py-3 border-b border-background/10 bg-background/5">
                     <div className="w-3 h-3 rounded-full bg-red-400"></div>
                     <div className="w-3 h-3 rounded-full bg-amber-400"></div>
                     <div className="w-3 h-3 rounded-full bg-green-400"></div>

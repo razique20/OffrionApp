@@ -19,36 +19,36 @@ export const HeroButtons = () => {
 
   if (user) {
     return (
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
         <Link 
           href={`/${user.role}/dashboard`}
-          className="w-full sm:w-auto px-8 py-4 bg-premium-gradient text-white rounded-2xl text-lg font-bold shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+          className="w-full sm:w-auto px-10 py-5 bg-[#245F73] text-white rounded-2xl text-lg font-bold shadow-xl shadow-[#245F73]/20 hover:bg-[#1a4a5a] transition-all flex items-center justify-center gap-2"
         >
           Go to Dashboard <LayoutDashboard className="w-5 h-5" />
         </Link>
         <Link 
           href="/partner/docs" 
-          className="w-full sm:w-auto px-8 py-4 bg-card border border-border rounded-2xl text-lg font-bold hover:bg-secondary transition-all flex items-center justify-center gap-2"
+          className="group text-[#245F73] font-bold text-lg flex items-center gap-2 hover:opacity-70 transition-opacity"
         >
-          View API Docs
+          View API Docs <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
       <Link 
-        href="/auth/register?role=merchant" 
-        className="w-full sm:w-auto px-8 py-4 bg-premium-gradient text-white rounded-2xl text-lg font-bold shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+        href="/auth/register" 
+        className="w-full sm:w-auto px-10 py-5 bg-[#245F73] text-white rounded-2xl text-lg font-bold shadow-xl shadow-[#245F73]/20 hover:bg-[#1a4a5a] transition-all flex items-center justify-center gap-2"
       >
-        Start as Merchant <ArrowRight className="w-5 h-5" />
+        Get Started Now <ArrowRight className="w-5 h-5" />
       </Link>
       <Link 
-        href="/auth/register?role=partner" 
-        className="w-full sm:w-auto px-8 py-4 bg-card border border-border rounded-2xl text-lg font-bold hover:bg-secondary transition-all flex items-center justify-center gap-2"
+        href="/docs" 
+        className="group text-[#245F73] font-bold text-lg flex items-center gap-2 hover:opacity-70 transition-opacity"
       >
-        Integrate API
+        Read the Docs <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
       </Link>
     </div>
   );

@@ -131,7 +131,7 @@ export default function PartnerStatusPage() {
              <p className="text-sm opacity-80 mb-6">If you're experiencing issues not listed here, our team is here to help.</p>
              <Link 
                href="/partner/support" 
-               className="w-full py-4 bg-white text-primary text-center font-bold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+               className="w-full py-4 bg-background text-primary border border-primary/20 text-center font-bold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                Contact Support <ChevronRight className="w-4 h-4" />
              </Link>

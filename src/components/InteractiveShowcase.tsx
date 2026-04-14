@@ -8,8 +8,8 @@ export const InteractiveShowcase = () => {
   const [activeTab, setActiveTab] = useState<'api' | 'merchant' | 'partner'>('api');
   const [typedText, setTypedText] = useState('');
   
-  const fullText = `curl -X GET "https://api.offrion.com/v1/deals" \\
-  -H "x-api-key: offr_live_8k2l9..." \\
+  const fullText = `curl -X GET "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/deals" \\
+  -H "x-api-key: dev_cba8912..." \\
   -d "radius=5000&lat=40.71&lng=-74.00"`;
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export const InteractiveShowcase = () => {
             </p>
             
             <div className="bg-[#0A0A0B] border border-white/10 rounded-xl overflow-hidden font-mono text-sm shadow-2xl">
-              <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/5">
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-background/10 bg-background/5">
                 <div className="w-3 h-3 rounded-full bg-red-400"></div>
                 <div className="w-3 h-3 rounded-full bg-amber-400"></div>
                 <div className="w-3 h-3 rounded-full bg-green-400"></div>

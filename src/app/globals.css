@@ -2,17 +2,17 @@
 
 :root {
   /* ── Yacht Club Light Theme ── */
-  --background: #F2F0EF;
+  --background: #ffffff;
   --foreground: #1A2B33;
-  --card: #FFFFFF;
+  --card: #ffffff;
   --card-foreground: #1A2B33;
-  --popover: #FFFFFF;
+  --popover: #ffffff;
   --popover-foreground: #1A2B33;
 
   /* Primary — Rich Indigo #245F73 */
   --primary: #245F73;
   --primary-gradient: linear-gradient(135deg, #245F73 0%, #1F5162 50%, #194452 100%);
-  --primary-foreground: #FFFFFF;
+  --primary-foreground: #ffffff;
 
   /* Secondary — Cool Gray #BBBDBC */
   --secondary: #BBBDBC;
@@ -24,10 +24,10 @@
 
   /* Accent — Mahogany #733E24 */
   --accent: #733E24;
-  --accent-foreground: #FFFFFF;
+  --accent-foreground: #ffffff;
 
   --destructive: #D45A5A;
-  --destructive-foreground: #FFFFFF;
+  --destructive-foreground: #ffffff;
 
   --border: #BBBDBC;
   --input: #BBBDBC;
@@ -43,10 +43,10 @@
   --radius: 0.75rem;
 
   /* Sidebar */
-  --sidebar: #F2F0EF;
+  --sidebar: #ffffff;
   --sidebar-foreground: #1A2B33;
   --sidebar-primary: #245F73;
-  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #BBBDBC;
   --sidebar-accent-foreground: #1A2B33;
   --sidebar-border: #BBBDBC;
@@ -55,7 +55,7 @@
 
 .dark {
   /* ── Yacht Club Dark Theme ── */
-  --background: #0D1317;
+  --background: #000000;
   --foreground: #F2F0EF;
   --card: #141C22;
   --card-foreground: #F2F0EF;
@@ -65,7 +65,7 @@
   /* Primary — Rich Indigo */
   --primary: #448FA6;
   --primary-gradient: linear-gradient(135deg, #448FA6 0%, #245F73 50%, #1F5162 100%);
-  --primary-foreground: #FFFFFF;
+  --primary-foreground: #ffffff;
 
   /* Secondary — Cool Gray */
   --secondary: #2C353A;
@@ -77,10 +77,10 @@
 
   /* Accent — Mahogany */
   --accent: #A66547;
-  --accent-foreground: #FFFFFF;
+  --accent-foreground: #ffffff;
 
   --destructive: #E06060;
-  --destructive-foreground: #FFFFFF;
+  --destructive-foreground: #ffffff;
 
   --border: #2C353A;
   --input: #2C353A;
@@ -97,7 +97,7 @@
   --sidebar: #0D1317;
   --sidebar-foreground: #F2F0EF;
   --sidebar-primary: #448FA6;
-  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #1C2830;
   --sidebar-accent-foreground: #F2F0EF;
   --sidebar-border: #243038;
@@ -237,4 +237,14 @@
 
 .frost-shimmer {
   animation: frost-shimmer 4s ease-in-out infinite;
+}
+/* ── Floating Animation ── */
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }

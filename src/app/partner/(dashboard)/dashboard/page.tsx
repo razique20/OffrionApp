@@ -240,7 +240,7 @@ export default function PartnerDashboard() {
             </div>
             <div className="p-6">
               <pre className="text-xs font-mono text-slate-300 leading-relaxed overflow-x-auto">
-                {`curl -X GET "https://api.offrion.com/api/deals?lat=40.7128&lng=-74.0060" \\
+                {`curl -X GET "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/deals?lat=40.7128&lng=-74.0060" \\
   -H "x-api-key: YOUR_API_KEY"`}
               </pre>
             </div>

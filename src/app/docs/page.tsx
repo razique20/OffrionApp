@@ -108,8 +108,8 @@ export default function PublicDocsPage() {
                 
                 <h3 className="text-2xl font-bold mb-4">Base URL</h3>
                 <div className="p-4 bg-secondary font-mono rounded-xl border border-border flex items-center justify-between mb-8">
-                  <span>https://api.offrion.com/api</span>
-                  <span className="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded">Dev: localhost:3000/api</span>
+                  <span>https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api</span>
+                  <span className="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded">PROD API</span>
                 </div>
 
                 <div className="space-y-6">
@@ -149,7 +149,7 @@ export default function PublicDocsPage() {
                 <CodeBlock 
                   language="http"
                   code={`GET /api/deals HTTP/1.1
-Host: api.offrion.com
+Host: offrion-app-kx5c-git-main-raziquemks-projects.vercel.app
 x-api-key: YOUR_API_KEY`}
                 />
                 <div className="mt-8 p-6 bg-blue-500/5 border border-blue-500/20 rounded-2xl flex gap-4">
@@ -190,7 +190,7 @@ x-api-key: YOUR_API_KEY`}
                       </div>
                     </div>
                     <CodeBlock 
-                      code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals"`}
+                      code={`curl -H "x-api-key: YOUR_KEY" "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/deals"`}
                     />
                   </div>
 
@@ -214,7 +214,7 @@ x-api-key: YOUR_API_KEY`}
                       />
                     </div>
                     <CodeBlock 
-                      code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/deals/654a123f8b..."`}
+                      code={`curl -H "x-api-key: YOUR_KEY" "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/deals/654a123f8b..."`}
                     />
                   </div>
                 </div>
@@ -258,7 +258,7 @@ x-api-key: YOUR_API_KEY`}
                   />
                 </div>
                 <CodeBlock 
-                  code={`curl -H "x-api-key: YOUR_KEY" "https://api.offrion.com/api/categories"`}
+                  code={`curl -H "x-api-key: YOUR_KEY" "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/categories"`}
                 />
               </DocSection>
             )}
@@ -410,7 +410,7 @@ Content-Type: application/json
                 <h3 className="text-xl font-bold mb-4">1. Add the Script</h3>
                 <CodeBlock 
                   language="html"
-                  code={`<script src="https://api.offrion.com/sdk/widget.js" defer></script>`}
+                  code={`<script src="https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/sdk/widget.js" defer></script>`}
                 />
 
                 <h3 className="text-xl font-bold mt-12 mb-4">2. Place the Container</h3>

@@ -31,7 +31,7 @@ export default async function AdminLayout({
           </div>
           <div className="flex items-center gap-4">
             <div className="bg-premium-gradient shadow-lg shadow-primary/20 text-white px-4 py-1.5 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-              <span className={cn("w-1.5 h-1.5 rounded-full bg-white", isSuperAdmin && "animate-pulse")}></span>
+              <span className={cn("w-1.5 h-1.5 rounded-full bg-background", isSuperAdmin && "animate-pulse")}></span>
               {isSuperAdmin ? 'Super Admin' : 'Platform Admin'}
             </div>
           </div>

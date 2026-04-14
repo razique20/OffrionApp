@@ -26,8 +26,10 @@ export const Logo = ({ className, iconOnly = false, size = 'md' }: LogoProps) =>
         <Image 
           src="/offrion-logo.png" 
           alt="Offrion Logo" 
-          fill 
+          width={48}
+          height={48}
           className="object-contain"
+          priority
         />
       </div>
 
