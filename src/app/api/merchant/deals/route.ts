@@ -12,7 +12,7 @@ const dealSchema = z.object({
   images: z.array(z.string()).optional().default([]),
   originalPrice: z.number().positive(),
   discountedPrice: z.number().positive(),
-  commissionPercentage: z.number().min(0).max(100).default(10),
+  commissionPercentage: z.number().min(10, "Minimum commission is 10%").max(100).default(10),
   location: z.object({
     type: z.literal('Point'),
     coordinates: z.tuple([z.number(), z.number()]), // [longitude, latitude]

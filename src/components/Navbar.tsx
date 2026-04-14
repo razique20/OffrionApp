@@ -177,7 +177,7 @@ export const Navbar = () => {
                 href="/auth/register" 
                 className="px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2"
               >
-                Launch Platform
+                Get Started
               </Link>
             </div>
           )}

@@ -234,11 +234,13 @@ export default function NewDealPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Commission Percentage</label>
+                <label className="text-sm font-medium">Commission Percentage (Min 10%)</label>
                 <div className="relative">
                   <Percent className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input 
                     type="number" 
+                    min="10"
+                    required
                     className="w-full bg-secondary border-none rounded-xl pl-10 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary"
                     value={formData.commissionPercentage}
                     onChange={(e) => setFormData({...formData, commissionPercentage: e.target.value})}
