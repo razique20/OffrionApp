@@ -45,7 +45,7 @@ export const Navbar = () => {
       "fixed top-0 w-full z-50 transition-all duration-300",
       isScrolled ? "bg-background/80 backdrop-blur-md py-3 shadow-sm" : "bg-transparent py-5"
     )}>
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 flex items-center">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 flex items-center justify-between">
         <Link href="/" className="hover:opacity-80 transition-opacity shrink-0">
           <Logo size="md" />
         </Link>

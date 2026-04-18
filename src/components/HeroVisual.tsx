@@ -86,21 +86,21 @@ export const HeroVisual = () => {
           </div>
 
           <div className="aspect-video w-full bg-secondary/30 rounded-2xl mb-6 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                <ShoppingBag className="w-8 h-8" />
-              </div>
-            </div>
+            <img 
+              src="/images/hero_multi_deal.png" 
+              alt="Exclusive Lifestyle Deals"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60"></div>
           </div>
 
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h4 className="text-xl font-bold tracking-tight">50% Off Total Bill</h4>
-              <span className="text-2xl font-black text-primary">AED 0</span>
+              <h4 className="text-xl font-bold tracking-tight">Multi-Category Discovery</h4>
+              <span className="text-sm font-black text-primary uppercase tracking-widest">Instant</span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Redeemable at 12 partner locations in the Dubai Mall area. Valid till end of week.
+              Explore premium offers across Hotels, Automotive, Wellness, and more. One API, infinite possibilities.
             </p>
             
             <button className="w-full py-3.5 bg-primary text-white rounded-xl text-xs font-bold shadow-lg shadow-primary/20 flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
