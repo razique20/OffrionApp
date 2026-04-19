@@ -107,30 +107,30 @@ export default function PublicDocsPage() {
                 </p>
                 
                 <h3 className="text-2xl font-bold mb-4">Base URL</h3>
-                <div className="p-4 bg-secondary font-mono rounded-xl border border-border flex items-center justify-between mb-8">
+                <div className="p-4 bg-secondary font-mono rounded-md border border-border flex items-center justify-between mb-8">
                   <span>https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api</span>
-                  <span className="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded">PROD API</span>
+                  <span className="text-[10px] bg-secondary text-foreground px-2 py-1 rounded">PROD API</span>
                 </div>
 
                 <div className="space-y-6">
                   <h3 className="text-2xl font-bold">Integration Checklist</h3>
                   <ol className="space-y-4">
                     <li className="flex gap-4">
-                      <div className="w-6 h-6 rounded-full bg-premium-gradient text-white text-xs flex items-center justify-center shrink-0">1</div>
+                      <div className="w-6 h-6 rounded-full bg-secondary text-foreground border border-border text-xs flex items-center justify-center shrink-0">1</div>
                       <div>
                         <p className="font-bold">Create Partner Account</p>
                         <p className="text-sm text-muted-foreground">Sign up to get your unique client credentials.</p>
                       </div>
                     </li>
                     <li className="flex gap-4">
-                      <div className="w-6 h-6 rounded-full bg-premium-gradient text-white text-xs flex items-center justify-center shrink-0">2</div>
+                      <div className="w-6 h-6 rounded-full bg-secondary text-foreground border border-border text-xs flex items-center justify-center shrink-0">2</div>
                       <div>
                         <p className="font-bold">Generate API Key</p>
                         <p className="text-sm text-muted-foreground">Go to your Connectivity dashboard and create your production API key.</p>
                       </div>
                     </li>
                     <li className="flex gap-4">
-                      <div className="w-6 h-6 rounded-full bg-premium-gradient text-white text-xs flex items-center justify-center shrink-0">3</div>
+                      <div className="w-6 h-6 rounded-full bg-secondary text-foreground border border-border text-xs flex items-center justify-center shrink-0">3</div>
                       <div>
                         <p className="font-bold">Fetch Local Deals</p>
                         <p className="text-sm text-muted-foreground">Build high-conversion rewards loops into your product.</p>
@@ -152,7 +152,7 @@ export default function PublicDocsPage() {
 Host: offrion-app-kx5c-git-main-raziquemks-projects.vercel.app
 x-api-key: YOUR_API_KEY`}
                 />
-                <div className="mt-8 p-6 bg-blue-500/5 border border-blue-500/20 rounded-2xl flex gap-4">
+                <div className="mt-8 p-6 bg-blue-500/5 border border-blue-500/20 rounded-md flex gap-4">
                    <Shield className="w-5 h-5 text-blue-500 shrink-0 mt-1" />
                    <p className="text-sm text-muted-foreground leading-relaxed">
                      All requests are processed using your production-stamped API key. Webhooks and payouts are triggered upon successful redemption of a validated deal.
@@ -173,8 +173,8 @@ x-api-key: YOUR_API_KEY`}
                       <div>
                         <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Query Parameters</h5>
                         <ul className="text-xs space-y-1 text-muted-foreground">
-                          <li><code className="text-primary">minDiscount</code> (number) - Filter by discount %</li>
-                          <li><code className="text-primary">activeNow</code> (boolean) - Currently valid deals</li>
+                          <li><code className="text-foreground">minDiscount</code> (number) - Filter by discount %</li>
+                          <li><code className="text-foreground">activeNow</code> (boolean) - Currently valid deals</li>
                         </ul>
                       </div>
                       <div>
@@ -275,8 +275,8 @@ x-api-key: YOUR_API_KEY`}
                       <div>
                         <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Payload (JSON)</h5>
                         <ul className="text-xs space-y-1 text-muted-foreground">
-                          <li><code className="text-primary">dealId</code> (string, required)</li>
-                          <li><code className="text-primary">metadata</code> (object, optional)</li>
+                          <li><code className="text-foreground">dealId</code> (string, required)</li>
+                          <li><code className="text-foreground">metadata</code> (object, optional)</li>
                         </ul>
                       </div>
                       <div>
@@ -307,9 +307,9 @@ x-api-key: YOUR_API_KEY`}
                       <div>
                         <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Payload (JSON)</h5>
                         <ul className="text-xs space-y-1 text-muted-foreground">
-                          <li><code className="text-primary">dealId</code> (string, required)</li>
-                          <li><code className="text-primary">amount</code> (number, required)</li>
-                          <li><code className="text-primary">currency</code> (string)</li>
+                          <li><code className="text-foreground">dealId</code> (string, required)</li>
+                          <li><code className="text-foreground">amount</code> (number, required)</li>
+                          <li><code className="text-foreground">currency</code> (string)</li>
                         </ul>
                       </div>
                       <div>
@@ -374,12 +374,12 @@ Content-Type: application/json
                     />
                   </div>
 
-                  <div className="p-6 bg-secondary/50 rounded-2xl border border-border">
+                  <div className="p-6 bg-secondary/50 rounded-md border border-border">
                     <h3 className="text-lg font-bold mb-2">Security & Verification</h3>
                     <p className="text-sm text-muted-foreground mb-4">
                       Each request includes an <code>X-Offrion-Signature</code> header. This is an HMAC-SHA256 hash of the raw request body using your Webhook Secret.
                     </p>
-                    <div className="flex items-center gap-2 text-xs font-bold text-primary">
+                    <div className="flex items-center gap-2 text-xs font-bold text-foreground">
                       <Shield className="w-4 h-4" />
                       Verification is mandatory for production environments.
                     </div>
@@ -402,7 +402,7 @@ Content-Type: application/json
                   />
                   <FeatureHighlight 
                     title="Responsive & Themed"
-                    desc="Beautifully adapts to mobile and desktop with Offrion's premium glassmorphism."
+                    desc="Beautifully adapts to mobile and desktop with Offrion's premium ."
                     icon={Globe}
                   />
                 </div>
@@ -440,7 +440,7 @@ function EndpointLabel({ method, path }: { method: string, path: string }) {
     <div className="flex items-center gap-2 mb-4">
       <span className={cn(
         "px-2 py-1 rounded text-xs font-bold font-mono",
-        isPost ? "bg-blue-500/20 text-blue-500" : "bg-primary/20 text-primary"
+        isPost ? "bg-blue-500/20 text-blue-500" : "bg-primary/20 text-white"
       )}>
         {method}
       </span>
@@ -457,9 +457,9 @@ function DocNavItem({ active, onClick, icon: Icon, label }: any) {
     <button 
       onClick={onClick}
       className={cn(
-        "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all",
+        "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all",
         active 
-          ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
+          ? "bg-primary text-primary-foreground border border-border shadow-none" 
           : "text-muted-foreground hover:bg-secondary hover:text-foreground"
       )}
     >
@@ -480,9 +480,9 @@ function DocSection({ title, children }: any) {
 
 function FeatureHighlight({ title, desc, icon: Icon }: any) {
   return (
-    <div className="p-6 bg-card border border-border rounded-2xl flex items-start gap-4">
-      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-        <Icon className="w-5 h-5 text-primary" />
+    <div className="p-6 bg-card border border-border rounded-md flex items-start gap-4">
+      <div className="w-10 h-10 rounded-md bg-secondary flex items-center justify-center shrink-0">
+        <Icon className="w-5 h-5 text-foreground" />
       </div>
       <div>
         <h4 className="font-bold text-sm mb-1">{title}</h4>
@@ -502,14 +502,14 @@ function CodeBlock({ code, language = 'bash' }: any) {
   };
 
   return (
-    <div className="bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-xl group">
+    <div className="bg-slate-950 rounded-md overflow-hidden border border-slate-800 shadow-none group">
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900/50 border-b border-slate-800">
         <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{language}</span>
         <button 
           onClick={handleCopy}
-          className="text-slate-400 hover:text-white transition-colors"
+          className="text-slate-400 hover:text-foreground transition-colors"
         >
-          {copied ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
+          {copied ? <CheckCircle2 className="w-4 h-4 text-foreground" /> : <Copy className="w-4 h-4" />}
         </button>
       </div>
       <div className="p-6 overflow-x-auto">
@@ -525,7 +525,7 @@ function ParamTable({ title, params }: any) {
   return (
     <div className="space-y-4">
       <h4 className="font-bold text-lg mb-2">{title}</h4>
-      <div className="border border-border rounded-2xl overflow-hidden">
+      <div className="border border-border rounded-md overflow-hidden">
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="bg-secondary/50 text-[10px] uppercase tracking-widest text-muted-foreground font-bold border-b border-border">
@@ -537,7 +537,7 @@ function ParamTable({ title, params }: any) {
           <tbody className="divide-y divide-border">
             {params.map((p: any) => (
               <tr key={p.name} className="group hover:bg-secondary/20 transition-all">
-                <td className="px-6 py-4 font-mono font-bold text-primary">{p.name}</td>
+                <td className="px-6 py-4 font-mono font-bold text-foreground">{p.name}</td>
                 <td className="px-6 py-4"><span className="px-2 py-0.5 bg-secondary rounded text-[10px] font-mono">{p.type}</span></td>
                 <td className="px-6 py-4 text-muted-foreground">{p.desc}</td>
               </tr>

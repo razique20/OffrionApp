@@ -31,16 +31,16 @@ export default function PartnerDashboardLayout({
           <div className="flex items-center gap-4">
             <Link 
               href="/partner/docs"
-              className="flex items-center gap-2 px-4 py-2 bg-secondary border border-border text-muted-foreground rounded-xl text-xs font-bold hover:bg-secondary/80 transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-secondary border border-border text-muted-foreground rounded-md text-xs font-bold hover:bg-secondary/80 transition-all"
             >
               <BookOpen className="w-3.5 h-3.5" />
               Docs
             </Link>
             <div className="h-4 w-px bg-border mx-2" />
-            <div className="bg-primary/5 border border-primary/20 text-primary px-3 py-1 rounded-full text-xs font-bold">
+            <div className="bg-muted border border-border text-foreground px-3 py-1 rounded-full text-xs font-bold">
               Partner Tier: Pro
             </div>
-            <div className="w-10 h-10 rounded-full border border-border bg-card flex items-center justify-center font-bold text-primary shadow-sm hover:shadow-md transition-all cursor-pointer">
+            <div className="w-10 h-10 rounded-full border border-border bg-card flex items-center justify-center font-bold text-foreground shadow-none hover:shadow-none transition-all cursor-pointer">
               P
             </div>
           </div>

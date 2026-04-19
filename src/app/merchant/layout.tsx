@@ -29,7 +29,7 @@ export default function MerchantLayout({
             <p className="text-muted-foreground">Manage your deals and track performance.</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full border border-border bg-card flex items-center justify-center font-bold text-primary">
+            <div className="w-10 h-10 rounded-full border border-border bg-card flex items-center justify-center font-bold text-foreground">
               M
             </div>
           </div>

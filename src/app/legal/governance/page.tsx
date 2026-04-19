@@ -12,11 +12,11 @@ export default function GovernancePolicyPage() {
     <article className="space-y-12">
       {/* Header */}
       <div className="space-y-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors">
+        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
         </Link>
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/10">
+          <div className="w-14 h-14 rounded-md bg-amber-500/10 text-amber-500 flex items-center justify-center shadow-none shadow-amber-500/10">
             <Scale className="w-7 h-7" />
           </div>
           <div>
@@ -38,7 +38,7 @@ export default function GovernancePolicyPage() {
 
         <section className="space-y-4">
           <h2 className="text-xl font-bold tracking-tight">2. Deal Moderation</h2>
-          <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+          <div className="bg-card border border-border rounded-md p-6 space-y-4">
             <h3 className="font-bold text-sm">2.1 Approval Process</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">All deals submitted by Merchants are subject to review by the Platform Administration. Deals must comply with content standards, local regulations, and ethical advertising practices before being made available to Partners.</p>
             <h3 className="font-bold text-sm">2.2 Prohibited Content</h3>
@@ -60,7 +60,7 @@ export default function GovernancePolicyPage() {
 
         <section className="space-y-4">
           <h2 className="text-xl font-bold tracking-tight">4. Financial Governance</h2>
-          <div className="bg-secondary/30 border border-border rounded-2xl p-6 space-y-3 text-sm">
+          <div className="bg-secondary/30 border border-border rounded-md p-6 space-y-3 text-sm">
             <p className="text-muted-foreground"><span className="font-bold text-foreground">Commission Transparency:</span> All commission rates are defined by the Merchant at deal creation and are visible to Partners. The 70/30 split (Partner/Platform) is standard and non-negotiable.</p>
             <p className="text-muted-foreground"><span className="font-bold text-foreground">Settlement Integrity:</span> Prepaid merchants have commissions settled instantly from their wallet balance. Card-on-file merchants accrue liability settled on a 15-day billing cycle.</p>
             <p className="text-muted-foreground"><span className="font-bold text-foreground">Audit Trail:</span> All financial transactions, commissions, and settlements are logged with immutable timestamps and are available for audit by authorized administrators.</p>
@@ -84,17 +84,17 @@ export default function GovernancePolicyPage() {
             Violations of governance policies may result in warnings, temporary suspensions, permanent account termination, or legal action. The severity of enforcement is proportional to the violation and considers the user&apos;s history and intent.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-card border border-border rounded-xl p-4 text-center">
+            <div className="bg-card border border-border rounded-md p-4 text-center">
               <p className="text-2xl font-black text-amber-500">⚠️</p>
               <p className="text-xs font-bold mt-2">Warning</p>
               <p className="text-[10px] text-muted-foreground mt-1">First-time minor violations</p>
             </div>
-            <div className="bg-card border border-border rounded-xl p-4 text-center">
+            <div className="bg-card border border-border rounded-md p-4 text-center">
               <p className="text-2xl font-black text-orange-500">⏸️</p>
               <p className="text-xs font-bold mt-2">Suspension</p>
               <p className="text-[10px] text-muted-foreground mt-1">Repeated or moderate violations</p>
             </div>
-            <div className="bg-card border border-border rounded-xl p-4 text-center">
+            <div className="bg-card border border-border rounded-md p-4 text-center">
               <p className="text-2xl font-black text-red-500">🚫</p>
               <p className="text-xs font-bold mt-2">Termination</p>
               <p className="text-[10px] text-muted-foreground mt-1">Severe or fraudulent violations</p>
@@ -111,7 +111,7 @@ export default function GovernancePolicyPage() {
 
         <section className="space-y-4">
           <h2 className="text-xl font-bold tracking-tight">8. Contact</h2>
-          <div className="bg-secondary/30 border border-border rounded-2xl p-6">
+          <div className="bg-secondary/30 border border-border rounded-md p-6">
             <p className="text-sm text-muted-foreground">For governance-related questions or to report violations:</p>
             <p className="text-sm font-bold mt-2">Aethyl Group — Offrion Platform</p>
             <p className="text-sm text-muted-foreground">Email: governance@offrion.com</p>

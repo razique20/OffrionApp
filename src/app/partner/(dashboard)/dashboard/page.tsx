@@ -139,8 +139,8 @@ export default function PartnerDashboard() {
       </div>
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 bg-card border border-border rounded-2xl flex items-center gap-4">
-          <div className="p-3 bg-emerald-500/10 text-emerald-500 rounded-xl">
+        <div className="p-6 bg-card border border-border rounded-md flex items-center gap-4">
+          <div className="p-3 bg-emerald-500/10 text-emerald-500 rounded-md">
             <DollarSign className="w-6 h-6" />
           </div>
           <div>
@@ -148,8 +148,8 @@ export default function PartnerDashboard() {
             <h3 className="text-2xl font-bold">{formatCurrency(totalEarned)}</h3>
           </div>
         </div>
-        <div className="p-6 bg-card border border-border rounded-2xl flex items-center gap-4">
-          <div className="p-3 bg-amber-500/10 text-amber-500 rounded-xl">
+        <div className="p-6 bg-card border border-border rounded-md flex items-center gap-4">
+          <div className="p-3 bg-amber-500/10 text-amber-500 rounded-md">
             <Clock className="w-6 h-6" />
           </div>
           <div>
@@ -157,8 +157,8 @@ export default function PartnerDashboard() {
             <h3 className="text-2xl font-bold">{formatCurrency(earnings.pending)}</h3>
           </div>
         </div>
-        <div className="p-6 bg-card border border-border rounded-2xl flex items-center gap-4">
-          <div className="p-3 bg-blue-500/10 text-blue-500 rounded-xl">
+        <div className="p-6 bg-card border border-border rounded-md flex items-center gap-4">
+          <div className="p-3 bg-blue-500/10 text-blue-500 rounded-md">
             <TrendingUp className="w-6 h-6" />
           </div>
           <div>
@@ -173,20 +173,20 @@ export default function PartnerDashboard() {
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold flex items-center gap-2">
-              <Key className="w-5 h-5 text-primary" />
+              <Key className="w-5 h-5 text-foreground" />
               API Keys
             </h2>
             <button 
               onClick={generateKey}
               disabled={generating}
-              className="px-4 py-2 bg-premium-gradient text-primary-foreground rounded-xl text-sm font-bold hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-bold hover:bg-primary/90 transition-all disabled:opacity-50"
             >
               {generating ? 'Generating...' : 'Generate New Key'}
             </button>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-xl flex items-center gap-3 text-destructive text-sm">
+            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-md flex items-center gap-3 text-destructive text-sm">
               <AlertCircle className="w-5 h-5 flex-shrink-0" />
               <p>{error}</p>
             </div>
@@ -194,22 +194,22 @@ export default function PartnerDashboard() {
 
           <div className="space-y-4">
             {keys.length === 0 ? (
-              <div className="p-12 text-center bg-secondary/50 border border-dashed border-border rounded-2xl">
+              <div className="p-12 text-center bg-secondary/50 border border-dashed border-border rounded-md">
                 <p className="text-muted-foreground italic">No API keys generated yet.</p>
               </div>
             ) : (
               keys.map((k) => (
-                <div key={k.id || k._id} className="p-5 bg-card border border-border rounded-2xl group hover:border-primary/30 transition-all">
+                <div key={k.id || k._id} className="p-5 bg-card border border-border rounded-md group hover:border-primary/30 transition-all">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h4 className="font-bold">{k.name}</h4>
                       <p className="text-xs text-muted-foreground">Created on {formatDate(k.createdAt)}</p>
                     </div>
-                    <div className="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">
+                    <div className="bg-secondary text-foreground px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">
                       Active
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 bg-secondary p-3 rounded-xl">
+                  <div className="flex items-center gap-2 bg-secondary p-3 rounded-md">
                     <code className="text-xs font-mono flex-1 overflow-hidden truncate">
                       {k.key}
                     </code>
@@ -217,7 +217,7 @@ export default function PartnerDashboard() {
                       onClick={() => copyToClipboard(k.key)}
                       className="p-2 hover:bg-background rounded-lg transition-colors"
                     >
-                      {copied === k.key ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
+                      {copied === k.key ? <CheckCircle2 className="w-4 h-4 text-foreground" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
                     </button>
                   </div>
                 </div>
@@ -229,11 +229,11 @@ export default function PartnerDashboard() {
         {/* Quick Integration */}
         <div className="space-y-6">
           <h2 className="text-xl font-bold flex items-center gap-2">
-            <Code className="w-5 h-5 text-primary" />
+            <Code className="w-5 h-5 text-foreground" />
             Quick Start
           </h2>
           
-          <div className="bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
+          <div className="bg-slate-950 rounded-md overflow-hidden border border-slate-800 shadow-none">
             <div className="flex items-center gap-2 px-4 py-3 bg-slate-900/50 border-b border-slate-800">
               <Terminal className="w-4 h-4 text-slate-400" />
               <span className="text-xs font-mono text-slate-300">Fetch Deals API</span>
@@ -246,15 +246,15 @@ export default function PartnerDashboard() {
             </div>
           </div>
 
-          <div className="p-6 bg-primary/5 border border-primary/10 rounded-2xl">
+          <div className="p-6 bg-muted border border-primary/10 rounded-md">
             <h4 className="font-bold flex items-center gap-2 mb-2">
-              <AlertCircle className="w-4 h-4 text-primary" />
+              <AlertCircle className="w-4 h-4 text-foreground" />
               Security Note
             </h4>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Your API keys carry significant privileges. Ensure they are stored securely and never exposed in client-side code without appropriate proxying.
             </p>
-            <Link href="/partner/docs" className="inline-block mt-4 text-primary font-bold text-sm hover:underline">
+            <Link href="/partner/docs" className="inline-block mt-4 text-foreground font-bold text-sm hover:underline">
               Read Governance Policy →
             </Link>
           </div>
@@ -262,13 +262,13 @@ export default function PartnerDashboard() {
       </div>
 
       {/* Recent Deal Claims */}
-      <div className="bg-card border border-border rounded-[32px] overflow-hidden shadow-sm">
+      <div className="bg-card border border-border rounded-md overflow-hidden shadow-none">
         <div className="p-8 border-b border-border flex justify-between items-center">
           <div>
             <h3 className="text-xl font-bold tracking-tight">Recent Deal Claims</h3>
             <p className="text-sm text-muted-foreground">Track your referred customer redemptions.</p>
           </div>
-          <Link href="/partner/analytics" className="text-sm font-bold text-primary hover:underline flex items-center gap-1">
+          <Link href="/partner/analytics" className="text-sm font-bold text-foreground hover:underline flex items-center gap-1">
             View All Analytics <ExternalLink className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -306,7 +306,7 @@ export default function PartnerDashboard() {
                       </div>
                     </td>
                     <td className="px-8 py-5">
-                      <span className="font-mono text-xs font-bold bg-secondary px-2 py-1 rounded text-primary">
+                      <span className="font-mono text-xs font-bold bg-secondary px-2 py-1 rounded text-foreground">
                         {t.qrCode || 'N/A'}
                       </span>
                     </td>
@@ -321,7 +321,7 @@ export default function PartnerDashboard() {
                         {t.status}
                       </span>
                     </td>
-                    <td className="px-8 py-5 text-right font-bold text-sm text-primary">
+                    <td className="px-8 py-5 text-right font-bold text-sm text-foreground">
                       {formatCurrency((t.amount * (t.dealId?.commissionPercentage || 10)) / 100 * 0.7)}
                     </td>
                   </tr>

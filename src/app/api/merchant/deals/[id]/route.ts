@@ -19,6 +19,8 @@ const dealSchema = z.object({
   validUntil: z.string().transform((str) => new Date(str)).optional(),
   usageLimit: z.number().int().nonnegative().optional(),
   isActive: z.boolean().optional(),
+  emirate: z.string().optional(),
+  landmark: z.string().optional(),
 });
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {

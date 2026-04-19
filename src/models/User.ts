@@ -10,6 +10,9 @@ export interface IUser extends Document {
   password?: string;
   role: UserRole;
   roles: UserRole[];
+  country?: string;
+  accessCountries?: string[];
+  pendingAccessCountries?: string[];
   isActive: boolean;
   permissions: string[];
   stripeConnectId?: string;
@@ -31,6 +34,9 @@ const UserSchema: Schema = new Schema(
       type: String,
       enum: Object.values(UserRole),
     }],
+    country: { type: String, default: 'United Arab Emirates' },
+    accessCountries: { type: [String], default: [] },
+    pendingAccessCountries: { type: [String], default: [] },
     isActive: { type: Boolean, default: true },
     permissions: [{ type: String }],
     stripeConnectId: { type: String, unique: true, sparse: true },

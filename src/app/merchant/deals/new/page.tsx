@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CloudinaryUpload } from '@/components/CloudinaryUpload';
+import { UAE_EMIRATES } from '@/constants/locations';
 
 export default function NewDealPage() {
   const router = useRouter();
@@ -32,6 +33,8 @@ export default function NewDealPage() {
     usageLimit: '0',
     lat: '',
     lng: '',
+    emirate: '',
+    landmark: '',
     images: [] as string[],
   });
 
@@ -94,10 +97,30 @@ export default function NewDealPage() {
     }
   };
 
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFormData(prev => ({
+          ...prev,
+          lat: position.coords.latitude.toString(),
+          lng: position.coords.longitude.toString()
+        }));
+      },
+      () => {
+        alert('Unable to retrieve your location. Please enter coordinates manually.');
+      }
+    );
+  };
+
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] text-center">
-        <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-6">
+        <div className="w-20 h-20 bg-secondary text-foreground rounded-full flex items-center justify-center mb-6">
           <CheckCircle2 className="w-10 h-10" />
         </div>
         <h2 className="text-2xl font-bold">Deal Created Successfully!</h2>
@@ -117,8 +140,8 @@ export default function NewDealPage() {
   if (kycStatus !== 'verified') {
     return (
       <div className="max-w-4xl mx-auto py-12">
-        <div className="bg-card border border-border rounded-[40px] p-12 text-center space-y-6 shadow-sm border-dashed">
-          <div className="w-24 h-24 bg-primary/10 text-primary rounded-[32px] flex items-center justify-center mx-auto shadow-lg shadow-primary/5">
+        <div className="bg-card border border-border rounded-md p-12 text-center space-y-6 shadow-none border-dashed">
+          <div className="w-24 h-24 bg-secondary text-foreground rounded-md flex items-center justify-center mx-auto shadow-none shadow-primary/5">
             <Upload className="w-12 h-12" />
           </div>
           <div className="space-y-2">
@@ -129,7 +152,7 @@ export default function NewDealPage() {
           </div>
           <button 
             onClick={() => router.push('/merchant/kyc')}
-            className="px-8 py-4 bg-premium-gradient text-white font-bold rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            className="px-8 py-4 bg-secondary text-foreground border border-border font-bold rounded-md shadow-none shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
             Complete KYC Now
           </button>
@@ -148,7 +171,7 @@ export default function NewDealPage() {
         Back to Deals
       </button>
 
-      <div className="bg-card border border-border rounded-2xl overflow-hidden">
+      <div className="bg-card border border-border rounded-md overflow-hidden">
         <div className="p-8 border-b border-border">
           <h2 className="text-xl font-bold">Create New Deal</h2>
           <p className="text-sm text-muted-foreground">Fill in the details to publish your deal.</p>
@@ -166,7 +189,7 @@ export default function NewDealPage() {
                   type="text" 
                   required
                   placeholder="e.g. 50% Off Gourmet Burger"
-                  className="w-full bg-secondary border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                  className="w-full bg-secondary border-none rounded-md px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
                   value={formData.title}
                   onChange={(e) => setFormData({...formData, title: e.target.value})}
                 />
@@ -178,7 +201,7 @@ export default function NewDealPage() {
                   required
                   rows={4}
                   placeholder="Describe the deal and any terms..."
-                  className="w-full bg-secondary border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                  className="w-full bg-secondary border-none rounded-md px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                 />
@@ -188,7 +211,7 @@ export default function NewDealPage() {
                 <label className="text-sm font-medium">Category</label>
                 <select 
                   required
-                  className="w-full bg-secondary border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                  className="w-full bg-secondary border-none rounded-md px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
                   value={formData.categoryId}
                   onChange={(e) => setFormData({...formData, categoryId: e.target.value})}
                 >
@@ -212,7 +235,7 @@ export default function NewDealPage() {
                     <input 
                       type="number" 
                       required
-                      className="w-full bg-secondary border-none rounded-xl pl-10 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                      className="w-full bg-secondary border-none rounded-md pl-10 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary"
                       value={formData.originalPrice}
                       onChange={(e) => setFormData({...formData, originalPrice: e.target.value})}
                     />
@@ -225,7 +248,7 @@ export default function NewDealPage() {
                     <input 
                       type="number" 
                       required
-                      className="w-full bg-secondary border-none rounded-xl pl-10 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                      className="w-full bg-secondary border-none rounded-md pl-10 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary"
                       value={formData.discountedPrice}
                       onChange={(e) => setFormData({...formData, discountedPrice: e.target.value})}
                     />
@@ -241,32 +264,68 @@ export default function NewDealPage() {
                     type="number" 
                     min="10"
                     required
-                    className="w-full bg-secondary border-none rounded-xl pl-10 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                    className="w-full bg-secondary border-none rounded-md pl-10 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary"
                     value={formData.commissionPercentage}
                     onChange={(e) => setFormData({...formData, commissionPercentage: e.target.value})}
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Latitude</label>
-                  <input 
-                    type="number" step="any"
-                    required
-                    className="w-full bg-secondary border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
-                    value={formData.lat}
-                    onChange={(e) => setFormData({...formData, lat: e.target.value})}
-                  />
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">Location Coordinates</label>
+                  <button 
+                    type="button"
+                    onClick={detectLocation}
+                    className="text-[10px] font-black uppercase tracking-widest text-foreground hover:opacity-70 transition-opacity flex items-center gap-1.5"
+                  >
+                    <MapPin className="w-3 h-3" />
+                    Detect My Location
+                  </button>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Longitude</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <input 
+                      type="number" step="any"
+                      required
+                      placeholder="Latitude"
+                      className="w-full bg-secondary border-none rounded-md px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                      value={formData.lat}
+                      onChange={(e) => setFormData({...formData, lat: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <input 
+                      type="number" step="any"
+                      required
+                      placeholder="Longitude"
+                      className="w-full bg-secondary border-none rounded-md px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                      value={formData.lng}
+                      onChange={(e) => setFormData({...formData, lng: e.target.value})}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <label className="text-sm font-medium">Detailed Location (UAE)</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <select 
+                    className="w-full bg-secondary border-none rounded-md px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                    value={formData.emirate}
+                    onChange={(e) => setFormData({...formData, emirate: e.target.value})}
+                  >
+                    <option value="">Select Emirate</option>
+                    {UAE_EMIRATES.map(e => (
+                      <option key={e} value={e}>{e}</option>
+                    ))}
+                  </select>
                   <input 
-                    type="number" step="any"
-                    required
-                    className="w-full bg-secondary border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
-                    value={formData.lng}
-                    onChange={(e) => setFormData({...formData, lng: e.target.value})}
+                    type="text"
+                    placeholder="Nearest Landmark"
+                    className="w-full bg-secondary border-none rounded-md px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                    value={formData.landmark}
+                    onChange={(e) => setFormData({...formData, landmark: e.target.value})}
                   />
                 </div>
               </div>
@@ -277,7 +336,7 @@ export default function NewDealPage() {
                   <input 
                     type="date" 
                     required
-                    className="w-full bg-secondary border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                    className="w-full bg-secondary border-none rounded-md px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
                     value={formData.validFrom}
                     onChange={(e) => setFormData({...formData, validFrom: e.target.value})}
                   />
@@ -287,7 +346,7 @@ export default function NewDealPage() {
                   <input 
                     type="date" 
                     required
-                    className="w-full bg-secondary border-none rounded-xl px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
+                    className="w-full bg-secondary border-none rounded-md px-4 py-3 text-sm focus:ring-1 focus:ring-primary"
                     value={formData.validUntil}
                     onChange={(e) => setFormData({...formData, validUntil: e.target.value})}
                   />
@@ -314,7 +373,7 @@ export default function NewDealPage() {
             <button 
               type="submit"
               disabled={loading}
-              className="w-full bg-premium-gradient text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full bg-secondary text-foreground border border-border font-bold py-4 rounded-md shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {loading ? 'Creating Deal...' : 'Publish Deal'}
             </button>

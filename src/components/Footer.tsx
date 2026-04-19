@@ -10,8 +10,8 @@ export const Footer = () => {
           {/* Brand */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-premium-gradient flex items-center justify-center">
-                <span className="text-white text-[10px] font-bold">O</span>
+              <div className="w-6 h-6 rounded-lg bg-secondary border border-border flex items-center justify-center">
+                <span className="text-foreground text-[10px] font-bold">O</span>
               </div>
               <span className="text-lg font-bold tracking-tight">Offrion</span>
             </div>
@@ -25,18 +25,18 @@ export const Footer = () => {
             <div className="space-y-3">
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Platform</p>
               <div className="flex flex-col gap-2">
-                <Link href="/features" className="text-xs text-muted-foreground hover:text-primary transition-colors">Features</Link>
-                <Link href="/partners" className="text-xs text-muted-foreground hover:text-primary transition-colors">Partners</Link>
-                <Link href="/partner/docs" className="text-xs text-muted-foreground hover:text-primary transition-colors">API Docs</Link>
-                <Link href="/auth/register?role=merchant" className="text-xs text-muted-foreground hover:text-primary transition-colors">Join as Merchant</Link>
+                <Link href="/features" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Features</Link>
+                <Link href="/partners" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Partners</Link>
+                <Link href="/partner/docs" className="text-xs text-muted-foreground hover:text-foreground transition-colors">API Docs</Link>
+                <Link href="/auth/register?role=merchant" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Join as Merchant</Link>
               </div>
             </div>
             <div className="space-y-3">
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Legal</p>
               <div className="flex flex-col gap-2">
-                <Link href="/legal/privacy" className="text-xs text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
-                <Link href="/legal/terms" className="text-xs text-muted-foreground hover:text-primary transition-colors">Terms & Conditions</Link>
-                <Link href="/legal/governance" className="text-xs text-muted-foreground hover:text-primary transition-colors">Governance Policy</Link>
+                <Link href="/legal/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>
+                <Link href="/legal/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms & Conditions</Link>
+                <Link href="/legal/governance" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Governance Policy</Link>
               </div>
             </div>
           </div>

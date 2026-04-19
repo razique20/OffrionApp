@@ -18,7 +18,7 @@ import dynamic from 'next/dynamic';
 
 const AnalyticsChart = dynamic(() => import('@/components/partner/AnalyticsChart'), { 
   ssr: false,
-  loading: () => <div className="w-full h-[400px] bg-secondary/20 animate-pulse rounded-2xl" />
+  loading: () => <div className="w-full h-[400px] bg-secondary/20 animate-pulse rounded-md" />
 });
 
 function AnalyticsContent() {
@@ -59,7 +59,7 @@ function AnalyticsContent() {
   );
 
   if (error) return (
-    <div className="p-8 bg-destructive/10 text-destructive rounded-2xl text-center">
+    <div className="p-8 bg-destructive/10 text-destructive rounded-md text-center">
       <p>{error}</p>
       <button onClick={() => window.location.reload()} className="mt-4 font-bold underline">Retry</button>
     </div>
@@ -69,7 +69,7 @@ function AnalyticsContent() {
     { name: 'Impressions', value: data.summary.impressions, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { name: 'Clicks', value: data.summary.clicks, icon: MousePointer2, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     { name: 'Conversions', value: data.summary.conversions, icon: ShoppingBag, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { name: 'Total Earned', value: formatCurrency(data.summary.totalEarned), icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10' },
+    { name: 'Total Earned', value: formatCurrency(data.summary.totalEarned), icon: DollarSign, color: 'text-white', bg: 'bg-secondary' },
   ];
 
   // Prepare Funnel Data
@@ -108,14 +108,14 @@ function AnalyticsContent() {
             <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
             <p className="text-muted-foreground">Deep dive into your referral metrics and earnings.</p>
           </div>
-          <div className="flex items-center gap-2 bg-card border border-border p-1 rounded-xl shadow-sm">
+          <div className="flex items-center gap-2 bg-card border border-border p-1 rounded-md shadow-none">
             {['7d', '30d', '90d'].map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
                 className={cn(
                   "px-4 py-1.5 rounded-lg text-sm font-bold transition-all",
-                  period === p ? "bg-primary text-primary-foreground shadow-md" : "hover:bg-secondary text-muted-foreground"
+                  period === p ? "bg-primary text-white-foreground shadow-none" : "hover:bg-secondary text-muted-foreground"
                 )}
               >
                 {p.toUpperCase()}
@@ -128,8 +128,8 @@ function AnalyticsContent() {
       {/* Main Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
-          <div key={stat.name} className="p-6 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-all">
-            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center mb-4 text-sm font-bold", stat.bg, stat.color)}>
+          <div key={stat.name} className="p-6 bg-card border border-border rounded-md shadow-none hover:shadow-none transition-all">
+            <div className={cn("w-10 h-10 rounded-md flex items-center justify-center mb-4 text-sm font-bold", stat.bg, stat.color)}>
               <stat.icon className="w-5 h-5" />
             </div>
             <p className="text-sm font-medium text-muted-foreground">{stat.name}</p>
@@ -140,10 +140,10 @@ function AnalyticsContent() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Growth Chart */}
-        <div className="lg:col-span-2 p-8 bg-card border border-border rounded-[32px] shadow-sm">
+        <div className="lg:col-span-2 p-8 bg-card border border-border rounded-md shadow-none">
           <div className="flex justify-between items-center mb-10">
             <h3 className="text-xl font-bold flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-primary" />
+              <TrendingUp className="w-5 h-5 text-foreground" />
               Growth Trends
             </h3>
           </div>
@@ -157,9 +157,9 @@ function AnalyticsContent() {
         </div>
 
         {/* Conversion Funnel */}
-        <div className="p-8 bg-card border border-border rounded-[32px] shadow-sm flex flex-col">
+        <div className="p-8 bg-card border border-border rounded-md shadow-none flex flex-col">
           <h3 className="text-xl font-bold mb-10 flex items-center gap-2">
-            <Filter className="w-5 h-5 text-primary" />
+            <Filter className="w-5 h-5 text-foreground" />
             Conversion Funnel
           </h3>
           <div className="flex-1 flex flex-col justify-center gap-8">
@@ -186,10 +186,10 @@ function AnalyticsContent() {
               </div>
             ))}
           </div>
-          <div className="mt-10 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-1">Overall Conversion Rate</p>
+          <div className="mt-10 p-4 bg-muted rounded-md border border-primary/10">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-foreground mb-1">Overall Conversion Rate</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-primary">{data.summary.conversionRate}</span>
+              <span className="text-3xl font-black text-foreground">{data.summary.conversionRate}</span>
               <span className="text-xs text-muted-foreground font-medium">of all clicks</span>
             </div>
           </div>

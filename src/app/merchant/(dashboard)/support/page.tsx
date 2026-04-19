@@ -111,7 +111,7 @@ export default function MerchantSupportPage() {
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <Loader2 className="w-8 h-8 animate-spin text-foreground" />
       <span className="text-sm font-medium text-muted-foreground">Opening support deck...</span>
     </div>
   );
@@ -124,12 +124,12 @@ export default function MerchantSupportPage() {
           <p className="text-muted-foreground mt-1 text-sm font-medium">Direct help for Merchants.</p>
         </div>
         <div className="flex items-center gap-3">
-           <div className="bg-secondary/40 p-1 rounded-2xl border border-border flex">
+           <div className="bg-secondary/40 p-1 rounded-md border border-border flex">
               <button 
                 onClick={() => setActiveTab('tickets')}
                 className={cn(
-                  "px-4 py-2 text-xs font-bold rounded-xl transition-all",
-                  activeTab === 'tickets' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+                  "px-4 py-2 text-xs font-bold rounded-md transition-all",
+                  activeTab === 'tickets' ? "bg-card text-foreground shadow-none" : "text-muted-foreground"
                 )}
               >
                 My Tickets
@@ -137,8 +137,8 @@ export default function MerchantSupportPage() {
               <button 
                 onClick={() => setActiveTab('faq')}
                 className={cn(
-                  "px-4 py-2 text-xs font-bold rounded-xl transition-all",
-                  activeTab === 'faq' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+                  "px-4 py-2 text-xs font-bold rounded-md transition-all",
+                  activeTab === 'faq' ? "bg-card text-foreground shadow-none" : "text-muted-foreground"
                 )}
               >
                 Knowledge Base (FAQ)
@@ -146,7 +146,7 @@ export default function MerchantSupportPage() {
            </div>
            <button 
              onClick={() => setShowNewTicket(true)}
-             className="flex items-center justify-center gap-2 px-6 py-3 bg-premium-gradient text-white rounded-2xl font-bold hover:scale-[1.02] shadow-xl shadow-primary/20 transition-all text-sm"
+             className="flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-foreground border border-border rounded-md font-bold hover:scale-[1.02] shadow-none shadow-primary/20 transition-all text-sm"
            >
              <Plus className="w-4 h-4" /> Open New Ticket
            </button>
@@ -161,7 +161,7 @@ export default function MerchantSupportPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-250px)]">
           {/* Ticket List */}
           <div className={cn(
-            "lg:col-span-4 bg-card border border-border rounded-[32px] overflow-hidden flex flex-col shadow-xl",
+            "lg:col-span-4 bg-card border border-border rounded-md overflow-hidden flex flex-col shadow-none",
             selectedTicket && "hidden lg:flex"
           )}>
              <div className="p-6 border-b border-border bg-secondary/20 flex items-center justify-between">
@@ -181,9 +181,9 @@ export default function MerchantSupportPage() {
                       key={ticket._id}
                       onClick={() => setSelectedTicket(ticket)}
                       className={cn(
-                        "p-4 rounded-2xl border transition-all cursor-pointer group",
+                        "p-4 rounded-md border transition-all cursor-pointer group",
                         selectedTicket?._id === ticket._id 
-                          ? "bg-primary/5 border-primary shadow-sm" 
+                          ? "bg-muted border-primary shadow-none" 
                           : "border-transparent hover:bg-secondary/40"
                       )}
                     >
@@ -195,7 +195,7 @@ export default function MerchantSupportPage() {
                            {new Date(ticket.createdAt).toLocaleDateString()}
                          </span>
                       </div>
-                      <h4 className="font-bold text-sm truncate pr-4 group-hover:text-primary transition-colors">{ticket.subject}</h4>
+                      <h4 className="font-bold text-sm truncate pr-4 group-hover:text-foreground transition-colors">{ticket.subject}</h4>
                       <p className="text-xs text-muted-foreground truncate mt-1">{ticket.message}</p>
                     </div>
                   ))
@@ -205,7 +205,7 @@ export default function MerchantSupportPage() {
 
           {/* Ticket Details / Chat */}
           <div className={cn(
-            "lg:col-span-8 bg-card border border-border rounded-[32px] overflow-hidden flex flex-col shadow-xl",
+            "lg:col-span-8 bg-card border border-border rounded-md overflow-hidden flex flex-col shadow-none",
             !selectedTicket && "hidden lg:flex items-center justify-center relative"
           )}>
              {selectedTicket ? (
@@ -232,7 +232,7 @@ export default function MerchantSupportPage() {
                  <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-secondary/5">
                     {/* Original Message */}
                     <div className="flex flex-col gap-1 max-w-[85%] self-start">
-                       <div className="p-4 rounded-2xl bg-secondary/40 border border-border text-sm leading-relaxed backdrop-blur-sm">
+                       <div className="p-4 rounded-md bg-secondary/40 border border-border text-sm leading-relaxed backdrop-blur-sm">
                           {selectedTicket.message}
                        </div>
                        <span className="text-[10px] font-bold text-muted-foreground px-2">You • {new Date(selectedTicket.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -245,10 +245,10 @@ export default function MerchantSupportPage() {
                         res.senderRole === 'merchant' ? "self-end items-end" : "self-start"
                       )}>
                          <div className={cn(
-                           "p-4 rounded-2xl text-sm leading-relaxed border transition-all",
+                           "p-4 rounded-md text-sm leading-relaxed border transition-all",
                            res.senderRole === 'merchant' 
-                             ? "bg-premium-gradient text-white border-transparent shadow-lg shadow-primary/10" 
-                             : "bg-background border-border shadow-sm backdrop-blur-md"
+                             ? "bg-secondary text-white border border-border border-transparent shadow-none shadow-primary/10" 
+                             : "bg-background border-border shadow-none "
                          )}>
                             {res.message}
                          </div>
@@ -266,7 +266,7 @@ export default function MerchantSupportPage() {
                         type="text"
                         disabled={selectedTicket.status === 'closed' || selectedTicket.status === 'resolved' || submitting}
                         placeholder={selectedTicket.status === 'closed' ? "This ticket is closed" : "Type your message..."}
-                        className="w-full bg-secondary/40 border border-border rounded-2xl pl-6 pr-14 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium disabled:opacity-50"
+                        className="w-full bg-secondary/40 border border-border rounded-md pl-6 pr-14 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium disabled:opacity-50"
                         value={replyMessage}
                         onChange={(e) => setReplyMessage(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && replyMessage && !submitting && handleSendReply()}
@@ -274,7 +274,7 @@ export default function MerchantSupportPage() {
                       <button 
                          onClick={handleSendReply}
                          disabled={!replyMessage || submitting || selectedTicket.status === 'closed'}
-                         className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-premium-gradient text-white rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.05] active:scale-[0.95] transition-all disabled:opacity-0 disabled:scale-0 duration-300"
+                         className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-secondary text-foreground border border-border rounded-md shadow-none hover:scale-[1.05] active:scale-[0.95] transition-all disabled:opacity-0 disabled:scale-0 duration-300"
                       >
                          {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                       </button>
@@ -284,7 +284,7 @@ export default function MerchantSupportPage() {
                </>
              ) : (
                <div className="flex flex-col items-center justify-center p-12 text-center h-full">
-                  <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-6 shadow-inner ring-4 ring-primary/5">
+                  <div className="w-20 h-20 bg-secondary text-foreground rounded-full flex items-center justify-center mb-6 shadow-inner ring-4 ring-primary/5">
                      <MessageSquare className="w-10 h-10" />
                   </div>
                   <h3 className="text-xl font-bold mb-2">No Ticket Selected</h3>
@@ -299,8 +299,8 @@ export default function MerchantSupportPage() {
 
       {/* New Ticket Modal (Structured Questionnaire) */}
       {showNewTicket && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-           <div className="bg-card w-full max-w-lg rounded-[32px] border border-border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60  animate-in fade-in duration-300">
+           <div className="bg-card w-full max-w-lg rounded-md border border-border shadow-none overflow-hidden animate-in zoom-in-95 duration-300">
               <div className="p-8 border-b border-border bg-gradient-to-r from-primary/10 to-transparent text-center">
                  <h3 className="text-2xl font-bold italic tracking-tight">Support Questionnaire</h3>
                  <p className="text-xs text-muted-foreground mt-1 font-bold uppercase tracking-widest">Help us help you faster</p>
@@ -320,9 +320,9 @@ export default function MerchantSupportPage() {
                               key={cat.id} type="button"
                               onClick={() => setNewTicket({...newTicket, category: cat.id})}
                               className={cn(
-                                "py-2 px-3 rounded-xl border text-[10px] font-bold transition-all",
+                                "py-2 px-3 rounded-md border text-[10px] font-bold transition-all",
                                 newTicket.category === cat.id 
-                                  ? "bg-primary/10 border-primary text-primary shadow-sm" 
+                                  ? "bg-secondary border-primary text-white shadow-none" 
                                   : "bg-secondary/40 border-border text-muted-foreground hover:bg-secondary/60"
                               )}
                             >
@@ -340,9 +340,9 @@ export default function MerchantSupportPage() {
                               key={p} type="button"
                               onClick={() => setNewTicket({...newTicket, priority: p})}
                               className={cn(
-                                "flex-1 py-2 px-4 rounded-xl border text-[10px] font-black uppercase transition-all",
+                                "flex-1 py-2 px-4 rounded-md border text-[10px] font-black uppercase transition-all",
                                 newTicket.priority === p 
-                                  ? "bg-primary text-white border-transparent shadow-lg shadow-primary/20" 
+                                  ? "bg-primary text-white border-transparent shadow-none" 
                                   : "bg-secondary/40 border-border text-muted-foreground"
                               )}
                             >
@@ -357,7 +357,7 @@ export default function MerchantSupportPage() {
                        <input 
                          type="text" required
                          placeholder="Describe in a few words..."
-                         className="w-full bg-secondary/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                         className="w-full bg-secondary/50 border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
                          value={newTicket.subject}
                          onChange={(e) => setNewTicket({...newTicket, subject: e.target.value})}
                        />
@@ -368,7 +368,7 @@ export default function MerchantSupportPage() {
                        <textarea 
                          required rows={4}
                          placeholder="Please include relevant details, error messages, or deal IDs..."
-                         className="w-full bg-secondary/50 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium resize-none shadow-inner"
+                         className="w-full bg-secondary/50 border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium resize-none shadow-inner"
                          value={newTicket.message}
                          onChange={(e) => setNewTicket({...newTicket, message: e.target.value})}
                        />
@@ -378,13 +378,13 @@ export default function MerchantSupportPage() {
                     <button 
                       type="button"
                       onClick={() => setShowNewTicket(false)}
-                      className="flex-1 px-6 py-3.5 bg-secondary text-foreground rounded-2xl font-bold hover:bg-secondary/80 transition-all text-sm"
+                      className="flex-1 px-6 py-3.5 bg-secondary text-foreground rounded-md font-bold hover:bg-secondary/80 transition-all text-sm"
                     >
                       Cancel
                     </button>
                     <button 
                       type="submit" disabled={submitting}
-                      className="flex-[2] flex items-center justify-center gap-2 px-6 py-3.5 bg-premium-gradient text-white rounded-2xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl shadow-primary/20 text-sm"
+                      className="flex-[2] flex items-center justify-center gap-2 px-6 py-3.5 bg-secondary text-foreground border border-border rounded-md font-bold hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 shadow-none shadow-primary/20 text-sm"
                     >
                       {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                       Submit Request

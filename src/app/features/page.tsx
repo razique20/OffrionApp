@@ -19,7 +19,7 @@ export default function FeaturesPage() {
       <main className="pt-32 pb-24">
         {/* Header */}
         <div className="max-w-7xl mx-auto px-6 mb-24 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-primary text-xs font-bold uppercase mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted border border-border text-foreground text-xs font-bold uppercase mb-6">
             Feature Roadmap
           </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-8">Platform <span className="text-gradient">Capabilities</span></h1>
@@ -56,7 +56,7 @@ export default function FeaturesPage() {
               title: "Enterprise Grade Analytics",
               description: "Every impression, click, and conversion is tracked with millisecond precision. Aggregate data across categories or drill down into specific deals.",
               icon: BarChart3,
-              color: "text-primary",
+              color: "text-white",
               bullets: ["Live tracking", "Historical aggregation", "Conversion funnel mapping"]
             }
           ].map((feature, i) => (
@@ -72,13 +72,13 @@ export default function FeaturesPage() {
                 <ul className="space-y-4">
                   {feature.bullets.map((b, j) => (
                     <li key={j} className="flex items-center gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full bg-premium-gradient" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-secondary border border-border" />
                       <span className="font-medium">{b}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="flex-1 w-full aspect-video rounded-[40px] relative overflow-hidden flex items-center justify-center">
+              <div className="flex-1 w-full aspect-video rounded-md relative overflow-hidden flex items-center justify-center">
                 <img 
                   src={i === 0 ? "/images/qr-scan.png" :
                        i === 1 ? "/images/dashboard.png" :

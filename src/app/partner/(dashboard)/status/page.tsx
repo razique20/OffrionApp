@@ -37,16 +37,16 @@ export default function PartnerStatusPage() {
   return (
     <div className="space-y-12 pb-20 max-w-5xl">
       {/* Overall Header */}
-      <div className="p-10 bg-card border border-border rounded-[48px] shadow-xl overflow-hidden relative">
-         <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4"></div>
+      <div className="p-10 bg-card border border-border rounded-[48px] shadow-none overflow-hidden relative">
+         <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-muted rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4"></div>
          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left">
               <h1 className="text-4xl font-black mb-2">System Status</h1>
               <p className="text-muted-foreground">Real-time status of Offrion's services and infrastructure.</p>
             </div>
-            <div className="flex items-center gap-3 px-6 py-3 bg-primary/10 border border-primary/20 rounded-2xl">
-              <CheckCircle2 className="w-6 h-6 text-primary" />
-              <span className="font-bold text-primary">All Systems Operational</span>
+            <div className="flex items-center gap-3 px-6 py-3 bg-secondary border border-border rounded-md">
+              <CheckCircle2 className="w-6 h-6 text-foreground" />
+              <span className="font-bold text-foreground">All Systems Operational</span>
             </div>
          </div>
       </div>
@@ -56,18 +56,18 @@ export default function PartnerStatusPage() {
         <div className="lg:col-span-2 space-y-8">
           <div className="space-y-4">
             {systems.map((system) => (
-              <div key={system.name} className="p-6 bg-card border border-border rounded-[32px] hover:border-primary/20 transition-all group">
+              <div key={system.name} className="p-6 bg-card border border-border rounded-md hover:border-border transition-all group">
                 <div className="flex items-center justify-between mb-6">
                    <div className="flex items-center gap-4">
-                     <div className="w-12 h-12 bg-secondary rounded-2xl flex items-center justify-center">
-                       <system.icon className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                     <div className="w-12 h-12 bg-secondary rounded-md flex items-center justify-center">
+                       <system.icon className="w-6 h-6 text-muted-foreground group-hover:text-foreground transition-colors" />
                      </div>
                      <div>
                        <h3 className="font-bold text-lg">{system.name}</h3>
                        <p className="text-xs text-muted-foreground">Uptime: {system.uptime}</p>
                      </div>
                    </div>
-                   <div className="flex items-center gap-2 text-xs font-bold text-primary">
+                   <div className="flex items-center gap-2 text-xs font-bold text-foreground">
                      <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
                      Operational
                    </div>
@@ -88,7 +88,7 @@ export default function PartnerStatusPage() {
 
           <div className="space-y-6 pt-8">
              <h2 className="text-2xl font-bold flex items-center gap-3">
-                <History className="w-6 h-6 text-primary" />
+                <History className="w-6 h-6 text-foreground" />
                 Incident History
              </h2>
              <div className="space-y-6">
@@ -106,15 +106,15 @@ export default function PartnerStatusPage() {
 
         {/* Sidebar */}
         <div className="space-y-8">
-          <div className="p-8 bg-card border border-border rounded-[40px] shadow-sm">
+          <div className="p-8 bg-card border border-border rounded-md shadow-none">
             <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-primary" />
+              <Clock className="w-5 h-5 text-foreground" />
               Maintenance
             </h3>
             {maintenance.map((m, i) => (
-              <div key={i} className="p-4 bg-secondary/50 rounded-2xl border border-border">
+              <div key={i} className="p-4 bg-secondary/50 rounded-md border border-border">
                 <div className="flex justify-between items-start mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary">{m.status}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-foreground">{m.status}</span>
                 </div>
                 <h4 className="text-sm font-bold mb-1">{m.title}</h4>
                 <p className="text-[10px] text-muted-foreground mb-3">{m.time}</p>
@@ -126,12 +126,12 @@ export default function PartnerStatusPage() {
             ))}
           </div>
 
-          <div className="p-8 bg-premium-gradient rounded-[40px] text-white shadow-xl shadow-primary/20">
+          <div className="p-8 bg-secondary border border-border rounded-md text-foreground shadow-none shadow-primary/20">
              <h3 className="text-lg font-bold mb-2">Need Support?</h3>
              <p className="text-sm opacity-80 mb-6">If you're experiencing issues not listed here, our team is here to help.</p>
              <Link 
                href="/partner/support" 
-               className="w-full py-4 bg-background text-primary border border-primary/20 text-center font-bold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+               className="w-full py-4 bg-background text-foreground border border-border text-center font-bold rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                Contact Support <ChevronRight className="w-4 h-4" />
              </Link>

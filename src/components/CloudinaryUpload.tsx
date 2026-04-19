@@ -82,7 +82,7 @@ export function CloudinaryUpload({
       <div 
         onClick={() => !isUploading && !disabled && fileInputRef.current?.click()}
         className={cn(
-          "w-full border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all",
+          "w-full border-2 border-dashed rounded-md p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all",
           (isUploading || disabled) ? "border-muted bg-secondary/50 cursor-not-allowed" : "border-border hover:border-primary/50 hover:bg-secondary/50",
           existingImages.length >= maxFiles && "opacity-50 pointer-events-none"
         )}
@@ -97,13 +97,13 @@ export function CloudinaryUpload({
         
         {isUploading ? (
           <>
-            <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
+            <Loader2 className="w-8 h-8 text-foreground animate-spin mb-4" />
             <p className="text-sm font-bold text-foreground">Uploading image...</p>
             <p className="text-xs text-muted-foreground mt-1">Please wait</p>
           </>
         ) : (
           <>
-            <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-secondary text-foreground rounded-md flex items-center justify-center mb-4">
               <Upload className="w-6 h-6" />
             </div>
             <p className="text-sm font-bold text-foreground">Click to upload image</p>
@@ -118,7 +118,7 @@ export function CloudinaryUpload({
       {existingImages.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
           {existingImages.map((url, idx) => (
-            <div key={idx} className="relative group aspect-square rounded-xl overflow-hidden border border-border">
+            <div key={idx} className="relative group aspect-square rounded-md overflow-hidden border border-border">
               <img src={url} alt={`Upload ${idx}`} className="w-full h-full object-cover" />
               {onRemoveImage && (
                 <button 

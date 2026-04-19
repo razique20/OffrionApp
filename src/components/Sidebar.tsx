@@ -113,7 +113,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   if (!mounted) {
     return (
       <div className={cn(
-        "bg-card/40 border-r border-border h-screen flex flex-col sticky top-0 transition-all duration-300 frost-glass",
+        "bg-background border-r border-border h-screen flex flex-col sticky top-0 transition-all duration-300",
         isMinimized ? "w-20" : "w-64"
       )}>
         <div className="p-6">
@@ -147,8 +147,8 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
               "flex items-center rounded-lg text-sm font-medium transition-all group",
               isMinimized ? "md:justify-center p-3" : "gap-3 px-3 py-2",
               isActive 
-                ? "bg-premium-gradient text-white shadow-lg shadow-primary/20" 
-                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                ? "bg-secondary text-foreground" 
+                : "text-[#888] hover:bg-secondary hover:text-foreground"
             )}
           >
             <Icon className={cn("flex-shrink-0", isMinimized ? "md:w-6 md:h-6 w-5 h-5" : "w-5 h-5")} />
@@ -168,7 +168,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
     <>
       {/* Mobile Hamburger Toggle */}
       <button 
-        className="md:hidden fixed top-4 right-4 z-[60] p-2 bg-card rounded-md border border-border shadow-md text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+        className="md:hidden fixed top-4 right-4 z-[60] p-2 bg-card rounded-md border border-border shadow-none text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
         onClick={() => setIsMobileOpen(true)}
       >
         <Menu className="w-5 h-5" />
@@ -184,12 +184,12 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
 
       {/* Sidebar Container */}
       <div className={cn(
-        "bg-card/40 border-r border-border h-[100svh] flex-col z-[80] transition-transform duration-300 frost-glass",
+        "bg-background border-r border-border h-[100svh] flex-col z-[80] transition-transform duration-300",
         // Desktop
         "md:sticky md:top-0 md:translate-x-0 hidden md:flex",
         isMinimized ? "md:w-20 md:items-center md:px-2" : "md:w-64",
         // Mobile
-        "fixed top-0 left-0 w-64 shadow-2xl md:shadow-none flex",
+        "fixed top-0 left-0 w-64 shadow-none md:shadow-none flex",
         isMobileOpen ? "translate-x-0" : "-translate-x-full"
       )}>
       <div className={cn("p-6 flex items-center relative", isMinimized ? "md:justify-center justify-between" : "justify-between")}>
@@ -199,7 +199,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
           </Link>
         )}
         {isMinimized && !isMobileOpen && (
-          <Link href="/" className="hover:opacity-90 transition-opacity font-bold text-2xl text-primary mt-2">
+          <Link href="/" className="hover:opacity-90 transition-opacity font-bold text-2xl text-foreground mt-2">
             O.
           </Link>
         )}
@@ -224,7 +224,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
               href="/admin/dashboard" 
               title={isMinimized ? "Admin Governance" : undefined}
               className={cn(
-                "flex items-center rounded-lg text-sm font-medium transition-all text-primary hover:bg-primary/10",
+                "flex items-center rounded-lg text-sm font-medium transition-all text-[#888] hover:bg-secondary hover:text-foreground",
                 isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2"
               )}>
                 <ShieldCheck className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
@@ -237,14 +237,14 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
         {userRoles.includes('merchant') && userRoles.includes('partner') && (
           <nav className={cn("space-y-1 w-full mt-8", isMinimized ? "px-2" : "px-4")}>
             {!isMinimized && (
-              <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">
+              <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">
                 Switch Role
               </p>
             )}
             <Link 
               href={role === 'merchant' ? '/partner/dashboard' : '/merchant/dashboard'} 
               className={cn(
-                "flex items-center rounded-lg text-sm font-medium transition-all border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10",
+                "flex items-center rounded-lg text-sm font-medium transition-all border border-border bg-card text-[#888] hover:bg-secondary hover:text-foreground mt-2",
                 isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2"
               )}>
                 {role === 'merchant' ? <Handshake className="w-5 h-5" /> : <Briefcase className="w-5 h-5" />}
@@ -256,12 +256,12 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
 
       <div className={cn("p-4 border-t border-border mt-auto w-full", isMinimized ? "px-2" : "")}>
         {!isMinimized && (
-          <div className="mb-4 px-3 py-2.5 rounded-xl bg-secondary/50 border border-border flex items-center justify-between">
+          <div className="mb-4 px-3 py-2.5 rounded-md bg-secondary/50 border border-border flex items-center justify-between">
              <div>
                <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold leading-none mb-1">Session Role</p>
                <p className="text-xs font-bold capitalize leading-none">{isSuperAdmin ? 'Super Admin' : role}</p>
              </div>
-             {isSuperAdmin && <Zap className="w-3.5 h-3.5 text-primary fill-primary animate-pulse" />}
+             {isSuperAdmin && <Zap className="w-3.5 h-3.5 text-foreground fill-primary animate-pulse" />}
           </div>
         )}
         
@@ -305,9 +305,9 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
       {/* Logout Confirmation Modal */}
       {isLogoutConfirmOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-md" onClick={() => setIsLogoutConfirmOpen(false)} />
-          <div className="bg-card w-full max-w-sm border border-border rounded-[40px] shadow-2xl relative z-[10000] overflow-hidden p-8 text-center space-y-6 animate-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 bg-destructive/10 text-destructive rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-destructive/10">
+          <div className="absolute inset-0 bg-background/80 " onClick={() => setIsLogoutConfirmOpen(false)} />
+          <div className="bg-card w-full max-w-sm border border-border rounded-md shadow-none relative z-[10000] overflow-hidden p-8 text-center space-y-6 animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 bg-secondary text-foreground rounded-md flex items-center justify-center mx-auto border border-border">
               <LogOut className="w-8 h-8" />
             </div>
             <div>
@@ -319,13 +319,13 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
             <div className="flex gap-3">
               <button 
                 onClick={() => setIsLogoutConfirmOpen(false)} 
-                className="flex-1 py-3 text-xs font-bold bg-secondary rounded-xl hover:bg-secondary/80 transition-all"
+                className="flex-1 py-3 text-xs font-bold bg-secondary rounded-md hover:bg-secondary/80 transition-all"
               >
                 Cancel
               </button>
               <button 
                 onClick={actualLogout} 
-                className="flex-1 py-3 text-xs font-bold bg-destructive text-destructive-foreground rounded-xl shadow-lg shadow-destructive/20 hover:bg-destructive/90 transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3 text-xs font-bold bg-[#E00] text-foreground rounded-md hover:bg-[#C00] transition-all flex items-center justify-center gap-2"
               >
                 Logout
               </button>

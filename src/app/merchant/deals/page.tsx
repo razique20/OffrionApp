@@ -69,13 +69,13 @@ export default function MerchantDealsPage() {
 
   if (error) return (
     <div className="flex items-center justify-center h-[50vh]">
-      <div className="p-8 bg-destructive/10 border border-destructive/20 rounded-[32px] text-center max-w-md">
+      <div className="p-8 bg-destructive/10 border border-destructive/20 rounded-md text-center max-w-md">
         <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
         <h3 className="text-xl font-bold mb-2">Deals Error</h3>
         <p className="text-sm text-muted-foreground mb-6">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="px-6 py-2 bg-premium-gradient text-white rounded-xl font-bold hover:bg-primary/90 transition-all"
+          className="px-6 py-2 bg-secondary text-foreground border border-border rounded-md font-bold hover:bg-primary/90 transition-all"
         >
           Retry Connection
         </button>
@@ -91,24 +91,24 @@ export default function MerchantDealsPage() {
           <input 
             type="text" 
             placeholder="Search deals..." 
-            className="w-full bg-card border border-border rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary transition-all"
+            className="w-full bg-card border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary transition-all"
           />
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <button className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-xl text-sm font-medium hover:bg-secondary transition-all">
+          <button className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-md text-sm font-medium hover:bg-secondary transition-all">
             <Filter className="w-4 h-4" />
             Filter
           </button>
           <Link 
             href="/merchant/deals/bulk"
-            className="flex items-center gap-2 px-4 py-2 bg-secondary border border-border rounded-xl text-sm font-medium hover:bg-secondary/80 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-secondary border border-border rounded-md text-sm font-medium hover:bg-secondary/80 transition-all"
           >
-            <Layers className="w-4 h-4 text-primary" />
+            <Layers className="w-4 h-4 text-foreground" />
             Bulk Upload
           </Link>
           <Link 
             href="/merchant/deals/new"
-            className="flex items-center gap-2 px-4 py-2 bg-premium-gradient text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-secondary text-foreground border border-border rounded-md text-sm font-bold shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
             <Plus className="w-4 h-4" />
             New Deal
@@ -118,20 +118,20 @@ export default function MerchantDealsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {deals.length === 0 ? (
-          <div className="col-span-full py-20 text-center bg-card border border-dashed border-border rounded-2xl">
+          <div className="col-span-full py-20 text-center bg-card border border-dashed border-border rounded-md">
             <Tag className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-bold">No deals found</h3>
             <p className="text-muted-foreground mt-1">Start by creating your first deal.</p>
             <Link 
               href="/merchant/deals/new"
-              className="inline-block mt-6 text-primary font-bold hover:underline"
+              className="inline-block mt-6 text-foreground font-bold hover:underline"
             >
               Create New Deal
             </Link>
           </div>
         ) : (
           deals.map((deal) => (
-            <div key={deal._id} className="bg-card border border-border rounded-2xl overflow-hidden group hover:shadow-xl transition-all duration-300">
+            <div key={deal._id} className="bg-card border border-border rounded-md overflow-hidden group hover:shadow-none transition-all duration-300">
               <div className="relative aspect-video bg-secondary">
                 {deal.images?.[0] ? (
                   <img src={deal.images[0]} alt={deal.title} className="w-full h-full object-cover" />
@@ -140,9 +140,9 @@ export default function MerchantDealsPage() {
                     <Tag className="w-12 h-12 text-muted-foreground/20" />
                   </div>
                 )}
-                <div className="absolute top-4 right-4 bg-background/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-border">
+                <div className="absolute top-4 right-4 bg-background/80  px-3 py-1 rounded-full text-xs font-bold border border-border">
                   {deal.isActive ? (
-                    <span className="text-primary">Active</span>
+                    <span className="text-foreground">Active</span>
                   ) : (
                     <span className="text-destructive">Inactive</span>
                   )}
@@ -152,7 +152,7 @@ export default function MerchantDealsPage() {
               <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex flex-col gap-1 min-w-0">
-                    <h3 className="text-lg font-bold truncate group-hover:text-primary transition-colors">{deal.title}</h3>
+                    <h3 className="text-lg font-bold truncate group-hover:text-foreground transition-colors">{deal.title}</h3>
                     <span className="text-[10px] font-mono text-muted-foreground bg-secondary/50 px-1.5 py-0.5 rounded uppercase self-start">ID: {deal._id}</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -194,7 +194,7 @@ export default function MerchantDealsPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Commission</p>
-                    <span className="text-sm font-bold text-primary">{deal.commissionPercentage}%</span>
+                    <span className="text-sm font-bold text-foreground">{deal.commissionPercentage}%</span>
                   </div>
                 </div>
               </div>

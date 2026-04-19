@@ -101,7 +101,7 @@ export default function AdminSupportPage() {
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <Loader2 className="w-8 h-8 animate-spin text-foreground" />
       <span className="text-sm font-medium text-muted-foreground">Accessing support vault...</span>
     </div>
   );
@@ -118,20 +118,20 @@ export default function AdminSupportPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-250px)]">
         {/* Ticket Feed */}
         <div className={cn(
-          "lg:col-span-4 bg-card border border-border rounded-[32px] overflow-hidden flex flex-col shadow-xl",
+          "lg:col-span-4 bg-card border border-border rounded-md overflow-hidden flex flex-col shadow-none",
           selectedTicket && "hidden lg:flex"
         )}>
            <div className="p-6 border-b border-border bg-secondary/20 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-sm uppercase tracking-widest text-muted-foreground">Active Tickets</h3>
-                <span className="bg-primary/10 text-primary text-[10px] font-black px-2 py-0.5 rounded-full">{filteredTickets.length} Total</span>
+                <span className="bg-secondary text-foreground text-[10px] font-black px-2 py-0.5 rounded-full">{filteredTickets.length} Total</span>
               </div>
               <div className="relative">
                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                  <input 
                    type="text" 
                    placeholder="Search tickets or users..."
-                   className="w-full bg-background border border-border rounded-xl pl-10 pr-4 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                   className="w-full bg-background border border-border rounded-md pl-10 pr-4 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                    value={searchQuery}
                    onChange={(e) => setSearchQuery(e.target.value)}
                  />
@@ -150,9 +150,9 @@ export default function AdminSupportPage() {
                     key={ticket._id}
                     onClick={() => setSelectedTicket(ticket)}
                     className={cn(
-                      "p-4 rounded-2xl border transition-all cursor-pointer group relative",
+                      "p-4 rounded-md border transition-all cursor-pointer group relative",
                       selectedTicket?._id === ticket._id 
-                        ? "bg-primary/5 border-primary shadow-sm" 
+                        ? "bg-muted border-primary shadow-none" 
                         : "border-transparent hover:bg-secondary/40"
                     )}
                   >
@@ -167,7 +167,7 @@ export default function AdminSupportPage() {
                          {ticket.userRole}
                        </span>
                     </div>
-                    <h4 className="font-bold text-sm truncate pr-8 group-hover:text-primary transition-colors">{ticket.subject}</h4>
+                    <h4 className="font-bold text-sm truncate pr-8 group-hover:text-foreground transition-colors">{ticket.subject}</h4>
                     <div className="flex items-center gap-2 mt-2">
                        <div className="w-5 h-5 bg-secondary rounded-full flex items-center justify-center overflow-hidden">
                           <User className="w-3 h-3 text-muted-foreground" />
@@ -175,7 +175,7 @@ export default function AdminSupportPage() {
                        <span className="text-[10px] font-medium text-muted-foreground truncate">{ticket.userId?.name || 'Unknown User'}</span>
                     </div>
                     {ticket.priority === 'urgent' && (
-                      <div className="absolute top-1/2 -translate-y-1/2 right-4 w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shadow-sm shadow-red-500/50" />
+                      <div className="absolute top-1/2 -translate-y-1/2 right-4 w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shadow-none shadow-red-500/50" />
                     )}
                   </div>
                 ))
@@ -185,7 +185,7 @@ export default function AdminSupportPage() {
 
         {/* Message Thread */}
         <div className={cn(
-          "lg:col-span-8 bg-card border border-border rounded-[32px] overflow-hidden flex flex-col shadow-xl",
+          "lg:col-span-8 bg-card border border-border rounded-md overflow-hidden flex flex-col shadow-none",
           !selectedTicket && "hidden lg:flex items-center justify-center relative"
         )}>
            {selectedTicket ? (
@@ -224,7 +224,7 @@ export default function AdminSupportPage() {
                <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-secondary/5">
                   {/* Partner's Original Issue */}
                   <div className="flex flex-col gap-1 max-w-[85%] self-start">
-                     <div className="p-4 rounded-2xl bg-secondary/40 border border-border text-sm leading-relaxed backdrop-blur-sm">
+                     <div className="p-4 rounded-md bg-secondary/40 border border-border text-sm leading-relaxed backdrop-blur-sm">
                         <div className="mb-2 pb-2 border-b border-border/50">
                            <span className={cn(
                              "text-[9px] font-black uppercase px-2 py-0.5 rounded-full border",
@@ -245,7 +245,7 @@ export default function AdminSupportPage() {
                       res.senderRole === 'admin' ? "self-end items-end" : "self-start"
                     )}>
                        <div className={cn(
-                         "p-4 rounded-2xl text-sm leading-relaxed border transition-all shadow-sm",
+                         "p-4 rounded-md text-sm leading-relaxed border transition-all shadow-none",
                          res.senderRole === 'admin' 
                            ? "bg-primary text-white border-transparent" 
                            : "bg-background border-border"
@@ -266,7 +266,7 @@ export default function AdminSupportPage() {
                       rows={2}
                       disabled={selectedTicket.status === 'closed' || submitting}
                       placeholder={selectedTicket.status === 'closed' ? "This ticket is closed" : "Type your official response..."}
-                      className="w-full bg-secondary/40 border border-border rounded-2xl pl-6 pr-14 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium disabled:opacity-50 resize-none"
+                      className="w-full bg-secondary/40 border border-border rounded-md pl-6 pr-14 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium disabled:opacity-50 resize-none"
                       value={replyMessage}
                       onChange={(e) => setReplyMessage(e.target.value)}
                     />
@@ -275,14 +275,14 @@ export default function AdminSupportPage() {
                           onClick={() => handleSendReply('resolved')}
                           disabled={!replyMessage || submitting || selectedTicket.status === 'closed'}
                           title="Reply and Resolve"
-                          className="p-2.5 bg-green-500/10 text-green-500 rounded-xl hover:bg-green-500/20 transition-all disabled:opacity-0 disabled:scale-0"
+                          className="p-2.5 bg-green-500/10 text-green-500 rounded-md hover:bg-green-500/20 transition-all disabled:opacity-0 disabled:scale-0"
                        >
                           <CheckCircle2 className="w-4 h-4" />
                        </button>
                        <button 
                           onClick={() => handleSendReply('in_progress')}
                           disabled={!replyMessage || submitting || selectedTicket.status === 'closed'}
-                          className="p-2.5 bg-primary text-white rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.05] active:scale-[0.95] transition-all disabled:opacity-0 disabled:scale-0"
+                          className="p-2.5 bg-primary text-foreground rounded-md shadow-none hover:scale-[1.05] active:scale-[0.95] transition-all disabled:opacity-0 disabled:scale-0"
                        >
                           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                        </button>
@@ -303,7 +303,7 @@ export default function AdminSupportPage() {
              </>
            ) : (
              <div className="flex flex-col items-center justify-center p-12 text-center h-full">
-                <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-6 shadow-inner ring-4 ring-primary/5">
+                <div className="w-20 h-20 bg-secondary text-foreground rounded-full flex items-center justify-center mb-6 shadow-inner ring-4 ring-primary/5">
                    <ShieldCheck className="w-10 h-10" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Governance Console</h3>

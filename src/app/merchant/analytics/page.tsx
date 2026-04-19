@@ -18,7 +18,7 @@ import dynamic from 'next/dynamic';
 
 const AnalyticsChart = dynamic(() => import('@/components/partner/AnalyticsChart'), { 
   ssr: false,
-  loading: () => <div className="w-full h-[400px] bg-secondary/20 animate-pulse rounded-2xl" />
+  loading: () => <div className="w-full h-[400px] bg-secondary/20 animate-pulse rounded-md" />
 });
 
 function MerchantAnalyticsContent() {
@@ -55,11 +55,11 @@ function MerchantAnalyticsContent() {
 
   if (error) return (
     <div className="flex items-center justify-center h-[60vh]">
-      <div className="p-8 bg-destructive/10 border border-destructive/20 rounded-[32px] text-center max-w-md">
+      <div className="p-8 bg-destructive/10 border border-destructive/20 rounded-md text-center max-w-md">
         <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
         <h3 className="text-xl font-bold mb-2">Analytics Error</h3>
         <p className="text-sm text-muted-foreground mb-6">{error}</p>
-        <button onClick={() => window.location.reload()} className="px-6 py-2 bg-primary text-white rounded-xl font-bold">Retry</button>
+        <button onClick={() => window.location.reload()} className="px-6 py-2 bg-primary text-foreground rounded-md font-bold">Retry</button>
       </div>
     </div>
   );
@@ -68,7 +68,7 @@ function MerchantAnalyticsContent() {
     { name: 'Impressions', value: data?.stats?.impressions || 0, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { name: 'Clicks', value: data?.stats?.clicks || 0, icon: MousePointer2, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     { name: 'Conversions', value: data?.stats?.conversions || 0, icon: ShoppingBag, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { name: 'Net Revenue', value: formatCurrency(data?.stats?.netRevenue || 0), icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10' },
+    { name: 'Net Revenue', value: formatCurrency(data?.stats?.netRevenue || 0), icon: DollarSign, color: 'text-white', bg: 'bg-secondary' },
   ];
 
   return (
@@ -82,14 +82,14 @@ function MerchantAnalyticsContent() {
         </div>
 
         <div className="flex flex-col gap-3 items-end">
-            <div className="flex items-center gap-2 bg-card border border-border p-1 rounded-xl shadow-sm">
+            <div className="flex items-center gap-2 bg-card border border-border p-1 rounded-md shadow-none">
                 {['7d', '30d', '90d'].map((p) => (
                     <button
                         key={p}
                         onClick={() => setPeriod(p)}
                         className={cn(
                         "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
-                        period === p ? "bg-secondary text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                        period === p ? "bg-secondary text-foreground shadow-none" : "text-muted-foreground hover:text-foreground"
                         )}
                     >
                         {p}
@@ -102,11 +102,11 @@ function MerchantAnalyticsContent() {
       {/* Main Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
-          <div key={stat.name} className="p-6 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+          <div key={stat.name} className="p-6 bg-card border border-border rounded-md shadow-none hover:shadow-none transition-all group overflow-hidden relative">
             <div className="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-700">
                 <stat.icon className="w-24 h-24" />
             </div>
-            <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-6 text-sm font-bold shadow-inner", stat.bg, stat.color)}>
+            <div className={cn("w-12 h-12 rounded-md flex items-center justify-center mb-6 text-sm font-bold shadow-inner", stat.bg, stat.color)}>
               <stat.icon className="w-6 h-6" />
             </div>
             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">{stat.name}</p>
@@ -117,10 +117,10 @@ function MerchantAnalyticsContent() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Growth Trends */}
-        <div className="lg:col-span-2 p-8 bg-card border border-border rounded-[40px] shadow-sm flex flex-col min-h-[500px]">
+        <div className="lg:col-span-2 p-8 bg-card border border-border rounded-md shadow-none flex flex-col min-h-[500px]">
           <div className="flex justify-between items-center mb-10">
             <h3 className="text-xl font-bold flex items-center gap-3">
-              <TrendingUp className="w-6 h-6 text-primary" />
+              <TrendingUp className="w-6 h-6 text-foreground" />
               Performance Trends
             </h3>
             <div className="flex gap-4">
@@ -153,9 +153,9 @@ function MerchantAnalyticsContent() {
         </div>
 
         {/* Conversion Metrics */}
-        <div className="p-8 bg-card border border-border rounded-[40px] shadow-sm flex flex-col">
+        <div className="p-8 bg-card border border-border rounded-md shadow-none flex flex-col">
             <h3 className="text-xl font-bold mb-10 flex items-center gap-2">
-                <BarChart3 className="w-6 h-6 text-primary" />
+                <BarChart3 className="w-6 h-6 text-foreground" />
                 Funnel Overview
             </h3>
             
@@ -172,7 +172,7 @@ function MerchantAnalyticsContent() {
                         </div>
                         <div className="h-4 bg-secondary/50 rounded-full overflow-hidden p-0.5 border border-border/50">
                             <div 
-                                className={cn("h-full rounded-full transition-all duration-1000 ease-out shadow-sm", item.color)}
+                                className={cn("h-full rounded-full transition-all duration-1000 ease-out shadow-none", item.color)}
                                 style={{ width: arr[0].value > 0 ? `${(item.value / arr[0].value) * 100}%` : '0%' }}
                             />
                         </div>
@@ -180,13 +180,13 @@ function MerchantAnalyticsContent() {
                 ))}
             </div>
 
-            <div className="mt-12 p-6 bg-premium-gradient text-white rounded-[32px] shadow-lg shadow-primary/20">
-                <p className="text-[10px] font-black uppercase tracking-widest text-white/70 mb-1">Conversion Efficiency</p>
+            <div className="mt-12 p-6 bg-secondary text-foreground border border-border rounded-md shadow-none">
+                <p className="text-[10px] font-black uppercase tracking-widest text-foreground/70 mb-1">Conversion Efficiency</p>
                 <div className="flex items-baseline gap-3">
                     <span className="text-4xl font-black">
                         {data?.stats?.clicks > 0 ? ((data.stats.conversions / data.stats.clicks) * 100).toFixed(1) : '0.0'}%
                     </span>
-                    <span className="text-xs font-medium text-white/80">Click-to-Convert</span>
+                    <span className="text-xs font-medium text-foreground/80">Click-to-Convert</span>
                 </div>
             </div>
         </div>

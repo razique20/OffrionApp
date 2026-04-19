@@ -8,6 +8,7 @@ import MerchantProfile from '../src/models/MerchantProfile';
 import AnalyticsEvent from '../src/models/AnalyticsEvent';
 import Transaction from '../src/models/Transaction';
 import Commission from '../src/models/Commission';
+import { PREDEFINED_CATEGORIES } from '../src/constants/categories';
 
 dotenv.config({ path: '.env.local' });
 
@@ -33,16 +34,10 @@ async function seed() {
     console.log('Cleared existing data');
 
     // Create Categories
-    const categories = await Category.insertMany([
-      { name: 'Hot Deals 🔥', slug: 'hot-deals', description: 'Limited time, high-value offers.', isActive: true },
-      { name: 'Retail', slug: 'retail', description: 'Fashion, Electronics, and more', isActive: true },
-      { name: 'Food & Dining', slug: 'food-dining', description: 'Restaurants and Cafes', isActive: true },
-      { name: 'Travel', slug: 'travel', description: 'Flights, Hotels, and Tours', isActive: true },
-      { name: 'Lifestyle', slug: 'lifestyle', description: 'Spas, Wellness, and Events', isActive: true },
-      { name: 'Automotive', slug: 'automotive', description: 'Cars, Parts, and Service', isActive: true },
-      { name: 'Electronics', slug: 'electronics', description: 'Gadgets and Appliances', isActive: true },
-    ]);
-    console.log('Created Categories (including Hot Deals)');
+    const categories = await Category.insertMany(
+      PREDEFINED_CATEGORIES.map(cat => ({ ...cat, isActive: true }))
+    );
+    console.log(`Created ${categories.length} Predefined Categories`);
 
     // Create Users
     const hashedPassword = await bcrypt.hash('password123', 10);
@@ -104,40 +99,44 @@ async function seed() {
     // Create Sample Deals
     const sampleDeals = [
       {
-        merchantId: merchants[0]._id, categoryId: categories[0]._id, // Hot Deal
+        merchantId: merchants[0]._id, categoryId: categories.find(c => c.slug === 'beauty-wellness')?._id || categories[0]._id,
         title: '70% Off Luxury SPA Weekend', description: 'Full body massage, sauna, and lunch included at the Palm Jumeirah.',
         images: ['https://images.unsplash.com/photo-1544161515-4ae6ce6fe858?auto=format&fit=crop&w=800&q=80'], 
         originalPrice: 500, discountedPrice: 150, discountPercentage: 70,
         commissionPercentage: 20, eventType: 'flash', dealType: 'percentage', targetAudience: ['all'],
         tags: ['spa', 'luxury', 'hot-deal'], location: { type: 'Point', coordinates: [55.13, 25.11] },
         validFrom: new Date(), validUntil: new Date(Date.now() + 2 * 24 * 3600000), isActive: true, status: 'active',
+        isHot: true, isFeatured: true, country: 'United Arab Emirates'
       },
       {
-        merchantId: merchants[1]._id, categoryId: categories[2]._id,
+        merchantId: merchants[1]._id, categoryId: categories.find(c => c.slug === 'food-dining')?._id || categories[0]._id,
         title: 'BOGO - Artisan Pizzas', description: 'Wood-fired perfection at Urban Eats Corp. Buy one get one free all weekend.',
         images: ['https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80'], 
         originalPrice: 40, discountedPrice: 20, discountPercentage: 50,
         commissionPercentage: 10, eventType: 'general', dealType: 'bogo', targetAudience: ['all'],
         tags: ['bogo', 'pizza'], location: { type: 'Point', coordinates: [55.27, 25.20] },
         validFrom: new Date(), validUntil: new Date(Date.now() + 7 * 24 * 3600000), isActive: true, status: 'active',
+        isFeatured: true, country: 'United Arab Emirates'
       },
       {
-        merchantId: merchants[2]._id, categoryId: categories[6]._id,
+        merchantId: merchants[2]._id, categoryId: categories.find(c => c.slug === 'electronics-tech')?._id || categories[0]._id,
         title: 'Last-Gen Laptop Clearout', description: 'Powerful machines at unbeatable prices. While stocks last.',
         images: ['https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=800&q=80'], 
         originalPrice: 1200, discountedPrice: 800, discountPercentage: 33,
         commissionPercentage: 8, eventType: 'seasonal', dealType: 'flat', targetAudience: ['all'],
         tags: ['laptop', 'electronics'], location: { type: 'Point', coordinates: [55.30, 25.25] },
         validFrom: new Date(), validUntil: new Date(Date.now() + 14 * 24 * 3600000), status: 'pending', isActive: false,
+        country: 'United Arab Emirates'
       },
       {
-        merchantId: merchants[4]._id, categoryId: categories[5]._id,
+        merchantId: merchants[4]._id, categoryId: categories.find(c => c.slug === 'auto-transport')?._id || categories[0]._id,
         title: 'Free Oil Change w/ Service', description: 'Keep your car running smooth with our premium oil change service.',
         images: ['https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=800&q=80'], 
         originalPrice: 80, discountedPrice: 0, discountPercentage: 100,
         commissionPercentage: 5, eventType: 'holiday', dealType: 'flat', targetAudience: ['all'],
         tags: ['auto', 'maintenance'], location: { type: 'Point', coordinates: [55.40, 25.30] },
         validFrom: new Date(), validUntil: new Date(Date.now() + 10 * 24 * 3600000), isActive: true, status: 'active',
+        isHot: true, country: 'United Arab Emirates'
       }
     ];
 
@@ -163,6 +162,7 @@ async function seed() {
             validUntil: new Date(Date.now() + 30 * 24 * 3600000),
             isActive: i % 3 !== 0,
             status: i % 3 !== 0 ? 'active' : 'pending',
+            country: 'United Arab Emirates'
         });
     }
 
@@ -186,6 +186,7 @@ async function seed() {
         
         const trans = await Transaction.create({
           dealId: deal._id,
+          merchantId: merchant._id,
           partnerId: partner._id,
           amount: deal.discountedPrice || 100,
           status: 'completed',

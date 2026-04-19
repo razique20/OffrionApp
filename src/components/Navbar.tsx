@@ -43,7 +43,7 @@ export const Navbar = () => {
   return (
     <nav className={cn(
       "fixed top-0 w-full z-50 transition-all duration-300",
-      isScrolled ? "bg-background/80 backdrop-blur-md py-3 shadow-sm" : "bg-transparent py-5"
+      isScrolled ? "bg-background/80  py-3 shadow-none" : "bg-transparent py-5"
     )}>
       <div className="max-w-7xl mx-auto px-6 sm:px-10 flex items-center justify-between">
         <Link href="/" className="hover:opacity-80 transition-opacity shrink-0">
@@ -62,7 +62,7 @@ export const Navbar = () => {
               className={cn(
                 "text-sm font-bold tracking-tight transition-all",
                 pathname === link.href 
-                  ? "text-primary" 
+                  ? "text-white" 
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -97,7 +97,7 @@ export const Navbar = () => {
                 <div className="text-right hidden sm:block">
                   <p className="text-[11px] font-black leading-none">{user.name}</p>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-premium-gradient flex items-center justify-center text-white border border-white/20 shadow-sm transition-transform group-hover:scale-105">
+                <div className="w-9 h-9 rounded-full bg-secondary border border-border flex items-center justify-center text-foreground border border-white/20 shadow-none transition-transform group-hover:scale-105">
                   <User className="w-5 h-5" />
                 </div>
               </button>
@@ -105,7 +105,7 @@ export const Navbar = () => {
               {showDropdown && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)}></div>
-                  <div className="absolute right-0 mt-2 w-56 bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl z-20 py-2 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                  <div className="absolute right-0 mt-2 w-56 bg-card/95  border border-border/50 rounded-md shadow-none z-20 py-2 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
                     <div className="px-4 py-2 border-b border-border/10 mb-1">
                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em]">Active Identity</p>
                        <p className="text-sm font-bold truncate">{user.name}</p>
@@ -115,7 +115,7 @@ export const Navbar = () => {
                       href={pathname.startsWith('/merchant') ? '/merchant/dashboard' : 
                             pathname.startsWith('/admin') ? '/admin/dashboard' : 
                             pathname.startsWith('/partner') ? '/partner/dashboard' : 
-                            `/${user.role}/dashboard`}
+                            user.role === 'super_admin' ? '/admin/dashboard' : `/${user.role}/dashboard`}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold hover:bg-secondary transition-colors"
                       onClick={() => setShowDropdown(false)}
                     >
@@ -172,10 +172,10 @@ export const Navbar = () => {
             </div>
           ) : (
             <div className="hidden md:flex items-center gap-6">
-              <Link href="/auth/login" className="text-sm font-bold hover:text-primary transition-colors">Sign In</Link>
+              <Link href="/auth/login" className="text-sm font-bold hover:text-foreground transition-colors">Sign In</Link>
               <Link 
                 href="/auth/register" 
-                className="px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2"
+                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-md text-sm font-black shadow-none hover:shadow-none hover:-translate-y-0.5 transition-all flex items-center gap-2"
               >
                 Get Started
               </Link>
@@ -183,7 +183,7 @@ export const Navbar = () => {
           )}
           
           <button 
-            className="md:hidden p-2 rounded-xl hover:bg-secondary transition-colors text-foreground"
+            className="md:hidden p-2 rounded-md hover:bg-secondary transition-colors text-foreground"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -193,7 +193,7 @@ export const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-background/95 backdrop-blur-xl border-b border-border p-8 flex flex-col gap-8 shadow-2xl animate-in fade-in slide-in-from-top-4">
+        <div className="md:hidden absolute top-full left-0 w-full bg-background/95  border-b border-border p-8 flex flex-col gap-8 shadow-none animate-in fade-in slide-in-from-top-4">
           <div className="flex flex-col gap-6">
             {[
               { label: 'Ecosystem', href: '/ecosystem' },
@@ -215,14 +215,14 @@ export const Navbar = () => {
             <div className="flex flex-col gap-4 mt-4 pt-8 border-t border-border/30">
               <Link 
                 href="/auth/login" 
-                className="w-full py-4 text-center rounded-2xl bg-secondary text-sm font-black"
+                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Sign In
               </Link>
               <Link 
                 href="/auth/register" 
-                className="w-full py-4 text-center rounded-2xl bg-primary text-white text-sm font-black shadow-xl shadow-primary/20"
+                className="w-full py-4 text-center rounded-md bg-primary text-foreground text-sm font-black shadow-none shadow-primary/20"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Get Started

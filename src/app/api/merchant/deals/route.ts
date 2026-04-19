@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
 import MerchantProfile from '@/models/MerchantProfile';
+import User from '@/models/User';
 import { z } from 'zod';
 import mongoose from 'mongoose';
 
@@ -20,6 +21,8 @@ const dealSchema = z.object({
   validFrom: z.string().transform((str) => new Date(str)),
   validUntil: z.string().transform((str) => new Date(str)),
   usageLimit: z.number().int().nonnegative().default(0),
+  emirate: z.string().optional(),
+  landmark: z.string().optional(),
 });
 
 export async function GET(req: Request) {
@@ -48,9 +51,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check Merchant Verification Status
-    const profile = await MerchantProfile.findOne({ userId });
+    // Check Merchant Verification Status & Country
+    const [profile, merchant] = await Promise.all([
+      MerchantProfile.findOne({ userId }),
+      User.findById(userId).select('country'),
+    ]);
     const isVerified = profile?.status === 'verified';
+    const merchantCountry = merchant?.country || 'United Arab Emirates';
 
     const validatedData = dealSchema.parse(body);
 
@@ -58,6 +65,9 @@ export async function POST(req: Request) {
       ...validatedData,
       merchantId: new mongoose.Types.ObjectId(userId),
       categoryId: new mongoose.Types.ObjectId(validatedData.categoryId),
+      country: merchantCountry,
+      emirate: validatedData.emirate,
+      landmark: validatedData.landmark,
       status: isVerified ? 'active' : 'pending',
       isActive: isVerified, // Only activate automatically if verified
     });

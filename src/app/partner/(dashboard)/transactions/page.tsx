@@ -40,7 +40,7 @@ export default function PartnerTransactionsPage() {
 
       </div>
 
-      <div className="bg-card border border-border rounded-[32px] overflow-hidden shadow-sm">
+      <div className="bg-card border border-border rounded-md overflow-hidden shadow-none">
         <div className="p-6 border-b border-border flex justify-between items-center bg-secondary/30">
           <h2 className="text-lg font-bold">Transaction History</h2>
           <button 

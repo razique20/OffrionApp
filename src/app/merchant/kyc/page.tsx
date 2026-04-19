@@ -93,7 +93,7 @@ export default function KYCPage() {
         </div>
         
         <div className={cn(
-          "px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-2 shadow-sm",
+          "px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-2 shadow-none",
           status === 'verified' && "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20",
           status === 'pending' && "bg-amber-500/10 text-amber-500 border border-amber-500/20",
           status === 'rejected' && "bg-red-500/10 text-red-500 border border-red-500/20",
@@ -107,8 +107,8 @@ export default function KYCPage() {
       </div>
 
       {status === 'verified' && (
-        <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-[32px] flex items-center gap-6">
-          <div className="w-16 h-16 bg-emerald-500 text-white rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-emerald-500/20">
+        <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-md flex items-center gap-6">
+          <div className="w-16 h-16 bg-emerald-500 text-white rounded-md flex items-center justify-center flex-shrink-0 shadow-none shadow-emerald-500/20">
             <CheckCircle2 className="w-10 h-10" />
           </div>
           <div>
@@ -119,8 +119,8 @@ export default function KYCPage() {
       )}
 
       {status === 'pending' && (
-        <div className="p-6 bg-amber-500/5 border border-amber-500/10 rounded-[32px] flex items-center gap-6">
-          <div className="w-16 h-16 bg-amber-500 text-white rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/20">
+        <div className="p-6 bg-amber-500/5 border border-amber-500/10 rounded-md flex items-center gap-6">
+          <div className="w-16 h-16 bg-amber-500 text-foreground rounded-md flex items-center justify-center flex-shrink-0 shadow-none shadow-amber-500/20">
             <Clock className="w-10 h-10" />
           </div>
           <div>
@@ -132,9 +132,9 @@ export default function KYCPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-card border border-border rounded-[40px] p-8 space-y-8 shadow-sm">
+          <div className="bg-card border border-border rounded-md p-8 space-y-8 shadow-none">
             <h3 className="text-xl font-bold flex items-center gap-3">
-              <Building2 className="w-5 h-5 text-primary" />
+              <Building2 className="w-5 h-5 text-foreground" />
               Business Details
             </h3>
 
@@ -149,7 +149,7 @@ export default function KYCPage() {
                       required
                       placeholder="e.g. Food & Beverage"
                       disabled={status === 'verified' || status === 'pending'}
-                      className="w-full bg-secondary border-none rounded-xl pl-11 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary disabled:opacity-50"
+                      className="w-full bg-secondary border-none rounded-md pl-11 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary disabled:opacity-50"
                       value={formData.industry}
                       onChange={(e) => setFormData({...formData, industry: e.target.value})}
                     />
@@ -164,7 +164,7 @@ export default function KYCPage() {
                       required
                       placeholder="e.g. TRN-123456789"
                       disabled={status === 'verified' || status === 'pending'}
-                      className="w-full bg-secondary border-none rounded-xl pl-11 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary disabled:opacity-50"
+                      className="w-full bg-secondary border-none rounded-md pl-11 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary disabled:opacity-50"
                       value={formData.taxId}
                       onChange={(e) => setFormData({...formData, taxId: e.target.value})}
                     />
@@ -181,7 +181,7 @@ export default function KYCPage() {
                     required
                     placeholder="e.g. LICENSE-99-88-77"
                     disabled={status === 'verified' || status === 'pending'}
-                    className="w-full bg-secondary border-none rounded-xl pl-11 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary disabled:opacity-50"
+                    className="w-full bg-secondary border-none rounded-md pl-11 pr-4 py-3 text-sm focus:ring-1 focus:ring-primary disabled:opacity-50"
                     value={formData.registrationNumber}
                     onChange={(e) => setFormData({...formData, registrationNumber: e.target.value})}
                   />
@@ -208,7 +208,7 @@ export default function KYCPage() {
                   <button 
                     type="submit"
                     disabled={submitting}
-                    className="w-full bg-premium-gradient text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+                    className="w-full bg-secondary text-foreground border border-border font-bold py-4 rounded-md shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
                   >
                     {submitting ? 'Submitting Application...' : 'Submit Verification Request'}
                   </button>
@@ -219,36 +219,36 @@ export default function KYCPage() {
         </div>
 
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-secondary/50 border border-border rounded-[32px] p-6 space-y-6">
+          <div className="bg-secondary/50 border border-border rounded-md p-6 space-y-6">
             <h4 className="font-bold flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-primary" />
+              <ShieldCheck className="w-4 h-4 text-foreground" />
               Why verify?
             </h4>
             <ul className="space-y-4">
               <li className="flex gap-3">
-                <div className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <CheckCircle2 className="w-3 h-3 text-primary" />
+                <div className="w-5 h-5 bg-secondary rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="w-3 h-3 text-foreground" />
                 </div>
                 <p className="text-xs text-muted-foreground italic">Unlock active redemption features</p>
               </li>
               <li className="flex gap-3">
-                <div className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <CheckCircle2 className="w-3 h-3 text-primary" />
+                <div className="w-5 h-5 bg-secondary rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="w-3 h-3 text-foreground" />
                 </div>
                 <p className="text-xs text-muted-foreground italic">Instant deal publishing instead of moderation</p>
               </li>
               <li className="flex gap-3">
-                <div className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <CheckCircle2 className="w-3 h-3 text-primary" />
+                <div className="w-5 h-5 bg-secondary rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="w-3 h-3 text-foreground" />
                 </div>
                 <p className="text-xs text-muted-foreground italic">Access to wallet payouts via Stripe</p>
               </li>
             </ul>
           </div>
 
-          <div className="bg-card border border-border rounded-[32px] p-6 text-center">
+          <div className="bg-card border border-border rounded-md p-6 text-center">
             <p className="text-xs text-muted-foreground">Need help with verification?</p>
-            <button className="text-xs font-bold text-primary mt-1 hover:underline">Contact Support</button>
+            <button className="text-xs font-bold text-foreground mt-1 hover:underline">Contact Support</button>
           </div>
         </div>
       </div>

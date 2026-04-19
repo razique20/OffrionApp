@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
 import APIKey from '@/models/APIKey';
+import User from '@/models/User';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import mongoose from 'mongoose';
 
@@ -33,6 +34,27 @@ export async function GET(req: Request) {
     // 2. Build Query
     const query: any = { isActive: true };
 
+    // Regional Access Enforcement for Partners (Strict Zero-Access Default)
+    const partner = await User.findById(apiKey.partnerId).select('accessCountries');
+    const accessCountries = partner?.accessCountries || [];
+
+    if (accessCountries.length > 0) {
+      // If partner has UAE access, include deals with no country field as well (fallback for legacy data)
+      if (accessCountries.includes('United Arab Emirates')) {
+        query.$or = [
+          { country: { $in: accessCountries } },
+          { country: { $exists: false } },
+          { country: null },
+          { country: '' }
+        ];
+      } else {
+        query.country = { $in: accessCountries };
+      }
+    } else {
+      // If no regions are assigned, they see zero deals
+      query._id = { $in: [] }; 
+    }
+
     // ... (rest of the query building logic remains same)
     // --- Category Filter (supports multiple comma-separated IDs) ---
     const categoryId = searchParams.get('categoryId');
@@ -48,6 +70,13 @@ export async function GET(req: Request) {
     // --- Deal Type Filter ---
     const dealType = searchParams.get('dealType');
     if (dealType) query.dealType = dealType;
+
+    // --- Hot & Featured Flags ---
+    const isHot = searchParams.get('isHot');
+    if (isHot === 'true') query.isHot = true;
+
+    const isFeatured = searchParams.get('isFeatured');
+    if (isFeatured === 'true') query.isFeatured = true;
 
     // --- Tags Filter (comma-separated, match any) ---
     const tags = searchParams.get('tags');

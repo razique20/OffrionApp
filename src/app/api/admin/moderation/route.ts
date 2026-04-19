@@ -3,6 +3,7 @@ import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
 import MerchantProfile from '@/models/MerchantProfile';
 import Commission from '@/models/Commission';
+import User from '@/models/User';
 
 export async function GET(req: Request) {
   try {
@@ -24,11 +25,17 @@ export async function GET(req: Request) {
       .populate('merchantId', 'name email')
       .sort({ createdAt: -1 });
 
+    // 4. Fetch Pending Regional Access Requests from Partners
+    const regionalRequests = await User.find({ 
+      pendingAccessCountries: { $exists: true, $not: { $size: 0 } } 
+    }).select('name email pendingAccessCountries accessCountries role createdAt');
+
     return NextResponse.json({
       deals: pendingDeals,
       merchants: pendingMerchants,
       commissions: pendingCommissions,
-      totalCount: pendingDeals.length + pendingMerchants.length + pendingCommissions.length
+      regionalRequests,
+      totalCount: pendingDeals.length + pendingMerchants.length + pendingCommissions.length + regionalRequests.length
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

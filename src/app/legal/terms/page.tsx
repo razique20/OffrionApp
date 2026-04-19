@@ -12,11 +12,11 @@ export default function TermsPage() {
     <article className="space-y-12">
       {/* Header */}
       <div className="space-y-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors">
+        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
         </Link>
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/10">
+          <div className="w-14 h-14 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center shadow-none shadow-blue-500/10">
             <FileText className="w-7 h-7" />
           </div>
           <div>
@@ -38,7 +38,7 @@ export default function TermsPage() {
 
         <section className="space-y-4">
           <h2 className="text-xl font-bold tracking-tight">2. Definitions</h2>
-          <div className="bg-card border border-border rounded-2xl p-6 space-y-3">
+          <div className="bg-card border border-border rounded-md p-6 space-y-3">
             <div className="flex items-start gap-3 text-sm"><span className="font-bold text-foreground w-28 shrink-0">Merchant</span><span className="text-muted-foreground">A business entity that creates and publishes deals on the Platform.</span></div>
             <div className="flex items-start gap-3 text-sm"><span className="font-bold text-foreground w-28 shrink-0">Partner</span><span className="text-muted-foreground">A developer or platform operator that integrates with the Offrion API to display and distribute deals to end-users.</span></div>
             <div className="flex items-start gap-3 text-sm"><span className="font-bold text-foreground w-28 shrink-0">End-User</span><span className="text-muted-foreground">A consumer who discovers, claims, and redeems deals through a Partner&apos;s integrated platform.</span></div>
@@ -75,7 +75,7 @@ export default function TermsPage() {
 
         <section className="space-y-4">
           <h2 className="text-xl font-bold tracking-tight">6. Financial Terms</h2>
-          <div className="bg-secondary/30 border border-border rounded-2xl p-6 space-y-3 text-sm">
+          <div className="bg-secondary/30 border border-border rounded-md p-6 space-y-3 text-sm">
             <p className="text-muted-foreground"><span className="font-bold text-foreground">Commission Rate:</span> Defined per deal by the Merchant. The commission is split 70% to the referring Partner and 30% to the Platform.</p>
             <p className="text-muted-foreground"><span className="font-bold text-foreground">Billing Cycles:</span> Merchants using &quot;Card on File&quot; are subject to a 15-day billing cycle (settlement on the 15th and 30th/31st of each month).</p>
             <p className="text-muted-foreground"><span className="font-bold text-foreground">Refunds:</span> Refunds for redeemed deals are handled exclusively by the Merchant. The Platform commission is non-refundable once a deal is redeemed.</p>
@@ -113,7 +113,7 @@ export default function TermsPage() {
 
         <section className="space-y-4">
           <h2 className="text-xl font-bold tracking-tight">11. Contact</h2>
-          <div className="bg-secondary/30 border border-border rounded-2xl p-6">
+          <div className="bg-secondary/30 border border-border rounded-md p-6">
             <p className="text-sm text-muted-foreground">For questions about these Terms:</p>
             <p className="text-sm font-bold mt-2">Aethyl Group — Offrion Platform</p>
             <p className="text-sm text-muted-foreground">Email: legal@offrion.com</p>

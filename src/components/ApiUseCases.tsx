@@ -8,8 +8,8 @@ const USE_CASES = [
   {
     id: 'mobility',
     icon: Car,
-    color: 'text-primary',
-    darkColor: 'text-primary',
+    color: 'text-white',
+    darkColor: 'text-white',
     bgColor: 'bg-primary/20',
     title: 'Ride-Sharing & Mobility',
     description: "Query the API using the rider's drop-off coordinates. Display targeted restaurant and activity discounts perfectly timed for arrival.",
@@ -34,8 +34,8 @@ const USE_CASES = [
   {
     id: 'wallet',
     icon: Wallet,
-    color: 'text-primary/80',
-    darkColor: 'text-primary/70',
+    color: 'text-white/80',
+    darkColor: 'text-white/70',
     bgColor: 'bg-secondary/40',
     title: 'Neo-banks & Wallets',
     description: "Embed a high-converting rewards tab. Offrion handles the merchant acquisition while you capture the transaction commission.",
@@ -58,9 +58,9 @@ const USE_CASES = [
   {
     id: 'travel',
     icon: Plane,
-    color: 'text-primary/90',
-    darkColor: 'text-primary/80',
-    bgColor: 'bg-primary/10',
+    color: 'text-white/90',
+    darkColor: 'text-white/80',
+    bgColor: 'bg-secondary',
     title: 'Travel & Hospitality',
     description: "Enhance booking confirmations with local perks. Automatically fetch deals within a 2-mile radius of the booked hotel.",
     request: `GET /api/deals
@@ -84,8 +84,8 @@ const USE_CASES = [
   {
     id: 'superapp',
     icon: Layers,
-    color: 'text-primary',
-    darkColor: 'text-primary/90',
+    color: 'text-white',
+    darkColor: 'text-white/90',
     bgColor: 'bg-secondary/30',
     title: 'Super Apps',
     description: "Create an infinite-scrolling deals marketplace powered entirely by our backend infrastructure. Leverage our global network instantly.",
@@ -125,9 +125,9 @@ export function ApiUseCases() {
                 key={uc.id}
                 onClick={() => setActiveId(uc.id)}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 lg:py-4 rounded-xl text-sm transition-all whitespace-nowrap lg:whitespace-normal text-left",
+                  "flex items-center gap-3 px-4 py-3 lg:py-4 rounded-md text-sm transition-all whitespace-nowrap lg:whitespace-normal text-left",
                   isActive 
-                    ? `bg-background dark:bg-white/10 ${uc.color} border border-border dark:border-white/10 shadow-sm dark:shadow-none` 
+                    ? `bg-background dark:bg-white/10 ${uc.color} border border-border dark:border-white/10 shadow-none dark:shadow-none` 
                     : "text-muted-foreground dark:text-white/60 hover:bg-secondary/50 dark:hover:bg-white/5 hover:text-foreground dark:hover:text-white border border-transparent"
                 )}
               >
@@ -153,41 +153,41 @@ export function ApiUseCases() {
               >
                 <div className="flex items-center gap-2 mb-6">
                   <uc.icon className={cn("w-5 h-5", uc.color)} />
-                  <h3 className="text-xl font-bold text-foreground dark:text-white">{uc.title}</h3>
+                  <h3 className="text-xl font-bold text-foreground dark:text-foreground">{uc.title}</h3>
                 </div>
-                <p className="text-muted-foreground dark:text-white/60 mb-8 max-w-lg">
+                <p className="text-muted-foreground dark:text-foreground/60 mb-8 max-w-lg">
                   {uc.description}
                 </p>
 
                 {/* ALWAYS DARK TERMINAL WINDOW */}
-                <div className="bg-[#0A0A0B] border border-white/10 rounded-xl overflow-hidden font-mono text-sm flex-1 flex flex-col shadow-2xl">
+                <div className="bg-[#0A0A0B] border border-white/10 rounded-md overflow-hidden font-mono text-sm flex-1 flex flex-col shadow-none">
                   {/* Editor Header */}
                   <div className="flex items-center gap-2 px-4 py-3 border-b border-background/10 bg-background/5">
                     <div className="w-3 h-3 rounded-full bg-red-400"></div>
                     <div className="w-3 h-3 rounded-full bg-amber-400"></div>
                     <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                    <Code2 className="w-4 h-4 ml-2 text-white/40" />
-                    <div className="text-white/40 text-xs">api-integration.ts</div>
+                    <Code2 className="w-4 h-4 ml-2 text-foreground/40" />
+                    <div className="text-foreground/40 text-xs">api-integration.ts</div>
                   </div>
 
                   {/* Editor Body */}
                   <div className="p-6 flex flex-col flex-1 overflow-y-auto">
                     {/* Request */}
                     <div className="mb-8">
-                      <div className="text-white/40 text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
+                      <div className="text-foreground/40 text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
                         <Terminal className="w-3 h-3" /> Request
                       </div>
-                      <div className="text-white/80 whitespace-pre font-mono text-sm">
+                      <div className="text-foreground/80 whitespace-pre font-mono text-sm">
                         <span className={cn("font-bold", uc.darkColor)}>{uc.request.split(' ')[0]}</span> {uc.request.substring(uc.request.indexOf(' ') + 1)}
                       </div>
                     </div>
 
                     {/* Response */}
                     <div className="flex-1 flex flex-col">
-                      <div className="text-white/40 text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
+                      <div className="text-foreground/40 text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
                         <Terminal className="w-3 h-3" /> Response
                       </div>
-                      <div className="text-white/80 whitespace-pre flex-1 text-[13px] leading-snug">
+                      <div className="text-foreground/80 whitespace-pre flex-1 text-[13px] leading-snug">
                         {uc.response}
                       </div>
                     </div>

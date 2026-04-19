@@ -31,9 +31,9 @@ export default function BillingAlert() {
   if (!isVisible) return null;
 
   return (
-    <div className="mb-8 relative overflow-hidden bg-amber-500/10 border border-amber-500/20 rounded-[32px] p-6 animate-in fade-in slide-in-from-top-4 duration-500">
+    <div className="mb-8 relative overflow-hidden bg-amber-500/10 border border-amber-500/20 rounded-md p-6 animate-in fade-in slide-in-from-top-4 duration-500">
       <div className="flex items-start md:items-center gap-6">
-        <div className="w-14 h-14 bg-amber-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/20 shrink-0">
+        <div className="w-14 h-14 bg-amber-500 text-foreground rounded-md flex items-center justify-center shadow-none shadow-amber-500/20 shrink-0">
           <Calendar className="w-7 h-7" />
         </div>
         
@@ -51,13 +51,13 @@ export default function BillingAlert() {
 
         <div className="hidden md:flex gap-3">
             <Link href="/merchant/wallet">
-                <button className="px-6 py-2.5 bg-amber-500 text-white rounded-2xl font-bold text-sm shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                <button className="px-6 py-2.5 bg-amber-500 text-foreground rounded-md font-bold text-sm shadow-none shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
                     Manage Funds <ArrowRight className="w-4 h-4" />
                 </button>
             </Link>
             <button 
                 onClick={() => setIsVisible(false)}
-                className="p-2.5 bg-amber-500/10 text-amber-600 rounded-xl hover:bg-amber-500/20 transition-all"
+                className="p-2.5 bg-amber-500/10 text-amber-600 rounded-md hover:bg-amber-500/20 transition-all"
             >
                 <X className="w-4 h-4" />
             </button>

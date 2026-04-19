@@ -24,7 +24,7 @@ const TIERS = [
     price: '$49/mo',
     fee: 10, // 10% platform fee
     retention: 90,
-    color: 'text-primary',
+    color: 'text-white',
     bg: 'bg-primary',
     features: ['Unlimited Active Deals', 'Global Network Distribution', 'Advanced Real-time Analytics', 'Priority API Support'],
     description: "For scaling platforms and ambitious merchants ready to expand their reach."
@@ -36,7 +36,7 @@ const TIERS = [
     price: 'Custom',
     fee: 5, // 5% platform fee
     retention: 95,
-    color: 'text-primary/70',
+    color: 'text-white/70',
     bg: 'bg-primary/70',
     features: ['White-label Merchant Portal', 'Dedicated Node Cluster', 'Custom SLA Guarantee', 'On-premise Database Sync'],
     description: "Mission-critical deals infrastructure for globally massive Super Apps."
@@ -48,10 +48,10 @@ export function InteractivePricing() {
   const activeTier = TIERS[activeTierIndex];
 
   return (
-    <div className="w-full relative max-w-5xl mx-auto mt-12 bg-card rounded-[2.5rem] p-4 lg:p-8 flex flex-col items-center shadow-2xl">
+    <div className="w-full relative max-w-5xl mx-auto mt-12 bg-card rounded-[2.5rem] p-4 lg:p-8 flex flex-col items-center shadow-none">
       
       {/* Tier Selector Toggle */}
-      <div className="inline-flex items-center p-1.5 bg-secondary/30 rounded-2xl mb-12 w-full lg:w-auto overflow-x-auto ring-1 ring-border/50">
+      <div className="inline-flex items-center p-1.5 bg-secondary/30 rounded-md mb-12 w-full lg:w-auto overflow-x-auto ring-1 ring-border/50">
         {TIERS.map((tier, idx) => {
           const isActive = idx === activeTierIndex;
           const Icon = tier.icon;
@@ -60,9 +60,9 @@ export function InteractivePricing() {
               key={tier.id}
               onClick={() => setActiveTierIndex(idx)}
               className={cn(
-                "flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap",
+                "flex items-center gap-2 px-6 py-3 rounded-md text-sm font-bold transition-all whitespace-nowrap",
                 isActive 
-                  ? "bg-background shadow-md text-foreground" 
+                  ? "bg-background shadow-none text-foreground" 
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
               )}
             >
@@ -126,9 +126,9 @@ export function InteractivePricing() {
           
           <div className="mt-4 pt-8 border-t border-border/50">
             <button className={cn(
-              "w-full lg:w-auto px-8 py-4 rounded-xl text-white font-bold shadow-lg transition-transform hover:scale-105 flex items-center justify-center gap-2",
+              "w-full lg:w-auto px-8 py-4 rounded-md text-white font-bold shadow-none transition-transform hover:scale-105 flex items-center justify-center gap-2",
               activeTier.bg,
-              activeTier.id === 'growth' && 'bg-premium-gradient'
+              activeTier.id === 'growth' && 'bg-secondary border border-border'
             )}>
               {activeTier.id === 'enterprise' ? 'Contact Sales' : 'Start Building Now'}
               <ArrowRight className="w-5 h-5" />

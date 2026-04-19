@@ -16,12 +16,12 @@ export default function FAQSupport() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-6">
-        <HelpCircle className="w-5 h-5 text-primary" />
+        <HelpCircle className="w-5 h-5 text-foreground" />
         <h3 className="font-bold text-lg">Frequently Asked Questions</h3>
       </div>
       <div className="space-y-3">
         {FAQS.map((faq, i) => (
-          <details key={i} className="group p-4 bg-secondary/20 border border-border rounded-2xl cursor-pointer hover:bg-secondary/40 transition-all">
+          <details key={i} className="group p-4 bg-secondary/20 border border-border rounded-md cursor-pointer hover:bg-secondary/40 transition-all">
             <summary className="flex items-center justify-between font-bold text-sm list-none outline-none">
               <span className="flex-1 pr-4">{faq.q}</span>
               <ChevronRight className="w-4 h-4 text-muted-foreground group-open:rotate-90 transition-transform" />

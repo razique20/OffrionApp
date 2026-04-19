@@ -105,23 +105,23 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
   return (
     <div className="space-y-4">
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-8 bg-card border border-border rounded-[40px] shadow-2xl relative overflow-hidden group">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-8 bg-card border border-border rounded-md shadow-none relative overflow-hidden group">
       {/* Background Glow */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] -z-10" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-muted blur-[100px] -z-10" />
       
       {/* Map Visualization (Left 2/3) */}
       <div className="lg:col-span-2 space-y-6">
         <div className="flex items-center justify-between px-2">
           <div>
             <h3 className="text-xl font-bold flex items-center gap-2">
-              <MapIcon className="w-5 h-5 text-primary" /> Geo-Discovery
+              <MapIcon className="w-5 h-5 text-foreground" /> Geo-Discovery
             </h3>
             <p className="text-xs text-muted-foreground mt-1">Simulate user location to discover hyper-local rewards.</p>
           </div>
           <div className="flex items-center gap-3">
              <div className="text-right">
                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Search Radius</p>
-                <p className="text-sm font-bold text-primary">{radius} km</p>
+                <p className="text-sm font-bold text-foreground">{radius} km</p>
              </div>
              <input 
               type="range" 
@@ -135,7 +135,7 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
         </div>
 
         {/* The "Map" SVG */}
-        <div className="relative aspect-[16/10] bg-slate-950 rounded-[32px] border border-slate-800 overflow-hidden shadow-inner">
+        <div className="relative aspect-[16/10] bg-slate-950 rounded-md border border-slate-800 overflow-hidden shadow-inner">
            {/* Grid Pattern */}
            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
            
@@ -151,7 +151,7 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
                 cx={userLocation.x} 
                 cy={userLocation.y} 
                 r={2} 
-                className="fill-primary animate-pulse shadow-lg"
+                className="fill-primary animate-pulse shadow-none"
               />
               
               {/* Point of Interest Markers */}
@@ -209,7 +209,7 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
                   className={cn(
                     "px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all",
                     userLocation.id === p.id 
-                      ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                      ? "bg-primary text-white shadow-none" 
                       : "bg-slate-900 text-slate-400 hover:bg-slate-800"
                   )}
                 >
@@ -236,7 +236,7 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
       <div className="flex flex-col h-full space-y-6 border-l border-border pl-8">
         <div>
           <h4 className="text-sm font-bold flex items-center gap-2">
-            <Zap className="w-4 h-4 text-primary" /> Nearby Matches
+            <Zap className="w-4 h-4 text-foreground" /> Nearby Matches
           </h4>
           <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-1">Sorted by Proximity</p>
         </div>
@@ -245,7 +245,7 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
           {loading && deals.length === 0 ? (
             <div className="space-y-4">
               {[1, 2, 3].map(i => (
-                <div key={i} className="h-24 bg-secondary/50 animate-pulse rounded-2xl" />
+                <div key={i} className="h-24 bg-secondary/50 animate-pulse rounded-md" />
               ))}
             </div>
           ) : deals.length === 0 ? (
@@ -261,21 +261,21 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
                 onMouseLeave={() => setActiveDealId(null)}
                 onClick={() => handleDealClick(deal._id)}
                 className={cn(
-                  "p-4 rounded-2xl border transition-all group/card cursor-pointer",
+                  "p-4 rounded-md border transition-all group/card cursor-pointer",
                   activeDealId === deal._id 
-                    ? "bg-primary/5 border-primary shadow-lg shadow-primary/5" 
+                    ? "bg-muted border-primary shadow-none shadow-primary/5" 
                     : "bg-card border-border hover:border-primary/30"
                 )}
               >
                 <div className="flex justify-between items-start mb-2">
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{deal.categoryId?.name}</span>
+                  <span className="text-[10px] font-bold text-foreground uppercase tracking-widest">{deal.categoryId?.name}</span>
                   {deal.eventType === 'flash' && <Flame className="w-3.5 h-3.5 text-orange-500" />}
                 </div>
                 <h5 className="text-[13px] font-bold truncate pr-4">{deal.title}</h5>
                 <p className="text-[11px] text-muted-foreground font-medium mt-1 uppercase tracking-tighter opacity-80">{deal.merchantId?.name}</p>
                 <div className="flex items-center justify-between mt-4">
                   <p className="text-sm font-bold text-foreground">{formatCurrency(deal.discountedPrice)}</p>
-                  <div className="p-1.5 bg-secondary rounded-lg group-hover/card:bg-primary group-hover/card:text-white transition-colors">
+                  <div className="p-1.5 bg-secondary rounded-lg group-hover/card:bg-primary group-hover/card:text-foreground transition-colors">
                     <ChevronRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
@@ -287,7 +287,7 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
         <div className="pt-4 mt-auto">
           <button 
             onClick={handleOpenAdvancedSearch}
-            className="w-full py-3 bg-secondary rounded-2xl text-[11px] font-bold uppercase tracking-widest hover:bg-primary hover:text-white transition-all">
+            className="w-full py-3 bg-secondary rounded-md text-[11px] font-bold uppercase tracking-widest hover:bg-primary hover:text-foreground transition-all">
             Open Advanced Search
           </button>
         </div>
@@ -295,29 +295,29 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
 
       {/* Redemption Success Overlay */}
       {redeemCode && (
-        <div className="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-lg flex items-center justify-center p-8 animate-in fade-in zoom-in duration-300">
-          <div className="bg-card border border-primary/30 rounded-[40px] p-10 max-w-md w-full text-center shadow-2xl relative">
+        <div className="fixed inset-0 z-[100] bg-slate-950/80  flex items-center justify-center p-8 animate-in fade-in zoom-in duration-300">
+          <div className="bg-card border border-primary/30 rounded-md p-10 max-w-md w-full text-center shadow-none relative">
             <button 
               onClick={() => setRedeemCode(null)}
               className="absolute top-6 right-8 text-muted-foreground hover:text-foreground transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
-            <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-8">
-              <CheckCircle2 className="w-10 h-10 text-primary" />
+            <div className="w-20 h-20 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-8">
+              <CheckCircle2 className="w-10 h-10 text-foreground" />
             </div>
             <h4 className="text-2xl font-bold mb-3 tracking-tight">Claim Initialized!</h4>
             <p className="text-sm text-muted-foreground mb-10 leading-relaxed">A <strong>Live Transaction</strong> has been created in your account. Use the code below in the Merchant Terminal to complete the testing loop.</p>
             
-            <div className="bg-secondary/50 rounded-[32px] p-8 border border-border/50 shadow-inner">
+            <div className="bg-secondary/50 rounded-md p-8 border border-border/50 shadow-inner">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-4">Merchant Verify Code</p>
-              <p className="text-5xl font-black tracking-[0.25em] text-primary">{redeemCode}</p>
+              <p className="text-5xl font-black tracking-[0.25em] text-foreground">{redeemCode}</p>
             </div>
             
-            <div className="mt-10 p-5 bg-primary/5 rounded-3xl border border-primary/10 flex items-start gap-4 text-left">
-              <Zap className="w-6 h-6 text-primary shrink-0 mt-0.5" />
+            <div className="mt-10 p-5 bg-muted rounded-3xl border border-primary/10 flex items-start gap-4 text-left">
+              <Zap className="w-6 h-6 text-foreground shrink-0 mt-0.5" />
               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                <strong className="text-foreground">Test the Webhook</strong>: Copy this code and use it in the <span className="text-primary font-bold">Redemption Terminal</span> (under Merchant Dashboard) to trigger your real-time webhook notification.
+                <strong className="text-foreground">Test the Webhook</strong>: Copy this code and use it in the <span className="text-foreground font-bold">Redemption Terminal</span> (under Merchant Dashboard) to trigger your real-time webhook notification.
               </p>
             </div>
           </div>
@@ -328,8 +328,8 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
       {claiming && (
         <div className="fixed inset-0 z-[110] bg-slate-950/40 backdrop-blur-sm flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="w-12 h-12 text-primary animate-spin" />
-            <p className="text-[10px] font-extrabold text-white uppercase tracking-widest">Generating Transaction...</p>
+            <Loader2 className="w-12 h-12 text-foreground animate-spin" />
+            <p className="text-[10px] font-extrabold text-foreground uppercase tracking-widest">Generating Transaction...</p>
           </div>
         </div>
       )}

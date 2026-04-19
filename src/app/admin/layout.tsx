@@ -30,7 +30,7 @@ export default async function AdminLayout({
             <p className="text-muted-foreground">Manage users, categories, and platform-wide settings.</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="bg-premium-gradient shadow-lg shadow-primary/20 text-white px-4 py-1.5 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+            <div className="bg-secondary border border-border shadow-none text-foreground px-4 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
               <span className={cn("w-1.5 h-1.5 rounded-full bg-background", isSuperAdmin && "animate-pulse")}></span>
               {isSuperAdmin ? 'Super Admin' : 'Platform Admin'}
             </div>

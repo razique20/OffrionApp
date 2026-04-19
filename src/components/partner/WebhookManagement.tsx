@@ -93,7 +93,7 @@ export function WebhookManagement() {
         <div className="lg:col-span-1">
           <div className="bg-card border border-border rounded-3xl p-6 sticky top-8">
             <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
-              <Plus className="w-4 h-4 text-primary" />
+              <Plus className="w-4 h-4 text-foreground" />
               Add Webhook Endpoint
             </h3>
             <form onSubmit={handleCreate} className="space-y-4">
@@ -103,7 +103,7 @@ export function WebhookManagement() {
                   type="url" 
                   required
                   placeholder="https://your-api.com/webhooks/offrion"
-                  className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                  className="w-full bg-secondary/50 border border-border rounded-md px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
                   value={newWebhook.url}
                   onChange={(e) => setNewWebhook({ ...newWebhook, url: e.target.value })}
                 />
@@ -114,7 +114,7 @@ export function WebhookManagement() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full py-2.5 bg-premium-gradient text-white rounded-xl text-[13px] font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-2.5 bg-secondary text-foreground border border-border rounded-md text-[13px] font-bold shadow-none hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Endpoint"}
               </button>
@@ -122,11 +122,11 @@ export function WebhookManagement() {
 
             <div className="mt-6 pt-6 border-t border-border space-y-3">
                <div className="flex items-center gap-2.5 text-[10px] text-muted-foreground">
-                  <Shield className="w-3.5 h-3.5 text-primary" />
+                  <Shield className="w-3.5 h-3.5 text-foreground" />
                   <span>Payloads signed with HMAC-SHA256</span>
                </div>
                <div className="flex items-center gap-2.5 text-[10px] text-muted-foreground">
-                  <Zap className="w-3.5 h-3.5 text-primary" />
+                  <Zap className="w-3.5 h-3.5 text-foreground" />
                   <span>Instant delivery (sub-100ms)</span>
                </div>
                <div className="flex items-center gap-2.5 text-[10px] text-muted-foreground">
@@ -135,7 +135,7 @@ export function WebhookManagement() {
                </div>
             </div>
 
-            <div className="mt-6 p-4 bg-primary/5 rounded-2xl border border-primary/10">
+            <div className="mt-6 p-4 bg-muted rounded-md border border-primary/10">
               <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
                 <Info className="w-3 h-3" />
                 Endpoint Requirements
@@ -146,8 +146,8 @@ export function WebhookManagement() {
 
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2 text-primary/80">1. Request Payload (Sent by Offrion)</h4>
-                  <pre className="text-[9px] font-mono p-3 bg-slate-950 text-slate-300 rounded-xl overflow-x-auto">
+                  <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2 text-foreground/80">1. Request Payload (Sent by Offrion)</h4>
+                  <pre className="text-[9px] font-mono p-3 bg-slate-950 text-slate-300 rounded-md overflow-x-auto">
 {`{
   "event": "deal.redeemed",
   "timestamp": "2026-04-11T...",
@@ -158,7 +158,7 @@ export function WebhookManagement() {
 
                 <div>
                   <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2 text-emerald-500/80">2. Your Response (Expected)</h4>
-                  <pre className="text-[9px] font-mono p-3 bg-slate-950 text-slate-300 rounded-xl overflow-x-auto">
+                  <pre className="text-[9px] font-mono p-3 bg-slate-950 text-slate-300 rounded-md overflow-x-auto">
 {`HTTP/1.1 200 OK
 Content-Type: application/json
 
@@ -173,14 +173,14 @@ Content-Type: application/json
         {/* Webhooks List */}
         <div className="lg:col-span-2 space-y-6">
           {error && (
-            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-2xl flex items-center gap-3 text-destructive text-sm">
+            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-md flex items-center gap-3 text-destructive text-sm">
               <AlertCircle className="w-5 h-5" />
               <p>{error}</p>
             </div>
           )}
 
           {success && (
-            <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center gap-3 text-emerald-500 text-sm">
+            <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-md flex items-center gap-3 text-emerald-500 text-sm">
               <CheckCircle2 className="w-5 h-5" />
               <p>{success}</p>
             </div>
@@ -188,10 +188,10 @@ Content-Type: application/json
 
           {loading ? (
             <div className="flex items-center justify-center p-20">
-              <Loader2 className="w-8 h-8 animate-spin text-primary/30" />
+              <Loader2 className="w-8 h-8 animate-spin text-foreground/30" />
             </div>
           ) : webhooks.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-20 bg-card border border-border border-dashed rounded-[40px] text-center">
+            <div className="flex flex-col items-center justify-center p-20 bg-card border border-border border-dashed rounded-md text-center">
               <div className="w-20 h-20 bg-secondary rounded-3xl flex items-center justify-center mb-6">
                 <Globe className="w-10 h-10 text-muted-foreground/30" />
               </div>
@@ -204,7 +204,7 @@ Content-Type: application/json
                 <div key={webhook._id} className="p-6 bg-card border border-border rounded-3xl hover:border-primary/30 transition-all relative overflow-hidden group">
                   <div className="flex items-start justify-between relative z-10">
                     <div className="flex gap-4">
-                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-primary/10 text-primary">
+                      <div className="w-12 h-12 rounded-md flex items-center justify-center shrink-0 bg-secondary text-foreground">
                         <Activity className="w-6 h-6" />
                       </div>
                       <div className="min-w-0">
@@ -224,7 +224,7 @@ Content-Type: application/json
                     <div className="flex items-center gap-1">
                       <button 
                         onClick={() => handleDelete(webhook._id)}
-                        className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all"
+                        className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition-all"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -237,19 +237,19 @@ Content-Type: application/json
                          <label className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">Webhook Secret</label>
                          <button 
                           onClick={() => setShowSecretId(showSecretId === webhook._id ? null : webhook._id)}
-                          className="text-[10px] font-bold text-primary hover:underline flex items-center gap-1"
+                          className="text-[10px] font-bold text-foreground hover:underline flex items-center gap-1"
                          >
                             {showSecretId === webhook._id ? <><EyeOff className="w-3 h-3" /> Hide</> : <><Eye className="w-3 h-3" /> Reveal</>}
                          </button>
                       </div>
-                      <div className="bg-secondary/50 rounded-xl px-3 py-2 border border-border flex items-center justify-between font-mono text-[10px]">
+                      <div className="bg-secondary/50 rounded-md px-3 py-2 border border-border flex items-center justify-between font-mono text-[10px]">
                         <span className="truncate mr-2">
                           {showSecretId === webhook._id ? webhook.secret : 'whsec_' + '•'.repeat(24)}
                         </span>
                       </div>
                     </div>
                     <div className="flex flex-col justify-end">
-                       <button className="w-full py-2 bg-secondary hover:bg-primary/5 text-[11px] font-bold rounded-xl border border-border transition-all flex items-center justify-center gap-2 group/btn">
+                       <button className="w-full py-2 bg-secondary hover:bg-muted text-[11px] font-bold rounded-md border border-border transition-all flex items-center justify-center gap-2 group/btn">
                           View Delivery Logs 
                           <ExternalLink className="w-3 h-3 opacity-0 group-hover/btn:opacity-100 transition-all" />
                        </button>

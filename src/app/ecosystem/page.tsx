@@ -27,8 +27,8 @@ export default function EcosystemPage() {
             <div className="hidden lg:block absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent -z-10"></div>
             
             {/* Merchant Role */}
-            <div className="bg-card border border-border p-8 rounded-[40px] shadow-sm hover:shadow-xl transition-all group">
-              <div className="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <div className="bg-card border border-border p-8 rounded-md shadow-none hover:shadow-none transition-all group">
+              <div className="w-16 h-16 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <ShoppingBag className="w-8 h-8" />
               </div>
               <h4 className="text-2xl font-bold mb-4 text-blue-500">The Merchant</h4>
@@ -37,31 +37,31 @@ export default function EcosystemPage() {
               </p>
               <div className="pt-6 border-t border-border flex items-center justify-between text-sm">
                 <span className="font-medium">Revenue Retention</span>
-                <span className="font-bold text-primary">85-95%</span>
+                <span className="font-bold text-foreground">85-95%</span>
               </div>
             </div>
 
             {/* Partner Role */}
-            <div className="bg-slate-900 text-white p-8 rounded-[40px] shadow-2xl relative overflow-hidden group">
+            <div className="bg-primary text-primary-foreground p-8 rounded-md shadow-none relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 transition-transform">
                 <Users className="w-24 h-24" />
               </div>
-              <div className="w-16 h-16 rounded-2xl bg-premium-gradient text-white flex items-center justify-center mb-6">
+              <div className="w-16 h-16 rounded-md bg-secondary text-foreground border border-border flex items-center justify-center mb-6">
                 <Globe className="w-8 h-8" />
               </div>
-              <h4 className="text-2xl font-bold mb-4 text-primary">The Partner</h4>
-              <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+              <h4 className="text-2xl font-bold mb-4">The Partner</h4>
+              <p className="text-sm opacity-80 mb-6 leading-relaxed">
                 Integrates the deals API into their apps (Fintech, E-commerce, Social). Earns the lion's share of the generated commission.
               </p>
               <div className="pt-6 border-t border-white/10 flex items-center justify-between text-sm">
-                <span className="font-medium text-slate-400">Commission Share</span>
-                <span className="font-bold text-primary">70%</span>
+                <span className="font-medium opacity-60">Commission Share</span>
+                <span className="font-bold">70%</span>
               </div>
             </div>
 
             {/* Platform Role */}
-            <div className="bg-card border border-border p-8 rounded-[40px] shadow-sm hover:shadow-xl transition-all group">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <div className="bg-card border border-border p-8 rounded-md shadow-none hover:shadow-none transition-all group">
+              <div className="w-16 h-16 rounded-md bg-secondary text-foreground flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Zap className="w-8 h-8" />
               </div>
               <h4 className="text-2xl font-bold mb-4 text-foreground">The Platform</h4>
@@ -70,7 +70,7 @@ export default function EcosystemPage() {
               </p>
               <div className="pt-6 border-t border-border flex items-center justify-between text-sm">
                 <span className="font-medium">Platform Share</span>
-                <span className="font-bold text-primary">30%</span>
+                <span className="font-bold text-foreground">30%</span>
               </div>
             </div>
           </div>

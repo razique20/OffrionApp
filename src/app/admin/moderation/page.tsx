@@ -80,7 +80,7 @@ export default function ModerationPage() {
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-[50vh] gap-4">
-      <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      <Loader2 className="w-10 h-10 text-foreground animate-spin" />
       <p className="text-muted-foreground animate-pulse">Loading moderation queue...</p>
     </div>
   );
@@ -90,8 +90,8 @@ export default function ModerationPage() {
       {/* Merchants Section */}
       <section>
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-            <Store className="w-5 h-5 text-primary" />
+          <div className="w-10 h-10 bg-secondary rounded-md flex items-center justify-center">
+            <Store className="w-5 h-5 text-foreground" />
           </div>
           <div>
             <h2 className="text-xl font-bold">Merchant Verifications</h2>
@@ -100,16 +100,16 @@ export default function ModerationPage() {
         </div>
 
         {merchants.length === 0 ? (
-          <div className="p-12 border border-dashed border-border rounded-[32px] text-center bg-secondary/10">
+          <div className="p-12 border border-dashed border-border rounded-md text-center bg-secondary/10">
             <p className="text-sm text-muted-foreground">All merchant applications have been processed.</p>
           </div>
         ) : (
           <div className="grid gap-4">
             {merchants.map((merchant) => (
-                <div key={merchant._id} className="flex flex-col gap-4 p-8 bg-card border border-border rounded-[32px] hover:shadow-xl transition-all group">
+                <div key={merchant._id} className="flex flex-col gap-4 p-8 bg-card border border-border rounded-md hover:shadow-none transition-all group">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-6">
-                      <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center overflow-hidden border border-border">
+                      <div className="w-14 h-14 bg-secondary rounded-md flex items-center justify-center overflow-hidden border border-border">
                         {merchant.logoUrl ? (
                           <img src={merchant.logoUrl} alt="" className="w-full h-full object-cover" />
                         ) : (
@@ -129,14 +129,14 @@ export default function ModerationPage() {
                       <button 
                         disabled={!!actionLoading}
                         onClick={() => handleMerchantAction(merchant._id, 'rejected')}
-                        className="p-3 bg-secondary text-red-500 rounded-2xl hover:bg-red-500/10 transition-all disabled:opacity-50"
+                        className="p-3 bg-secondary text-red-500 rounded-md hover:bg-red-500/10 transition-all disabled:opacity-50"
                       >
                         <XCircle className="w-5 h-5" />
                       </button>
                       <button 
                         disabled={!!actionLoading}
                         onClick={() => handleMerchantAction(merchant._id, 'verified')}
-                        className="px-6 py-3 bg-premium-gradient text-white text-xs font-bold rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 disabled:opacity-50"
+                        className="px-6 py-3 bg-secondary text-foreground border border-border text-xs font-bold rounded-md shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 disabled:opacity-50"
                       >
                         {actionLoading === `merchant-${merchant._id}` ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                         Approve Merchant
@@ -146,7 +146,7 @@ export default function ModerationPage() {
 
                   {/* KYC Documents Review */}
                   {(merchant.kycDetails || (merchant.documents && merchant.documents.length > 0)) && (
-                    <div className="mt-4 p-5 bg-secondary/30 rounded-2xl border border-border/50">
+                    <div className="mt-4 p-5 bg-secondary/30 rounded-md border border-border/50">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-3">
                           <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Business Details</p>
@@ -161,10 +161,10 @@ export default function ModerationPage() {
                           <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar">
                             {merchant.documents && merchant.documents.length > 0 ? (
                               merchant.documents.map((doc: string, idx: number) => (
-                                <a key={idx} href={doc} target="_blank" rel="noopener noreferrer" className="relative group w-24 h-24 rounded-xl overflow-hidden border border-border flex-shrink-0">
+                                <a key={idx} href={doc} target="_blank" rel="noopener noreferrer" className="relative group w-24 h-24 rounded-md overflow-hidden border border-border flex-shrink-0">
                                   <img src={doc} alt="" className="w-full h-full object-cover" />
                                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <ExternalLink className="w-5 h-5 text-white" />
+                                    <ExternalLink className="w-5 h-5 text-foreground" />
                                   </div>
                                 </a>
                               ))
@@ -185,7 +185,7 @@ export default function ModerationPage() {
       {/* Deals Section */}
       <section>
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-amber-500/10 rounded-md flex items-center justify-center">
             <Tag className="w-5 h-5 text-amber-600" />
           </div>
           <div>
@@ -195,16 +195,16 @@ export default function ModerationPage() {
         </div>
 
         {deals.length === 0 ? (
-          <div className="p-12 border border-dashed border-border rounded-[32px] text-center bg-secondary/10">
+          <div className="p-12 border border-dashed border-border rounded-md text-center bg-secondary/10">
             <p className="text-sm text-muted-foreground">The deal queue is empty. Good job!</p>
           </div>
         ) : (
           <div className="grid gap-4">
             {deals.map((deal) => (
-              <div key={deal._id} className="p-6 bg-card border border-border rounded-[28px] group hover:shadow-lg transition-all">
+              <div key={deal._id} className="p-6 bg-card border border-border rounded-[28px] group hover:shadow-none transition-all">
                 <div className="flex items-start justify-between">
                   <div className="flex gap-6">
-                    <div className="w-20 h-20 bg-secondary rounded-2xl flex items-center justify-center overflow-hidden border border-border">
+                    <div className="w-20 h-20 bg-secondary rounded-md flex items-center justify-center overflow-hidden border border-border">
                       {deal.images?.[0] ? (
                         <img src={deal.images[0]} alt="" className="w-full h-full object-cover" />
                       ) : (
@@ -227,7 +227,7 @@ export default function ModerationPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="text-muted-foreground">Merchant:</span>
-                          <span className="text-primary font-bold">{deal.merchantId?.name || 'ID: ' + deal.merchantId.toString().slice(-8)}</span>
+                          <span className="text-foreground font-bold">{deal.merchantId?.name || 'ID: ' + deal.merchantId.toString().slice(-8)}</span>
                         </div>
                       </div>
                     </div>
@@ -236,7 +236,7 @@ export default function ModerationPage() {
                     <button 
                       disabled={!!actionLoading}
                       onClick={() => handleDealAction(deal._id, 'active')}
-                      className="px-6 py-2.5 bg-premium-gradient text-white text-[10px] font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      className="px-6 py-2.5 bg-secondary text-foreground border border-border text-[10px] font-bold rounded-md shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       {actionLoading === `deal-${deal._id}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
                       Approve Deal
@@ -244,7 +244,7 @@ export default function ModerationPage() {
                     <button 
                       disabled={!!actionLoading}
                       onClick={() => handleDealAction(deal._id, 'rejected')}
-                      className="px-6 py-2.5 bg-secondary text-[10px] font-bold rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      className="px-6 py-2.5 bg-secondary text-[10px] font-bold rounded-md hover:bg-destructive/10 hover:text-destructive transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       <XCircle className="w-3 h-3" />
                       Reject

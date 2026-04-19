@@ -58,7 +58,7 @@ export default function AdminBillingPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight flex items-center gap-3">
-            <DollarSign className="w-8 h-8 text-primary" />
+            <DollarSign className="w-8 h-8 text-foreground" />
             Fund Management
           </h1>
           <p className="text-muted-foreground mt-1">Manage merchant settlements and billing cycles (15-day periods).</p>
@@ -68,7 +68,7 @@ export default function AdminBillingPage() {
                 <Calendar className="w-3.5 h-3.5" />
                 {isBillingNear() ? 'Billing Period Active' : 'Next Billing: 15th / 30th'}
             </div>
-            <button className="px-6 py-2.5 bg-primary text-white rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+            <button className="px-6 py-2.5 bg-primary text-foreground rounded-md font-bold text-sm shadow-none hover:scale-105 transition-all">
                 Export Reports
             </button>
         </div>
@@ -76,7 +76,7 @@ export default function AdminBillingPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-card border border-border p-6 rounded-[32px] shadow-sm relative overflow-hidden group">
+        <div className="bg-card border border-border p-6 rounded-md shadow-none relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform">
             <CreditCard className="w-24 h-24" />
           </div>
@@ -87,7 +87,7 @@ export default function AdminBillingPage() {
           </div>
         </div>
 
-        <div className="bg-card border border-border p-6 rounded-[32px] shadow-sm relative overflow-hidden group">
+        <div className="bg-card border border-border p-6 rounded-md shadow-none relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform">
             <Wallet className="w-24 h-24" />
           </div>
@@ -98,7 +98,7 @@ export default function AdminBillingPage() {
           </div>
         </div>
 
-        <div className="bg-card border border-border p-6 rounded-[32px] shadow-sm relative overflow-hidden group">
+        <div className="bg-card border border-border p-6 rounded-md shadow-none relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform">
             <AlertCircle className="w-24 h-24" />
           </div>
@@ -111,24 +111,24 @@ export default function AdminBillingPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-card border border-border rounded-[40px] shadow-sm overflow-hidden text-foreground">
+      <div className="bg-card border border-border rounded-md shadow-none overflow-hidden text-foreground">
         <div className="p-6 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4 bg-secondary/20">
             <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input 
                     type="text" 
                     placeholder="Search merchant name or email..." 
-                    className="w-full pl-11 pr-4 py-2.5 bg-background border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                    className="w-full pl-11 pr-4 py-2.5 bg-background border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
             <div className="flex items-center gap-2">
-                <button className="p-2.5 bg-card border border-border rounded-xl hover:bg-secondary transition-all">
+                <button className="p-2.5 bg-card border border-border rounded-md hover:bg-secondary transition-all">
                     <Filter className="w-4 h-4" />
                 </button>
                 <div className="h-6 w-px bg-border mx-2" />
-                <button className="px-4 py-2 bg-primary/10 text-primary rounded-xl text-sm font-bold hover:bg-primary/20 transition-all">
+                <button className="px-4 py-2 bg-secondary text-foreground rounded-md text-sm font-bold hover:bg-primary/20 transition-all">
                     All Merchants
                 </button>
             </div>
@@ -180,14 +180,14 @@ export default function AdminBillingPage() {
                   </td>
                   <td className="p-6">
                     <div className="flex items-center gap-2">
-                      <div className={`w-1.5 h-1.5 rounded-full ${merchant.status === 'verified' ? 'bg-green-500 shadow-sm shadow-green-500/50' : 'bg-amber-500'}`} />
+                      <div className={`w-1.5 h-1.5 rounded-full ${merchant.status === 'verified' ? 'bg-green-500 shadow-none shadow-green-500/50' : 'bg-amber-500'}`} />
                       <span className="text-[11px] font-bold capitalize ">{merchant.status}</span>
                     </div>
                   </td>
                   <td className="p-6">
                     <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       {merchant.accruedLiability > 0 && (
-                        <button className="p-2 bg-primary text-white rounded-lg hover:scale-105 transition-all shadow-sm">
+                        <button className="p-2 bg-primary text-foreground rounded-lg hover:scale-105 transition-all shadow-none">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                         </button>
                       )}

@@ -141,7 +141,7 @@ export function BulkDealUpload() {
         </div>
         <button 
           onClick={downloadTemplate}
-          className="flex items-center gap-2 px-5 py-2.5 bg-secondary border border-border rounded-xl text-xs font-bold hover:bg-secondary/80 transition-all"
+          className="flex items-center gap-2 px-5 py-2.5 bg-secondary border border-border rounded-md text-xs font-bold hover:bg-secondary/80 transition-all"
         >
           <Download className="w-4 h-4" /> Download CSV Template
         </button>
@@ -150,10 +150,10 @@ export function BulkDealUpload() {
       {!file ? (
         <div 
           onClick={() => fileInputRef.current?.click()}
-          className="p-16 border-2 border-dashed border-border rounded-[40px] flex flex-col items-center justify-center text-center group hover:border-primary/50 transition-all cursor-pointer bg-card/30"
+          className="p-16 border-2 border-dashed border-border rounded-md flex flex-col items-center justify-center text-center group hover:border-primary/50 transition-all cursor-pointer bg-card/30"
         >
-          <div className="w-20 h-20 bg-primary/10 rounded-[32px] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-xl shadow-primary/5">
-            <Upload className="w-10 h-10 text-primary" />
+          <div className="w-20 h-20 bg-secondary rounded-md flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-none shadow-primary/5">
+            <Upload className="w-10 h-10 text-foreground" />
           </div>
           <h3 className="text-xl font-bold mb-2">Drop your CSV here</h3>
           <p className="text-sm text-muted-foreground mb-8 max-w-xs">Drag and drop or click to select your bulk deals file (.csv only)</p>
@@ -164,14 +164,14 @@ export function BulkDealUpload() {
             accept=".csv"
             onChange={handleFileChange}
           />
-          <button className="px-8 py-3 bg-premium-gradient text-white rounded-xl text-xs font-bold shadow-lg shadow-primary/20">Select File</button>
+          <button className="px-8 py-3 bg-secondary text-foreground border border-border rounded-md text-xs font-bold shadow-none">Select File</button>
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="p-6 bg-card border border-border rounded-[32px] flex items-center justify-between">
+          <div className="p-6 bg-card border border-border rounded-md flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary/10 rounded-2xl">
-                <FileText className="w-6 h-6 text-primary" />
+              <div className="p-3 bg-secondary rounded-md">
+                <FileText className="w-6 h-6 text-foreground" />
               </div>
               <div>
                 <p className="text-sm font-bold">{file.name}</p>
@@ -187,10 +187,10 @@ export function BulkDealUpload() {
           </div>
 
           {/* Preview Table */}
-          <div className="bg-card border border-border rounded-[32px] overflow-hidden">
+          <div className="bg-card border border-border rounded-md overflow-hidden">
             <div className="p-6 border-b border-border flex items-center justify-between">
               <h3 className="text-sm font-bold flex items-center gap-2">
-                <TableIcon className="w-4 h-4 text-primary" /> Preview Data
+                <TableIcon className="w-4 h-4 text-foreground" /> Preview Data
               </h3>
               <span className="text-[10px] bg-secondary px-2 py-0.5 rounded font-mono">Row check active</span>
             </div>
@@ -211,7 +211,7 @@ export function BulkDealUpload() {
                       <td className="px-6 py-4 font-medium truncate max-w-[200px]">{deal.title}</td>
                       <td className="px-6 py-4 text-muted-foreground">{deal.categoryName}</td>
                       <td className="px-6 py-4 font-mono text-muted-foreground">${deal.originalPrice}</td>
-                      <td className="px-6 py-4 font-bold text-primary">${deal.discountedPrice}</td>
+                      <td className="px-6 py-4 font-bold text-foreground">${deal.discountedPrice}</td>
                       <td className="px-6 py-4 text-muted-foreground">{deal.validUntil}</td>
                     </tr>
                   ))}
@@ -224,14 +224,14 @@ export function BulkDealUpload() {
              <button 
               disabled={uploading}
               onClick={() => { setFile(null); setParsedDeals([]); }} 
-              className="px-8 py-3 text-xs font-bold border border-border rounded-xl hover:bg-secondary transition-all"
+              className="px-8 py-3 text-xs font-bold border border-border rounded-md hover:bg-secondary transition-all"
              >
                 Cancel
              </button>
              <button 
               onClick={handleUpload}
               disabled={uploading || parsedDeals.length === 0}
-              className="px-8 py-3 bg-premium-gradient text-white rounded-xl text-xs font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2"
+              className="px-8 py-3 bg-secondary text-foreground border border-border rounded-md text-xs font-bold shadow-none hover:scale-[1.02] transition-all flex items-center gap-2"
              >
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                 {uploading ? 'Injecting Deals...' : `Confirm Upload (${parsedDeals.length} Deals)`}
@@ -242,15 +242,15 @@ export function BulkDealUpload() {
 
       {/* Result Alerts */}
       {error && (
-        <div className="p-6 bg-red-500/5 border border-red-500/10 rounded-[32px] flex items-center gap-4 text-red-500">
+        <div className="p-6 bg-red-500/5 border border-red-500/10 rounded-md flex items-center gap-4 text-red-500">
            <AlertCircle className="w-6 h-6 flex-shrink-0" />
            <p className="text-xs font-medium">{error}</p>
         </div>
       )}
 
       {successCount !== null && (
-        <div className="p-8 bg-emerald-500/5 border border-emerald-500/10 rounded-[40px] flex flex-col items-center text-center space-y-4 animate-in zoom-in-95">
-           <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/5">
+        <div className="p-8 bg-emerald-500/5 border border-emerald-500/10 rounded-md flex flex-col items-center text-center space-y-4 animate-in zoom-in-95">
+           <div className="w-16 h-16 bg-emerald-500/10 rounded-md flex items-center justify-center shadow-none shadow-emerald-500/5">
               <Check className="w-8 h-8 text-emerald-500" />
            </div>
            <div>
@@ -259,7 +259,7 @@ export function BulkDealUpload() {
            </div>
            <button 
             onClick={() => setSuccessCount(null)}
-            className="px-6 py-2 bg-secondary rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-secondary/80 transition-all"
+            className="px-6 py-2 bg-secondary rounded-md text-[10px] font-bold uppercase tracking-widest hover:bg-secondary/80 transition-all"
            >
               Dismiss
            </button>

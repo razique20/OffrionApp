@@ -113,7 +113,7 @@ export default function ApiKeysPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-[50vh]">
-      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <Loader2 className="w-8 h-8 animate-spin text-foreground" />
     </div>
   );
 
@@ -129,7 +129,7 @@ export default function ApiKeysPage() {
         <div className="lg:col-span-1">
           <div className="bg-card border border-border rounded-3xl p-6 sticky top-8">
             <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
-              <Lock className="w-4 h-4 text-primary" />
+              <Lock className="w-4 h-4 text-foreground" />
               New API Key
             </h3>
 
@@ -140,7 +140,7 @@ export default function ApiKeysPage() {
                   type="text" 
                   required
                   placeholder="e.g. My Mobile App"
-                  className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                  className="w-full bg-secondary/50 border border-border rounded-md px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
                   value={newKeyName}
                   onChange={(e) => setNewKeyName(e.target.value)}
                 />
@@ -148,7 +148,7 @@ export default function ApiKeysPage() {
               <button
                 type="submit"
                 disabled={generating}
-                className="w-full py-2.5 bg-premium-gradient text-white rounded-xl text-[13px] font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2.5 bg-secondary text-foreground border border-border rounded-md text-[13px] font-bold shadow-none hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Plus className="w-4 h-4" /> Generate API Key</>}
               </button>
@@ -159,7 +159,7 @@ export default function ApiKeysPage() {
         {/* Keys List */}
         <div className="lg:col-span-2 space-y-6">
           {error && (
-            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-2xl flex items-center gap-3 text-destructive text-sm">
+            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-md flex items-center gap-3 text-destructive text-sm">
               <AlertCircle className="w-5 h-5" />
               <p>{error}</p>
             </div>
@@ -167,7 +167,7 @@ export default function ApiKeysPage() {
 
           {filteredKeys.length === 0 ? (
             <div className="relative group/tour">
-              <div className="flex flex-col items-center justify-center p-20 bg-card border border-border border-dashed rounded-[40px] text-center">
+              <div className="flex flex-col items-center justify-center p-20 bg-card border border-border border-dashed rounded-md text-center">
                 <div className="w-20 h-20 bg-secondary rounded-3xl flex items-center justify-center mb-6">
                   <Key className="w-10 h-10 text-muted-foreground/30" />
                 </div>
@@ -176,7 +176,7 @@ export default function ApiKeysPage() {
               </div>
               
               {/* Quick Start Tour Overlay */}
-              <div className="absolute -top-12 -left-8 md:-left-12 p-6 bg-premium-gradient text-white rounded-[32px] shadow-2xl shadow-primary/40 max-w-[280px] animate-bounce-slow z-20 hidden group-hover/tour:block lg:block">
+              <div className="absolute -top-12 -left-8 md:-left-12 p-6 bg-secondary text-foreground border border-border rounded-md shadow-none shadow-primary/40 max-w-[280px] animate-bounce-slow z-20 hidden group-hover/tour:block lg:block">
                 <div className="flex items-center gap-2 mb-2">
                   <Zap className="w-4 h-4 fill-white" />
                   <span className="text-[10px] font-black uppercase tracking-widest">Quick Start Guide</span>
@@ -184,7 +184,7 @@ export default function ApiKeysPage() {
                 <p className="text-xs font-bold leading-relaxed">
                   To begin your integration, use the form on the left to name and generate your first API key.
                 </p>
-                <div className="absolute -bottom-2 translate-x-12 w-4 h-4 bg-primary rotate-45 shadow-xl"></div>
+                <div className="absolute -bottom-2 translate-x-12 w-4 h-4 bg-primary rotate-45 shadow-none"></div>
               </div>
             </div>
           ) : (
@@ -195,22 +195,22 @@ export default function ApiKeysPage() {
                 return (
                   <div 
                     key={displayId} 
-                    className={cn("p-5 bg-card border border-border rounded-2xl transition-all hover:border-primary/30 shadow-sm", !key.isActive && "opacity-60 grayscale bg-muted/30")}
+                    className={cn("p-5 bg-card border border-border rounded-md transition-all hover:border-primary/30 shadow-none", !key.isActive && "opacity-60 grayscale bg-muted/30")}
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-xl bg-premium-gradient flex items-center justify-center text-white shadow-md">
+                        <div className="w-10 h-10 rounded-md bg-secondary border border-border flex items-center justify-center text-foreground shadow-none">
                           <Zap className="w-5 h-5" />
                         </div>
                         <div>
                           <h4 className="font-bold text-[14px] truncate max-w-[140px]">{key.name}</h4>
-                          <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full text-primary bg-primary/5">
+                          <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full text-foreground bg-muted">
                             Live Environment
                           </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <button onClick={() => toggleKeyStatus(displayId, key.isActive)} className={cn("p-2 rounded-lg transition-all text-[10px] font-bold", key.isActive ? "text-muted-foreground hover:bg-destructive/10 hover:text-destructive" : "text-primary hover:bg-primary/10")} title={key.isActive ? "Deactivate" : "Activate"}>
+                        <button onClick={() => toggleKeyStatus(displayId, key.isActive)} className={cn("p-2 rounded-lg transition-all text-[10px] font-bold", key.isActive ? "text-muted-foreground hover:bg-destructive/10 hover:text-destructive" : "text-white hover:bg-secondary")} title={key.isActive ? "Deactivate" : "Activate"}>
                           {key.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                         <button onClick={() => handleDeleteKey(displayId)} className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all">
@@ -218,7 +218,7 @@ export default function ApiKeysPage() {
                         </button>
                       </div>
                     </div>
-                    <div className="bg-secondary/40 rounded-xl p-3 border border-border/40 flex items-center justify-between group/key">
+                    <div className="bg-secondary/40 rounded-md p-3 border border-border/40 flex items-center justify-between group/key">
                       <code className="text-[11px] font-mono truncate mr-2 text-muted-foreground">
                         {isRevealed ? key.key : 'offrion_' + '•'.repeat(16)}
                       </code>
@@ -226,7 +226,7 @@ export default function ApiKeysPage() {
                         <button onClick={() => setShowKeyId(isRevealed ? null : displayId)} className="p-1.5 hover:bg-background rounded-md text-muted-foreground">
                           {isRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         </button>
-                        <button onClick={() => copyToClipboard(key.key)} className={cn("p-1.5 rounded-md", copiedKey === key.key ? "bg-premium-gradient text-white" : "hover:bg-background text-muted-foreground")}>
+                        <button onClick={() => copyToClipboard(key.key)} className={cn("p-1.5 rounded-md", copiedKey === key.key ? "bg-secondary text-white border border-border" : "hover:bg-background text-muted-foreground")}>
                           {copiedKey === key.key ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                       </div>

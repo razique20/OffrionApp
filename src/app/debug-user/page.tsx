@@ -11,7 +11,7 @@ export default function DebugUserPage() {
     <div className="p-20 max-w-4xl mx-auto space-y-8">
       <h1 className="text-3xl font-bold">User Debug Info</h1>
       
-      <div className="bg-secondary/20 border border-border p-6 rounded-2xl overflow-auto">
+      <div className="bg-secondary/20 border border-border p-6 rounded-md overflow-auto">
         <pre className="text-sm">
           {JSON.stringify(user, null, 2)}
         </pre>
@@ -22,7 +22,7 @@ export default function DebugUserPage() {
         <p><strong>Primary Role (singular):</strong> {user?.role}</p>
       </div>
 
-      <div className="p-4 bg-primary/10 border border-primary/20 rounded-xl">
+      <div className="p-4 bg-secondary border border-border rounded-md">
         <p className="text-sm">
           If <code>roles</code> is missing or only contains one item, the Navbar switcher will be hidden.
         </p>

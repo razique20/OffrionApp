@@ -15,7 +15,7 @@ export default function Error403Page() {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-foreground">
       <div className="max-w-2xl w-full space-y-12">
         <div className="text-center space-y-4">
-          <div className="w-20 h-20 bg-destructive/10 text-destructive rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl shadow-destructive/10 animate-pulse">
+          <div className="w-20 h-20 bg-destructive/10 text-destructive rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-none shadow-destructive/10 animate-pulse">
             <ShieldAlert className="w-10 h-10" />
           </div>
           <h1 className="text-4xl font-black tracking-tighter sm:text-5xl">Error 403: Access Denied</h1>
@@ -23,9 +23,9 @@ export default function Error403Page() {
         </div>
 
         <div className="grid gap-6">
-           <div className="p-8 bg-card border border-border rounded-[40px] shadow-sm space-y-6">
+           <div className="p-8 bg-card border border-border rounded-md shadow-none space-y-6">
               <h3 className="text-xl font-bold flex items-center gap-3">
-                 <Terminal className="text-primary w-5 h-5" />
+                 <Terminal className="text-foreground w-5 h-5" />
                  Common Causes
               </h3>
               <div className="space-y-4">
@@ -55,12 +55,12 @@ export default function Error403Page() {
 
            <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/partner/api-keys" className="flex-1">
-                 <button className="w-full p-6 bg-premium-gradient text-white rounded-[32px] font-bold text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                 <button className="w-full p-6 bg-secondary text-foreground border border-border rounded-md font-bold text-sm shadow-none shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                     Check Dashboard <ArrowRight className="w-4 h-4" />
                  </button>
               </Link>
               <Link href="/docs" className="flex-1">
-                 <button className="w-full p-6 bg-secondary text-foreground rounded-[32px] font-bold text-sm hover:bg-secondary/80 transition-all flex items-center justify-center gap-2">
+                 <button className="w-full p-6 bg-secondary text-foreground rounded-md font-bold text-sm hover:bg-secondary/80 transition-all flex items-center justify-center gap-2">
                     <BookOpen className="w-4 h-4" /> Full API Docs
                  </button>
               </Link>

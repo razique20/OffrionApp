@@ -12,11 +12,11 @@ export default function PrivacyPolicyPage() {
     <article className="space-y-12">
       {/* Header */}
       <div className="space-y-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors">
+        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
         </Link>
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-lg shadow-primary/10">
+          <div className="w-14 h-14 rounded-md bg-secondary text-foreground flex items-center justify-center shadow-none shadow-primary/10">
             <Shield className="w-7 h-7" />
           </div>
           <div>
@@ -38,7 +38,7 @@ export default function PrivacyPolicyPage() {
 
         <section className="space-y-4">
           <h2 className="text-xl font-bold tracking-tight">2. Information We Collect</h2>
-          <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+          <div className="bg-card border border-border rounded-md p-6 space-y-4">
             <h3 className="font-bold text-sm">2.1 Account Information</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">When you register as a Merchant or Partner, we collect: full name, email address, business name, contact phone number, physical address, and KYC documents (tax ID, registration number).</p>
             <h3 className="font-bold text-sm">2.2 Transaction Data</h3>
@@ -97,7 +97,7 @@ export default function PrivacyPolicyPage() {
 
         <section className="space-y-4">
           <h2 className="text-xl font-bold tracking-tight">8. Contact Us</h2>
-          <div className="bg-secondary/30 border border-border rounded-2xl p-6">
+          <div className="bg-secondary/30 border border-border rounded-md p-6">
             <p className="text-sm text-muted-foreground">
               For privacy-related inquiries, contact our Data Protection team:
             </p>

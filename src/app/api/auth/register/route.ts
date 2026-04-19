@@ -10,6 +10,8 @@ const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   role: z.nativeEnum(UserRole).default(UserRole.PARTNER),
+  country: z.string().optional().default('United Arab Emirates'),
+  accessCountries: z.array(z.string()).optional().default([]),
 });
 
 export async function POST(req: Request) {
@@ -80,6 +82,8 @@ export async function POST(req: Request) {
         name: user.name,
         email: user.email,
         role: user.role,
+        country: user.country,
+        accessCountries: user.accessCountries,
       }
     }, { status: 201 });
 

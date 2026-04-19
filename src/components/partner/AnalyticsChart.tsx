@@ -34,7 +34,7 @@ export default function AnalyticsChart({ data, series, height = 400 }: ChartProp
   }, []);
 
   if (!mounted) {
-    return <div className="w-full bg-secondary/20 animate-pulse rounded-2xl" style={{ height }} />;
+    return <div className="w-full bg-secondary/20 animate-pulse rounded-md" style={{ height }} />;
   }
 
   return (

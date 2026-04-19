@@ -48,7 +48,7 @@ export function FomoTicker() {
   const currentDeal = deals[currentIndex];
 
   return (
-    <div className="w-full bg-primary/5 border-y border-primary/20 backdrop-blur-sm overflow-hidden h-10 flex items-center relative z-40">
+    <div className="w-full bg-muted border-y border-border backdrop-blur-sm overflow-hidden h-10 flex items-center relative z-40">
       <div className="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
         <div className="flex items-center gap-4 animate-in slide-in-from-right duration-500">
            <div className={cn(
@@ -63,14 +63,14 @@ export function FomoTicker() {
              <span className="font-bold">{currentDeal.merchantName}:</span> {currentDeal.title} — 
              <span className={cn(
                "ml-2 font-bold",
-               currentDeal.urgencyLevel >= 9 ? "text-red-500" : "text-primary"
+               currentDeal.urgencyLevel >= 9 ? "text-red-500" : "text-white"
              )}>{currentDeal.urgencyReason}</span>
            </p>
         </div>
 
         <Link 
           href={`/deals/${currentDeal.id}`}
-          className="hidden sm:flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-primary hover:opacity-80 transition-opacity"
+          className="hidden sm:flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-foreground hover:opacity-80 transition-opacity"
         >
           Claim Now <ArrowRight className="w-3 h-3" />
         </Link>

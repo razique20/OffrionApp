@@ -21,7 +21,7 @@ import dynamic from 'next/dynamic';
 
 const AnalyticsChart = dynamic(() => import('@/components/partner/AnalyticsChart'), { 
   ssr: false,
-  loading: () => <div className="w-full h-[300px] bg-secondary/20 animate-pulse rounded-2xl" />
+  loading: () => <div className="w-full h-[300px] bg-secondary/20 animate-pulse rounded-md" />
 });
 
 export default function MerchantDashboard() {
@@ -58,13 +58,13 @@ export default function MerchantDashboard() {
 
   if (error) return (
     <div className="flex items-center justify-center h-[50vh]">
-      <div className="p-8 bg-destructive/10 border border-destructive/20 rounded-[32px] text-center max-w-md">
+      <div className="p-8 bg-destructive/10 border border-destructive/20 rounded-md text-center max-w-md">
         <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
         <h3 className="text-xl font-bold mb-2">Dashboard Error</h3>
         <p className="text-sm text-muted-foreground mb-6">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="px-6 py-2 bg-premium-gradient text-white rounded-xl font-bold hover:bg-primary/90 transition-all"
+          className="px-6 py-2 border border-border bg-primary text-primary-foreground hover:bg-primary/90 rounded-md font-bold transition-all mt-4"
         >
           Retry Connection
         </button>
@@ -77,7 +77,7 @@ export default function MerchantDashboard() {
   const stats = [
     { name: 'Total Sales', value: formatCurrency(data.stats.totalSales), icon: ShoppingBag, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { name: 'Total Conversions', value: data.stats.conversions, icon: Users, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-    { name: 'Net Revenue', value: formatCurrency(data.stats.netRevenue), icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10' },
+    { name: 'Net Revenue', value: formatCurrency(data.stats.netRevenue), icon: DollarSign, color: 'text-white', bg: 'bg-secondary' },
     { name: 'Commission Paid', value: formatCurrency(data.stats.totalCommission), icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-500/10' },
   ];
 
@@ -93,24 +93,21 @@ export default function MerchantDashboard() {
       
       {/* Verification Action Banner */}
       {data.verificationStatus !== 'verified' && (
-        <div className="p-8 bg-premium-gradient text-white rounded-[32px] shadow-xl shadow-primary/20 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative group">
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
-            <AlertCircle className="w-32 h-32" />
-          </div>
+        <div className="vercel-section flex flex-col md:flex-row items-center justify-between gap-6 p-6">
           <div className="relative z-10 flex items-center gap-6">
-            <div className="w-16 h-16 bg-background/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/30">
-              <AlertCircle className="w-8 h-8 text-white" />
+            <div className="w-12 h-12 bg-red-500/10 rounded-md flex items-center justify-center border border-red-500/20">
+              <AlertCircle className="w-6 h-6 text-red-500" />
             </div>
             <div>
               <h3 className="text-xl font-bold">Verification Required</h3>
-              <p className="text-white/80 text-sm max-w-md mt-1">
+              <p className="text-foreground/80 text-sm max-w-md mt-1">
                 Complete your business verification to start publishing live deals and clearing commissions to your bank account.
               </p>
             </div>
           </div>
           <Link 
             href="/merchant/kyc" 
-            className="relative z-10 px-8 py-3 bg-background text-primary border border-primary/10 font-bold rounded-2xl hover:bg-background/90 transition-all shadow-lg active:scale-[0.98]"
+            className="px-6 py-2 bg-primary text-primary-foreground font-semibold rounded-md hover:bg-primary/90 transition-all whitespace-nowrap"
           >
             Start Verification
           </Link>
@@ -119,17 +116,17 @@ export default function MerchantDashboard() {
 
       {/* Expiry Alerts Section */}
       {data.topDeals.some((d: any) => d.dealInfo?.validUntil && new Date(d.dealInfo.validUntil).getTime() < Date.now() + 72 * 60 * 60 * 1000) && (
-        <div className="p-6 bg-red-500/5 border border-red-500/20 rounded-2xl flex items-center justify-between">
+        <div className="p-6 bg-muted border border-border rounded-md flex items-center justify-between mt-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
-              <Flame className="w-6 h-6 text-red-500 animate-pulse" />
+            <div className="w-10 h-10 bg-red-500/10 rounded-md flex items-center justify-center">
+              <Flame className="w-5 h-5 text-red-500 animate-pulse" />
             </div>
             <div>
               <h4 className="text-sm font-bold text-foreground">Immediate Action Required</h4>
               <p className="text-xs text-muted-foreground">Some of your top-performing deals are expiring within 72 hours.</p>
             </div>
           </div>
-          <Link href="/merchant/deals" className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white text-xs font-bold rounded-xl hover:bg-red-600 transition-all">
+          <Link href="/merchant/deals" className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-xs font-bold rounded-md hover:bg-primary/90 transition-all">
             Extend Now <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -138,10 +135,10 @@ export default function MerchantDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
-          <div key={stat.name} className="p-6 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-all group">
+          <div key={stat.name} className="vercel-section p-6 transition-all group">
             <div className="flex justify-between items-start mb-4">
-              <div className={cn("p-2 rounded-xl", stat.bg)}>
-                <stat.icon className={cn("w-6 h-6", stat.color)} />
+              <div className="p-2 bg-muted rounded-md border border-border">
+                <stat.icon className="w-5 h-5 text-muted-foreground" />
               </div>
             </div>
             <div>
@@ -154,9 +151,9 @@ export default function MerchantDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Sales Chart */}
-        <div className="lg:col-span-2 p-6 bg-card border border-border rounded-2xl min-h-[400px] flex flex-col">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold">Revenue Overview</h3>
+        <div className="lg:col-span-2 vercel-section p-6 min-h-[400px] flex flex-col">
+          <div className="flex justify-between items-center mb-6 border-b border-border pb-4">
+            <h3 className="text-sm font-semibold">Revenue Overview</h3>
           </div>
           <div className="flex-1 w-full flex flex-col items-center justify-center">
             {data.dailyRevenue && data.dailyRevenue.length > 0 ? (
@@ -192,12 +189,12 @@ export default function MerchantDashboard() {
         </div>
 
         {/* Top Deals */}
-        <div className="p-6 bg-card border border-border rounded-2xl">
-          <h3 className="text-lg font-bold mb-6">Top Performing Deals</h3>
+        <div className="vercel-section p-6">
+          <h3 className="text-sm font-semibold mb-6 border-b border-border pb-4">Top Performing Deals</h3>
           <div className="space-y-6">
             {data.topDeals.map((item: any) => (
               <div key={item._id} className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-secondary flex-shrink-0 flex items-center justify-center overflow-hidden border border-border">
+                <div className="w-10 h-10 rounded-md bg-muted flex-shrink-0 flex items-center justify-center overflow-hidden border border-border">
                   {item.dealInfo.images?.[0] ? (
                     <img src={item.dealInfo.images[0]} alt="" className="w-full h-full object-cover" />
                   ) : (
@@ -218,7 +215,7 @@ export default function MerchantDashboard() {
             ))}
           </div>
           <Link href="/merchant/deals">
-            <button className="w-full mt-8 py-2 rounded-xl border border-border text-sm font-medium hover:bg-secondary transition-all">
+            <button className="w-full mt-8 py-2 rounded-md border border-border bg-muted text-sm hover:bg-secondary transition-all">
               View All Deals
             </button>
           </Link>

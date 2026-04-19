@@ -142,8 +142,8 @@ export default function MerchantRedeemPage() {
   if (kycStatus !== 'verified') {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-120px)] p-6">
-        <div className="w-full max-w-lg bg-card border border-border rounded-[40px] p-12 text-center space-y-8 shadow-sm">
-          <div className="w-24 h-24 bg-primary/10 text-primary rounded-[32px] flex items-center justify-center mx-auto shadow-lg shadow-primary/5">
+        <div className="w-full max-w-lg bg-card border border-border rounded-md p-12 text-center space-y-8 shadow-none">
+          <div className="w-24 h-24 bg-secondary text-foreground rounded-md flex items-center justify-center mx-auto shadow-none shadow-primary/5">
             <ScanLine className="w-12 h-12" />
           </div>
           <div className="space-y-3">
@@ -155,7 +155,7 @@ export default function MerchantRedeemPage() {
           <div className="flex flex-col gap-3">
              <button 
                 onClick={() => window.location.href = '/merchant/kyc'}
-                className="w-full py-4 bg-premium-gradient text-white font-bold rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="w-full py-4 bg-secondary text-foreground border border-border font-bold rounded-md shadow-none shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
              >
                 Verify Business Account
              </button>
@@ -175,8 +175,8 @@ export default function MerchantRedeemPage() {
           <div className="text-center space-y-8 animate-[fade-in_0.4s_ease-out]">
             {/* Header */}
             <div className="space-y-3">
-              <div className="w-20 h-20 bg-premium-gradient rounded-3xl flex items-center justify-center mx-auto shadow-lg shadow-primary/20">
-                <ScanLine className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 bg-secondary border border-border rounded-3xl flex items-center justify-center mx-auto shadow-none">
+                <ScanLine className="w-10 h-10 text-foreground" />
               </div>
               <h2 className="text-2xl font-bold tracking-tight">Scan & Redeem</h2>
               <p className="text-sm text-muted-foreground max-w-xs mx-auto">
@@ -199,7 +199,7 @@ export default function MerchantRedeemPage() {
                   onPaste={i === 0 ? handlePaste : undefined}
                   disabled={state === 'loading'}
                   className={cn(
-                    "w-14 h-16 text-center text-2xl font-bold tracking-wider rounded-2xl border-2 bg-card outline-none transition-all duration-200",
+                    "w-14 h-16 text-center text-2xl font-bold tracking-wider rounded-md border-2 bg-card outline-none transition-all duration-200",
                     "focus:border-primary focus:ring-4 focus:ring-primary/10",
                     "disabled:opacity-50 disabled:cursor-not-allowed",
                     codeChars[i]?.trim()
@@ -216,9 +216,9 @@ export default function MerchantRedeemPage() {
               onClick={handleRedeem}
               disabled={code.replace(/\s/g, '').length !== 6 || state === 'loading'}
               className={cn(
-                "w-full max-w-xs mx-auto flex items-center justify-center gap-3 py-4 px-6 rounded-2xl text-sm font-bold transition-all duration-300",
+                "w-full max-w-xs mx-auto flex items-center justify-center gap-3 py-4 px-6 rounded-md text-sm font-bold transition-all duration-300",
                 code.replace(/\s/g, '').length === 6
-                  ? "bg-premium-gradient text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
+                  ? "bg-secondary text-white border border-border shadow-none hover:shadow-none hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
                   : "bg-secondary text-muted-foreground cursor-not-allowed"
               )}
             >
@@ -244,8 +244,8 @@ export default function MerchantRedeemPage() {
             <div className="text-center space-y-3">
               <div className="relative w-20 h-20 mx-auto">
                 <div className="absolute inset-0 bg-emerald-500/20 rounded-full animate-ping" />
-                <div className="relative w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                  <CheckCircle2 className="w-10 h-10 text-white" />
+                <div className="relative w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center shadow-none shadow-emerald-500/30">
+                  <CheckCircle2 className="w-10 h-10 text-foreground" />
                 </div>
               </div>
               <h2 className="text-2xl font-bold tracking-tight text-emerald-600">Redeemed!</h2>
@@ -253,10 +253,10 @@ export default function MerchantRedeemPage() {
             </div>
 
             {/* Deal Card */}
-            <div className="bg-card border border-border rounded-3xl p-6 space-y-5 shadow-sm">
+            <div className="bg-card border border-border rounded-3xl p-6 space-y-5 shadow-none">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                  <Tag className="w-6 h-6 text-primary" />
+                <div className="w-12 h-12 bg-secondary rounded-md flex items-center justify-center flex-shrink-0">
+                  <Tag className="w-6 h-6 text-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-lg tracking-tight">{result.transaction.dealTitle}</h3>
@@ -267,7 +267,7 @@ export default function MerchantRedeemPage() {
               </div>
 
               {/* Price Row */}
-              <div className="flex items-center justify-between p-4 bg-secondary/50 rounded-2xl">
+              <div className="flex items-center justify-between p-4 bg-secondary/50 rounded-md">
                 <div>
                   <p className="text-xs text-muted-foreground font-medium">Original Price</p>
                   <p className="text-lg font-bold line-through opacity-50">{formatCurrency(result.transaction.originalPrice)}</p>
@@ -275,7 +275,7 @@ export default function MerchantRedeemPage() {
                 <ArrowRight className="w-5 h-5 text-muted-foreground" />
                 <div className="text-right">
                   <p className="text-xs text-muted-foreground font-medium">Customer Paid</p>
-                  <p className="text-lg font-bold text-primary">{formatCurrency(result.transaction.discountedPrice)}</p>
+                  <p className="text-lg font-bold text-foreground">{formatCurrency(result.transaction.discountedPrice)}</p>
                 </div>
               </div>
 
@@ -287,20 +287,20 @@ export default function MerchantRedeemPage() {
                 </div>
 
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="p-3 bg-amber-500/5 border border-amber-500/10 rounded-xl text-center">
+                  <div className="p-3 bg-amber-500/5 border border-amber-500/10 rounded-md text-center">
                     <DollarSign className="w-4 h-4 text-amber-500 mx-auto mb-1" />
                     <p className="text-xs text-muted-foreground">Total</p>
                     <p className="text-sm font-bold">{formatCurrency(result.commission.total)}</p>
                   </div>
-                  <div className="p-3 bg-blue-500/5 border border-blue-500/10 rounded-xl text-center">
+                  <div className="p-3 bg-blue-500/5 border border-blue-500/10 rounded-md text-center">
                     <Users className="w-4 h-4 text-blue-500 mx-auto mb-1" />
                     <p className="text-xs text-muted-foreground">Partner</p>
                     <p className="text-sm font-bold text-blue-600">{formatCurrency(result.commission.partnerShare)}</p>
                   </div>
-                  <div className="p-3 bg-primary/5 border border-primary/10 rounded-xl text-center">
-                    <ShieldCheck className="w-4 h-4 text-primary mx-auto mb-1" />
+                  <div className="p-3 bg-muted border border-primary/10 rounded-md text-center">
+                    <ShieldCheck className="w-4 h-4 text-foreground mx-auto mb-1" />
                     <p className="text-xs text-muted-foreground">Platform</p>
-                    <p className="text-sm font-bold text-primary">{formatCurrency(result.commission.platformShare)}</p>
+                    <p className="text-sm font-bold text-foreground">{formatCurrency(result.commission.platformShare)}</p>
                   </div>
                 </div>
               </div>
@@ -309,7 +309,7 @@ export default function MerchantRedeemPage() {
             {/* New Scan Button */}
             <button
               onClick={handleReset}
-              className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl text-sm font-bold border-2 border-border hover:bg-secondary transition-all"
+              className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-md text-sm font-bold border-2 border-border hover:bg-secondary transition-all"
             >
               <RotateCcw className="w-5 h-5" />
               Scan Another Code
@@ -330,7 +330,7 @@ export default function MerchantRedeemPage() {
             <div className="flex gap-3 max-w-xs mx-auto">
               <button
                 onClick={handleReset}
-                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-sm font-bold bg-premium-gradient text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-md text-sm font-bold bg-secondary text-foreground border border-border shadow-none hover:shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 <RotateCcw className="w-4 h-4" />
                 Try Again

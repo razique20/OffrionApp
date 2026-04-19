@@ -8,6 +8,7 @@ export type TargetAudience = 'student' | 'senior' | 'member' | 'all';
 export interface IDeal extends Document {
   merchantId: mongoose.Types.ObjectId;
   categoryId: mongoose.Types.ObjectId;
+  country: string;
   title: string;
   description: string;
   images: string[];
@@ -19,6 +20,8 @@ export interface IDeal extends Document {
   eventType: EventType;
   dealType: DealType;
   targetAudience: TargetAudience[];
+  emirate?: string;
+  landmark?: string;
   location: {
     type: 'Point';
     coordinates: [number, number]; // [longitude, latitude]
@@ -29,6 +32,8 @@ export interface IDeal extends Document {
   currentUsage: number;
   status: 'pending' | 'active' | 'rejected' | 'suspended';
   isActive: boolean;
+  isHot: boolean;
+  isFeatured: boolean;
   priorityScore: number;
   createdAt: Date;
   updatedAt: Date;
@@ -38,6 +43,7 @@ const DealSchema: Schema = new Schema(
   {
     merchantId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true, index: true },
+    country: { type: String, required: true, index: true, default: 'United Arab Emirates' },
     title: { type: String, required: true },
     description: { type: String, required: true },
     images: { type: [String], default: [] },
@@ -64,6 +70,8 @@ const DealSchema: Schema = new Schema(
       default: ['all'],
       index: true,
     },
+    emirate: { type: String, index: true },
+    landmark: { type: String, index: true },
     location: {
       type: {
         type: String,
@@ -87,6 +95,8 @@ const DealSchema: Schema = new Schema(
       index: true,
     },
     isActive: { type: Boolean, default: false },
+    isHot: { type: Boolean, default: false, index: true },
+    isFeatured: { type: Boolean, default: false, index: true },
     priorityScore: { type: Number, default: 0 },
   },
   { timestamps: true }
