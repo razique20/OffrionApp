@@ -13,7 +13,7 @@ import {
   Filter
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import FAQSupport from '@/components/FAQSupport';
+import { FAQSupport } from '@/components/FAQSupport';
 
 export default function PartnerSupportPage() {
   const [tickets, setTickets] = useState<any[]>([]);

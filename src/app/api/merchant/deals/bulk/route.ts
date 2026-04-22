@@ -17,6 +17,11 @@ const dealBulkSchema = z.object({
   validUntil: z.string().or(z.date()),
   usageLimit: z.number().default(0),
   tags: z.array(z.string()).default([]),
+  eventType: z.enum(['general', 'holiday', 'flash', 'seasonal', 'clearance']).default('general'),
+  dealType: z.enum(['percentage', 'flat', 'bogo', 'free-item']).default('percentage'),
+  targetAudience: z.array(z.enum(['student', 'senior', 'member', 'all'])).default(['all']),
+  emirate: z.string().optional(),
+  landmark: z.string().optional(),
   location: z.object({
     lng: z.number(),
     lat: z.number(),
@@ -26,10 +31,6 @@ const dealBulkSchema = z.object({
 export async function POST(req: Request) {
   try {
     // 1. Auth check (Merchant only)
-    // Note: Since I saw earlier that 'verifyAuth' was a point of confusion, 
-    // I'll check the current standard for merchant auth in this codebase.
-    // Based on previous files, merchants are authenticated via session/cookies.
-    // For now, I'll use the headers pattern I saw in admin stats or check for a better one.
     const userId = req.headers.get('x-user-id');
     const userRole = req.headers.get('x-user-role');
 
@@ -63,19 +64,28 @@ export async function POST(req: Request) {
             const categoryId = categoryMap.get(categoryNameLower);
             
             if (!categoryId) {
-                console.error(`Category not found: "${parsed.categoryName}"`);
                 errors.push({ 
                   row: i + 1, 
-                  error: `Category "${parsed.categoryName}" does not exist. Valid options are: ${Array.from(categoryMap.keys()).join(', ')}` 
+                  error: `Category "${parsed.categoryName}" does not exist.` 
                 });
                 continue;
             }
 
             // Prepare for Mongoose
             validatedDeals.push({
-                ...parsed,
+                title: parsed.title,
+                description: parsed.description,
+                originalPrice: parsed.originalPrice,
+                discountedPrice: parsed.discountedPrice,
+                tags: parsed.tags,
+                eventType: parsed.eventType,
+                dealType: parsed.dealType,
+                targetAudience: parsed.targetAudience,
+                emirate: parsed.emirate,
+                landmark: parsed.landmark,
+                usageLimit: parsed.usageLimit,
                 merchantId: new mongoose.Types.ObjectId(userId),
-                categoryId: categoryId, // categoryId is already an ObjectId from map
+                categoryId: categoryId,
                 status: 'pending',
                 isActive: false,
                 location: parsed.location ? {

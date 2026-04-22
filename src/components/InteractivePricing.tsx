@@ -15,7 +15,9 @@ const TIERS = [
     color: 'text-muted-foreground',
     bg: 'bg-muted',
     features: ['Geo-Spatial Search API', 'Up to 10 Active Deals', 'Basic Partner Dashboard', 'Standard Support'],
-    description: "Perfect for indie hackers and local marketplaces testing the waters."
+    description: "Perfect for indie hackers and local marketplaces testing the waters.",
+    why: "Zero upfront risk. We only grow when you grow.",
+    when: "Choose this if you are launching your first pilot or testing a local niche with minimal traffic."
   },
   {
     id: 'growth',
@@ -27,7 +29,9 @@ const TIERS = [
     color: 'text-white',
     bg: 'bg-primary',
     features: ['Unlimited Active Deals', 'Global Network Distribution', 'Advanced Real-time Analytics', 'Priority API Support'],
-    description: "For scaling platforms and ambitious merchants ready to expand their reach."
+    description: "For scaling platforms and ambitious merchants ready to expand their reach.",
+    why: "Massive fee reduction that pays for itself after your 50th redemption.",
+    when: "Upgrade when you process >50 transactions/mo or need unlimited deal capacity to scale."
   },
   {
     id: 'enterprise',
@@ -39,7 +43,9 @@ const TIERS = [
     color: 'text-white/70',
     bg: 'bg-primary/70',
     features: ['White-label Merchant Portal', 'Dedicated Node Cluster', 'Custom SLA Guarantee', 'On-premise Database Sync'],
-    description: "Mission-critical deals infrastructure for globally massive Super Apps."
+    description: "Mission-critical deals infrastructure for globally massive Super Apps.",
+    why: "The lowest possible margins for high-volume ecosystems.",
+    when: "Ideal for established platforms, bank-led rewards programs, or apps with >1M active users."
   }
 ];
 
@@ -107,6 +113,17 @@ export function InteractivePricing() {
           <p className="mt-8 text-center text-sm text-muted-foreground max-w-xs leading-relaxed animate-in fade-in duration-500" key={activeTier.description}>
             {activeTier.description}
           </p>
+
+          <div className="mt-8 pt-8 border-t border-border/50 w-full grid grid-cols-1 gap-6">
+            <div className="space-y-1">
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Why choose this</p>
+              <p className="text-sm font-bold text-foreground leading-snug">{activeTier.why}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Best for when</p>
+              <p className="text-sm font-medium text-muted-foreground leading-relaxed italic">{activeTier.when}</p>
+            </div>
+          </div>
         </div>
 
         {/* Right Side: Features */}

@@ -389,7 +389,7 @@ export default function LandingPage() {
                 },
               ].map((item, i) => (
                 <div key={i} className="p-8 rounded-[2rem] border border-border bg-background hover:border-border hover:shadow-none hover:shadow-primary/5 transition-all group">
-                  <div className="w-12 h-12 rounded-md bg-secondary/30 text-foreground flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-foreground transition-colors">
+                  <div className="w-12 h-12 rounded-md bg-secondary/30 text-foreground flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                     <item.icon className="w-6 h-6" />
                   </div>
                   <h3 className="text-lg font-black tracking-tight mb-2">{item.title}</h3>

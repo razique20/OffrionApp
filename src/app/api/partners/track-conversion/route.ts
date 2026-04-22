@@ -56,6 +56,7 @@ export async function POST(req: Request) {
     const transaction = await Transaction.create({
       dealId: new mongoose.Types.ObjectId(dealId),
       merchantId: deal.merchantId,
+      apiKeyId: apiKey._id,
       partnerId: new mongoose.Types.ObjectId(apiKey.partnerId.toString()),
       amount,
       currency,
@@ -68,6 +69,7 @@ export async function POST(req: Request) {
       type: 'conversion',
       dealId,
       partnerId: apiKey.partnerId,
+      apiKeyId: apiKey._id,
       merchantId: deal.merchantId,
       metadata: {
         ...metadata,

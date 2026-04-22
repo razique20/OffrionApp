@@ -54,7 +54,7 @@ export const Navbar = () => {
           {[
             { label: 'Ecosystem', href: '/ecosystem' },
             { label: 'Docs', href: '/docs' },
-            { label: 'Pricing', href: '/#pricing' },
+            { label: 'Pricing', href: '/pricing' },
           ].map((link) => (
             <Link 
               key={link.label}
@@ -62,8 +62,8 @@ export const Navbar = () => {
               className={cn(
                 "text-sm font-bold tracking-tight transition-all",
                 pathname === link.href 
-                  ? "text-white" 
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "text-foreground" 
+                  : "text-muted-foreground hover:text-foreground hover:-translate-y-0.5"
               )}
             >
               {link.label}
@@ -105,7 +105,7 @@ export const Navbar = () => {
               {showDropdown && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)}></div>
-                  <div className="absolute right-0 mt-2 w-56 bg-card/95  border border-border/50 rounded-md shadow-none z-20 py-2 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                  <div className="absolute right-0 mt-2 w-56 bg-card border border-border shadow-2xl z-20 py-2 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
                     <div className="px-4 py-2 border-b border-border/10 mb-1">
                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em]">Active Identity</p>
                        <p className="text-sm font-bold truncate">{user.name}</p>
@@ -193,17 +193,20 @@ export const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-background/95  border-b border-border p-8 flex flex-col gap-8 shadow-none animate-in fade-in slide-in-from-top-4">
+        <div className="md:hidden absolute top-full left-0 w-full bg-background border-y border-border p-8 flex flex-col gap-8 shadow-2xl animate-in fade-in slide-in-from-top-4">
           <div className="flex flex-col gap-6">
             {[
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
-              { label: 'Pricing', href: '/#pricing' },
+              { label: 'Pricing', href: '/pricing' },
             ].map((link) => (
               <Link 
                 key={link.label}
                 href={link.href} 
-                className="text-3xl font-black tracking-tighter text-foreground"
+                className={cn(
+                  "text-3xl font-black tracking-tighter transition-all",
+                  pathname === link.href ? "text-foreground" : "text-muted-foreground"
+                )}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.label}

@@ -43,6 +43,9 @@ export default function EditDealPage() {
     emirate: '',
     landmark: '',
     images: [] as string[],
+    eventType: 'general',
+    dealType: 'percentage',
+    targetAudience: ['all'] as string[],
   });
 
   useEffect(() => {
@@ -83,6 +86,9 @@ export default function EditDealPage() {
           emirate: deal.emirate || '',
           landmark: deal.landmark || '',
           images: deal.images || [],
+          eventType: deal.eventType || 'general',
+          dealType: deal.dealType || 'percentage',
+          targetAudience: deal.targetAudience || ['all'],
         });
         setLoading(false);
       })
@@ -238,6 +244,62 @@ export default function EditDealPage() {
                     <option key={cat._id} value={cat._id}>{cat.name}</option>
                   ))}
                 </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Event Type</label>
+                  <select 
+                    required
+                    className="w-full bg-secondary border-none rounded-md px-4 py-3 text-sm focus:ring-1 focus:ring-primary font-medium"
+                    value={formData.eventType}
+                    onChange={(e) => setFormData({...formData, eventType: e.target.value})}
+                  >
+                    <option value="general">General</option>
+                    <option value="holiday">Holiday</option>
+                    <option value="flash">Flash Deal</option>
+                    <option value="seasonal">Seasonal</option>
+                    <option value="clearance">Clearance</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Deal Type</label>
+                  <select 
+                    required
+                    className="w-full bg-secondary border-none rounded-md px-4 py-3 text-sm focus:ring-1 focus:ring-primary font-medium"
+                    value={formData.dealType}
+                    onChange={(e) => setFormData({...formData, dealType: e.target.value})}
+                  >
+                    <option value="percentage">Percentage Discount</option>
+                    <option value="flat">Flat Amount Off</option>
+                    <option value="bogo">BOGO (Buy One Get One)</option>
+                    <option value="free-item">Free Item with Purchase</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-3 p-4 bg-secondary/50 rounded-md border border-border/30">
+                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Target Audience</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {['all', 'student', 'senior', 'member'].map(audience => (
+                    <label key={audience} className="flex items-center gap-2 cursor-pointer group">
+                      <input 
+                        type="checkbox"
+                        checked={formData.targetAudience.includes(audience)}
+                        onChange={(e) => {
+                          const updated = e.target.checked 
+                            ? [...formData.targetAudience, audience]
+                            : formData.targetAudience.filter(a => a !== audience);
+                          setFormData({...formData, targetAudience: updated});
+                        }}
+                        className="w-4 h-4 rounded border-border text-primary focus:ring-primary bg-background"
+                      />
+                      <span className="text-xs capitalize font-medium group-hover:text-foreground transition-colors">
+                        {audience}
+                      </span>
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
 

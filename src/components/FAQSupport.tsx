@@ -12,7 +12,7 @@ const FAQS = [
   { q: "What happens if a deal is expired?", a: "Expired deals are automatically removed from partner search results but remain visible in your merchant archives." },
 ];
 
-export default function FAQSupport() {
+export function FAQSupport() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-6">
@@ -35,3 +35,5 @@ export default function FAQSupport() {
     </div>
   );
 }
+
+export default FAQSupport;

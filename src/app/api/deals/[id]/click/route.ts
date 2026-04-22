@@ -29,6 +29,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       type: 'click',
       dealId: deal._id,
       partnerId: apiKey.partnerId,
+      apiKeyId: apiKey._id,
       merchantId: deal.merchantId,
     });
 

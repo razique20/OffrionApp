@@ -115,7 +115,7 @@ function AnalyticsContent() {
                 onClick={() => setPeriod(p)}
                 className={cn(
                   "px-4 py-1.5 rounded-lg text-sm font-bold transition-all",
-                  period === p ? "bg-primary text-white-foreground shadow-none" : "hover:bg-secondary text-muted-foreground"
+                  period === p ? "bg-primary text-primary-foreground shadow-none" : "hover:bg-secondary text-muted-foreground"
                 )}
               >
                 {p.toUpperCase()}

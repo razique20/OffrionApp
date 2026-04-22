@@ -5,6 +5,7 @@ import APIKey from '@/models/APIKey';
 import User from '@/models/User';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import mongoose from 'mongoose';
+import { MOCK_DEALS } from '@/lib/mockData';
 
 export async function GET(req: Request) {
   try {
@@ -24,14 +25,41 @@ export async function GET(req: Request) {
       }, { status: 403 });
     }
 
-    // Determine environment
-    const DealModel = Deal;
-
-    // Update last used
+    // Update last used and usage count
     apiKey.lastUsedAt = new Date();
+    apiKey.usageCount = (apiKey.usageCount || 0) + 1;
     await apiKey.save();
 
-    // 2. Build Query
+    // Log API Request Event (fire-and-forget)
+    AnalyticsEvent.create({
+      type: 'request',
+      apiKeyId: apiKey._id,
+      partnerId: apiKey.partnerId,
+      // No dealId or merchantId for a general request log
+    } as any).catch((err) => console.error('Failed to log API request:', err));
+
+    const DealModel = Deal;
+
+    // 2. Sandbox Logic
+    if (apiKey.isSandbox) {
+      return NextResponse.json({
+        page: 1,
+        limit: 20,
+        total: MOCK_DEALS.length,
+        pages: 1,
+        count: MOCK_DEALS.length,
+        deals: MOCK_DEALS,
+        environment: 'sandbox'
+      }, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, x-api-key',
+        }
+      });
+    }
+
+    // 3. Build Query
     const query: any = { isActive: true };
 
     // Regional Access Enforcement for Partners (Strict Zero-Access Default)
@@ -173,6 +201,7 @@ export async function GET(req: Request) {
         type: 'impression',
         dealId: deal._id,
         partnerId: apiKey.partnerId,
+        apiKeyId: apiKey._id,
         merchantId: deal.merchantId,
       }));
       AnalyticsEvent.insertMany(impressionEvents).catch((err) =>

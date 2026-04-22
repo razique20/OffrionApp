@@ -1,8 +1,9 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IAnalyticsEvent extends Document {
-  type: 'impression' | 'click' | 'conversion';
+  type: 'impression' | 'click' | 'conversion' | 'request';
   dealId: mongoose.Types.ObjectId;
+  apiKeyId?: mongoose.Types.ObjectId;
   partnerId?: mongoose.Types.ObjectId;
   merchantId: mongoose.Types.ObjectId;
   metadata?: any;
@@ -13,11 +14,12 @@ const AnalyticsEventSchema: Schema = new Schema(
   {
     type: {
       type: String,
-      enum: ['impression', 'click', 'conversion'],
+      enum: ['impression', 'click', 'conversion', 'request'],
       required: true,
       index: true,
     },
     dealId: { type: Schema.Types.ObjectId, ref: 'Deal', required: true, index: true },
+    apiKeyId: { type: Schema.Types.ObjectId, ref: 'APIKey', index: true },
     partnerId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
     merchantId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     metadata: { type: Schema.Types.Mixed },

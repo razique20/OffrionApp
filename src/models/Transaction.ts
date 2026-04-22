@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface ITransaction extends Document {
   dealId: mongoose.Types.ObjectId;
   merchantId: mongoose.Types.ObjectId;
+  apiKeyId?: mongoose.Types.ObjectId;
   partnerId: mongoose.Types.ObjectId;
   userId?: mongoose.Types.ObjectId; // End user if tracked
   amount: number;
@@ -18,6 +19,7 @@ const TransactionSchema: Schema = new Schema(
   {
     dealId: { type: Schema.Types.ObjectId, ref: 'Deal', required: true, index: true },
     merchantId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    apiKeyId: { type: Schema.Types.ObjectId, ref: 'APIKey', index: true },
     partnerId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     userId: { type: Schema.Types.ObjectId, ref: 'User' },
     amount: { type: Number, required: true },

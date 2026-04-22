@@ -5,7 +5,9 @@ export interface IAPIKey extends Document {
   key: string;
   name: string;
   isActive: boolean;
+  isSandbox: boolean;
   rateLimit: number; // requests per hour
+  usageCount: number;
   lastUsedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -17,7 +19,9 @@ const APIKeySchema: Schema = new Schema(
     key: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
     isActive: { type: Boolean, default: true },
+    isSandbox: { type: Boolean, default: false },
     rateLimit: { type: Number, default: 1000 },
+    usageCount: { type: Number, default: 0 },
     lastUsedAt: { type: Date },
   },
   { timestamps: true }

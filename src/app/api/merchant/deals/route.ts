@@ -18,6 +18,9 @@ const dealSchema = z.object({
     type: z.literal('Point'),
     coordinates: z.tuple([z.number(), z.number()]), // [longitude, latitude]
   }),
+  eventType: z.enum(['general', 'holiday', 'flash', 'seasonal', 'clearance']).default('general'),
+  dealType: z.enum(['percentage', 'flat', 'bogo', 'free-item']).default('percentage'),
+  targetAudience: z.array(z.enum(['student', 'senior', 'member', 'all'])).default(['all']),
   validFrom: z.string().transform((str) => new Date(str)),
   validUntil: z.string().transform((str) => new Date(str)),
   usageLimit: z.number().int().nonnegative().default(0),

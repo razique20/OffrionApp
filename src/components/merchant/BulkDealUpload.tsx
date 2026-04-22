@@ -24,6 +24,11 @@ interface RawDeal {
   validUntil: string;
   usageLimit: number;
   tags: string[];
+  eventType: string;
+  dealType: string;
+  targetAudience: string[];
+  emirate: string;
+  landmark: string;
 }
 
 export function BulkDealUpload() {
@@ -64,8 +69,17 @@ export function BulkDealUpload() {
         } else if (['validfrom', 'validuntil'].includes(header)) {
           const key = header === 'validfrom' ? 'validFrom' : 'validUntil';
           deal[key] = values[index];
+        } else if (header === 'targetaudience') {
+          deal['targetAudience'] = values[index].split('|').map(a => a.trim().toLowerCase());
+        } else if (header === 'eventtype') {
+          deal['eventType'] = values[index].toLowerCase();
+        } else if (header === 'dealtype') {
+          deal['dealType'] = values[index].toLowerCase();
         } else {
-          deal[header] = values[index];
+          // Normalize other keys to camelCase if they match emirate or landmark
+          const key = header === 'emirate' ? 'emirate' : 
+                      header === 'landmark' ? 'landmark' : header;
+          deal[key] = values[index];
         }
       });
       deals.push(deal as RawDeal);
@@ -121,8 +135,8 @@ export function BulkDealUpload() {
   };
 
   const downloadTemplate = () => {
-    const headers = 'title,description,originalPrice,discountedPrice,category,validFrom,validUntil,usageLimit,tags\n';
-    const sample = 'Sample High-End Deal,Luxury experience at 50% off,100,50,Dining,2024-01-01,2024-12-31,100,luxury|dining|half-off\n';
+    const headers = 'title,description,originalPrice,discountedPrice,category,validFrom,validUntil,usageLimit,tags,eventType,dealType,targetAudience,emirate,landmark\n';
+    const sample = 'Sample Deal,50% off luxury dining,100,50,Dining,2024-01-01,2024-12-31,100,luxury|dining,flash,percentage,student|member,Dubai,Downtown\n';
     const blob = new Blob([headers + sample], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

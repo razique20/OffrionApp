@@ -22,6 +22,7 @@ export default function ApiKeysPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [newKeyName, setNewKeyName] = useState('');
+  const [isSandbox, setIsSandbox] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [showKeyId, setShowKeyId] = useState<string | null>(null);
@@ -56,7 +57,8 @@ export default function ApiKeysPage() {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ 
-          name: newKeyName
+          name: newKeyName,
+          isSandbox
         }),
       });
       const data = await res.json();
@@ -145,6 +147,27 @@ export default function ApiKeysPage() {
                   onChange={(e) => setNewKeyName(e.target.value)}
                 />
               </div>
+              
+              <div className="flex items-center justify-between p-2.5 bg-secondary/30 border border-border rounded-md mb-2">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold uppercase tracking-wider">Sandbox Mode</span>
+                  <span className="text-[9px] text-muted-foreground font-medium">Use dummy data for testing</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsSandbox(!isSandbox)}
+                  className={cn(
+                    "w-10 h-5 rounded-full transition-all relative",
+                    isSandbox ? "bg-emerald-500" : "bg-muted"
+                  )}
+                >
+                  <div className={cn(
+                    "absolute top-1 w-3 h-3 bg-white rounded-full transition-all",
+                    isSandbox ? "left-6" : "left-1"
+                  )} />
+                </button>
+              </div>
+
               <button
                 type="submit"
                 disabled={generating}
@@ -203,9 +226,12 @@ export default function ApiKeysPage() {
                           <Zap className="w-5 h-5" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-[14px] truncate max-w-[140px]">{key.name}</h4>
-                          <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full text-foreground bg-muted">
-                            Live Environment
+                          <h4 className="font-bold text-[14px] truncate max-w-[140px] text-foreground">{key.name}</h4>
+                          <span className={cn(
+                            "text-[9px] font-black uppercase tracking-[0.1em] px-2 py-0.5 rounded-full",
+                            key.isSandbox ? "text-emerald-500 bg-emerald-500/10 border border-emerald-500/20" : "text-foreground bg-muted border border-border"
+                          )}>
+                            {key.isSandbox ? "Sandbox Environment" : "Live Environment"}
                           </span>
                         </div>
                       </div>
@@ -218,6 +244,18 @@ export default function ApiKeysPage() {
                         </button>
                       </div>
                     </div>
+
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div className="p-3 bg-secondary/30 border border-border/50 rounded-md">
+                         <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Claims Completed</p>
+                         <p className="text-lg font-black text-foreground">{key.claimsCount || 0}</p>
+                      </div>
+                      <div className="p-3 bg-secondary/30 border border-border/50 rounded-md">
+                         <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">API Usage (24h)</p>
+                         <p className="text-lg font-black text-foreground">{key.usageRate || 0}</p>
+                      </div>
+                    </div>
+
                     <div className="bg-secondary/40 rounded-md p-3 border border-border/40 flex items-center justify-between group/key">
                       <code className="text-[11px] font-mono truncate mr-2 text-muted-foreground">
                         {isRevealed ? key.key : 'offrion_' + '•'.repeat(16)}

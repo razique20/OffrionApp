@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Globe } from 'lucide-react';
+import { Logo } from './Logo';
 
 export const Footer = () => {
   return (
@@ -9,12 +10,7 @@ export const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-start gap-8">
           {/* Brand */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-secondary border border-border flex items-center justify-center">
-                <span className="text-foreground text-[10px] font-bold">O</span>
-              </div>
-              <span className="text-lg font-bold tracking-tight">Offrion</span>
-            </div>
+            <Logo size="sm" />
             <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">
               The scalable deals architecture for modern platforms. Connect merchants with partners through a high-performance API.
             </p>
