@@ -5,6 +5,7 @@ import APIKey from '@/models/APIKey';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import Transaction from '@/models/Transaction';
 import Commission from '@/models/Commission';
+import { checkIpRateLimit } from '@/lib/ipRateLimit';
 import { z } from 'zod';
 import mongoose from 'mongoose';
 
@@ -20,15 +21,28 @@ export async function POST(req: Request) {
     await dbConnect();
     const body = await req.json();
     
-    // API Key Validation
+    // 1. IP Rate Limiting
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    const ipLimit = checkIpRateLimit(ip, 60);
+    if (!ipLimit.allowed) {
+      return NextResponse.json({ error: 'Too many requests from this IP' }, { status: 429 });
+    }
+
+    // 2. API Key & CORS Check
     const apiKeyHeader = req.headers.get('x-api-key');
+    const origin = req.headers.get('origin') || undefined;
+
     if (!apiKeyHeader) {
       return NextResponse.json({ error: 'API Key is required' }, { status: 401 });
     }
 
-    const apiKey = await APIKey.findOne({ key: apiKeyHeader, isActive: true });
-    if (!apiKey) {
-      return NextResponse.json({ error: 'Invalid or inactive API Key' }, { status: 401 });
+    let apiKey;
+    try {
+      const { validateApiKey } = await import('@/lib/apiKey');
+      apiKey = await validateApiKey(apiKeyHeader, origin);
+    } catch (err: any) {
+      const status = err.message.includes('Rate limit') || err.message.includes('authorized') ? 403 : 401;
+      return NextResponse.json({ error: err.message }, { status });
     }
 
     const { dealId, amount, currency, metadata } = conversionSchema.parse(body);
@@ -62,6 +76,7 @@ export async function POST(req: Request) {
       currency,
       status: 'pending',
       qrCode: redeemCode,
+      expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48h expiry
     });
 
     // 2. Log Conversion Event
@@ -82,12 +97,20 @@ export async function POST(req: Request) {
     // 3. Update Deal Usage
     await Deal.findByIdAndUpdate(dealId, { $inc: { currentUsage: 1 } });
 
-    return NextResponse.json({ 
+    const response = NextResponse.json({ 
       message: 'Conversion tracked. Redemption code generated.',
       transactionId: transaction._id,
       redeemCode: transaction.qrCode,
       status: 'pending'
     });
+
+    const allowedOrigin = origin || '*';
+    response.headers.set('Access-Control-Allow-Origin', allowedOrigin);
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, x-api-key');
+    response.headers.set('Vary', 'Origin');
+
+    return response;
 
   } catch (error: any) {
     if (error instanceof z.ZodError) {
@@ -95,4 +118,15 @@ export async function POST(req: Request) {
     }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, x-api-key',
+    },
+  });
 }

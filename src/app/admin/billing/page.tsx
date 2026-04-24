@@ -28,12 +28,33 @@ export default function AdminBillingPage() {
 
   const fetchMerchants = async () => {
     try {
-      const res = await fetch('/api/admin/billing/settlements');
+      const res = await fetch('/api/admin/billing/settlements', { cache: 'no-store' });
       const data = await res.json();
       setMerchants(data.merchants || []);
     } catch (error) {
       console.error('Error fetching merchants:', error);
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClearDebt = async (merchantId: string, amount: number) => {
+    if (!confirm(`Are you sure you want to manually clear the $${amount.toLocaleString()} liability for this merchant?`)) return;
+    
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/billing/settlements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ merchantId, amount })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to settle debt');
+      
+      // Refresh the table
+      fetchMerchants();
+    } catch (error: any) {
+      alert(`Error clearing debt: ${error.message}`);
       setLoading(false);
     }
   };
@@ -68,7 +89,7 @@ export default function AdminBillingPage() {
                 <Calendar className="w-3.5 h-3.5" />
                 {isBillingNear() ? 'Billing Period Active' : 'Next Billing: 15th / 30th'}
             </div>
-            <button className="px-6 py-2.5 bg-primary text-foreground rounded-md font-bold text-sm shadow-none hover:scale-105 transition-all">
+            <button className="px-6 py-2.5 bg-primary text-primary-foreground rounded-md font-bold text-sm shadow-none hover:scale-105 transition-all">
                 Export Reports
             </button>
         </div>
@@ -187,7 +208,11 @@ export default function AdminBillingPage() {
                   <td className="p-6">
                     <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       {merchant.accruedLiability > 0 && (
-                        <button className="p-2 bg-primary text-foreground rounded-lg hover:scale-105 transition-all shadow-none">
+                        <button 
+                          onClick={() => handleClearDebt(merchant.merchantId, merchant.accruedLiability)}
+                          title="Manually Settle Debt"
+                          className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg hover:bg-emerald-500 hover:text-white hover:scale-105 transition-all shadow-none"
+                        >
                           <CheckCircle2 className="w-3.5 h-3.5" />
                         </button>
                       )}

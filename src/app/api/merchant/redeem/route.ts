@@ -56,20 +56,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Transaction already redeemed' }, { status: 400 });
     }
 
-    // Mark transaction as completed
-    transaction.status = 'completed';
-    transaction.redeemedAt = new Date();
-    await transaction.save();
-
-    // --- Log Conversion Analytics Event ---
-    await AnalyticsEvent.create({
-      type: 'conversion',
-      dealId: deal._id,
-      partnerId: new mongoose.Types.ObjectId(transaction.partnerId.toString()),
-      merchantId: deal.merchantId,
-      metadata: { transactionId: transaction._id },
-    });
-
     // --- Automated Commission Engine ---
     const commissionRate = deal.commissionPercentage / 100;
     const totalCommission = deal.discountedPrice * commissionRate;
@@ -77,6 +63,7 @@ export async function POST(req: Request) {
     const platformShare = Math.round(totalCommission * 0.30 * 100) / 100;
 
     // --- Wallet Deduction Logic ---
+    // Perform balance check BEFORE modifying the transaction status.
     const profile = await MerchantProfile.findOne({ userId: deal.merchantId });
     if (!profile) {
       return NextResponse.json({ error: 'Merchant profile not found' }, { status: 404 });
@@ -97,12 +84,41 @@ export async function POST(req: Request) {
       profile.balance = Math.max(0, profile.balance - totalCommission);
       commissionStatus = 'cleared';
     } else if (profile.billingPreference === 'card_on_file') {
+      // Dynamic Credit Risk Gateway
+      const currentLiability = profile.accruedLiability || 0;
+      const limit = profile.creditLimit || 0;
+      if (currentLiability + totalCommission > limit) {
+        return NextResponse.json({ 
+          error: 'Credit limit exceeded for post-paid billing. Please settle your invoice or switch to a prepaid wallet.', 
+          required: totalCommission,
+          currentLiability,
+          creditLimit: limit
+        }, { status: 402 });
+      }
+
       // Increment accrued liability
-      profile.accruedLiability = (profile.accruedLiability || 0) + totalCommission;
+      profile.accruedLiability = currentLiability + totalCommission;
       commissionStatus = 'pending'; // Stays pending until admin settles it
     }
 
+    // --- All checks passed! Execute state mutations ---
+
+    // Mark transaction as completed and disable TTL removal
+    transaction.status = 'completed';
+    transaction.redeemedAt = new Date();
+    transaction.expiresAt = undefined; 
+    await transaction.save();
+
     await profile.save();
+
+    // --- Log Conversion Analytics Event ---
+    await AnalyticsEvent.create({
+      type: 'conversion',
+      dealId: deal._id,
+      partnerId: new mongoose.Types.ObjectId(transaction.partnerId.toString()),
+      merchantId: deal.merchantId,
+      metadata: { transactionId: transaction._id },
+    });
 
     const commission = await Commission.create({
       transactionId: transaction._id,

@@ -184,6 +184,8 @@ export async function GET(req: Request) {
         paidCommission: comm.paidCommission,
         billingPreference: profile?.billingPreference || MerchantBillingPreference.PREPAID,
         balance: profile?.balance || 0,
+        accruedLiability: profile?.accruedLiability || 0,
+        creditLimit: profile?.creditLimit || 0,
         chartData
       });
     }

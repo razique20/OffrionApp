@@ -50,10 +50,12 @@ export async function PATCH(
     const { id } = await params;
     const body = await req.json();
 
+    const { creditLimit, ...userFields } = body;
+
     // Allow updating role and permissions
     const user = await User.findByIdAndUpdate(
       id,
-      { $set: body },
+      { $set: userFields },
       { returnDocument: 'after' }
     ).select('-password');
 
@@ -61,7 +63,11 @@ export async function PATCH(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ message: 'User updated successfully', user });
+    if (creditLimit !== undefined && user.role === 'merchant') {
+       await MerchantProfile.findOneAndUpdate({ userId: id }, { creditLimit });
+    }
+
+    return NextResponse.json({ message: 'User context updated successfully', user });
 
   } catch (error: any) {
     console.error('Admin User PATCH Error:', error);

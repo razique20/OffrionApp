@@ -94,7 +94,7 @@ const DealSchema: Schema = new Schema(
       default: 'pending',
       index: true,
     },
-    isActive: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: false, index: true },
     isHot: { type: Boolean, default: false, index: true },
     isFeatured: { type: Boolean, default: false, index: true },
     priorityScore: { type: Number, default: 0 },

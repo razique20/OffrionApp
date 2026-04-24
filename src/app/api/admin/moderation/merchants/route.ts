@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import MerchantProfile from '@/models/MerchantProfile';
+import Deal from '@/models/Deal';
 import { z } from 'zod';
 
 const updateStatusSchema = z.object({
   merchantId: z.string(),
   status: z.enum(['verified', 'rejected', 'suspended']),
+  creditLimit: z.number().optional().default(0),
 });
 
 export async function GET(req: Request) {
@@ -34,11 +36,11 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { merchantId, status } = updateStatusSchema.parse(body);
+    const { merchantId, status, creditLimit } = updateStatusSchema.parse(body);
 
     const profile = await MerchantProfile.findByIdAndUpdate(
       merchantId,
-      { status },
+      { status, creditLimit },
       { new: true }
     );
 
@@ -46,7 +48,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ message: `Merchant status updated to ${status}`, profile });
+    // Auto-activate deals if verified
+    if (status === 'verified') {
+      await Deal.updateMany(
+        { merchantId: profile.userId, status: 'pending' },
+        { status: 'active', isActive: true }
+      );
+      console.log(`[Moderation] Auto-activated pending deals for merchant ${profile.businessName}`);
+    }
+
+    return NextResponse.json({ 
+      message: `Merchant status updated to ${status}${status === 'verified' ? ' and deals activated.' : '.'}`, 
+      profile 
+    });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues }, { status: 400 });

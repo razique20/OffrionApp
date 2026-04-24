@@ -9,6 +9,7 @@ import { z } from 'zod';
 const apiKeySchema = z.object({
   name: z.string().min(2),
   isSandbox: z.boolean().optional(),
+  allowedOrigins: z.array(z.string()).optional(),
 });
 
 export async function GET(req: Request) {
@@ -66,7 +67,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { name, isSandbox } = apiKeySchema.parse(body);
+    const { name, isSandbox, allowedOrigins } = apiKeySchema.parse(body);
 
     const prefix = isSandbox ? 'offrion_sb_' : 'offrion_';
     const key = `${prefix}${crypto.randomBytes(24).toString('hex')}`;
@@ -76,7 +77,8 @@ export async function POST(req: Request) {
       key,
       name,
       isSandbox: !!isSandbox,
-      usageCount: 0
+      usageCount: 0,
+      allowedOrigins: allowedOrigins && allowedOrigins.length > 0 ? allowedOrigins : ['*'],
     });
 
     return NextResponse.json({ 
@@ -88,6 +90,7 @@ export async function POST(req: Request) {
         name: apiKey.name,
         isActive: apiKey.isActive,
         isSandbox: apiKey.isSandbox,
+        allowedOrigins: apiKey.allowedOrigins,
         createdAt: apiKey.createdAt,
         claimsCount: 0,
         usageRate: 0

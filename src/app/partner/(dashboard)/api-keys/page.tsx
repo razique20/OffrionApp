@@ -24,6 +24,7 @@ export default function ApiKeysPage() {
   const [newKeyName, setNewKeyName] = useState('');
   const [isSandbox, setIsSandbox] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [allowedOrigins, setAllowedOrigins] = useState('');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [showKeyId, setShowKeyId] = useState<string | null>(null);
 
@@ -58,7 +59,8 @@ export default function ApiKeysPage() {
         credentials: 'include',
         body: JSON.stringify({ 
           name: newKeyName,
-          isSandbox
+          isSandbox,
+          allowedOrigins: allowedOrigins.split(',').map(s => s.trim()).filter(Boolean)
         }),
       });
       const data = await res.json();
@@ -67,6 +69,7 @@ export default function ApiKeysPage() {
       
       setKeys([data.apiKey, ...keys]);
       setNewKeyName('');
+      setAllowedOrigins('');
       setShowKeyId(data.apiKey.id);
     } catch (err: any) {
       setError(err.message);
@@ -148,6 +151,18 @@ export default function ApiKeysPage() {
                 />
               </div>
               
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold ml-1">Authorized Domains</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. mybank.com (comma separated)"
+                  className="w-full bg-secondary/50 border border-border rounded-md px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                  value={allowedOrigins}
+                  onChange={(e) => setAllowedOrigins(e.target.value)}
+                />
+                <p className="text-[9px] text-muted-foreground ml-1">Leave blank to allow all (*)</p>
+              </div>
+
               <div className="flex items-center justify-between p-2.5 bg-secondary/30 border border-border rounded-md mb-2">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-bold uppercase tracking-wider">Sandbox Mode</span>
@@ -253,6 +268,21 @@ export default function ApiKeysPage() {
                       <div className="p-3 bg-secondary/30 border border-border/50 rounded-md">
                          <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">API Usage (24h)</p>
                          <p className="text-lg font-black text-foreground">{key.usageRate || 0}</p>
+                      </div>
+                    </div>
+
+                    <div className="mb-4 px-3 py-2 bg-background/50 border border-border/30 rounded-md">
+                      <p className="text-[8px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">Authorized Origins</p>
+                      <div className="flex flex-wrap gap-1">
+                        {key.allowedOrigins && key.allowedOrigins.length > 0 ? (
+                          key.allowedOrigins.map((origin: string) => (
+                            <span key={origin} className="text-[9px] bg-secondary px-1.5 py-0.5 rounded border border-border/50 font-mono">
+                              {origin}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-[9px] text-muted-foreground italic">Global (*)</span>
+                        )}
                       </div>
                     </div>
 

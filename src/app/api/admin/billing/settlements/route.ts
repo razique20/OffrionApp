@@ -5,6 +5,8 @@ import Commission from '@/models/Commission';
 import User from '@/models/User';
 import mongoose from 'mongoose';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET: Fetch all merchants with pending balances or liabilities
  */
@@ -25,25 +27,6 @@ export async function GET(req: Request) {
       const user = profile.userId as any;
       if (!user) return null; // Filter out orphaned profiles
 
-      // Aggregate real-time pending commissions for this merchant
-      // CRITICAL: Ensure we use new mongoose.Types.ObjectId() for the aggregate $match
-      const pendingCommissions = await Commission.aggregate([
-        { 
-          $match: { 
-            merchantId: new mongoose.Types.ObjectId(user._id.toString()), 
-            status: 'pending' 
-          } 
-        },
-        { 
-          $group: { 
-            _id: null, 
-            total: { $sum: '$amount' } 
-          } 
-        }
-      ]);
-
-      const realTimeLiability = pendingCommissions[0]?.total || 0;
-
       return {
         id: profile._id,
         merchantId: user._id,
@@ -51,9 +34,8 @@ export async function GET(req: Request) {
         email: user.email,
         billingPreference: profile.billingPreference,
         balance: profile.balance,
-        // Show liability for ANY pending commission found
-        // This ensures visibility even if there's a status mismatch (e.g. prepaid record stuck in 'pending')
-        accruedLiability: realTimeLiability,
+        // Pull the permanent source of truth for liability, ignoring if it was already paid out early
+        accruedLiability: profile.accruedLiability || 0,
         lastBillingDate: profile.lastBillingDate,
         status: profile.status,
       };

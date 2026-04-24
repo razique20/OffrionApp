@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
+import { checkIpRateLimit } from '@/lib/ipRateLimit';
 import { z } from 'zod';
 
 const dealSchema = z.object({
@@ -32,6 +33,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const userId = req.headers.get('x-user-id');
     const { id } = await params;
 
+    // Rate Limiting
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    if (!checkIpRateLimit(ip, 30).allowed) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
+
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -53,6 +60,12 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const userId = req.headers.get('x-user-id');
     const { id } = await params;
     const body = await req.json();
+
+    // Rate Limiting
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    if (!checkIpRateLimit(ip, 20).allowed) { // Stricter for mutations
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -84,6 +97,12 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     await dbConnect();
     const userId = req.headers.get('x-user-id');
     const { id } = await params;
+
+    // Rate Limiting
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    if (!checkIpRateLimit(ip, 10).allowed) { // Even stricter for deletions
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

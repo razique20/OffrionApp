@@ -19,6 +19,7 @@ export default function ModerationPage() {
   const [deals, setDeals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [creditLimits, setCreditLimits] = useState<Record<string, number>>({});
 
   useEffect(() => {
     fetchData();
@@ -45,10 +46,15 @@ export default function ModerationPage() {
   const handleMerchantAction = async (merchantId: string, status: string) => {
     setActionLoading(`merchant-${merchantId}`);
     try {
+      const payload: any = { merchantId, status };
+      if (status === 'verified') {
+        payload.creditLimit = creditLimits[merchantId] !== undefined ? creditLimits[merchantId] : 100; // default $100
+      }
+
       const res = await fetch('/api/admin/moderation/merchants', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ merchantId, status }),
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         setMerchants(merchants.filter(m => m._id !== merchantId));
@@ -125,7 +131,18 @@ export default function ModerationPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 items-center">
+                      <div className="relative" title="Card-on-file Credit Limit">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold leading-none">$</span>
+                        <input 
+                          type="number"
+                          min="0"
+                          placeholder="Limit"
+                          value={creditLimits[merchant._id] !== undefined ? creditLimits[merchant._id] : 100}
+                          onChange={(e) => setCreditLimits({...creditLimits, [merchant._id]: parseInt(e.target.value) || 0})}
+                          className="w-24 pl-7 pr-3 py-3 text-xs font-bold bg-secondary/50 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary h-full m-0"
+                        />
+                      </div>
                       <button 
                         disabled={!!actionLoading}
                         onClick={() => handleMerchantAction(merchant._id, 'rejected')}

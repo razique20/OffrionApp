@@ -196,7 +196,7 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
       {/* Balance Cards */}
       <div className={cn(
         "grid gap-6",
-        role === 'partner' ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 md:grid-cols-3"
+        role === 'partner' ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
       )}>
         {role === 'partner' ? (
           <>
@@ -237,12 +237,12 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
         ) : (
           <>
             <StatCard 
-              title={stats?.billingPreference === 'prepaid' ? "Wallet Balance" : "Outstanding Debt"} 
-              value={formatCurrency(stats?.billingPreference === 'prepaid' ? stats.balance : stats.pendingCommission)} 
-              label={stats?.billingPreference === 'prepaid' ? "Available for redemptions" : "To be charged from card"}
-              icon={stats?.billingPreference === 'prepaid' ? Wallet : AlertCircle}
-              color={stats?.billingPreference === 'prepaid' ? "text-white" : "text-amber-500"}
-              bg={stats?.billingPreference === 'prepaid' ? "bg-secondary" : "bg-amber-500/10"}
+              title="Wallet Balance" 
+              value={formatCurrency(stats?.balance || 0)} 
+              label="Available for redemptions"
+              icon={Wallet}
+              color="text-white"
+              bg="bg-secondary"
               primary
             />
             <StatCard 
@@ -260,6 +260,14 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
               icon={History}
               color="text-emerald-500"
               bg="bg-emerald-500/10"
+            />
+            <StatCard 
+              title="Accrued Liability" 
+              value={formatCurrency(stats.accruedLiability || 0)} 
+              label={stats?.creditLimit > 0 ? `Credit Limit: ${formatCurrency(stats.creditLimit)} max` : 'To be cleared manually'}
+              icon={AlertCircle}
+              color="text-amber-500"
+              bg="bg-amber-500/10"
             />
           </>
         )}

@@ -10,6 +10,7 @@ export interface ITransaction extends Document {
   currency: string;
   status: 'pending' | 'completed' | 'cancelled' | 'refunded';
   redeemedAt?: Date;
+  expiresAt?: Date; // TTL field
   qrCode?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -28,12 +29,17 @@ const TransactionSchema: Schema = new Schema(
       type: String,
       enum: ['pending', 'completed', 'cancelled', 'refunded'],
       default: 'pending',
+      index: true,
     },
     redeemedAt: { type: Date },
+    expiresAt: { type: Date },
     qrCode: { type: String },
   },
   { timestamps: true }
 );
+
+// TTL Index: Deletes documents at the time specified in expiresAt
+TransactionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const Transaction: Model<ITransaction> = mongoose.models.Transaction || 
   mongoose.model<ITransaction>('Transaction', TransactionSchema);

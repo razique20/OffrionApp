@@ -9,6 +9,7 @@ export interface IAPIKey extends Document {
   rateLimit: number; // requests per hour
   usageCount: number;
   lastUsedAt?: Date;
+  allowedOrigins?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,6 +24,7 @@ const APIKeySchema: Schema = new Schema(
     rateLimit: { type: Number, default: 1000 },
     usageCount: { type: Number, default: 0 },
     lastUsedAt: { type: Date },
+    allowedOrigins: { type: [String], default: ['*'] },
   },
   { timestamps: true }
 );

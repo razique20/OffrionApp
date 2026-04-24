@@ -46,6 +46,12 @@ export default function PartnerDocsPage() {
               icon={Shield}
               label="Authentication" 
             />
+            <DocNavItem 
+              active={activeTab === 'security'} 
+              onClick={() => setActiveTab('security')}
+              icon={Lock}
+              label="Security & Privacy" 
+            />
           </nav>
         </div>
 
@@ -124,7 +130,17 @@ export default function PartnerDocsPage() {
               <span className="text-[10px] bg-secondary text-foreground px-2 py-1 rounded">PROD API</span>
             </div>
 
-            <div className="space-y-6">
+            <div className="mt-8 p-6 bg-amber-500/5 border border-amber-500/20 rounded-md flex gap-4 animate-in zoom-in-95 duration-500">
+               <FlaskConical className="w-6 h-6 text-amber-500 shrink-0 mt-1" />
+               <div>
+                  <h4 className="font-bold text-amber-500 text-sm mb-1 uppercase tracking-wider">Developer Best Practice</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Always use <strong>Sandbox Credentials</strong> for testing and fetching while developing. This ensures your analytics data remains clean and prevents accidental live redemptions.
+                  </p>
+               </div>
+            </div>
+
+            <div className="space-y-6 mt-12">
               <h3 className="text-2xl font-bold">Integration Checklist</h3>
               <ol className="space-y-4">
                 <li className="flex gap-4">
@@ -169,6 +185,64 @@ x-api-key: YOUR_API_KEY`}
                <p className="text-sm text-muted-foreground leading-relaxed">
                  For partner dashboard requests (internal), authentication uses <strong>JWT HTTP-only cookies</strong>. When calling internal APIs, ensure your cross-origin settings (CORS) allow credentials.
                </p>
+            </div>
+          </DocSection>
+        )}
+
+        {activeTab === 'security' && (
+          <DocSection title="Security & Privacy">
+            <p className="text-muted-foreground mb-12">
+              Offrion provides enterprise-grade security features to protect your integrations and your customers' data.
+            </p>
+            
+            <div className="space-y-12">
+              <div>
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <Globe className="w-5 h-5 text-primary" />
+                  Domain Locking (CORS)
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                  Prevent unauthorized use of your API keys by locking them to specific domains. When a key is domain-locked, Offrion will only accept requests that originate from your authorized website.
+                </p>
+                <div className="p-4 bg-secondary/30 border border-border rounded-md">
+                   <p className="text-xs font-bold mb-2 uppercase tracking-widest text-muted-foreground">How to configure:</p>
+                   <ol className="text-xs space-y-2 text-muted-foreground list-decimal ml-4">
+                     <li>Go to your <strong>API Keys</strong> dashboard.</li>
+                     <li>When creating or editing a key, enter your domain (e.g., <code>mybank.com</code>) in the <strong>Authorized Domains</strong> field.</li>
+                     <li>For multiple domains, use commas: <code>app.mybank.com, staging.mybank.com</code>.</li>
+                   </ol>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-primary" />
+                  Rate Limiting
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                  To ensure platform stability, all endpoints are subject to rate limiting.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="p-4 bg-secondary/30 border border-border rounded-md">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Standard Tier</p>
+                      <p className="text-lg font-bold">1,000 req/hr</p>
+                   </div>
+                   <div className="p-4 bg-secondary/30 border border-border rounded-md">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Burst Protection</p>
+                      <p className="text-lg font-bold">60 req/min (IP-based)</p>
+                   </div>
+                </div>
+              </div>
+
+              <div className="p-6 bg-amber-500/5 border border-amber-500/20 rounded-md flex gap-4">
+                 <Shield className="w-6 h-6 text-amber-500 shrink-0 mt-1" />
+                 <div>
+                    <h4 className="font-bold text-amber-500 text-sm mb-1 uppercase tracking-wider">Secret Management</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      Never expose your API keys in public repositories or unencrypted client-side logs. If you suspect a key is compromised, <strong>Revoke</strong> it immediately from your dashboard.
+                    </p>
+                 </div>
+              </div>
             </div>
           </DocSection>
         )}

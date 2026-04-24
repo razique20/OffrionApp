@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import PartnerWebhook from '@/models/PartnerWebhook';
+import WebhookLog from '@/models/WebhookLog';
 
 /**
  * Dispatches a signed webhook to a partner's configured endpoint.
@@ -39,31 +40,58 @@ export async function dispatchWebhook(
         .update(body)
         .digest('hex');
 
-      console.log(`[Webhook] Dispatching ${event} to ${webhook.url}...`);
-      
-      const response = await fetch(webhook.url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Offrion-Signature': signature,
-          'User-Agent': 'Offrion-Webhook-Dispatcher/1.0'
-        },
-        body
+      // Create initial log entry
+      const log = await WebhookLog.create({
+        partnerId,
+        webhookId: webhook._id,
+        event,
+        url: webhook.url,
+        payload: fullPayload,
+        status: 'pending'
       });
 
-      if (!response.ok) {
-        throw new Error(`Webhook responded with status: ${response.status}`);
-      }
+      try {
+        console.log(`[Webhook] Dispatching ${event} to ${webhook.url}...`);
+        
+        const response = await fetch(webhook.url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Offrion-Signature': signature,
+            'User-Agent': 'Offrion-Webhook-Dispatcher/1.0'
+          },
+          body
+        });
 
-      console.log(`[Webhook] Successfully delivered ${event} to ${webhook.url}`);
+        if (!response.ok) {
+          throw new Error(`Webhook responded with status: ${response.status}`);
+        }
+
+        // Update log on success
+        await WebhookLog.findByIdAndUpdate(log._id, {
+          status: 'success',
+          responseCode: response.status,
+          lastAttemptAt: new Date()
+        });
+
+        console.log(`[Webhook] Successfully delivered ${event} to ${webhook.url}`);
+      } catch (err: any) {
+        // Update log on failure
+        await WebhookLog.findByIdAndUpdate(log._id, {
+          status: 'failed',
+          errorMessage: err.message,
+          lastAttemptAt: new Date(),
+          $inc: { retryCount: 1 }
+        });
+        console.error(`[Webhook ERROR] Delivery failed for ${webhook.url}:`, err.message);
+      }
     });
 
     await Promise.all(dispatchPromises);
     return true;
 
   } catch (err: any) {
-    console.error(`[Webhook ERROR] Delivery failed for partner ${partnerId}:`, err.message);
-    // In a production system, we would log this to a WebhookAttempt model and retry
+    console.error(`[Webhook SYSTEM ERROR] Partner ${partnerId}:`, err.message);
     return false;
   }
 }

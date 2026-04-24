@@ -41,6 +41,7 @@ export default function SettingsForm() {
     email: '',
     businessName: '',
     billingPreference: 'prepaid' as 'prepaid' | 'card_on_file',
+    merchantStatus: 'pending',
   });
 
   // Password Data
@@ -99,11 +100,13 @@ export default function SettingsForm() {
         email: userData.email || '',
         businessName: '',
         billingPreference: 'prepaid' as 'prepaid' | 'card_on_file',
+        merchantStatus: 'pending',
       };
 
       if (merchantData && !merchantData.error) {
         baseData.businessName = merchantData.businessName || '';
         baseData.billingPreference = merchantData.billingPreference || 'prepaid';
+        baseData.merchantStatus = merchantData.status || 'pending';
       }
 
       setFormData(baseData);
@@ -404,25 +407,39 @@ export default function SettingsForm() {
                              <p className="text-xs text-muted-foreground mt-1">Add funds in advance. Commissions are deducted per redemption.</p>
                           </button>
 
-                          <button
-                            type="button"
-                            onClick={() => setFormData({...formData, billingPreference: 'card_on_file'})}
-                            className={cn(
-                              "p-6 rounded-md border text-left transition-all relative overflow-hidden",
-                              formData.billingPreference === 'card_on_file' 
-                                ? "border-primary bg-muted ring-2 ring-primary/20" 
-                                : "border-border bg-secondary/20 hover:bg-secondary/40"
+                          <div className="relative group">
+                            <button
+                              type="button"
+                              disabled={formData.merchantStatus !== 'verified'}
+                              onClick={() => setFormData({...formData, billingPreference: 'card_on_file'})}
+                              className={cn(
+                                "w-full p-6 rounded-md border text-left transition-all relative overflow-hidden",
+                                formData.billingPreference === 'card_on_file' 
+                                  ? "border-primary bg-muted ring-2 ring-primary/20" 
+                                  : "border-border bg-secondary/20 hover:bg-secondary/40",
+                                formData.merchantStatus !== 'verified' && "opacity-50 cursor-not-allowed filter grayscale"
+                              )}
+                            >
+                               <div className="flex justify-between items-start mb-4">
+                                  <div className={cn(
+                                    "p-2 rounded-lg", 
+                                    formData.billingPreference === 'card_on_file' ? "bg-primary text-white" : "bg-card text-muted-foreground",
+                                    formData.merchantStatus !== 'verified' && "bg-secondary text-muted-foreground"
+                                  )}>
+                                     {formData.merchantStatus !== 'verified' ? <Lock className="w-5 h-5" /> : <CreditCard className="w-5 h-5" />}
+                                  </div>
+                                  {formData.billingPreference === 'card_on_file' && <CheckCircle2 className="w-5 h-5 text-foreground" />}
+                               </div>
+                               <h5 className="font-bold">Opt 2: Card on File</h5>
+                               <p className="text-xs text-muted-foreground mt-1">Directly charge your attached payment method for commissions.</p>
+                               {formData.merchantStatus !== 'verified' && (
+                                 <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest mt-3">Requires KYC Verification</p>
+                               )}
+                            </button>
+                            {formData.merchantStatus !== 'verified' && (
+                              <div className="absolute inset-0 z-10 hidden group-hover:block" />
                             )}
-                          >
-                             <div className="flex justify-between items-start mb-4">
-                                <div className={cn("p-2 rounded-lg", formData.billingPreference === 'card_on_file' ? "bg-primary text-white" : "bg-card text-muted-foreground")}>
-                                   <CreditCard className="w-5 h-5" />
-                                </div>
-                                {formData.billingPreference === 'card_on_file' && <CheckCircle2 className="w-5 h-5 text-foreground" />}
-                             </div>
-                             <h5 className="font-bold">Opt 2: Card on File</h5>
-                             <p className="text-xs text-muted-foreground mt-1">Directly charge your attached payment method for commissions.</p>
-                          </button>
+                          </div>
                        </div>
                     </div>
                   )}

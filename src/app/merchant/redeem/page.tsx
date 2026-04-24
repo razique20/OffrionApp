@@ -12,7 +12,8 @@ import {
   DollarSign,
   Users,
   Tag,
-  ShieldCheck
+  ShieldCheck,
+  QrCode
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
@@ -182,6 +183,27 @@ export default function MerchantRedeemPage() {
               <p className="text-sm text-muted-foreground max-w-xs mx-auto">
                 Enter the 6-digit redemption code from the customer&apos;s deal voucher.
               </p>
+            </div>
+            {/* QR Scanner Trigger Placeholder */}
+            <div className="max-w-xs mx-auto mb-10">
+               <button 
+                  onClick={() => alert('Camera access would be requested here in the next version to scan the customer QR code.')}
+                  className="w-full flex items-center justify-center gap-3 py-6 px-4 bg-primary/10 text-foreground border-2 border-dashed border-primary/30 rounded-3xl group hover:bg-primary/20 transition-all duration-300"
+               >
+                  <div className="p-3 bg-primary/20 rounded-xl group-hover:scale-110 transition-transform">
+                     <QrCode className="w-8 h-8 text-foreground" />
+                  </div>
+                  <div className="text-left">
+                     <p className="text-sm font-bold">Scan with Camera</p>
+                     <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Fast Contactless Sync</p>
+                  </div>
+               </button>
+            </div>
+
+            <div className="flex items-center gap-4 mb-4">
+               <div className="flex-1 h-px bg-border/50"></div>
+               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.3em]">OR ENTER MANUALLY</span>
+               <div className="flex-1 h-px bg-border/50"></div>
             </div>
 
             {/* Code Input Grid */}

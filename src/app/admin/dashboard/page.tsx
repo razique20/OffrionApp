@@ -57,6 +57,7 @@ export default function AdminDashboard() {
   // Editable User Fields
   const [editCountry, setEditCountry] = useState('');
   const [editAccessCountries, setEditAccessCountries] = useState<string[]>([]);
+  const [editCreditLimit, setEditCreditLimit] = useState<number>(0);
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type });
@@ -342,6 +343,9 @@ export default function AdminDashboard() {
           setEditCountry(json.user.country || 'United Arab Emirates');
           setEditAccessCountries(json.user.accessCountries || []);
         }
+        if (json.profile) {
+          setEditCreditLimit(json.profile.creditLimit || 0);
+        }
       } else {
         console.error('Fetch error:', json.error);
       }
@@ -360,7 +364,8 @@ export default function AdminDashboard() {
         body: JSON.stringify({
           country: editCountry,
           accessCountries: editAccessCountries,
-          pendingAccessCountries: detailData.user.role === 'partner' ? [] : detailData.user.pendingAccessCountries
+          pendingAccessCountries: detailData.user.role === 'partner' ? [] : detailData.user.pendingAccessCountries,
+          creditLimit: editCreditLimit
         }),
       });
       if (res.ok) {
@@ -408,6 +413,7 @@ export default function AdminDashboard() {
       let endpoint = '';
       if (activeTab === 'deals') endpoint = `/api/admin/deals/${selectedItem._id}`;
       else if (activeTab === 'categories') endpoint = `/api/admin/categories/${selectedItem._id}`;
+      else if (activeTab === 'admins' || selectedItem.role === 'admin' || selectedItem.role === 'super_admin') endpoint = `/api/admin/admins/${selectedItem._id}`;
       else endpoint = `/api/admin/users/${selectedItem._id}`;
 
       const res = await fetch(endpoint, { method: 'DELETE' });
@@ -415,9 +421,13 @@ export default function AdminDashboard() {
 
       if (res.ok) {
         if (activeTab === 'categories') setCategories(categories.filter(c => c._id !== selectedItem._id));
+        else if (activeTab === 'admins' || selectedItem.role === 'admin' || selectedItem.role === 'super_admin') {
+          setAdmins(admins.filter(a => a._id !== selectedItem._id));
+          setEditingAdminId(null);
+        }
         else setData(data.filter(i => i._id !== selectedItem._id));
         
-        showNotification(`${activeTab === 'categories' ? 'Category' : 'Item'} removed permanently`);
+        showNotification(`${activeTab === 'categories' ? 'Category' : activeTab === 'admins' ? 'Administrator' : 'Item'} removed permanently`);
         fetchStats();
       } else {
          showNotification(json.error || 'Delete failed', 'error');
@@ -656,10 +666,10 @@ export default function AdminDashboard() {
                              </div>
                           </td>
                           <td className="px-8 py-6 text-right">
-                             <div className="flexitems-center justify-end gap-2">
+                             <div className="flex items-center justify-end gap-2">
                                 <button 
                                  onClick={() => { setSelectedItem(item); setIsDeleteOpen(true); }}
-                                 className="px-3 py-2 text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                                 className="px-3 py-2 text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/10 rounded-md"
                                 >
                                    <Ban className="w-4 h-4" />
                                 </button>
@@ -811,28 +821,426 @@ export default function AdminDashboard() {
 
             {/* Categories */}
             {activeTab === 'categories' && (
-              <div className="vercel-section">
-                <div className="vercel-section-content p-32 text-center opacity-40">
-                   <Filter className="w-12 h-12 mx-auto mb-4" />
-                   <p className="text-sm font-black uppercase tracking-[0.2em]">Taxonomy Grid Active</p>
+              <div className="space-y-8">
+                {/* Create Category Form */}
+                <div className="vercel-section">
+                  <div className="vercel-section-header">
+                    <h2 className="text-xs font-black uppercase tracking-[0.2em]">Initialize New Category</h2>
+                  </div>
+                  <div className="vercel-section-content">
+                    <form onSubmit={handleCreateCategory} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                      <div>
+                        <label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground block mb-2">Name</label>
+                        <input
+                          value={newCat.name}
+                          onChange={(e) => setNewCat({ ...newCat, name: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })}
+                          placeholder="e.g. Food & Dining"
+                          className="w-full bg-background border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground transition-all"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground block mb-2">Slug</label>
+                        <input
+                          value={newCat.slug}
+                          onChange={(e) => setNewCat({ ...newCat, slug: e.target.value })}
+                          placeholder="food-dining"
+                          className="w-full bg-background border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground transition-all font-mono"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground block mb-2">Description</label>
+                        <input
+                          value={newCat.description}
+                          onChange={(e) => setNewCat({ ...newCat, description: e.target.value })}
+                          placeholder="Optional description"
+                          className="w-full bg-background border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground transition-all"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={actionLoading === 'new-cat'}
+                        className="px-6 py-3 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-[0.15em] rounded-md hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        {actionLoading === 'new-cat' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                        Create
+                      </button>
+                    </form>
+                  </div>
+                </div>
+
+                {/* Category List */}
+                <div className="vercel-section">
+                  <div className="vercel-section-header flex items-center justify-between">
+                    <h2 className="text-xs font-black uppercase tracking-[0.2em]">Taxonomy Registry</h2>
+                    <span className="text-[10px] font-bold text-muted-foreground opacity-50">{categories.length} categories</span>
+                  </div>
+                  <div className="vercel-section-content p-0 overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead className="bg-secondary/20 border-b border-border">
+                        <tr>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Name</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Slug</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Description</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Status</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {categories.map((cat: any) => (
+                          <tr key={cat._id} className="group hover:bg-secondary/20 transition-colors">
+                            <td className="px-8 py-5">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-secondary rounded flex items-center justify-center text-[10px] font-bold border border-border">{cat.name?.[0]}</div>
+                                <p className="text-sm font-bold tracking-tight">{cat.name}</p>
+                              </div>
+                            </td>
+                            <td className="px-8 py-5">
+                              <code className="text-xs bg-secondary/40 px-2 py-1 rounded font-mono">{cat.slug}</code>
+                            </td>
+                            <td className="px-8 py-5 text-xs opacity-60 max-w-[200px] truncate">{cat.description || '—'}</td>
+                            <td className="px-8 py-5">
+                              <div className="flex items-center gap-2">
+                                <span className={cn("w-2 h-2 rounded-full", cat.isActive ? "bg-emerald-500" : "bg-red-500")} />
+                                <span className="text-[10px] font-black uppercase tracking-widest opacity-70">{cat.isActive ? 'Active' : 'Disabled'}</span>
+                              </div>
+                            </td>
+                            <td className="px-8 py-5 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  onClick={() => handleToggleCategory(cat._id, cat.isActive)}
+                                  disabled={actionLoading === cat._id}
+                                  className={cn(
+                                    "px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-md transition-all",
+                                    cat.isActive
+                                      ? "bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-white"
+                                      : "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white"
+                                  )}
+                                >
+                                  {actionLoading === cat._id ? <Loader2 className="w-3 h-3 animate-spin" /> : cat.isActive ? 'Disable' : 'Enable'}
+                                </button>
+                                <button
+                                  onClick={() => { setSelectedItem(cat); setIsDeleteOpen(true); }}
+                                  className="px-3 py-2 text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                                >
+                                  <Ban className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {categories.length === 0 && !loading && (
+                      <div className="p-32 text-center opacity-30">
+                        <Filter className="w-12 h-12 mx-auto mb-4" />
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em]">No categories defined</p>
+                        <p className="text-xs opacity-50 mt-2">Use the form above to initialize your taxonomy</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
             {/* Admins */}
             {activeTab === 'admins' && (
-              <div className="vercel-section">
-                <div className="vercel-section-content p-32 text-center opacity-40">
-                   <Edit2 className="w-12 h-12 mx-auto mb-4" />
-                   <p className="text-sm font-black uppercase tracking-[0.2em]">Personnel Directory Active</p>
+              <div className="space-y-8">
+                {/* Create Admin Form */}
+                <div className="vercel-section">
+                  <div className="vercel-section-header">
+                    <h2 className="text-xs font-black uppercase tracking-[0.2em]">Provision New Administrator</h2>
+                  </div>
+                  <div className="vercel-section-content">
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      setActionLoading('new-admin');
+                      try {
+                        const res = await fetch('/api/admin/admins', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(newAdmin),
+                        });
+                        const json = await res.json();
+                        if (res.ok) {
+                          setAdmins([json.user, ...admins]);
+                          setNewAdmin({ name: '', email: '', password: '', role: 'admin', permissions: [] });
+                          showNotification('Administrator provisioned successfully');
+                        } else {
+                          showNotification(json.error || 'Failed to create admin', 'error');
+                        }
+                      } catch (err: any) {
+                        showNotification(err.message || 'Network error', 'error');
+                      } finally {
+                        setActionLoading(null);
+                      }
+                    }} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                      <div>
+                        <label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground block mb-2">Name</label>
+                        <input
+                          value={newAdmin.name}
+                          onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
+                          placeholder="Full name"
+                          className="w-full bg-background border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground transition-all"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground block mb-2">Email</label>
+                        <input
+                          type="email"
+                          value={newAdmin.email}
+                          onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                          placeholder="admin@offrion.com"
+                          className="w-full bg-background border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground transition-all"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground block mb-2">Password</label>
+                        <input
+                          type="password"
+                          value={newAdmin.password}
+                          onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
+                          placeholder="••••••••"
+                          className="w-full bg-background border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground transition-all"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground block mb-2">Role</label>
+                        <select
+                          value={newAdmin.role}
+                          onChange={(e) => setNewAdmin({ ...newAdmin, role: e.target.value })}
+                          className="w-full bg-background border border-border rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-foreground transition-all"
+                        >
+                          <option value="admin">Admin</option>
+                          <option value="super_admin">Super Admin</option>
+                        </select>
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={actionLoading === 'new-admin'}
+                        className="px-6 py-3 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-[0.15em] rounded-md hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        {actionLoading === 'new-admin' ? <Loader2 className="w-3 h-3 animate-spin" /> : <ShieldCheck className="w-3 h-3" />}
+                        Provision
+                      </button>
+                    </form>
+                  </div>
+                </div>
+
+                {/* Admins List */}
+                <div className="vercel-section">
+                  <div className="vercel-section-header flex items-center justify-between">
+                    <h2 className="text-xs font-black uppercase tracking-[0.2em]">Personnel Directory</h2>
+                    <span className="text-[10px] font-bold text-muted-foreground opacity-50">{admins.length} administrators</span>
+                  </div>
+                  <div className="vercel-section-content p-0 overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead className="bg-secondary/20 border-b border-border">
+                        <tr>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Identity</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Email</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Role</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Permissions</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Status</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Joined</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {admins.map((admin: any) => (
+                          <tr key={admin._id} className="group hover:bg-secondary/20 transition-colors">
+                            <td className="px-8 py-5">
+                              <div className="flex items-center gap-3">
+                                <div className={cn(
+                                  "w-10 h-10 rounded flex items-center justify-center text-sm font-bold border border-border",
+                                  admin.role === 'super_admin' ? "bg-amber-500/20 text-amber-400" : "bg-secondary"
+                                )}>
+                                  {admin.name?.[0]?.toUpperCase()}
+                                </div>
+                                <div>
+                                  <p className="text-sm font-bold tracking-tight">{admin.name}</p>
+                                  <p className="text-id opacity-40">#{admin._id?.slice(-8).toUpperCase()}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-8 py-5 text-xs opacity-60">{admin.email}</td>
+                            <td className="px-8 py-5">
+                              <span className={cn(
+                                "px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest",
+                                admin.role === 'super_admin'
+                                  ? "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                                  : "bg-blue-500/15 text-blue-400 border border-blue-500/30"
+                              )}>
+                                {admin.role === 'super_admin' ? 'Super Admin' : 'Admin'}
+                              </span>
+                            </td>
+                            <td className="px-8 py-5">
+                              <div className="flex flex-wrap gap-1.5 max-w-[250px]">
+                                {admin.role === 'super_admin' ? (
+                                  <span className="text-[10px] opacity-40 font-bold">ALL</span>
+                                ) : admin.permissions?.length > 0 ? admin.permissions.map((p: string) => (
+                                  <span key={p} className="px-2 py-0.5 bg-secondary text-[9px] font-bold uppercase tracking-widest rounded border border-border">{p}</span>
+                                )) : (
+                                  <span className="text-[10px] opacity-30">No permissions</span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-8 py-5">
+                              <div className="flex items-center gap-2">
+                                <span className={cn("w-2 h-2 rounded-full", admin.isActive ? "bg-emerald-500" : "bg-red-500")} />
+                                <span className="text-[10px] font-black uppercase tracking-widest opacity-70">{admin.isActive ? 'Active' : 'Locked'}</span>
+                              </div>
+                            </td>
+                            <td className="px-8 py-5 text-xs opacity-50">{new Date(admin.createdAt).toLocaleDateString()}</td>
+                            <td className="px-8 py-5 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                {/* Toggle Active/Locked */}
+                                <button
+                                  onClick={async () => {
+                                    setActionLoading(admin._id);
+                                    try {
+                                      const res = await fetch(`/api/admin/admins/${admin._id}`, {
+                                        method: 'PATCH',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ isActive: !admin.isActive }),
+                                      });
+                                      if (res.ok) {
+                                        setAdmins(admins.map((a: any) => a._id === admin._id ? { ...a, isActive: !a.isActive } : a));
+                                        showNotification(`Admin ${!admin.isActive ? 'activated' : 'deactivated'}`);
+                                      } else {
+                                        const json = await res.json();
+                                        showNotification(json.error || 'Failed to update status', 'error');
+                                      }
+                                    } catch (err: any) { showNotification(err.message, 'error'); }
+                                    finally { setActionLoading(null); }
+                                  }}
+                                  disabled={actionLoading === admin._id}
+                                  className={cn(
+                                    "px-3 py-2 text-[10px] font-black uppercase tracking-widest rounded-md transition-all opacity-0 group-hover:opacity-100",
+                                    admin.isActive
+                                      ? "bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-white"
+                                      : "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white"
+                                  )}
+                                >
+                                  {actionLoading === admin._id ? <Loader2 className="w-3 h-3 animate-spin" /> : admin.isActive ? 'Lock' : 'Unlock'}
+                                </button>
+                                {/* Edit Admin */}
+                                <button
+                                  onClick={() => { setEditingAdminId(admin._id); }}
+                                  className="px-4 py-2 bg-primary text-primary-foreground border border-primary rounded-md text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all"
+                                >
+                                  <Edit2 className="w-3 h-3" />
+                                </button>
+                                {/* Delete Admin */}
+                                <button
+                                  onClick={() => { setSelectedItem(admin); setIsDeleteOpen(true); }}
+                                  className="px-3 py-2 text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/10 rounded-md"
+                                >
+                                  <Ban className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {admins.length === 0 && !loading && (
+                      <div className="p-32 text-center opacity-30">
+                        <ShieldCheck className="w-12 h-12 mx-auto mb-4" />
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em]">No administrators found</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
+
             {/* Financials */}
             {activeTab === 'financials' && (
-              <div className="vercel-section">
-                <div className="vercel-section-content p-32 text-center opacity-40">
-                   <Download className="w-12 h-12 mx-auto mb-4" />
-                   <p className="text-sm font-black uppercase tracking-[0.2em]">Ledger Active</p>
+              <div className="space-y-8">
+                {/* Summary Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[
+                    { name: 'Gross Volume', value: `$${(financials?.summary?.grossVolume || 0).toFixed(2)}`, desc: 'Total commission value across all transactions' },
+                    { name: 'Partner Payouts', value: `$${(financials?.summary?.partnerPayouts || 0).toFixed(2)}`, desc: '70% share distributed to partners' },
+                    { name: 'Platform Profit', value: `$${(financials?.summary?.platformProfit || 0).toFixed(2)}`, desc: '30% platform revenue earned by Offrion' },
+                  ].map((card) => (
+                    <div key={card.name} className="vercel-section relative group hover:border-foreground/30 transition-all">
+                      <div className="vercel-section-content">
+                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] mb-4">{card.name}</p>
+                        <h3 className="text-4xl font-bold tracking-tighter mb-2">{card.value}</h3>
+                        <p className="text-xs text-muted-foreground opacity-60">{card.desc}</p>
+                      </div>
+                      <div className="vercel-section-footer bg-secondary/10">
+                        <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-50 flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          Live Ledger
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Commission History Table */}
+                <div className="vercel-section">
+                  <div className="vercel-section-header flex items-center justify-between">
+                    <h2 className="text-xs font-black uppercase tracking-[0.2em]">Commission Ledger</h2>
+                    <span className="text-[10px] font-bold text-muted-foreground opacity-50">
+                      {financials?.total || 0} total records • Page {financials?.page || 1} of {financials?.pages || 1}
+                    </span>
+                  </div>
+                  <div className="vercel-section-content p-0 overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead className="bg-secondary/20 border-b border-border">
+                        <tr>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Partner</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Merchant</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Total</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Partner Cut</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Platform Cut</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Status</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {financials?.commissions?.map((c: any) => (
+                          <tr key={c._id} className="group hover:bg-secondary/20 transition-colors">
+                            <td className="px-8 py-5">
+                              <p className="text-sm font-bold tracking-tight">{c.partnerId?.name || 'Unknown'}</p>
+                              <p className="text-[10px] opacity-40">{c.partnerId?.email}</p>
+                            </td>
+                            <td className="px-8 py-5">
+                              <p className="text-sm font-bold tracking-tight">{c.merchantId?.name || 'Unknown'}</p>
+                              <p className="text-[10px] opacity-40">{c.merchantId?.email}</p>
+                            </td>
+                            <td className="px-8 py-5 text-sm font-bold">${(c.amount || 0).toFixed(2)}</td>
+                            <td className="px-8 py-5 text-sm font-semibold text-purple-400">${(c.partnerShare || 0).toFixed(2)}</td>
+                            <td className="px-8 py-5 text-sm font-semibold text-emerald-400">${(c.platformShare || 0).toFixed(2)}</td>
+                            <td className="px-8 py-5">
+                              <div className="flex items-center gap-2">
+                                <span className={cn(
+                                  "w-2 h-2 rounded-full",
+                                  c.status === 'cleared' || c.status === 'paid' ? "bg-emerald-500" : c.status === 'pending' ? "bg-amber-500" : "bg-red-500"
+                                )} />
+                                <span className="text-[10px] font-black uppercase tracking-widest opacity-70">{c.status}</span>
+                              </div>
+                            </td>
+                            <td className="px-8 py-5 text-xs opacity-50">{new Date(c.createdAt).toLocaleDateString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {(!financials?.commissions || financials.commissions.length === 0) && !loading && (
+                      <div className="p-32 text-center opacity-30">
+                        <Download className="w-12 h-12 mx-auto mb-4" />
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em]">No commission records yet</p>
+                        <p className="text-xs opacity-50 mt-2">Records will appear here after deals are redeemed</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -842,7 +1250,7 @@ export default function AdminDashboard() {
 
       {/* ── SHARED OVERLAY: INSPECTOR PANEL ── */}
       {isDetailOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end">
+        <div className="fixed inset-0 z-[100] flex justify-end">
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm animate-in fade-in" onClick={() => setIsDetailOpen(false)} />
           <div className="bg-background w-full max-w-xl border-l border-border relative z-50 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in slide-in-from-right duration-300">
             <div className="p-8 border-b border-border flex items-center justify-between bg-sidebar">
@@ -881,6 +1289,31 @@ export default function AdminDashboard() {
                           </div>
                        </div>
                     </section>
+
+                    {detailData.profile && (
+                      <section className="vercel-section">
+                        <div className="vercel-section-header">
+                           <span className="text-[10px] font-black uppercase tracking-[0.2em]">Financial Controls</span>
+                        </div>
+                        <div className="vercel-section-content space-y-6">
+                           <div>
+                              <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-3 block">Billing Scheme</label>
+                              <div className="p-3 bg-secondary/50 border border-border rounded-md text-xs font-bold uppercase tracking-widest">
+                                 {detailData.profile.billingPreference === 'card_on_file' ? 'Post-Paid (Card)' : 'Prepaid (Wallet)'}
+                              </div>
+                           </div>
+                           <div>
+                              <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-3 block">Credit Limit for Post-Paid ($)</label>
+                              <input 
+                                type="number" min="0" 
+                                value={editCreditLimit}
+                                onChange={(e) => setEditCreditLimit(parseInt(e.target.value) || 0)}
+                                className="w-full bg-background p-3 rounded-md border border-border text-xs font-bold focus:ring-1 focus:ring-foreground outline-none transition-all"
+                              />
+                           </div>
+                        </div>
+                      </section>
+                    )}
 
                     {detailData.user && (
                       <section className="vercel-section">
@@ -928,7 +1361,7 @@ export default function AdminDashboard() {
                             disabled={!!actionLoading}
                             className="w-full py-3 bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest rounded-md hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                            >
-                             {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply Governance Policy'}
+                             {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Profile Configurations'}
                            </button>
                         </div>
                       </section>
@@ -945,6 +1378,239 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {/* ── SHARED OVERLAY: ADMIN EDIT PANEL ── */}
+      {editingAdminId && (() => {
+        const editAdmin = admins.find((a: any) => a._id === editingAdminId);
+        if (!editAdmin) return null;
+        const AVAILABLE_PERMISSIONS = ['MANAGE_DEALS', 'MANAGE_CATEGORIES', 'MANAGE_MERCHANTS', 'MANAGE_PARTNERS', 'MANAGE_FINANCIALS', 'MANAGE_SUPPORT'];
+        return (
+          <div className="fixed inset-0 z-[100] flex justify-end">
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm animate-in fade-in" onClick={() => setEditingAdminId(null)} />
+            <div className="bg-background w-full max-w-xl border-l border-border relative z-50 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in slide-in-from-right duration-300">
+              <div className="p-8 border-b border-border flex items-center justify-between bg-sidebar">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tighter">Manage Admin</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 mt-1">Role & Permission Control</p>
+                </div>
+                <button onClick={() => setEditingAdminId(null)} className="w-10 h-10 rounded-full hover:bg-secondary flex items-center justify-center transition-all">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-8 space-y-8 no-scrollbar">
+                {/* Identity Card */}
+                <section className="vercel-section">
+                  <div className="vercel-section-header">
+                    <span className="font-black text-[10px] uppercase tracking-[0.2em]">Identity</span>
+                  </div>
+                  <div className="vercel-section-content">
+                    <div className="flex items-center gap-5">
+                      <div className={cn(
+                        "w-16 h-16 rounded-lg flex items-center justify-center text-2xl font-bold border border-border",
+                        editAdmin.role === 'super_admin' ? "bg-amber-500/20 text-amber-400" : "bg-secondary"
+                      )}>
+                        {editAdmin.name?.[0]?.toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-xl font-bold tracking-tighter">{editAdmin.name}</p>
+                        <p className="text-xs opacity-50">{editAdmin.email}</p>
+                        <p className="text-[10px] font-mono opacity-30 mt-1">#{editAdmin._id?.toUpperCase()}</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Role Assignment */}
+                <section className="vercel-section">
+                  <div className="vercel-section-header">
+                    <span className="font-black text-[10px] uppercase tracking-[0.2em]">Role Assignment</span>
+                  </div>
+                  <div className="vercel-section-content space-y-4">
+                    <p className="text-xs opacity-50 leading-relaxed">Super Admins have unrestricted access. Admins require explicit permissions.</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {(['admin', 'super_admin'] as const).map(role => (
+                        <button
+                          key={role}
+                          onClick={async () => {
+                            setActionLoading(`role-${editAdmin._id}`);
+                            try {
+                              const res = await fetch(`/api/admin/admins/${editAdmin._id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ role }),
+                              });
+                              const json = await res.json();
+                              if (res.ok) {
+                                setAdmins(admins.map((a: any) => a._id === editAdmin._id ? { ...a, role } : a));
+                                showNotification(`Role updated to ${role === 'super_admin' ? 'Super Admin' : 'Admin'}`);
+                              } else {
+                                showNotification(json.error || 'Failed to update role', 'error');
+                              }
+                            } catch (err: any) { showNotification(err.message, 'error'); }
+                            finally { setActionLoading(null); }
+                          }}
+                          disabled={actionLoading === `role-${editAdmin._id}`}
+                          className={cn(
+                            "p-5 rounded-lg border-2 transition-all text-center",
+                            editAdmin.role === role
+                              ? role === 'super_admin'
+                                ? "border-amber-500 bg-amber-500/10"
+                                : "border-blue-500 bg-blue-500/10"
+                              : "border-border hover:border-foreground/30 bg-secondary/20"
+                          )}
+                        >
+                          <ShieldCheck className={cn(
+                            "w-6 h-6 mx-auto mb-2",
+                            editAdmin.role === role
+                              ? role === 'super_admin' ? "text-amber-400" : "text-blue-400"
+                              : "opacity-30"
+                          )} />
+                          <p className={cn(
+                            "text-[10px] font-black uppercase tracking-widest",
+                            editAdmin.role === role ? "opacity-100" : "opacity-50"
+                          )}>
+                            {role === 'super_admin' ? 'Super Admin' : 'Admin'}
+                          </p>
+                          <p className="text-[9px] opacity-40 mt-1">
+                            {role === 'super_admin' ? 'Full unrestricted access' : 'Permission-based access'}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+
+                {/* Granular Permissions */}
+                {editAdmin.role === 'admin' && (
+                  <section className="vercel-section">
+                    <div className="vercel-section-header">
+                      <span className="font-black text-[10px] uppercase tracking-[0.2em]">Granular Permissions</span>
+                    </div>
+                    <div className="vercel-section-content space-y-3">
+                      <p className="text-xs opacity-50 leading-relaxed mb-4">Toggle which modules this administrator can access and manage.</p>
+                      {AVAILABLE_PERMISSIONS.map(perm => {
+                        const hasPermission = editAdmin.permissions?.includes(perm);
+                        return (
+                          <button
+                            key={perm}
+                            onClick={async () => {
+                              const newPermissions = hasPermission
+                                ? editAdmin.permissions.filter((p: string) => p !== perm)
+                                : [...(editAdmin.permissions || []), perm];
+                              setActionLoading(`perm-${perm}`);
+                              try {
+                                const res = await fetch(`/api/admin/admins/${editAdmin._id}`, {
+                                  method: 'PATCH',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ permissions: newPermissions }),
+                                });
+                                if (res.ok) {
+                                  setAdmins(admins.map((a: any) => a._id === editAdmin._id ? { ...a, permissions: newPermissions } : a));
+                                  showNotification(`${perm} ${hasPermission ? 'revoked' : 'granted'}`);
+                                } else {
+                                  const json = await res.json();
+                                  showNotification(json.error || 'Failed to update permissions', 'error');
+                                }
+                              } catch (err: any) { showNotification(err.message, 'error'); }
+                              finally { setActionLoading(null); }
+                            }}
+                            disabled={actionLoading === `perm-${perm}`}
+                            className={cn(
+                              "w-full flex items-center justify-between p-4 rounded-lg border transition-all",
+                              hasPermission
+                                ? "border-emerald-500/30 bg-emerald-500/5"
+                                : "border-border bg-secondary/10 hover:border-foreground/20"
+                            )}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={cn(
+                                "w-8 h-8 rounded flex items-center justify-center text-xs transition-all",
+                                hasPermission ? "bg-emerald-500/20 text-emerald-400" : "bg-secondary/50 opacity-40"
+                              )}>
+                                {actionLoading === `perm-${perm}` ? <Loader2 className="w-3 h-3 animate-spin" /> : hasPermission ? <Check className="w-4 h-4" /> : <X className="w-3 h-3" />}
+                              </div>
+                              <span className="text-xs font-bold tracking-tight">{perm.replace(/_/g, ' ')}</span>
+                            </div>
+                            <span className={cn(
+                              "text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded",
+                              hasPermission ? "text-emerald-400 bg-emerald-500/10" : "text-muted-foreground opacity-40"
+                            )}>
+                              {hasPermission ? 'Granted' : 'Revoked'}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+
+                {/* Danger Zone */}
+                <section className="vercel-section border-red-500/20">
+                  <div className="vercel-section-header">
+                    <span className="font-black text-[10px] uppercase tracking-[0.2em] text-red-500">Danger Zone</span>
+                  </div>
+                  <div className="vercel-section-content space-y-4">
+                    <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                      <div>
+                        <p className="text-sm font-bold">
+                          {editAdmin.isActive ? 'Deactivate Account' : 'Reactivate Account'}
+                        </p>
+                        <p className="text-xs opacity-40 mt-0.5">
+                          {editAdmin.isActive ? 'Lock this admin out of the system' : 'Restore access to this admin'}
+                        </p>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          setActionLoading(`toggle-${editAdmin._id}`);
+                          try {
+                            const res = await fetch(`/api/admin/admins/${editAdmin._id}`, {
+                              method: 'PATCH',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ isActive: !editAdmin.isActive }),
+                            });
+                            if (res.ok) {
+                              setAdmins(admins.map((a: any) => a._id === editAdmin._id ? { ...a, isActive: !a.isActive } : a));
+                              showNotification(`Admin ${!editAdmin.isActive ? 'activated' : 'deactivated'}`);
+                            } else {
+                              const json = await res.json();
+                              showNotification(json.error || 'Error', 'error');
+                            }
+                          } catch (err: any) { showNotification(err.message, 'error'); }
+                          finally { setActionLoading(null); }
+                        }}
+                        disabled={!!actionLoading}
+                        className={cn(
+                          "px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-md transition-all",
+                          editAdmin.isActive
+                            ? "bg-amber-500/10 text-amber-500 border border-amber-500/30 hover:bg-amber-500 hover:text-white"
+                            : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white"
+                        )}
+                      >
+                        {actionLoading === `toggle-${editAdmin._id}` ? <Loader2 className="w-3 h-3 animate-spin" /> : editAdmin.isActive ? 'Lock' : 'Unlock'}
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-between p-4 border border-red-500/20 rounded-lg bg-red-500/5">
+                      <div>
+                        <p className="text-sm font-bold text-red-400">Delete Account</p>
+                        <p className="text-xs opacity-40 mt-0.5">Permanently remove this admin from the system</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setSelectedItem(editAdmin);
+                          setIsDeleteOpen(true);
+                        }}
+                        className="px-5 py-2 text-[10px] font-black uppercase tracking-widest bg-red-600/10 text-red-500 border border-red-500/30 rounded-md hover:bg-red-600 hover:text-white transition-all"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
       {/* ── SHARED OVERLAY: DELETE CONFIRMATION ── */}
       {isDeleteOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-8 bg-background/80 backdrop-blur-sm animate-in fade-in">

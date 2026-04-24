@@ -1,6 +1,7 @@
 import Sidebar, { SidebarItem } from '@/components/Sidebar';
 import { cn } from '@/lib/utils';
 import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
 const adminMenuItems: SidebarItem[] = [
@@ -18,6 +19,11 @@ export default async function AdminLayout({
 }) {
   const headerList = await headers();
   const role = headerList.get('x-user-role');
+  
+  if (role !== 'admin' && role !== 'super_admin') {
+    redirect('/');
+  }
+
   const isSuperAdmin = role === 'super_admin';
 
   return (

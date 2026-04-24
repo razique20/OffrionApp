@@ -24,6 +24,7 @@ const CommissionSchema: Schema = new Schema(
       type: String,
       enum: ['pending', 'cleared', 'paid'],
       default: 'pending',
+      index: true,
     },
   },
   { timestamps: true }

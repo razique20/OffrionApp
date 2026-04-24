@@ -12,23 +12,23 @@ export async function GET(req: Request) {
     await dbConnect();
     const { searchParams } = new URL(req.url);
 
-    // 1. API Key Validation
+    // 1. API Key Validation & Rate Limiting
     const apiKeyHeader = req.headers.get('x-api-key');
     if (!apiKeyHeader) {
       return NextResponse.json({ error: 'API Key is required' }, { status: 401 });
     }
-    const apiKey = await APIKey.findOne({ key: apiKeyHeader, isActive: true });
-    if (!apiKey) {
-      return NextResponse.json({ 
-        error: 'Invalid or inactive API Key',
-        documentationUrl: '/docs/errors/403'
-      }, { status: 403 });
-    }
 
-    // Update last used and usage count
-    apiKey.lastUsedAt = new Date();
-    apiKey.usageCount = (apiKey.usageCount || 0) + 1;
-    await apiKey.save();
+    let apiKey;
+    try {
+      const { validateApiKey } = await import('@/lib/apiKey');
+      apiKey = await validateApiKey(apiKeyHeader);
+    } catch (err: any) {
+      const status = err.message.includes('Rate limit') ? 429 : 403;
+      return NextResponse.json({ 
+        error: err.message,
+        documentationUrl: '/docs/errors/' + status
+      }, { status });
+    }
 
     // Log API Request Event (fire-and-forget)
     AnalyticsEvent.create({
