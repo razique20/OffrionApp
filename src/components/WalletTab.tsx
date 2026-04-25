@@ -149,7 +149,7 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
       <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
       <h3 className="text-xl font-bold mb-2">Wallet Offline</h3>
       <p className="text-muted-foreground mb-6">{error}</p>
-      <button onClick={() => fetchData()} className="px-6 py-2 bg-primary text-foreground rounded-md">Retry Connection</button>
+      <button onClick={() => fetchData()} className="px-6 py-2 bg-primary text-primary-foreground rounded-md font-bold">Retry Connection</button>
     </div>
   );
 

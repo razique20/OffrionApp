@@ -44,7 +44,6 @@ function AnalyticsContent() {
         setData(json);
       })
       .catch(err => {
-        console.error('Analytics fetch error:', err);
         setError(err.message);
       })
       .finally(() => {

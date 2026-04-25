@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   ChevronRight,
   Info,
+  Lock,
   Layers,
   MapPin,
   DollarSign,
@@ -30,7 +31,7 @@ export default function PartnerDocsPage() {
   return (
     <div className="flex flex-col lg:flex-row gap-12 pb-20">
       {/* Sidebar Navigation */}
-      <aside className="lg:w-64 shrink-0 space-y-8">
+      <aside className="lg:w-64 shrink-0 space-y-8 sticky top-24 h-fit">
         <div>
           <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-4 ml-3">Getting Started</h4>
           <nav className="space-y-1">
@@ -117,7 +118,7 @@ export default function PartnerDocsPage() {
       </aside>
 
       {/* Content Area */}
-      <main className="flex-1 max-w-4xl">
+      <main className="flex-1 max-w-4xl min-h-[800px]">
         {activeTab === 'getting-started' && (
           <DocSection title="Quick Start & Installation">
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">

@@ -36,7 +36,7 @@ export default function PublicDocsPage() {
       <main className="max-w-7xl mx-auto px-6 py-20 w-full flex-1">
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Sidebar Navigation */}
-          <aside className="lg:w-64 shrink-0 space-y-8">
+          <aside className="lg:w-64 shrink-0 space-y-8 sticky top-32 h-fit">
             <div>
               <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-4 ml-3">Getting Started</h4>
               <nav className="space-y-1">
@@ -99,7 +99,7 @@ export default function PublicDocsPage() {
           </aside>
 
           {/* Content Area */}
-          <div className="flex-1 max-w-4xl">
+          <div className="flex-1 max-w-4xl min-h-[800px]">
             {activeTab === 'getting-started' && (
               <DocSection title="Quick Start & Installation">
                 <p className="text-lg text-muted-foreground leading-relaxed mb-8">

@@ -49,7 +49,6 @@ export default function PartnerDashboard() {
         }
       })
       .catch(err => {
-        console.error('Fetch error:', err);
         setError(err.message);
       })
       .finally(() => {
@@ -85,7 +84,7 @@ export default function PartnerDashboard() {
         const data = await res.json();
         setTransactions(data.transactions || []);
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setTransLoading(false));
   }, []);
 

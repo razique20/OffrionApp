@@ -1,6 +1,21 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 import { UserRole } from '@/lib/constants';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
+// Initialize the ratelimiter only if we have proper tokens
+const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+
+let ratelimit: Ratelimit | null = null;
+if (redisToken && redisUrl && redisToken !== 'your-upstash-token-here') {
+  ratelimit = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(10, '10 s'),
+    analytics: true,
+  });
+}
 
 // Routes that don't require authentication
 const publicRoutes = [
@@ -20,6 +35,31 @@ const roleRoutes = {
 
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Rate Limiting Logic (skip for webhooks)
+  if (pathname.startsWith('/api/') && !pathname.startsWith('/api/webhooks')) {
+    if (ratelimit) {
+      const ip = request.headers.get('x-forwarded-for') ?? request.headers.get('x-real-ip') ?? '127.0.0.1';
+      try {
+        const { success, limit, reset, remaining } = await ratelimit.limit(`ratelimit_${ip}`);
+        if (!success) {
+          return NextResponse.json(
+            { error: 'Too Many Requests' },
+            {
+              status: 429,
+              headers: {
+                'X-RateLimit-Limit': limit.toString(),
+                'X-RateLimit-Remaining': remaining.toString(),
+                'X-RateLimit-Reset': reset.toString(),
+              },
+            }
+          );
+        }
+      } catch (error) {
+        console.error('Rate Limiter Error:', error);
+      }
+    }
+  }
 
   // 1. Handle Public Routes
   const isPublicRoute = publicRoutes.some(route => 
@@ -123,13 +163,7 @@ export default async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/api/admin/:path*',
-    '/api/merchant/:path*',
-    '/api/partner/:path*',
-    '/api/auth/me',
-    '/api/auth/profile/:path*',
-    '/api/billing/:path*',
-    '/api/wallet/:path*',
+    '/api/:path*',
     '/admin/:path*',
     '/merchant/:path*',
     '/partner/:path*',
