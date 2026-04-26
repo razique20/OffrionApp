@@ -1,6 +1,7 @@
 import React from 'react';
 import Sidebar, { SidebarItem } from '@/components/Sidebar';
 import BillingAlert from '@/components/merchant/BillingAlert';
+import UserNav from '@/components/UserNav';
 
 const merchantMenuItems: SidebarItem[] = [
   { name: 'Dashboard', icon: 'dashboard', href: '/merchant/dashboard' },
@@ -29,9 +30,7 @@ export default function MerchantLayout({
             <p className="text-muted-foreground">Manage your deals and track performance.</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full border border-border bg-card flex items-center justify-center font-bold text-foreground">
-              M
-            </div>
+            <UserNav />
           </div>
         </header>
         <BillingAlert />

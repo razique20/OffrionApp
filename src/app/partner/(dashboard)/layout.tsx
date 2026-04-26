@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import Sidebar, { SidebarItem } from '@/components/Sidebar';
 import Link from 'next/link';
 import { Zap, BookOpen } from 'lucide-react';
+import UserNav from '@/components/UserNav';
 
 const partnerMenuItems: SidebarItem[] = [
   { name: 'Dashboard', icon: 'dashboard', href: '/partner/dashboard' },
@@ -40,9 +41,7 @@ export default function PartnerDashboardLayout({
             <div className="bg-muted border border-border text-foreground px-3 py-1 rounded-full text-xs font-bold">
               Partner Tier: Pro
             </div>
-            <div className="w-10 h-10 rounded-full border border-border bg-card flex items-center justify-center font-bold text-foreground shadow-none hover:shadow-none transition-all cursor-pointer">
-              P
-            </div>
+            <UserNav />
           </div>
         </header>
         {children}
