@@ -4,6 +4,19 @@ This file tracks all architectural updates, security enhancements, and feature i
 
 ---
 
+## [2026-04-25] - Observability, Security & Premium Design
+### 🛡️ Security & Performance
+- **Upstash Redis Integration**: Implemented Edge-based API rate limiting (10 req / 10s per IP) using `@upstash/ratelimit` to protect against API abuse.
+- **Sentry Global Integration**: Added full-stack error tracking and performance monitoring across Server, Edge, and Client runtimes.
+
+### 🎨 UI/UX & Aesthetics
+- **Typography Overhaul**: Migrated the entire platform font to **Outfit**, a premium geometric Google Font, for a more state-of-the-art SaaS aesthetic.
+- **Docs Stability Layer**: Fixed documentation layout "jumping" by implementing a stable `min-height` content base and **Sticky Sidebar** navigation.
+- **Wallet UI Fix**: Resolved high-contrast visibility issues for primary action buttons in the financial dashboard.
+- **Silent Reject Handling**: Handled rate-limit 429 rejections silently in the dashboard to prevent developer console pollution while maintaining user-facing alert states.
+
+---
+
 ## [2026-04-23] - Webhook Reliability & Production Hardening
 ### ✨ Architectural Hardening
 - **Webhook Retry System**: Implemented `scripts/webhook-retry.ts` and `WebhookLog` persistence.

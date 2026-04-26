@@ -12,7 +12,7 @@ let ratelimit: Ratelimit | null = null;
 if (redisToken && redisUrl && redisToken !== 'your-upstash-token-here') {
   ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(10, '10 s'),
+    limiter: Ratelimit.slidingWindow(50, '10 s'),
     analytics: true,
   });
 }
@@ -23,6 +23,7 @@ const publicRoutes = [
   '/api/auth/login',
   '/api/auth/register',
   '/api/deals/public',
+  '/api/webhooks',
   '/docs',
 ];
 
