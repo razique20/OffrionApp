@@ -14,7 +14,9 @@ import {
   Sun,
   ShieldCheck,
   Menu,
-  X
+  X,
+  Search,
+  ShoppingBag as Bag
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useUser } from '@/hooks/useUser';
@@ -42,152 +44,155 @@ export const Navbar = () => {
 
   return (
     <nav className={cn(
-      "fixed top-0 w-full z-50 transition-all duration-300",
-      isScrolled ? "bg-background/80  py-3 shadow-none" : "bg-transparent py-5"
+      "fixed top-0 w-full z-50 transition-all duration-300 h-12 flex items-center border-b border-border/40",
+      "bg-background/80 backdrop-blur-md"
     )}>
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 flex items-center justify-between w-full">
+        {/* Left: Logo (Icon Only) */}
         <Link href="/" className="hover:opacity-80 transition-opacity shrink-0">
-          <Logo size="md" />
+          <Logo size="md" iconOnly />
         </Link>
 
-        <div className="hidden md:flex items-center gap-8 ml-12 flex-1">
-          {[
-            { label: 'Ecosystem', href: '/ecosystem' },
-            { label: 'Docs', href: '/docs' },
-            { label: 'Pricing', href: '/pricing' },
-          ].map((link) => (
-            <Link 
-              key={link.label}
-              href={link.href} 
-              className={cn(
-                "text-sm font-bold tracking-tight transition-all",
-                pathname === link.href 
-                  ? "text-foreground" 
-                  : "text-muted-foreground hover:text-foreground hover:-translate-y-0.5"
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 mr-2">
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2 rounded-full hover:bg-secondary transition-colors text-muted-foreground"
-                aria-label="Toggle Theme"
+        {/* Right: Combined Links and Actions */}
+        <div className="flex items-center gap-8">
+          {/* Menus (Right Aligned) */}
+          <div className="hidden md:flex items-center gap-8">
+            {[
+              { label: 'Ecosystem', href: '/ecosystem' },
+              { label: 'Docs', href: '/docs' },
+              { label: 'Pricing', href: '/pricing' },
+            ].map((link) => (
+              <Link 
+                key={link.label}
+                href={link.href} 
+                className={cn(
+                  "text-[12px] font-medium transition-colors whitespace-nowrap",
+                  pathname === link.href 
+                    ? "text-foreground" 
+                    : "text-muted-foreground/80 hover:text-foreground"
+                )}
               >
-                {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-              </button>
-            )}
+                {link.label}
+              </Link>
+            ))}
           </div>
 
-          <div className="h-4 w-px bg-border/40 mx-1 hidden sm:block" />
+          <div className="h-4 w-px bg-border/40 hidden md:block" />
 
-          {loading ? (
-            <div className="w-10 h-10 bg-secondary animate-pulse rounded-full"></div>
-          ) : user ? (
-            <div className="relative">
-              <button 
-                onClick={() => setShowDropdown(!showDropdown)}
-                className="flex items-center gap-2 p-1 pl-3 rounded-full hover:bg-secondary transition-all group"
-              >
-                <div className="text-right hidden sm:block">
-                  <p className="text-[11px] font-black leading-none">{user.name}</p>
-                </div>
-                <div className="w-9 h-9 rounded-full bg-secondary border border-border flex items-center justify-center text-foreground border border-white/20 shadow-none transition-transform group-hover:scale-105">
-                  <User className="w-5 h-5" />
-                </div>
-              </button>
+          {/* Actions */}
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-6">
+              {mounted && (
+                <button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="text-muted-foreground/80 hover:text-foreground transition-colors"
+                  aria-label="Toggle Theme"
+                >
+                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                </button>
+              )}
 
-              {showDropdown && (
-                <>
-                  <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)}></div>
-                  <div className="absolute right-0 mt-2 w-56 bg-card border border-border shadow-2xl z-20 py-2 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                    <div className="px-4 py-2 border-b border-border/10 mb-1">
-                       <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em]">Active Identity</p>
-                       <p className="text-sm font-bold truncate">{user.name}</p>
+              {loading ? (
+                <div className="w-8 h-8 bg-secondary animate-pulse rounded-full"></div>
+              ) : user ? (
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className="flex items-center gap-2 rounded-full hover:opacity-80 transition-all"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-secondary border border-border flex items-center justify-center text-foreground">
+                      <User className="w-4 h-4" />
                     </div>
+                  </button>
 
-                    <Link 
-                      href={pathname.startsWith('/merchant') ? '/merchant/dashboard' : 
-                            pathname.startsWith('/admin') ? '/admin/dashboard' : 
-                            pathname.startsWith('/partner') ? '/partner/dashboard' : 
-                            user.role === 'super_admin' ? '/admin/dashboard' : `/${user.role}/dashboard`}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold hover:bg-secondary transition-colors"
-                      onClick={() => setShowDropdown(false)}
-                    >
-                      <LayoutDashboard className="w-4 h-4" />
-                      Dashboard
-                    </Link>
-
-                    {(() => {
-                      const availableViews = [
-                        { role: UserRole.MERCHANT, label: 'Merchant Center', href: '/merchant/dashboard', icon: ShoppingBag },
-                        { role: UserRole.PARTNER, label: 'Partner API', href: '/partner/dashboard', icon: User },
-                        { role: UserRole.ADMIN, label: 'Admin Panel', href: '/admin/dashboard', icon: ShieldCheck },
-                      ].filter(view => {
-                        const userRoles = (user?.roles && user.roles.length > 0) ? user.roles : (user?.role ? [user.role] : []);
-                        if (userRoles.includes(UserRole.SUPER_ADMIN) || userRoles.includes(UserRole.ADMIN)) return true;
-                        return userRoles.includes(view.role);
-                      });
-
-                      if (availableViews.length <= 1) return null;
-
-                      return (
-                        <div className="border-t border-border/10 my-1 pt-1">
-                          <p className="px-4 py-1.5 text-[9px] font-black text-muted-foreground uppercase tracking-widest">Perspective</p>
-                          {availableViews.map((view) => (
-                            <Link 
-                              key={view.href}
-                              href={view.href}
-                              className="flex items-center gap-3 px-4 py-2 text-sm font-medium hover:bg-secondary transition-colors"
-                              onClick={() => setShowDropdown(false)}
-                            >
-                              <view.icon className="w-4 h-4" />
-                              {view.label}
-                            </Link>
-                          ))}
+                  {showDropdown && (
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)}></div>
+                      <div className="absolute right-0 mt-2 w-56 bg-card border border-border shadow-2xl z-20 py-2 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                        <div className="px-4 py-2 border-b border-border/10 mb-1">
+                           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em]">Active Identity</p>
+                           <p className="text-sm font-bold truncate">{user.name}</p>
                         </div>
-                      );
-                    })()}
 
-                    <div className="border-t border-border/10 my-1 pt-1">
-                       <button 
-                        onClick={() => {
-                          logout();
-                          setShowDropdown(false);
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-destructive hover:bg-destructive/5 transition-colors"
-                       >
-                        <LogOut className="w-4 h-4" />
-                        Sign Out
-                      </button>
-                    </div>
-                  </div>
+                        <Link 
+                          href={pathname.startsWith('/merchant') ? '/merchant/dashboard' : 
+                                pathname.startsWith('/admin') ? '/admin/dashboard' : 
+                                pathname.startsWith('/partner') ? '/partner/dashboard' : 
+                                user.role === 'super_admin' ? '/admin/dashboard' : `/${user.role}/dashboard`}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold hover:bg-secondary transition-colors"
+                          onClick={() => setShowDropdown(false)}
+                        >
+                          <LayoutDashboard className="w-4 h-4" />
+                          Dashboard
+                        </Link>
+
+                        {(() => {
+                          const availableViews = [
+                            { role: UserRole.MERCHANT, label: 'Merchant Center', href: '/merchant/dashboard', icon: ShoppingBag },
+                            { role: UserRole.PARTNER, label: 'Partner API', href: '/partner/dashboard', icon: User },
+                            { role: UserRole.ADMIN, label: 'Admin Panel', href: '/admin/dashboard', icon: ShieldCheck },
+                          ].filter(view => {
+                            const userRoles = (user?.roles && user.roles.length > 0) ? user.roles : (user?.role ? [user.role] : []);
+                            if (userRoles.includes(UserRole.SUPER_ADMIN) || userRoles.includes(UserRole.ADMIN)) return true;
+                            return userRoles.includes(view.role);
+                          });
+
+                          if (availableViews.length <= 1) return null;
+
+                          return (
+                            <div className="border-t border-border/10 my-1 pt-1">
+                              <p className="px-4 py-1.5 text-[9px] font-black text-muted-foreground uppercase tracking-widest">Perspective</p>
+                              {availableViews.map((view) => (
+                                <Link 
+                                  key={view.href}
+                                  href={view.href}
+                                  className="flex items-center gap-3 px-4 py-2 text-sm font-medium hover:bg-secondary transition-colors"
+                                  onClick={() => setShowDropdown(false)}
+                                >
+                                  <view.icon className="w-4 h-4" />
+                                  {view.label}
+                                </Link>
+                              ))}
+                            </div>
+                          );
+                        })()}
+
+                        <div className="border-t border-border/10 my-1 pt-1">
+                           <button 
+                            onClick={() => {
+                              logout();
+                              setShowDropdown(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-destructive hover:bg-destructive/5 transition-colors"
+                           >
+                            <LogOut className="w-4 h-4" />
+                            Sign Out
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <Link href="/auth/login" className="text-[12px] font-medium text-muted-foreground/80 hover:text-foreground transition-colors whitespace-nowrap">Sign In</Link>
+                  <Link 
+                    href="/auth/register" 
+                    className="px-3 py-1 bg-foreground text-background rounded-full text-[12px] font-medium hover:opacity-90 transition-all whitespace-nowrap"
+                  >
+                    Get Started
+                  </Link>
                 </>
               )}
             </div>
-          ) : (
-            <div className="hidden md:flex items-center gap-6">
-              <Link href="/auth/login" className="text-sm font-bold hover:text-foreground transition-colors">Sign In</Link>
-              <Link 
-                href="/auth/register" 
-                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-md text-sm font-black shadow-none hover:shadow-none hover:-translate-y-0.5 transition-all flex items-center gap-2"
-              >
-                Get Started
-              </Link>
-            </div>
-          )}
-          
-          <button 
-            className="md:hidden p-2 rounded-md hover:bg-secondary transition-colors text-foreground"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+            
+            <button 
+              className="md:hidden p-2 rounded-md hover:bg-secondary transition-colors text-foreground"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -225,7 +230,7 @@ export const Navbar = () => {
               </Link>
               <Link 
                 href="/auth/register" 
-                className="w-full py-4 text-center rounded-md bg-primary text-foreground text-sm font-black shadow-none shadow-primary/20"
+                className="w-full py-4 text-center rounded-full bg-foreground text-background text-sm font-semibold shadow-none"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Get Started

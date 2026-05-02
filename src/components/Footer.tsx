@@ -5,7 +5,7 @@ import { Logo } from './Logo';
 
 export const Footer = () => {
   return (
-    <footer className="py-12 border-t border-border bg-card/30">
+    <footer className="py-16 border-t border-border bg-secondary/20 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start gap-8">
           {/* Brand */}
@@ -18,8 +18,8 @@ export const Footer = () => {
 
           {/* Navigation Links */}
           <div className="flex gap-8 md:gap-16">
-            <div className="space-y-3">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Platform</p>
+            <div className="space-y-4">
+              <p className="text-[11px] font-semibold text-foreground tracking-tight">Platform</p>
               <div className="flex flex-col gap-2">
                 <Link href="/features" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Features</Link>
                 <Link href="/partners" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Partners</Link>
@@ -27,8 +27,8 @@ export const Footer = () => {
                 <Link href="/auth/register?role=merchant" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Join as Merchant</Link>
               </div>
             </div>
-            <div className="space-y-3">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Legal</p>
+            <div className="space-y-4">
+              <p className="text-[11px] font-semibold text-foreground tracking-tight">Legal</p>
               <div className="flex flex-col gap-2">
                 <Link href="/legal/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>
                 <Link href="/legal/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms & Conditions</Link>

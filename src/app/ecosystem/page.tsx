@@ -1,13 +1,12 @@
 import React from 'react';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
+
 import { InteractiveShowcase } from '@/components/InteractiveShowcase';
 import { ShoppingBag, Users, Globe, Zap } from 'lucide-react';
 
 export default function EcosystemPage() {
   return (
     <div className="min-h-screen bg-background selection:bg-primary/20 flex flex-col">
-      <Navbar />
+      
 
       <main className="flex-1 pt-32 pb-24 relative overflow-hidden">
         {/* Background blurs */}
@@ -90,7 +89,7 @@ export default function EcosystemPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

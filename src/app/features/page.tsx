@@ -1,6 +1,5 @@
 import React from 'react';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
+
 import { 
   Zap, 
   Target, 
@@ -14,7 +13,7 @@ import {
 export default function FeaturesPage() {
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      
       
       <main className="pt-32 pb-24">
         {/* Header */}
@@ -93,7 +92,7 @@ export default function FeaturesPage() {
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

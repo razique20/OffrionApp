@@ -21,16 +21,12 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
 import { HeroButtons } from '@/components/HeroButtons';
 import { HeroVisual } from '@/components/HeroVisual';
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background selection:bg-primary/20">
-      <Navbar />
-
       <main>
         {/* ── Hero Section ── */}
         <section className="relative min-h-[90svh] lg:min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
@@ -47,9 +43,9 @@ export default function LandingPage() {
                 <span className="text-[10px] font-bold text-foreground uppercase tracking-[0.2em]">Partner Infrastructure v2.0</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-black tracking-tighter leading-[0.95] mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-bold tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 Scale your deals <br />
-                <span className="text-gradient">effortlessly.</span>
+                <span className="text-foreground">effortlessly.</span>
               </h1>
 
               <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-8 leading-relaxed animate-in fade-in slide-in-from-bottom-5 duration-1000">
@@ -106,10 +102,10 @@ export default function LandingPage() {
                 <Zap className="w-3.5 h-3.5 text-foreground" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-foreground font-mono leading-none">The Workflow</span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4 max-w-2xl">
-                Redemption in <span className="text-gradient">Three Acts</span>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 max-w-2xl">
+                Redemption in <span className="text-foreground/80">Three Acts</span>
               </h2>
-              <p className="text-muted-foreground max-w-xl text-base md:text-lg">
+              <p className="text-muted-foreground max-w-xl text-base md:text-lg font-medium">
                 Offrion bridges the gap between local commerce and digital discovery through a streamlined, automated ecosystem.
               </p>
             </div>
@@ -176,8 +172,8 @@ export default function LandingPage() {
                 <ShoppingBag className="w-3.5 h-3.5 text-foreground" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-foreground font-mono leading-none">For Merchants</span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight leading-[1.1]">
-                Fill empty tables,<br />not expensive <span className="text-gradient">ads.</span>
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight leading-[1.1]">
+                Fill empty tables,<br />not expensive <span className="text-foreground/80">ads.</span>
               </h2>
               <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
                 Connect your business to a massive network of discovery apps with zero upfront marketing costs. Pay only when customers actually walk through your door.
@@ -204,7 +200,7 @@ export default function LandingPage() {
               <div className="flex items-center gap-6">
                 <Link
                   href="/auth/register?role=merchant"
-                  className="px-8 py-4 bg-primary text-primary-foreground rounded-md text-sm font-black shadow-none hover:shadow-none hover:-translate-y-0.5 transition-all"
+                  className="px-8 py-4 bg-foreground text-background rounded-full text-sm font-semibold shadow-none hover:opacity-90 hover:-translate-y-0.5 transition-all"
                 >
                   Start Listing Deals
                 </Link>
@@ -307,7 +303,7 @@ export default function LandingPage() {
                 <Code2 className="w-3.5 h-3.5 text-foreground" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-foreground font-mono leading-none">For Partners</span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight leading-[1.1]">
+              <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight leading-[1.1]">
                 Infinite Supply.<br />One Integration.
               </h2>
               <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
@@ -330,7 +326,7 @@ export default function LandingPage() {
 
               <Link
                 href="/docs"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-secondary text-secondary-foreground rounded-md text-sm font-black border border-border hover:bg-muted transition-all group"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-secondary/80 backdrop-blur-md text-foreground rounded-full text-sm font-semibold border border-border/50 hover:bg-secondary transition-all group"
               >
                 Access API Keys
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -347,8 +343,8 @@ export default function LandingPage() {
                 <Shield className="w-3.5 h-3.5 text-foreground" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-foreground font-mono leading-none">The Foundation</span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
-                Built for <span className="text-gradient">Scale.</span>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+                Built for <span className="text-foreground/80">Scale.</span>
               </h2>
               <p className="text-muted-foreground max-w-xl text-base md:text-lg">
                 High-performance architecture meeting the demands of modern commerce ecosystems.
@@ -404,9 +400,9 @@ export default function LandingPage() {
         <section className="py-24 md:py-32 px-6 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-muted -z-10" />
           <div className="max-w-4xl mx-auto space-y-10">
-            <h2 className="text-4xl md:text-6xl font-black tracking-tighter leading-none">
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-none">
               The redemption network is <br />
-              now <span className="text-gradient underline decoration-primary/20 underline-offset-8">strictly open.</span>
+              now <span className="underline decoration-border underline-offset-8">strictly open.</span>
             </h2>
             <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
               Join the ecosystem today and start monetizing local discovery with industry-leading infrastructure.
@@ -414,14 +410,14 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
               <Link
                 href="/auth/register?role=merchant"
-                className="w-full sm:w-auto px-10 py-5 bg-primary text-primary-foreground rounded-md text-sm font-black shadow-none hover:shadow-none hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
+                className="w-full sm:w-auto px-10 py-5 bg-foreground text-background rounded-full text-sm font-semibold shadow-none hover:opacity-90 hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
               >
                 Become a Merchant
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/auth/register?role=partner"
-                className="w-full sm:w-auto px-10 py-5 bg-card border border-border text-foreground rounded-md text-sm font-black hover:bg-secondary/50 transition-all flex items-center justify-center gap-3"
+                className="w-full sm:w-auto px-10 py-5 bg-secondary/80 backdrop-blur-md border border-border/50 text-foreground rounded-full text-sm font-semibold hover:bg-secondary transition-all flex items-center justify-center gap-3"
               >
                 Access API Gateway
                 <Code2 className="w-4 h-4" />
@@ -434,8 +430,6 @@ export default function LandingPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }

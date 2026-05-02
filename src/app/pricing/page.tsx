@@ -9,8 +9,6 @@ import {
   BarChart3, 
   Globe 
 } from 'lucide-react';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
 import { InteractivePricing } from '@/components/InteractivePricing';
 import FAQSupport from '@/components/FAQSupport';
 import { cn } from '@/lib/utils';
@@ -18,8 +16,6 @@ import { cn } from '@/lib/utils';
 export default function PricingPage() {
   return (
     <div className="min-h-screen bg-background selection:bg-primary/20">
-      <Navbar />
-
       <main className="pt-24 md:pt-32">
         {/* ── Hero Section ── */}
         <section className="px-6 py-12 md:py-20 flex flex-col items-center text-center max-w-4xl mx-auto">
@@ -130,8 +126,6 @@ export default function PricingPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }

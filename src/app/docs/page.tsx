@@ -23,15 +23,14 @@ import {
   Code2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
+
 
 export default function PublicDocsPage() {
   const [activeTab, setActiveTab] = useState('getting-started');
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
+      
       
       <main className="max-w-7xl mx-auto px-6 py-20 w-full flex-1">
         <div className="flex flex-col lg:flex-row gap-12">
@@ -429,7 +428,7 @@ Content-Type: application/json
         </div>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

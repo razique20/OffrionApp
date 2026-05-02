@@ -81,10 +81,10 @@ export const Logo = ({ className, iconOnly = false, size = 'md' }: LogoProps) =>
 
       {!iconOnly && (
         <span className={cn(
-          "font-black tracking-tighter text-foreground group-hover:text-white transition-colors duration-300",
+          "font-semibold tracking-tight text-foreground transition-colors duration-300",
           currentSize.text
         )}>
-          Offrion<span className="text-foreground italic">.</span>
+          Offrion<span className="text-foreground opacity-50">.</span>
         </span>
       )}
     </div>
