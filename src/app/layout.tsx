@@ -17,9 +17,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Offrion | Deals-as-a-Service Infrastructure",
-  description: "The scalable deals architecture for modern platforms. Connect merchants with partners through a high-performance, geo-spatial API.",
-  keywords: ["deals-as-a-service", "merchant dashboard", "partner api", "ecommerce infrastructure", "offrion"],
+  title: "Offrion | Local deals that bring in real customers",
+  description: "Offrion connects local businesses with the apps people already use. Merchants pay only for real visits; partner apps reward users and earn 70% on every redemption.",
+  keywords: ["local deals", "merchant offers", "partner api", "deal redemption", "offrion"],
 };
 
 export default function RootLayout({
