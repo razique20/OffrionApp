@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import { comparePassword } from '@/lib/hash';
@@ -34,7 +35,16 @@ export async function POST(req: Request) {
       roles: JSON.parse(JSON.stringify(user.roles && user.roles.length > 0 ? user.roles : [user.role])),
     });
 
-    return NextResponse.json(JSON.parse(JSON.stringify({ 
+    const cookieStore = await cookies();
+    cookieStore.set('token', token, {
+      httpOnly: true,
+      path: '/',
+      maxAge: 60 * 60 * 24,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    return NextResponse.json(JSON.parse(JSON.stringify({
       message: 'Login successful',
       token,
       user: {
@@ -44,12 +54,7 @@ export async function POST(req: Request) {
         role: user.role,
         roles: user.roles && user.roles.length > 0 ? user.roles : [user.role],
       }
-    })), { 
-      status: 200,
-      headers: {
-        'Set-Cookie': `token=${token}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24}; SameSite=Lax${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`
-      }
-    });
+    })), { status: 200 });
 
   } catch (error: any) {
     console.error('LOGIN_API_ERROR:', error);
