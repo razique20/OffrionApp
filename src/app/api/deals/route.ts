@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Deal from '@/models/Deal';
-import APIKey from '@/models/APIKey';
 import User from '@/models/User';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import mongoose from 'mongoose';
@@ -18,13 +17,34 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'API Key is required' }, { status: 401 });
     }
 
+    // Public showcase demo key — serves mock data, no DB lookup needed
+    if (apiKeyHeader === 'sk_sandbox_demo') {
+      const limit = Math.min(Number(searchParams.get('limit') || 20), 100);
+      const deals = MOCK_DEALS.slice(0, limit);
+      return NextResponse.json({
+        page: 1,
+        limit,
+        total: MOCK_DEALS.length,
+        pages: 1,
+        count: deals.length,
+        deals,
+        environment: 'showcase',
+      }, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, x-api-key',
+        },
+      });
+    }
+
     let apiKey;
     try {
       const { validateApiKey } = await import('@/lib/apiKey');
       apiKey = await validateApiKey(apiKeyHeader);
     } catch (err: any) {
       const status = err.message.includes('Rate limit') ? 429 : 403;
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: err.message,
         documentationUrl: '/docs/errors/' + status
       }, { status });

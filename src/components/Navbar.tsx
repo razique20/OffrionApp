@@ -60,15 +60,16 @@ export const Navbar = () => {
             {[
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
+              { label: 'Showcase', href: '/showcase' },
               { label: 'Pricing', href: '/pricing' },
             ].map((link) => (
-              <Link 
+              <Link
                 key={link.label}
-                href={link.href} 
+                href={link.href}
                 className={cn(
                   "text-[12px] font-medium transition-colors whitespace-nowrap",
-                  pathname === link.href 
-                    ? "text-foreground" 
+                  pathname === link.href
+                    ? "text-foreground"
                     : "text-muted-foreground/80 hover:text-foreground"
                 )}
               >
@@ -203,11 +204,12 @@ export const Navbar = () => {
             {[
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
+              { label: 'Showcase', href: '/showcase' },
               { label: 'Pricing', href: '/pricing' },
             ].map((link) => (
-              <Link 
+              <Link
                 key={link.label}
-                href={link.href} 
+                href={link.href}
                 className={cn(
                   "text-3xl font-black tracking-tighter transition-all",
                   pathname === link.href ? "text-foreground" : "text-muted-foreground"

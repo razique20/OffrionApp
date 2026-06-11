@@ -1,24 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  Book, 
-  Code, 
-  Terminal, 
-  Globe, 
-  Shield, 
-  Zap, 
-  Copy, 
+import {
+  Book,
+  Globe,
+  Shield,
+  Zap,
+  Copy,
   CheckCircle2,
-  ChevronRight,
-  Info,
   Layers,
-  MapPin,
-  DollarSign,
   Activity,
   Search,
   List,
-  Target,
   FlaskConical,
   Code2
 } from 'lucide-react';
@@ -87,12 +80,25 @@ export default function PublicDocsPage() {
                   icon={Globe}
                   label="Webhooks" 
                 />
-                <DocNavItem 
-                  active={activeTab === 'sdk-widget'} 
+                <DocNavItem
+                  active={activeTab === 'sdk-widget'}
                   onClick={() => setActiveTab('sdk-widget')}
                   icon={Code2}
-                  label="SDK Widget" 
+                  label="SDK Widget"
                 />
+              </nav>
+            </div>
+
+            <div>
+              <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-4 ml-3">Resources</h4>
+              <nav className="space-y-1">
+                <a
+                  href="/showcase"
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all text-muted-foreground hover:bg-secondary hover:text-foreground"
+                >
+                  <FlaskConical className="w-4 h-4" />
+                  Live Showcase
+                </a>
               </nav>
             </div>
           </aside>
