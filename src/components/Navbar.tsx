@@ -3,20 +3,16 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  ArrowRight, 
-  ShoppingBag, 
-  User, 
-  LogOut, 
+import {
+  ShoppingBag,
+  User,
+  LogOut,
   LayoutDashboard,
-  ChevronDown,
   Moon,
   Sun,
   ShieldCheck,
   Menu,
   X,
-  Search,
-  ShoppingBag as Bag
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useUser } from '@/hooks/useUser';
@@ -44,19 +40,18 @@ export const Navbar = () => {
 
   return (
     <nav className={cn(
-      "fixed top-0 w-full z-50 transition-all duration-300 h-12 flex items-center border-b border-border/40",
-      "bg-background/80 backdrop-blur-md"
+      "fixed top-0 w-full z-50 transition-all duration-300 h-14 flex items-center border-b",
+      isScrolled ? "border-border/60 bg-background/90 backdrop-blur-md" : "border-transparent bg-background/60 backdrop-blur-sm"
     )}>
       <div className="max-w-7xl mx-auto px-6 sm:px-10 flex items-center justify-between w-full">
-        {/* Left: Logo (Icon Only) */}
+        {/* Left: Logo + wordmark */}
         <Link href="/" className="hover:opacity-80 transition-opacity shrink-0">
-          <Logo size="md" iconOnly />
+          <Logo size="md" />
         </Link>
 
-        {/* Right: Combined Links and Actions */}
+        {/* Right: Links + Actions */}
         <div className="flex items-center gap-8">
-          {/* Menus (Right Aligned) */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-1">
             {[
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
@@ -67,13 +62,16 @@ export const Navbar = () => {
                 key={link.label}
                 href={link.href}
                 className={cn(
-                  "text-[12px] font-medium transition-colors whitespace-nowrap",
+                  "relative px-3 py-1.5 text-[12px] font-medium transition-colors whitespace-nowrap rounded-md",
                   pathname === link.href
                     ? "text-foreground"
-                    : "text-muted-foreground/80 hover:text-foreground"
+                    : "text-muted-foreground/80 hover:text-foreground hover:bg-secondary"
                 )}
               >
                 {link.label}
+                {pathname === link.href && (
+                  <span className="absolute bottom-0 left-3 right-3 h-px bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444]" />
+                )}
               </Link>
             ))}
           </div>
@@ -82,7 +80,7 @@ export const Navbar = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-4">
               {mounted && (
                 <button
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
