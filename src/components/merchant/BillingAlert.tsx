@@ -39,12 +39,12 @@ export default function BillingAlert() {
         
         <div className="flex-1 space-y-1">
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-black tracking-tight text-amber-900 dark:text-amber-100">Billing Cycle Settlement Near</h3>
+            <h3 className="alert-heading text-lg font-black tracking-tight">Billing Cycle Settlement Near</h3>
             <span className="px-2 py-0.5 bg-amber-500/20 text-amber-600 rounded-lg text-[10px] font-black uppercase tracking-wider">
                {daysRemaining === 0 ? 'Due Today' : `${daysRemaining} Days Left`}
             </span>
           </div>
-          <p className="text-sm font-medium text-amber-800/70 dark:text-amber-200/50 max-w-2xl">
+          <p className="alert-body text-sm font-medium max-w-2xl">
             Our 15-day fund settlement period is active. Please ensure your payment method is valid or top up your wallet to avoid service interruption during the next settlement cycle.
           </p>
         </div>

@@ -143,6 +143,19 @@
 }
 
 @layer utilities {
+  .alert-heading {
+    color: #111827; /* gray-900 in light theme */
+  }
+  .alert-body {
+    color: #1f2937; /* gray-800 in light theme */
+  }
+  .dark .alert-heading {
+    color: #fef3c7; /* amber-100 in dark theme */
+  }
+  .dark .alert-body {
+    color: rgb(253 230 138 / 0.7); /* amber-200/70 in dark theme */
+  }
+
   .vercel-section {
     @apply bg-card border border-border rounded-md overflow-hidden shadow-none;
   }

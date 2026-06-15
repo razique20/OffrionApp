@@ -1591,7 +1591,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex items-center justify-between p-4 border border-red-500/20 rounded-lg bg-red-500/5">
                       <div>
-                        <p className="text-sm font-bold text-red-400">Delete Account</p>
+                        <p className="text-sm font-bold text-red-700 dark:text-red-400">Delete Account</p>
                         <p className="text-xs opacity-40 mt-0.5">Permanently remove this admin from the system</p>
                       </div>
                       <button

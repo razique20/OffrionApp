@@ -35,35 +35,25 @@ export function CloudinaryUpload({
     setIsUploading(true);
     setError(null);
 
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
-    if (!cloudName || !uploadPreset) {
-      setError('Cloudinary configuration is missing. Check .env.local');
-      setIsUploading(false);
-      return;
-    }
-
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', uploadPreset);
 
     try {
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      // Upload through our own API route. The server reads Cloudinary config
+      // from runtime env (process.env) — no NEXT_PUBLIC_ vars are baked into
+      // this client bundle, so it works in Docker standalone without rebuilds.
+      const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
+        credentials: 'include',
       });
 
+      const data = await response.json().catch(() => ({}));
+
       if (!response.ok) {
-        let errMessage = 'Upload failed';
-        try {
-          const errData = await response.json();
-          errMessage = errData.error?.message || errMessage;
-        } catch (_) {}
-        throw new Error(errMessage);
+        throw new Error(data?.error || 'Upload failed');
       }
 
-      const data = await response.json();
       onUploadSuccess(data.secure_url);
     } catch (err: any) {
       console.error('Error uploading image:', err);
