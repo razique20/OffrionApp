@@ -1,0 +1,22 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        # ${VAR} is interpolated by Compose from the shell env or a file named
+        # exactly `.env` in this directory (NOT from env_file below, which is
+        # runtime-only). Run `cp .env.local .env` before building, or export
+        # these vars. With the /api/upload proxy these are optional at build time.
+        CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+        CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+        NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:-}
+        NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET: ${NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET:-}
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    restart: unless-stopped

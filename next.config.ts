@@ -2,8 +2,9 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   typescript: {
-    ignoreBuildErrors: true,   // ← Add this
+    ignoreBuildErrors: true,
   },
   /* config options here */
 };

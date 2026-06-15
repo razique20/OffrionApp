@@ -1,20 +1,48 @@
-# Build Stage
-FROM node:20-alpine AS builder
+# syntax = docker/dockerfile:1.7
+
+# Base stage
+FROM node:22-alpine AS base
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+
+# Dependencies stage
+FROM base AS deps
+COPY package.json package-lock.json ./
+RUN npm ci --frozen-lockfile --production=false
+
+# Builder stage
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Pass Cloudinary env vars at build time
+ARG CLOUDINARY_API_KEY
+ARG CLOUDINARY_API_SECRET
+ARG NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+ARG NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
+
+ENV CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+ENV CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+ENV NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+ENV NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=${NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+
 RUN npm run build
 
-# Production Stage
-FROM node:20-alpine AS runner
-WORKDIR /app
+# Production runner stage
+FROM base AS runner
 ENV NODE_ENV=production
-COPY --from=builder /app/next.config.mjs ./
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/.next ./.next
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
 
 EXPOSE 3000
-CMD ["npm", "start"]
+
+CMD ["node", "server.js"]
