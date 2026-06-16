@@ -143,9 +143,9 @@ export function InteractivePricing() {
           
           <div className="mt-4 pt-8 border-t border-border/50">
             <button className={cn(
-              "w-full lg:w-auto px-8 py-4 rounded-md text-white font-bold shadow-none transition-transform hover:scale-105 flex items-center justify-center gap-2",
+              "w-full lg:w-auto px-8 py-4 rounded-md font-bold shadow-none transition-transform hover:scale-105 flex items-center justify-center gap-2",
               activeTier.bg,
-              activeTier.id === 'growth' && 'bg-secondary border border-border'
+              activeTier.id === 'starter' ? 'text-foreground' : 'text-white'
             )}>
               {activeTier.id === 'enterprise' ? 'Contact Sales' : 'Start Building Now'}
               <ArrowRight className="w-5 h-5" />

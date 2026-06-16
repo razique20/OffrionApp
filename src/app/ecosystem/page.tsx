@@ -34,58 +34,60 @@ export default function EcosystemPage() {
             </p>
           </div>
 
-          {/* Three roles */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
-            <div className="hidden lg:block absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#A855F7]/20 to-transparent -z-10" />
-
+          {/* Three roles — stacked flow rows */}
+          <div className="max-w-4xl mx-auto flex flex-col gap-5">
             {/* Merchant */}
-            <div className="relative p-8 rounded-3xl border border-border bg-card hover:-translate-y-1 transition-all group overflow-hidden">
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: 'linear-gradient(135deg, #F9731608, transparent)' }} />
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style={{ background: '#F9731615' }}>
-                <ShoppingBag className="w-8 h-8" style={{ color: '#F97316' }} />
+            <div className="relative group flex flex-col sm:flex-row sm:items-center gap-6 p-6 sm:p-8 rounded-2xl border border-border bg-card hover:border-[#F97316]/40 transition-colors">
+              <div className="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center" style={{ background: '#F9731615' }}>
+                <ShoppingBag className="w-7 h-7" style={{ color: '#F97316' }} />
               </div>
-              <h4 className="text-2xl font-bold mb-4" style={{ color: '#F97316' }}>The Merchant</h4>
-              <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                Publishes deals and manages inventory. Only pays a platform fee on successful redemptions. No upfront costs.
-              </p>
-              <div className="pt-6 border-t border-border flex items-center justify-between text-sm">
-                <span className="font-medium text-muted-foreground">Revenue Retention</span>
-                <span className="font-bold text-xl bg-gradient-to-r from-[#F97316] to-[#EF4444] bg-clip-text text-transparent">85–95%</span>
+              <div className="flex-1">
+                <h4 className="text-xl font-bold mb-1.5" style={{ color: '#F97316' }}>The Merchant</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Publishes deals and manages inventory. Only pays a platform fee on successful redemptions. No upfront costs.
+                </p>
+              </div>
+              <div className="sm:text-right shrink-0 sm:pl-6 sm:border-l border-border">
+                <div className="text-xs font-medium text-muted-foreground mb-1">Revenue Retention</div>
+                <div className="font-bold text-2xl bg-gradient-to-r from-[#F97316] to-[#EF4444] bg-clip-text text-transparent">85–95%</div>
               </div>
             </div>
 
             {/* Partner — featured */}
-            <div className="relative p-8 rounded-3xl overflow-hidden group hover:-translate-y-1 transition-all"
-              style={{ background: 'linear-gradient(135deg, #A855F7, #F97316)' }}>
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                <Users className="w-24 h-24 text-white" />
+            <div className="relative group flex flex-col sm:flex-row sm:items-center gap-6 p-6 sm:p-8 rounded-2xl border border-[#A855F7]/40 bg-card overflow-hidden ring-1 ring-[#A855F7]/10 transition-colors hover:border-[#A855F7]/60">
+              <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(135deg, #A855F708, transparent 60%)' }} />
+              <div className="relative w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center" style={{ background: '#A855F715' }}>
+                <Globe className="w-7 h-7" style={{ color: '#A855F7' }} />
               </div>
-              <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-6">
-                <Globe className="w-8 h-8 text-white" />
+              <div className="relative flex-1">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <h4 className="text-xl font-bold" style={{ color: '#A855F7' }}>The Partner</h4>
+                  <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full text-[#A855F7]" style={{ background: '#A855F715' }}>Earns most</span>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Integrates the deals API into their apps — Fintech, E-commerce, Social. Earns the lion's share of the generated commission.
+                </p>
               </div>
-              <h4 className="text-2xl font-bold mb-4 text-white">The Partner</h4>
-              <p className="text-sm text-white/80 mb-6 leading-relaxed">
-                Integrates the deals API into their apps — Fintech, E-commerce, Social. Earns the lion's share of the generated commission.
-              </p>
-              <div className="pt-6 border-t border-white/20 flex items-center justify-between text-sm">
-                <span className="font-medium text-white/60">Commission Share</span>
-                <span className="font-bold text-2xl text-white">70%</span>
+              <div className="relative sm:text-right shrink-0 sm:pl-6 sm:border-l border-[#A855F7]/20">
+                <div className="text-xs font-medium text-muted-foreground mb-1">Commission Share</div>
+                <div className="font-bold text-3xl bg-gradient-to-r from-[#A855F7] to-[#F97316] bg-clip-text text-transparent">70%</div>
               </div>
             </div>
 
             {/* Platform */}
-            <div className="relative p-8 rounded-3xl border border-border bg-card hover:-translate-y-1 transition-all group overflow-hidden">
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: 'linear-gradient(135deg, #A855F708, transparent)' }} />
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style={{ background: '#A855F715' }}>
-                <Zap className="w-8 h-8" style={{ color: '#A855F7' }} />
+            <div className="relative group flex flex-col sm:flex-row sm:items-center gap-6 p-6 sm:p-8 rounded-2xl border border-border bg-card hover:border-[#A855F7]/40 transition-colors">
+              <div className="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center" style={{ background: '#A855F715' }}>
+                <Zap className="w-7 h-7" style={{ color: '#A855F7' }} />
               </div>
-              <h4 className="text-2xl font-bold mb-4" style={{ color: '#A855F7' }}>The Platform</h4>
-              <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                The Offrion core handles geo-indexing, API high-concurrency, security, and automated commission settlements.
-              </p>
-              <div className="pt-6 border-t border-border flex items-center justify-between text-sm">
-                <span className="font-medium text-muted-foreground">Platform Share</span>
-                <span className="font-bold text-xl bg-gradient-to-r from-[#A855F7] to-[#F97316] bg-clip-text text-transparent">30%</span>
+              <div className="flex-1">
+                <h4 className="text-xl font-bold mb-1.5" style={{ color: '#A855F7' }}>The Platform</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  The Offrion core handles geo-indexing, API high-concurrency, security, and automated commission settlements.
+                </p>
+              </div>
+              <div className="sm:text-right shrink-0 sm:pl-6 sm:border-l border-border">
+                <div className="text-xs font-medium text-muted-foreground mb-1">Platform Share</div>
+                <div className="font-bold text-2xl bg-gradient-to-r from-[#A855F7] to-[#F97316] bg-clip-text text-transparent">30%</div>
               </div>
             </div>
           </div>

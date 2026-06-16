@@ -29,6 +29,11 @@ export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
+  const dashboardHref = pathname.startsWith('/merchant') ? '/merchant/dashboard' :
+    pathname.startsWith('/admin') ? '/admin/dashboard' :
+    pathname.startsWith('/partner') ? '/partner/dashboard' :
+    user?.role === 'super_admin' ? '/admin/dashboard' : `/${user?.role}/dashboard`;
+
   React.useEffect(() => {
     setMounted(true);
     const handleScroll = () => {
@@ -57,6 +62,7 @@ export const Navbar = () => {
               { label: 'Docs', href: '/docs' },
               { label: 'Showcase', href: '/showcase' },
               { label: 'Pricing', href: '/pricing' },
+              ...(user ? [{ label: 'Dashboard', href: dashboardHref }] : []),
             ].map((link) => (
               <Link
                 key={link.label}
@@ -113,11 +119,8 @@ export const Navbar = () => {
                            <p className="text-sm font-bold truncate">{user.name}</p>
                         </div>
 
-                        <Link 
-                          href={pathname.startsWith('/merchant') ? '/merchant/dashboard' : 
-                                pathname.startsWith('/admin') ? '/admin/dashboard' : 
-                                pathname.startsWith('/partner') ? '/partner/dashboard' : 
-                                user.role === 'super_admin' ? '/admin/dashboard' : `/${user.role}/dashboard`}
+                        <Link
+                          href={dashboardHref}
                           className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold hover:bg-secondary transition-colors"
                           onClick={() => setShowDropdown(false)}
                         >
@@ -204,6 +207,7 @@ export const Navbar = () => {
               { label: 'Docs', href: '/docs' },
               { label: 'Showcase', href: '/showcase' },
               { label: 'Pricing', href: '/pricing' },
+              ...(user ? [{ label: 'Dashboard', href: dashboardHref }] : []),
             ].map((link) => (
               <Link
                 key={link.label}
@@ -219,17 +223,29 @@ export const Navbar = () => {
             ))}
           </div>
           
-          {!user && (
+          {user ? (
             <div className="flex flex-col gap-4 mt-4 pt-8 border-t border-border/30">
-              <Link 
-                href="/auth/login" 
+              <button
+                onClick={() => {
+                  logout();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black text-destructive"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4 mt-4 pt-8 border-t border-border/30">
+              <Link
+                href="/auth/login"
                 className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Sign In
               </Link>
-              <Link 
-                href="/auth/register" 
+              <Link
+                href="/auth/register"
                 className="w-full py-4 text-center rounded-full bg-foreground text-background text-sm font-semibold shadow-none"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
