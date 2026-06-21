@@ -26,7 +26,7 @@ const TIERS = [
     price: '$49/mo',
     fee: 10, // 10% platform fee
     retention: 90,
-    color: 'text-white',
+    color: 'text-foreground',
     bg: 'bg-primary',
     features: ['Unlimited Active Deals', 'Global Network Distribution', 'Advanced Real-time Analytics', 'Priority API Support'],
     description: "For scaling platforms and ambitious merchants ready to expand their reach.",
@@ -40,7 +40,7 @@ const TIERS = [
     price: 'Custom',
     fee: 5, // 5% platform fee
     retention: 95,
-    color: 'text-white/70',
+    color: 'text-muted-foreground',
     bg: 'bg-primary/70',
     features: ['White-label Merchant Portal', 'Dedicated Node Cluster', 'Custom SLA Guarantee', 'On-premise Database Sync'],
     description: "Mission-critical deals infrastructure for globally massive Super Apps.",
@@ -93,8 +93,8 @@ export function InteractivePricing() {
           {/* Revenue Split Bar */}
           <div className="w-full max-w-xs relative h-16 rounded-full overflow-hidden flex bg-secondary shadow-inner ring-1 ring-black/5 dark:ring-white/5">
             {/* User Retention */}
-            <div 
-              className={cn("h-full flex items-center justify-center font-bold text-white transition-all duration-700 ease-out", activeTier.bg)}
+            <div
+              className={cn("h-full flex items-center justify-center font-bold transition-all duration-700 ease-out", activeTier.bg, activeTier.id === 'starter' ? 'text-foreground' : 'text-primary-foreground')}
               style={{ width: `${activeTier.retention}%` }}
             >
               <span className="opacity-0 lg:opacity-100">{activeTier.retention}% You</span>
@@ -145,7 +145,7 @@ export function InteractivePricing() {
             <button className={cn(
               "w-full lg:w-auto px-8 py-4 rounded-md font-bold shadow-none transition-transform hover:scale-105 flex items-center justify-center gap-2",
               activeTier.bg,
-              activeTier.id === 'starter' ? 'text-foreground' : 'text-white'
+              activeTier.id === 'starter' ? 'text-foreground' : 'text-primary-foreground'
             )}>
               {activeTier.id === 'enterprise' ? 'Contact Sales' : 'Start Building Now'}
               <ArrowRight className="w-5 h-5" />

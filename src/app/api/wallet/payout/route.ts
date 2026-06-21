@@ -11,7 +11,9 @@ export async function POST(req: Request) {
     await dbConnect();
     const userId = req.headers.get('x-user-id');
     const role = req.headers.get('x-user-role');
-    const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+    // Server-only flag (not NEXT_PUBLIC_*, which is inlined at build time and
+    // would let payouts skip the Stripe bank-link check). Defaults to off.
+    const isDemoMode = process.env.DEMO_MODE === 'true';
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

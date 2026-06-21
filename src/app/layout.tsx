@@ -16,10 +16,32 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://offrion.com";
+const siteTitle = "Offrion | Local deals that bring in real customers";
+const siteDescription =
+  "Offrion connects local businesses with the apps people already use. Merchants pay only for real visits; partner apps reward users and earn 70% on every redemption.";
+
 export const metadata: Metadata = {
-  title: "Offrion | Local deals that bring in real customers",
-  description: "Offrion connects local businesses with the apps people already use. Merchants pay only for real visits; partner apps reward users and earn 70% on every redemption.",
+  metadataBase: new URL(siteUrl),
+  title: siteTitle,
+  description: siteDescription,
   keywords: ["local deals", "merchant offers", "partner api", "deal redemption", "offrion"],
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    siteName: "Offrion",
+    title: siteTitle,
+    description: siteDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
