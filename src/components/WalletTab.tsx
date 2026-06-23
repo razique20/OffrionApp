@@ -80,11 +80,44 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
       const res = await fetch('/api/wallet/onboard', { method: 'POST' });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Onboarding failed');
-      
+
       // Redirect to Stripe
       window.location.href = json.url;
     } catch (err: any) {
       alert(err.message);
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDownloadReport = () => {
+    // Streams a CSV statement of all recorded money movements.
+    window.open('/api/wallet/report?format=csv', '_blank');
+  };
+
+  const handleSettle = async () => {
+    const liability = stats?.accruedLiability || 0;
+    const balance = stats?.balance || 0;
+    if (liability <= 0) return;
+    if (balance <= 0) {
+      alert('Insufficient wallet balance. Top up your wallet to settle this liability.');
+      return;
+    }
+    const willSettle = Math.min(balance, liability);
+    const partial = willSettle < liability;
+    const confirmMsg = partial
+      ? `Your balance (${formatCurrency(balance)}) only covers part of the ${formatCurrency(liability)} liability. Settle ${formatCurrency(willSettle)} now from your balance?`
+      : `Settle the full ${formatCurrency(liability)} liability from your wallet balance?`;
+    if (!confirm(confirmMsg)) return;
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch('/api/wallet/settle', { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Settlement failed');
+      await fetchData(true);
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -162,7 +195,14 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
           <p className="text-muted-foreground text-sm">Manage your balances and withdrawal settings.</p>
         </div>
         <div className="flex gap-3">
-          <button 
+          <button
+            onClick={handleDownloadReport}
+            className="px-5 py-2.5 bg-secondary text-xs font-bold rounded-md hover:bg-secondary/80 transition-all flex items-center gap-2"
+            title="Download a CSV statement of all money movements"
+          >
+            <Download className="w-4 h-4" /> Report
+          </button>
+          <button
             onClick={bankStatus?.isConnected ? () => setIsBankModalOpen(true) : handleOnboard}
             className="px-5 py-2.5 bg-secondary text-xs font-bold rounded-md hover:bg-secondary/80 transition-all flex items-center gap-2"
           >
@@ -236,12 +276,12 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
           </>
         ) : (
           <>
-            <StatCard 
-              title="Wallet Balance" 
-              value={formatCurrency(stats?.balance || 0)} 
+            <StatCard
+              title="Wallet Balance"
+              value={formatCurrency(stats?.balance || 0)}
               label="Available for redemptions"
               icon={Wallet}
-              color="text-white"
+              color="text-foreground"
               bg="bg-secondary"
               primary
             />
@@ -261,13 +301,23 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
               color="text-emerald-500"
               bg="bg-emerald-500/10"
             />
-            <StatCard 
-              title="Accrued Liability" 
-              value={formatCurrency(stats.accruedLiability || 0)} 
-              label={stats?.creditLimit > 0 ? `Credit Limit: ${formatCurrency(stats.creditLimit)} max` : 'To be cleared manually'}
+            <StatCard
+              title="Accrued Liability"
+              value={formatCurrency(stats.accruedLiability || 0)}
+              label={stats?.creditLimit > 0 ? `Credit Limit: ${formatCurrency(stats.creditLimit)} max` : 'Unbilled commissions'}
               icon={AlertCircle}
               color="text-amber-500"
               bg="bg-amber-500/10"
+              action={(stats.accruedLiability || 0) > 0 && (
+                <button
+                  onClick={handleSettle}
+                  disabled={isSubmitting}
+                  title={(stats?.balance || 0) <= 0 ? 'Top up your wallet balance to settle' : 'Settle from wallet balance'}
+                  className="mt-5 w-full py-2.5 rounded-md text-xs font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20 hover:bg-amber-500 hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Settle from Balance'}
+                </button>
+              )}
             />
           </>
         )}
@@ -480,7 +530,7 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
                  </div>
                  <button 
                    onClick={handleOnboard}
-                   className="w-full py-4 bg-primary text-foreground font-bold rounded-md shadow-none shadow-primary/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                   className="w-full py-4 bg-primary text-primary-foreground font-bold rounded-md shadow-none shadow-primary/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
                  >
                     {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Plus className="w-5 h-5" /> {bankStatus?.isConnected ? 'Update Info on Stripe' : 'Start Stripe Onboarding'}</>}
                  </button>
@@ -493,7 +543,7 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
   );
 }
 
-function StatCard({ title, value, label, icon: Icon, color, bg, primary }: any) {
+function StatCard({ title, value, label, icon: Icon, color, bg, primary, action }: any) {
   return (
     <div className={cn(
       "p-8 rounded-[36px] border border-border shadow-none group hover:shadow-none transition-all relative overflow-hidden",
@@ -510,6 +560,7 @@ function StatCard({ title, value, label, icon: Icon, color, bg, primary }: any) 
         <p className="text-sm font-bold opacity-80">{title}</p>
         <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-2">{label}</p>
       </div>
+      {action}
     </div>
   );
 }
