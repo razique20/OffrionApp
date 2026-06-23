@@ -251,7 +251,7 @@ export default function ApiKeysPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <button onClick={() => toggleKeyStatus(displayId, key.isActive)} className={cn("p-2 rounded-lg transition-all text-[10px] font-bold", key.isActive ? "text-muted-foreground hover:bg-destructive/10 hover:text-destructive" : "text-white hover:bg-secondary")} title={key.isActive ? "Deactivate" : "Activate"}>
+                        <button onClick={() => toggleKeyStatus(displayId, key.isActive)} className={cn("p-2 rounded-lg transition-all text-[10px] font-bold", key.isActive ? "text-muted-foreground hover:bg-destructive/10 hover:text-destructive" : "text-foreground hover:bg-secondary")} title={key.isActive ? "Deactivate" : "Activate"}>
                           {key.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                         <button onClick={() => handleDeleteKey(displayId)} className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all">
@@ -294,7 +294,7 @@ export default function ApiKeysPage() {
                         <button onClick={() => setShowKeyId(isRevealed ? null : displayId)} className="p-1.5 hover:bg-background rounded-md text-muted-foreground">
                           {isRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         </button>
-                        <button onClick={() => copyToClipboard(key.key)} className={cn("p-1.5 rounded-md", copiedKey === key.key ? "bg-secondary text-white border border-border" : "hover:bg-background text-muted-foreground")}>
+                        <button onClick={() => copyToClipboard(key.key)} className={cn("p-1.5 rounded-md", copiedKey === key.key ? "bg-secondary text-foreground border border-border" : "hover:bg-background text-muted-foreground")}>
                           {copiedKey === key.key ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                       </div>

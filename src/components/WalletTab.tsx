@@ -343,7 +343,7 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
                            <div className="flex items-center gap-3">
                               <div className={cn(
                                 "w-10 h-10 rounded-md flex items-center justify-center",
-                                item.type === 'commission' ? "bg-secondary text-white" : "bg-red-500/10 text-red-500"
+                                item.type === 'commission' ? "bg-secondary text-foreground" : "bg-red-500/10 text-red-500"
                               )}>
                                  {item.type === 'commission' ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
                               </div>
@@ -392,7 +392,7 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
                        onClick={() => setTopupAmount(amt)}
                        className={cn(
                           "py-2 text-xs font-bold rounded-lg border transition-all",
-                          topupAmount === amt ? "bg-secondary border-primary text-white" : "bg-secondary/50 border-border text-muted-foreground hover:bg-secondary"
+                          topupAmount === amt ? "bg-secondary border-primary text-foreground" : "bg-secondary/50 border-border text-muted-foreground hover:bg-secondary"
                        )}
                     >
                        ${amt}

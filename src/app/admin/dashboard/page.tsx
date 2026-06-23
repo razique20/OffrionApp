@@ -445,7 +445,7 @@ export default function AdminDashboard() {
   const dashboardStats = [
     { name: 'Merchants', value: stats?.merchants || '0', icon: ShoppingBag, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { name: 'Partners', value: stats?.partners || '0', icon: Users, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-    { name: 'Revenue', value: `$${stats?.revenue?.toLocaleString() || '0'}`, icon: TrendingUp, color: 'text-white', bg: 'bg-secondary' },
+    { name: 'Revenue', value: `$${stats?.revenue?.toLocaleString() || '0'}`, icon: TrendingUp, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
     { name: 'Active Deals', value: stats?.deals || '0', icon: Layers, color: 'text-amber-500', bg: 'bg-amber-500/10' },
   ];
 
@@ -465,9 +465,9 @@ export default function AdminDashboard() {
                   onClick={() => setActiveTab(tab)}
                   className={cn(
                     "flex items-center gap-2 py-4 text-sm font-medium transition-all relative whitespace-nowrap",
-                    isActive 
-                      ? "text-white" 
-                      : "text-[#888] hover:text-white"
+                    isActive
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   <span className="capitalize">{tab}</span>
@@ -477,7 +477,7 @@ export default function AdminDashboard() {
                     </span>
                   )}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white rounded-t-full" />
+                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-foreground rounded-t-full" />
                   )}
                 </button>
               );
@@ -501,7 +501,7 @@ export default function AdminDashboard() {
         <div className="max-w-6xl mx-auto px-6 lg:px-12 relative z-10 w-full animate-fade-in flex-1 flex flex-col">
           {/* Subtle Dynamic Header */}
           <header className="mb-8">
-          <div className="flex items-center gap-2 text-[10px] text-[#888] uppercase tracking-[0.2em] font-black mb-2 opacity-80">
+          <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-black mb-2 opacity-80">
             <span>Foundation</span>
             <ChevronRight className="w-3 h-3 opacity-30" />
             <span className="text-foreground">{activeTab}</span>

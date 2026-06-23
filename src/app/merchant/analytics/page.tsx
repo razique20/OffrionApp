@@ -68,7 +68,7 @@ function MerchantAnalyticsContent() {
     { name: 'Impressions', value: data?.stats?.impressions || 0, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { name: 'Clicks', value: data?.stats?.clicks || 0, icon: MousePointer2, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     { name: 'Conversions', value: data?.stats?.conversions || 0, icon: ShoppingBag, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { name: 'Net Revenue', value: formatCurrency(data?.stats?.netRevenue || 0), icon: DollarSign, color: 'text-white', bg: 'bg-secondary' },
+    { name: 'Net Revenue', value: formatCurrency(data?.stats?.netRevenue || 0), icon: DollarSign, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
   ];
 
   return (

@@ -131,7 +131,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
   const renderItems = (itemsToRender: SidebarItem[], label?: string) => (
     <nav className={cn("space-y-1 w-full", isMinimized ? "px-2" : "px-4")}>
       {!isMinimized && label && itemsToRender.length > 0 && (
-        <p className="px-3 mb-2 mt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-50">
+        <p className="px-3 mb-2 mt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
           {label}
         </p>
       )}
@@ -148,7 +148,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
               isMinimized ? "md:justify-center p-3" : "gap-3 px-3 py-2",
               isActive 
                 ? "bg-secondary text-foreground" 
-                : "text-[#888] hover:bg-secondary hover:text-foreground"
+                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
             )}
           >
             <Icon className={cn("flex-shrink-0", isMinimized ? "md:w-6 md:h-6 w-5 h-5" : "w-5 h-5")} />
@@ -224,7 +224,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
               href="/admin/dashboard" 
               title={isMinimized ? "Admin Governance" : undefined}
               className={cn(
-                "flex items-center rounded-lg text-sm font-medium transition-all text-[#888] hover:bg-secondary hover:text-foreground",
+                "flex items-center rounded-lg text-sm font-medium transition-all text-muted-foreground hover:bg-secondary hover:text-foreground",
                 isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2"
               )}>
                 <ShieldCheck className={cn("flex-shrink-0", isMinimized ? "w-6 h-6" : "w-5 h-5")} />
@@ -244,7 +244,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
             <Link 
               href={role === 'merchant' ? '/partner/dashboard' : '/merchant/dashboard'} 
               className={cn(
-                "flex items-center rounded-lg text-sm font-medium transition-all border border-border bg-card text-[#888] hover:bg-secondary hover:text-foreground mt-2",
+                "flex items-center rounded-lg text-sm font-medium transition-all border border-border bg-card text-muted-foreground hover:bg-secondary hover:text-foreground mt-2",
                 isMinimized ? "justify-center p-3" : "gap-3 px-3 py-2"
               )}>
                 {role === 'merchant' ? <Handshake className="w-5 h-5" /> : <Briefcase className="w-5 h-5" />}
@@ -325,7 +325,7 @@ export default function Sidebar({ items, role = 'merchant' }: SidebarProps) {
               </button>
               <button 
                 onClick={actualLogout} 
-                className="flex-1 py-3 text-xs font-bold bg-[#E00] text-foreground rounded-md hover:bg-[#C00] transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3 text-xs font-bold bg-destructive text-white rounded-md hover:bg-destructive/90 transition-all flex items-center justify-center gap-2"
               >
                 Logout
               </button>

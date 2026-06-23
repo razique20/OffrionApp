@@ -247,7 +247,7 @@ export default function MerchantSupportPage() {
                          <div className={cn(
                            "p-4 rounded-md text-sm leading-relaxed border transition-all",
                            res.senderRole === 'merchant' 
-                             ? "bg-secondary text-white border border-border border-transparent shadow-none shadow-primary/10" 
+                             ? "bg-secondary text-foreground border border-border border-transparent shadow-none shadow-primary/10"
                              : "bg-background border-border shadow-none "
                          )}>
                             {res.message}
@@ -322,7 +322,7 @@ export default function MerchantSupportPage() {
                               className={cn(
                                 "py-2 px-3 rounded-md border text-[10px] font-bold transition-all",
                                 newTicket.category === cat.id 
-                                  ? "bg-secondary border-primary text-white shadow-none" 
+                                  ? "bg-secondary border-primary text-foreground shadow-none"
                                   : "bg-secondary/40 border-border text-muted-foreground hover:bg-secondary/60"
                               )}
                             >

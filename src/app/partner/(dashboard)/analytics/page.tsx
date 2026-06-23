@@ -68,7 +68,7 @@ function AnalyticsContent() {
     { name: 'Impressions', value: data.summary.impressions, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { name: 'Clicks', value: data.summary.clicks, icon: MousePointer2, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     { name: 'Conversions', value: data.summary.conversions, icon: ShoppingBag, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { name: 'Total Earned', value: formatCurrency(data.summary.totalEarned), icon: DollarSign, color: 'text-white', bg: 'bg-secondary' },
+    { name: 'Total Earned', value: formatCurrency(data.summary.totalEarned), icon: DollarSign, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
   ];
 
   // Prepare Funnel Data

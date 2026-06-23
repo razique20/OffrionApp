@@ -240,7 +240,7 @@ export default function MerchantRedeemPage() {
               className={cn(
                 "w-full max-w-xs mx-auto flex items-center justify-center gap-3 py-4 px-6 rounded-md text-sm font-bold transition-all duration-300",
                 code.replace(/\s/g, '').length === 6
-                  ? "bg-secondary text-white border border-border shadow-none hover:shadow-none hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
+                  ? "bg-secondary text-foreground border border-border shadow-none hover:shadow-none hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
                   : "bg-secondary text-muted-foreground cursor-not-allowed"
               )}
             >
