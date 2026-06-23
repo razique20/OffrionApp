@@ -61,7 +61,7 @@ export const Navbar = () => {
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
               { label: 'Showcase', href: '/showcase' },
-              { label: 'Pricing', href: '/pricing' },
+              { label: 'Beta', href: '/pricing' },
               ...(user ? [{ label: 'Dashboard', href: dashboardHref }] : []),
             ].map((link) => (
               <Link
@@ -206,7 +206,7 @@ export const Navbar = () => {
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
               { label: 'Showcase', href: '/showcase' },
-              { label: 'Pricing', href: '/pricing' },
+              { label: 'Beta', href: '/pricing' },
               ...(user ? [{ label: 'Dashboard', href: dashboardHref }] : []),
             ].map((link) => (
               <Link
