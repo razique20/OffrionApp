@@ -29,6 +29,7 @@ export async function GET(req: Request) {
           query: {
             isActive: true,
             status: 'active',
+            validUntil: { $gte: new Date() }, // never serve expired deals
             ...(categoryId ? { categoryId: new mongoose.Types.ObjectId(categoryId) } : {})
           },
           spherical: true

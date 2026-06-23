@@ -77,7 +77,7 @@ export default function MerchantDashboard() {
   const stats = [
     { name: 'Total Sales', value: formatCurrency(data.stats.totalSales), icon: ShoppingBag, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { name: 'Total Conversions', value: data.stats.conversions, icon: Users, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-    { name: 'Net Revenue', value: formatCurrency(data.stats.netRevenue), icon: DollarSign, color: 'text-white', bg: 'bg-secondary' },
+    { name: 'Net Revenue', value: formatCurrency(data.stats.netRevenue), icon: DollarSign, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
     { name: 'Commission Paid', value: formatCurrency(data.stats.totalCommission), icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-500/10' },
   ];
 
@@ -114,8 +114,13 @@ export default function MerchantDashboard() {
         </div>
       )}
 
-      {/* Expiry Alerts Section */}
-      {data.topDeals.some((d: any) => d.dealInfo?.validUntil && new Date(d.dealInfo.validUntil).getTime() < Date.now() + 72 * 60 * 60 * 1000) && (
+      {/* Expiry Alerts Section — only deals that are still live AND expire within the next 72h */}
+      {data.topDeals.some((d: any) => {
+        if (!d.dealInfo?.validUntil) return false;
+        const expiry = new Date(d.dealInfo.validUntil).getTime();
+        const now = Date.now();
+        return expiry > now && expiry < now + 72 * 60 * 60 * 1000;
+      }) && (
         <div className="p-6 bg-muted border border-border rounded-md flex items-center justify-between mt-4">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-red-500/10 rounded-md flex items-center justify-center">

@@ -18,7 +18,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ error: 'Invalid or inactive API Key' }, { status: 401 });
     }
 
-    const deal = await Deal.findOne({ _id: id, isActive: true })
+    const deal = await Deal.findOne({ _id: id, isActive: true, validUntil: { $gte: new Date() } })
       .populate('categoryId', 'name slug');
 
     if (!deal) {
