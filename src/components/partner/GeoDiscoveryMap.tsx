@@ -275,7 +275,7 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
                 <p className="text-[11px] text-muted-foreground font-medium mt-1 uppercase tracking-tighter opacity-80">{deal.merchantId?.name}</p>
                 <div className="flex items-center justify-between mt-4">
                   <p className="text-sm font-bold text-foreground">{formatCurrency(deal.discountedPrice)}</p>
-                  <div className="p-1.5 bg-secondary rounded-lg group-hover/card:bg-primary group-hover/card:text-foreground transition-colors">
+                  <div className="p-1.5 bg-secondary rounded-lg group-hover/card:bg-primary group-hover/card:text-primary-foreground transition-colors">
                     <ChevronRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
@@ -287,7 +287,7 @@ export function GeoDiscoveryMap({ trackingKey }: { trackingKey?: string }) {
         <div className="pt-4 mt-auto">
           <button 
             onClick={handleOpenAdvancedSearch}
-            className="w-full py-3 bg-secondary rounded-md text-[11px] font-bold uppercase tracking-widest hover:bg-primary hover:text-foreground transition-all">
+            className="w-full py-3 bg-secondary rounded-md text-[11px] font-bold uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all">
             Open Advanced Search
           </button>
         </div>

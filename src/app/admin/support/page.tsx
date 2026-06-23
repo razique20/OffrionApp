@@ -282,7 +282,7 @@ export default function AdminSupportPage() {
                        <button 
                           onClick={() => handleSendReply('in_progress')}
                           disabled={!replyMessage || submitting || selectedTicket.status === 'closed'}
-                          className="p-2.5 bg-primary text-foreground rounded-md shadow-none hover:scale-[1.05] active:scale-[0.95] transition-all disabled:opacity-0 disabled:scale-0"
+                          className="p-2.5 bg-primary text-primary-foreground rounded-md shadow-none hover:scale-[1.05] active:scale-[0.95] transition-all disabled:opacity-0 disabled:scale-0"
                        >
                           {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                        </button>

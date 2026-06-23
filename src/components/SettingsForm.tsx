@@ -818,7 +818,7 @@ export default function SettingsForm() {
                                )}
                                
                                <div className="mb-4">
-                                  <h5 className="font-bold text-base">{plan.name} {isCurrent && <span className="ml-1 text-[10px] bg-primary text-foreground px-1.5 py-0.5 rounded-full uppercase tracking-tighter">Current</span>}</h5>
+                                  <h5 className="font-bold text-base">{plan.name} {isCurrent && <span className="ml-1 text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full uppercase tracking-tighter">Current</span>}</h5>
                                   <div className="flex items-baseline gap-1 mt-1">
                                     <span className="text-2xl font-black">{plan.price}</span>
                                     {plan.id !== 'enterprise' && <span className="text-[10px] text-muted-foreground font-bold uppercase">/mo</span>}

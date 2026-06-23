@@ -58,7 +58,7 @@ export function LastCallDeals() {
                     <p className="text-[10px] text-muted-foreground font-medium">Starting from</p>
                     <p className="text-xl font-bold text-foreground">{formatCurrency(deal.amount)}</p>
                   </div>
-                  <Link href={`/deals/${deal.id}`} className="p-3 bg-secondary rounded-md group-hover:bg-primary group-hover:text-foreground transition-colors">
+                  <Link href={`/deals/${deal.id}`} className="p-3 bg-secondary rounded-md group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                     <ArrowRight className="w-5 h-5" />
                   </Link>
                 </div>
