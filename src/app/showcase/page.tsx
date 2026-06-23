@@ -27,6 +27,15 @@ import {
   CheckCheck,
   Sparkles,
   ChevronDown,
+  Globe,
+  Search,
+  Lock,
+  Plane,
+  Wallet,
+  Users,
+  Store,
+  Building2,
+  Webhook,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -190,22 +199,20 @@ const { redeemCode, transactionId } = await res.json();
 
         {/* Deal image + details */}
         <div className="p-5 space-y-4">
-          {deal.images?.[0] && (
-            <div className="relative rounded-lg overflow-hidden h-44">
-              <img src={deal.images[0]} alt={deal.title} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                <span className="bg-primary text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full">
-                  {deal.discountPercentage}% OFF
+          <div className="relative rounded-lg overflow-hidden h-44">
+            <DealImage src={deal.images?.[0]} alt={deal.title} className="w-full h-full" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            <div className="absolute bottom-3 left-3 flex items-center gap-2">
+              <span className="bg-primary text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full">
+                {deal.discountPercentage}% OFF
+              </span>
+              {deal.isHot && (
+                <span className="bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                  <Flame className="w-3 h-3" /> HOT
                 </span>
-                {deal.isHot && (
-                  <span className="bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-                    <Flame className="w-3 h-3" /> HOT
-                  </span>
-                )}
-              </div>
+              )}
             </div>
-          )}
+          </div>
 
           <p className="text-sm text-muted-foreground leading-relaxed">{deal.description}</p>
 
@@ -522,18 +529,38 @@ export default function ShowcasePage() {
           </div>
         </div>
 
+        {/* How the system works */}
+        <HowItWorks />
+
+        {/* Partner website mockups */}
+        <PartnerSiteMockups />
+
         {/* Integration ideas */}
         <div className="mt-24 border-t border-border pt-16">
           <h2 className="text-2xl font-bold mb-2">What partners are building</h2>
-          <p className="text-muted-foreground mb-10">Real integration patterns used in production.</p>
+          <p className="text-muted-foreground mb-10 max-w-2xl">
+            Real integration patterns used in production. Each one is the same{' '}
+            <code className="text-xs font-mono px-1 py-0.5 bg-secondary rounded">/api/deals</code> call, shaped by a few
+            query params into a completely different experience.
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {INTEGRATION_IDEAS.map(idea => (
-              <div key={idea.title} className="border border-border rounded-lg p-6 bg-card hover:border-foreground/20 transition-colors">
-                <div className="w-9 h-9 rounded-md bg-secondary flex items-center justify-center mb-4">
-                  <idea.icon className="w-4 h-4 text-foreground" />
+              <div key={idea.title} className="border border-border rounded-xl p-5 bg-card hover:border-foreground/20 hover:-translate-y-0.5 transition-all">
+                {/* Visual preview of the integration */}
+                <IdeaVisual idea={idea} />
+
+                <div className="flex items-center gap-2.5 mt-4 mb-2">
+                  <div className="w-8 h-8 rounded-md bg-secondary border border-border flex items-center justify-center shrink-0">
+                    <idea.icon className={cn('w-4 h-4', idea.accent)} />
+                  </div>
+                  <h3 className="font-bold text-sm">{idea.title}</h3>
                 </div>
-                <h3 className="font-bold text-sm mb-2">{idea.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed mb-4">{idea.desc}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed mb-3">{idea.desc}</p>
+
+                <code className="block px-2.5 py-1.5 bg-slate-950 rounded text-[10px] font-mono text-emerald-300 overflow-x-auto mb-3">
+                  {idea.endpoint}
+                </code>
+
                 <div className="flex flex-wrap gap-1.5">
                   {idea.params.map(p => (
                     <span key={p} className="px-2 py-0.5 bg-secondary border border-border rounded text-[10px] font-mono text-muted-foreground">{p}</span>
@@ -561,14 +588,21 @@ function PreviewRenderer({ variant, deals, onDealClick }: { variant: ShowcaseVar
   }
 }
 
+// Guaranteed-to-render fallback so every deal card always shows a picture,
+// even when the API returns a deal with no image or a broken URL.
+const FALLBACK_DEAL_IMG = 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&q=70';
+
 function DealImage({ src, alt, className }: { src?: string; alt: string; className?: string }) {
-  const [err, setErr] = useState(false);
-  if (!src || err) return (
-    <div className={cn('bg-secondary flex items-center justify-center', className)}>
-      <ShoppingBag className="w-6 h-6 text-muted-foreground/40" />
-    </div>
+  const [failed, setFailed] = useState(false);
+  const resolved = !src || failed ? FALLBACK_DEAL_IMG : src;
+  return (
+    <img
+      src={resolved}
+      alt={alt}
+      onError={() => { if (!failed) setFailed(true); }}
+      className={cn('object-cover bg-secondary', className)}
+    />
   );
-  return <img src={src} alt={alt} onError={() => setErr(true)} className={cn('object-cover', className)} />;
 }
 
 function CardGrid({ deals, onDealClick }: { deals: Deal[]; onDealClick: (d: Deal) => void }) {
@@ -758,11 +792,425 @@ function ParamChips({ variant }: { variant: ShowcaseVariant }) {
   );
 }
 
-const INTEGRATION_IDEAS = [
-  { title: 'Loyalty App Rewards Feed', icon: Star, desc: 'Surface relevant local deals inside a points or cashback app.', params: ['categoryId', 'audience', 'limit'] },
-  { title: 'Travel / City Guide App', icon: MapPin, desc: "Show deals near the user's GPS coordinates.", params: ['lat', 'lng', 'radius', 'activeNow'] },
-  { title: 'Flash Sale Banner', icon: Flame, desc: 'Highlight only the most urgent, time-limited deals.', params: ['isHot=true', 'activeNow', 'limit'] },
-  { title: 'E-commerce Checkout Upsell', icon: ShoppingBag, desc: 'Show deals from a matching category at checkout.', params: ['categoryId', 'dealType', 'limit'] },
-  { title: 'Newsletter Personalisation', icon: Coffee, desc: 'Pull deals by tag or audience for weekly email digests.', params: ['tags', 'audience', 'from', 'to'] },
-  { title: 'SuperApp Deals Tab', icon: Layers, desc: 'Full deal browser with category, discount range, event type.', params: ['search', 'minDiscount', 'eventType', 'page'] },
+// ── How the system works (member ⇄ partner ⇄ merchant) ──
+
+const FLOW_STEPS = [
+  {
+    icon: Globe,
+    role: 'Partner',
+    color: 'text-blue-500',
+    bg: 'bg-blue-500/10 border-blue-500/20',
+    title: 'Embeds the API',
+    desc: 'A partner site or app calls GET /api/deals with their key and renders live, hyper-local deals inside their own UI.',
+    code: 'GET /api/deals?lat=…&lng=…',
+  },
+  {
+    icon: Users,
+    role: 'Member',
+    color: 'text-foreground',
+    bg: 'bg-secondary border-border',
+    title: 'Claims a deal',
+    desc: 'A member browsing the partner site taps "Claim". The partner posts to track-click and receives a unique redeem code.',
+    code: 'POST /api/partners/track-click',
+  },
+  {
+    icon: Store,
+    role: 'Merchant',
+    color: 'text-orange-500',
+    bg: 'bg-orange-500/10 border-orange-500/20',
+    title: 'Redeems in-store',
+    desc: 'The member shows the code; the merchant validates it at the point of sale. The redemption is recorded against the deal.',
+    code: 'POST /api/redeem',
+  },
+  {
+    icon: Wallet,
+    role: 'Partner',
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-500/10 border-emerald-500/20',
+    title: 'Earns commission',
+    desc: 'On every confirmed redemption the partner earns commission, credited automatically and paid out from the dashboard.',
+    code: 'webhook: redemption.confirmed',
+  },
 ];
+
+function HowItWorks() {
+  return (
+    <div className="mt-24 border-t border-border pt-16">
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border mb-6">
+        <Webhook className="w-3.5 h-3.5 text-muted-foreground" />
+        <span className="text-xs font-medium text-muted-foreground">How the system actually works</span>
+      </div>
+      <h2 className="text-2xl font-bold mb-2">One API, three players, one loop</h2>
+      <p className="text-muted-foreground mb-10 max-w-2xl">
+        Every deal flows from a partner&apos;s integration to a member&apos;s pocket to a merchant&apos;s till — and the
+        commission flows back. Here&apos;s the full round trip.
+      </p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative">
+        {FLOW_STEPS.map((s, i) => (
+          <div key={i} className="relative">
+            <div className={cn('h-full rounded-xl border p-5 bg-card', s.bg)}>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-9 h-9 rounded-md bg-background border border-border flex items-center justify-center">
+                  <s.icon className={cn('w-4 h-4', s.color)} />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Step {i + 1}
+                </span>
+              </div>
+              <p className={cn('text-[10px] font-bold uppercase tracking-wider mb-1', s.color)}>{s.role}</p>
+              <h3 className="font-bold text-sm mb-2">{s.title}</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed mb-3">{s.desc}</p>
+              <code className="inline-block px-2 py-1 bg-background border border-border rounded text-[10px] font-mono text-foreground">
+                {s.code}
+              </code>
+            </div>
+            {i < FLOW_STEPS.length - 1 && (
+              <div className="hidden lg:flex absolute top-1/2 -right-3 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-background border border-border items-center justify-center">
+                <ArrowRight className="w-3 h-3 text-muted-foreground" />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Partner website mockups (browser-chrome frames) ──
+
+function BrowserFrame({ url, accent, children }: { url: string; accent: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+      {/* Chrome */}
+      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-border bg-secondary/50">
+        <div className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-red-400/70" />
+          <div className="w-2.5 h-2.5 rounded-full bg-amber-400/70" />
+          <div className="w-2.5 h-2.5 rounded-full bg-green-400/70" />
+        </div>
+        <div className="flex-1 flex items-center gap-1.5 mx-2 px-2.5 py-1 rounded-md bg-background border border-border min-w-0">
+          <Lock className="w-2.5 h-2.5 text-muted-foreground shrink-0" />
+          <span className="text-[10px] font-mono text-muted-foreground truncate">{url}</span>
+        </div>
+        <span className={cn('text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shrink-0', accent)}>
+          Powered by Offrion
+        </span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+const MOCK_DEALS = [
+  { title: '50% OFF Specialty Coffee', place: 'Downtown Dubai', pay: 18, was: 36, pct: 50, hot: true, img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=70' },
+  { title: 'Buy 1 Get 1 Brunch', place: 'JBR Walk', pay: 99, was: 198, pct: 50, hot: false, img: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=400&q=70' },
+  { title: '30% OFF Spa Day', place: 'Palm Jumeirah', pay: 210, was: 300, pct: 30, hot: false, img: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=70' },
+  { title: 'Free Dessert w/ Mains', place: 'City Walk', pay: 0, was: 45, pct: 100, hot: true, img: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400&q=70' },
+];
+
+function MiniDeal({ d, compact }: { d: typeof MOCK_DEALS[number]; compact?: boolean }) {
+  return (
+    <div className="rounded-md border border-border bg-background overflow-hidden group hover:border-foreground/30 transition-colors">
+      <div className="relative h-16">
+        <DealImage src={d.img} alt={d.title} className="w-full h-16" />
+        <span className="absolute top-1.5 right-1.5 bg-primary text-primary-foreground text-[9px] font-bold px-1.5 py-0.5 rounded">
+          -{d.pct}%
+        </span>
+        {d.hot && !compact && (
+          <span className="absolute top-1.5 left-1.5 bg-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+            <Flame className="w-2 h-2" /> HOT
+          </span>
+        )}
+      </div>
+      <div className="p-2">
+        <p className="text-[10px] font-bold truncate">{d.title}</p>
+        <p className="text-[9px] text-muted-foreground mt-0.5 flex items-center gap-0.5">
+          <MapPin className="w-2 h-2" /> {d.place}
+        </p>
+        <div className="flex items-center justify-between mt-1.5">
+          <span className="text-[10px] font-bold">AED {d.pay}</span>
+          <span className="text-[9px] text-muted-foreground line-through">AED {d.was}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const PARTNER_SITES = [
+  {
+    id: 'travel',
+    name: 'WanderUAE — Travel Guide',
+    url: 'wanderuae.com/dubai/deals',
+    icon: Plane,
+    accent: 'bg-blue-500/10 text-blue-500',
+    tagline: 'A city-guide app embeds geo-search to surface deals near the traveller.',
+    endpoint: '/api/deals?lat=25.20&lng=55.27&radius=15000',
+    render: () => (
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Plane className="w-4 h-4 text-blue-500" />
+          <span className="text-xs font-bold">Near you in Dubai</span>
+          <span className="ml-auto text-[9px] text-muted-foreground flex items-center gap-0.5">
+            <MapPin className="w-2.5 h-2.5" /> 15km radius
+          </span>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {MOCK_DEALS.slice(0, 3).map((d, i) => <MiniDeal key={i} d={d} />)}
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: 'bank',
+    name: 'NeoBank — Rewards Tab',
+    url: 'app.neobank.ae/rewards',
+    icon: Wallet,
+    accent: 'bg-emerald-500/10 text-emerald-500',
+    tagline: 'A fintech app turns deals into cashback offers inside its rewards tab.',
+    endpoint: '/api/deals?categoryId=dining&limit=4',
+    render: () => (
+      <div className="p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Available cashback</p>
+            <p className="text-lg font-black text-emerald-500">AED 340 in offers</p>
+          </div>
+          <Wallet className="w-6 h-6 text-emerald-500/60" />
+        </div>
+        <div className="space-y-1.5">
+          {MOCK_DEALS.slice(0, 3).map((d, i) => (
+            <div key={i} className="flex items-center gap-2 p-2 rounded-md border border-border bg-background">
+              <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center shrink-0">
+                <Tag className="w-3 h-3 text-muted-foreground" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold truncate">{d.title}</p>
+                <p className="text-[9px] text-muted-foreground">{d.place}</p>
+              </div>
+              <span className="text-[10px] font-bold text-emerald-500 shrink-0">{d.pct}% back</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: 'extension',
+    name: 'SaverPop — Browser Extension',
+    url: 'chrome-extension://saverpop/popup',
+    icon: Search,
+    accent: 'bg-purple-500/10 text-purple-500',
+    tagline: 'A coupon extension pops local deals while members browse the web.',
+    endpoint: '/api/deals?isHot=true&limit=4',
+    render: () => (
+      <div className="p-4 flex justify-center">
+        <div className="w-48 rounded-lg border border-border bg-background overflow-hidden">
+          <div className="flex items-center gap-1.5 px-3 py-2 border-b border-border bg-purple-500/5">
+            <Search className="w-3 h-3 text-purple-500" />
+            <span className="text-[10px] font-bold">SaverPop found 4 deals</span>
+          </div>
+          <div className="p-2 space-y-1.5">
+            {MOCK_DEALS.slice(0, 2).map((d, i) => (
+              <div key={i} className="flex items-center gap-2 p-1.5 rounded border border-border">
+                <div className="flex-1 min-w-0">
+                  <p className="text-[9px] font-bold truncate">{d.title}</p>
+                  <p className="text-[8px] text-muted-foreground">{d.place}</p>
+                </div>
+                <span className="text-[8px] font-bold bg-purple-500 text-white px-1.5 py-0.5 rounded shrink-0">
+                  -{d.pct}%
+                </span>
+              </div>
+            ))}
+            <button className="w-full bg-purple-500 text-white text-[9px] font-bold py-1.5 rounded">
+              Apply at checkout
+            </button>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: 'superapp',
+    name: 'CityGo — SuperApp Deals Tab',
+    url: 'citygo.app/deals',
+    icon: Building2,
+    accent: 'bg-foreground/10 text-foreground',
+    tagline: 'A super-app gives the full deal browser its own tab with categories.',
+    endpoint: '/api/deals?search=&minDiscount=20&page=1',
+    render: () => (
+      <div className="p-4">
+        <div className="flex items-center gap-1.5 mb-3 overflow-x-auto">
+          {['All', 'Dining', 'Spa', 'Coffee'].map((c, i) => (
+            <span
+              key={c}
+              className={cn(
+                'text-[9px] font-bold px-2 py-1 rounded-full shrink-0',
+                i === 0 ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground border border-border'
+              )}
+            >
+              {c}
+            </span>
+          ))}
+        </div>
+        <div className="grid grid-cols-4 gap-2">
+          {MOCK_DEALS.map((d, i) => <MiniDeal key={i} d={d} compact />)}
+        </div>
+      </div>
+    ),
+  },
+];
+
+function PartnerSiteMockups() {
+  return (
+    <div className="mt-24 border-t border-border pt-16">
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border mb-6">
+        <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+        <span className="text-xs font-medium text-muted-foreground">Live in the wild</span>
+      </div>
+      <h2 className="text-2xl font-bold mb-2">The same API, four very different products</h2>
+      <p className="text-muted-foreground mb-10 max-w-2xl">
+        Partners drop one endpoint into their own UI. Members never leave the partner&apos;s product — they just see
+        deals that feel native. Here&apos;s how the same <code className="text-xs font-mono px-1 py-0.5 bg-secondary rounded">/api/deals</code> call looks across real-world integrations.
+      </p>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {PARTNER_SITES.map(site => (
+          <div key={site.id} className="space-y-3">
+            <BrowserFrame url={site.url} accent={site.accent}>
+              {site.render()}
+            </BrowserFrame>
+            <div className="px-1">
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="w-6 h-6 rounded-md bg-secondary border border-border flex items-center justify-center shrink-0">
+                  <site.icon className="w-3 h-3 text-foreground" />
+                </div>
+                <h3 className="font-bold text-sm">{site.name}</h3>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed mb-2">{site.tagline}</p>
+              <code className="inline-block px-2 py-1 bg-slate-950 rounded text-[10px] font-mono text-emerald-300 overflow-x-auto max-w-full">
+                {site.endpoint}
+              </code>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const INTEGRATION_IDEAS = [
+  { title: 'Loyalty App Rewards Feed', icon: Star, accent: 'text-amber-500', visual: 'feed', desc: 'Surface relevant local deals inside a points or cashback app.', endpoint: '/api/deals?categoryId=dining&audience=members&limit=3', params: ['categoryId', 'audience', 'limit'] },
+  { title: 'Travel / City Guide App', icon: MapPin, accent: 'text-blue-500', visual: 'map', desc: "Show deals near the user's GPS coordinates.", endpoint: '/api/deals?lat=25.2&lng=55.27&radius=15000', params: ['lat', 'lng', 'radius', 'activeNow'] },
+  { title: 'Flash Sale Banner', icon: Flame, accent: 'text-orange-500', visual: 'banner', desc: 'Highlight only the most urgent, time-limited deals.', endpoint: '/api/deals?isHot=true&activeNow=true&limit=1', params: ['isHot=true', 'activeNow', 'limit'] },
+  { title: 'E-commerce Checkout Upsell', icon: ShoppingBag, accent: 'text-emerald-500', visual: 'checkout', desc: 'Show deals from a matching category at checkout.', endpoint: '/api/deals?categoryId=fashion&dealType=bogo&limit=2', params: ['categoryId', 'dealType', 'limit'] },
+  { title: 'Newsletter Personalisation', icon: Coffee, accent: 'text-rose-500', visual: 'email', desc: 'Pull deals by tag or audience for weekly email digests.', endpoint: '/api/deals?tags=coffee&audience=subscribers', params: ['tags', 'audience', 'from', 'to'] },
+  { title: 'SuperApp Deals Tab', icon: Layers, accent: 'text-purple-500', visual: 'grid', desc: 'Full deal browser with category, discount range, event type.', endpoint: '/api/deals?search=&minDiscount=20&page=1', params: ['search', 'minDiscount', 'eventType', 'page'] },
+];
+
+type IntegrationIdea = (typeof INTEGRATION_IDEAS)[number];
+
+// Tiny illustrative preview rendered at the top of each integration card,
+// so the section reads visually instead of as a wall of text.
+function IdeaVisual({ idea }: { idea: IntegrationIdea }) {
+  const Icon = idea.icon;
+  const wrap = 'h-28 rounded-md border border-border bg-background/60 overflow-hidden p-3';
+
+  switch (idea.visual) {
+    case 'feed':
+      return (
+        <div className={cn(wrap, 'flex flex-col gap-1.5 justify-center')}>
+          {[0, 1, 2].map(i => (
+            <div key={i} className="flex items-center gap-2 rounded bg-secondary/70 border border-border px-2 py-1.5">
+              <div className="w-5 h-5 rounded bg-background border border-border flex items-center justify-center shrink-0">
+                <Tag className="w-2.5 h-2.5 text-muted-foreground" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <div className="h-1.5 rounded-full bg-muted-foreground/30" style={{ width: `${70 - i * 12}%` }} />
+              </div>
+              <span className={cn('text-[8px] font-bold', idea.accent)}>{40 - i * 10}%</span>
+            </div>
+          ))}
+        </div>
+      );
+    case 'map':
+      return (
+        <div className={cn(wrap, 'relative')} style={{ backgroundImage: 'radial-gradient(circle, var(--border) 1px, transparent 1px)', backgroundSize: '12px 12px' }}>
+          {[{ t: '20%', l: '25%' }, { t: '55%', l: '60%' }, { t: '35%', l: '75%' }].map((p, i) => (
+            <div key={i} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ top: p.t, left: p.l }}>
+              <MapPin className={cn('w-4 h-4', idea.accent)} fill="currentColor" />
+            </div>
+          ))}
+          <div className="absolute bottom-2 left-2 right-2 rounded bg-background/90 border border-border px-2 py-1 flex items-center gap-1">
+            <MapPin className="w-2.5 h-2.5 text-muted-foreground" />
+            <span className="text-[8px] text-muted-foreground">3 deals within 15km</span>
+          </div>
+        </div>
+      );
+    case 'banner':
+      return (
+        <div className={cn(wrap, 'flex items-center')}>
+          <div className="w-full rounded-md bg-gradient-to-r from-orange-500/15 to-orange-500/5 border border-orange-500/30 px-3 py-2.5 flex items-center gap-2">
+            <Flame className="w-4 h-4 text-orange-500 shrink-0" />
+            <div className="flex-1">
+              <p className="text-[10px] font-bold text-foreground">Flash Sale — 50% OFF</p>
+              <p className="text-[8px] text-muted-foreground">Ends in 02:14:09</p>
+            </div>
+            <span className="text-[8px] font-bold bg-orange-500 text-white px-1.5 py-0.5 rounded shrink-0">CLAIM</span>
+          </div>
+        </div>
+      );
+    case 'checkout':
+      return (
+        <div className={cn(wrap, 'flex flex-col justify-center gap-1.5')}>
+          <div className="flex items-center justify-between text-[8px] text-muted-foreground">
+            <span>Subtotal</span><span>AED 240</span>
+          </div>
+          <div className="rounded bg-emerald-500/10 border border-emerald-500/30 px-2 py-1.5 flex items-center gap-1.5">
+            <ShoppingBag className="w-3 h-3 text-emerald-500 shrink-0" />
+            <span className="text-[8px] font-bold text-foreground flex-1">Add a matching deal &amp; save 30%</span>
+            <span className="text-[8px] font-bold text-emerald-500">+ Add</span>
+          </div>
+          <div className="h-6 rounded bg-foreground/90 flex items-center justify-center">
+            <span className="text-[8px] font-bold text-background">Checkout</span>
+          </div>
+        </div>
+      );
+    case 'email':
+      return (
+        <div className={cn(wrap, 'flex flex-col')}>
+          <div className="flex items-center gap-1.5 pb-1.5 border-b border-border mb-1.5">
+            <Coffee className="w-3 h-3 text-rose-500" />
+            <span className="text-[8px] font-bold text-foreground">Your weekly deals digest</span>
+          </div>
+          {[0, 1].map(i => (
+            <div key={i} className="flex items-center gap-1.5 py-1">
+              <div className="w-1 h-1 rounded-full bg-rose-500" />
+              <div className="h-1.5 rounded-full bg-muted-foreground/25" style={{ width: `${80 - i * 20}%` }} />
+            </div>
+          ))}
+          <div className="mt-auto h-4 rounded bg-rose-500/15 border border-rose-500/30 flex items-center justify-center">
+            <span className="text-[7px] font-bold text-rose-500">View all 12 deals</span>
+          </div>
+        </div>
+      );
+    case 'grid':
+    default:
+      return (
+        <div className={cn(wrap, 'flex flex-col gap-1.5')}>
+          <div className="flex gap-1">
+            {['All', 'Spa', 'Food'].map((c, i) => (
+              <span key={c} className={cn('text-[7px] font-bold px-1.5 py-0.5 rounded-full', i === 0 ? 'bg-primary text-primary-foreground' : 'bg-secondary border border-border text-muted-foreground')}>{c}</span>
+            ))}
+          </div>
+          <div className="grid grid-cols-3 gap-1 flex-1">
+            {[0, 1, 2, 3, 4, 5].map(i => (
+              <div key={i} className="rounded bg-secondary/70 border border-border flex items-center justify-center">
+                <Icon className="w-2.5 h-2.5 text-muted-foreground/50" />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+  }
+}
