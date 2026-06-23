@@ -142,8 +142,8 @@ export default function MerchantDashboard() {
         {stats.map((stat) => (
           <div key={stat.name} className="vercel-section p-6 transition-all group">
             <div className="flex justify-between items-start mb-4">
-              <div className="p-2 bg-muted rounded-md border border-border">
-                <stat.icon className="w-5 h-5 text-muted-foreground" />
+              <div className={cn("p-2.5 rounded-md", stat.bg)}>
+                <stat.icon className={cn("w-5 h-5", stat.color)} />
               </div>
             </div>
             <div>
@@ -158,7 +158,12 @@ export default function MerchantDashboard() {
         {/* Sales Chart */}
         <div className="lg:col-span-2 vercel-section p-6 min-h-[400px] flex flex-col">
           <div className="flex justify-between items-center mb-6 border-b border-border pb-4">
-            <h3 className="text-sm font-semibold">Revenue Overview</h3>
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-md bg-emerald-500/10">
+                <TrendingUp className="w-4 h-4 text-emerald-500" />
+              </div>
+              <h3 className="text-sm font-semibold">Revenue Overview</h3>
+            </div>
           </div>
           <div className="flex-1 w-full flex flex-col items-center justify-center">
             {data.dailyRevenue && data.dailyRevenue.length > 0 ? (
@@ -195,7 +200,12 @@ export default function MerchantDashboard() {
 
         {/* Top Deals */}
         <div className="vercel-section p-6">
-          <h3 className="text-sm font-semibold mb-6 border-b border-border pb-4">Top Performing Deals</h3>
+          <div className="flex items-center gap-2.5 mb-6 border-b border-border pb-4">
+            <div className="p-1.5 rounded-md bg-amber-500/10">
+              <Tag className="w-4 h-4 text-amber-500" />
+            </div>
+            <h3 className="text-sm font-semibold">Top Performing Deals</h3>
+          </div>
           <div className="space-y-6">
             {data.topDeals.map((item: any) => (
               <div key={item._id} className="flex items-center gap-4">

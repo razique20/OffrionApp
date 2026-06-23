@@ -120,7 +120,7 @@ export default function PartnerSupportPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Support & Knowledge</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Support &amp; Knowledge</h1>
           <p className="text-muted-foreground">Get help and read integration guides.</p>
         </div>
 
