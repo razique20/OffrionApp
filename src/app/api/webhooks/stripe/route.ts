@@ -35,12 +35,27 @@ export async function POST(req: Request) {
       }
 
       const MerchantProfile = (await import('@/models/MerchantProfile')).default;
-      await MerchantProfile.findOneAndUpdate(
+
+      // Upsert so a top-up always credits, even if the merchant profile was
+      // never created via KYC yet. Seed the schema-required fields from the
+      // user record on insert.
+      const topupUser = await User.findById(userId);
+      const updated = await MerchantProfile.findOneAndUpdate(
         { userId },
-        { $inc: { balance: Number(amount) } }
+        {
+          $inc: { balance: Number(amount) },
+          $setOnInsert: {
+            businessName: topupUser?.name || 'My Business',
+            contactEmail: topupUser?.email || 'unknown@offrion.com',
+            contactPhone: 'N/A',
+            address: 'N/A',
+            billingPreference: 'prepaid',
+          },
+        },
+        { upsert: true, new: true }
       );
 
-      console.log(`Successfully topped up wallet for user ${userId} with $${amount}`);
+      console.log(`Successfully topped up wallet for user ${userId} with $${amount}. New balance: ${updated?.balance}`);
       return NextResponse.json({ received: true });
     }
 
