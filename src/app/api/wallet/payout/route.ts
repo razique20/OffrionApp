@@ -86,6 +86,15 @@ export async function POST(req: Request) {
         if (isDemoMode) {
             console.warn('⚠️ DEMO MODE: Mocking successful payout despite Stripe error.');
             stripeTransferId = `mock_tr_${Math.random().toString(36).slice(2, 9)}`;
+        } else if (stripeErr.code === 'balance_insufficient') {
+            // The partner's earnings are valid, but the platform's Stripe balance
+            // hasn't settled the underlying charges yet (card funds are typically
+            // pending for a couple of days). This is temporary — surface it clearly
+            // and DO NOT mark commissions paid, so the partner can retry later.
+            return NextResponse.json({
+                error: 'Funds are still settling and not yet available for payout. Please try again in a day or two.',
+                code: 'funds_settling',
+            }, { status: 402 });
         } else {
             return NextResponse.json({
                 error: `Stripe Payout Failed: ${stripeErr.message}`,
