@@ -123,7 +123,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-6 py-10">
+      <div className="max-w-6xl mx-auto px-6 pt-24 pb-12">
         <Link href="/deals" className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" /> All deals
         </Link>

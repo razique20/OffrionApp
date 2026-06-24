@@ -44,7 +44,7 @@ export default function DealsBrowsePage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <div className="max-w-6xl mx-auto px-6 pt-28 pb-16">
         <div className="mb-10">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground mb-3">Offrion Deals</p>
           <h1 className="text-5xl font-black tracking-tighter mb-4">Browse Deals</h1>

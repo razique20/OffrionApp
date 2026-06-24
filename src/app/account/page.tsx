@@ -161,7 +161,7 @@ export default function AccountPage() {
   // Logged in — show account + claim history
   return (
     <main className="min-h-screen bg-background">
-      <div className="max-w-3xl mx-auto px-6 py-16">
+      <div className="max-w-3xl mx-auto px-6 pt-28 pb-16">
         <div className="flex items-start justify-between mb-12">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground mb-2">My Account</p>
