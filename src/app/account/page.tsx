@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { notifyCustomerSessionChange } from '@/hooks/useCustomer';
 
 type Customer = { id: string; name: string; email: string };
 type Claim = {
@@ -65,6 +66,7 @@ export default function AccountPage() {
         return;
       }
       await loadSession();
+      notifyCustomerSessionChange();
     } catch {
       setError('Network error. Please try again.');
     } finally {
@@ -76,6 +78,7 @@ export default function AccountPage() {
     await fetch('/api/customer/auth/logout', { method: 'POST' });
     setCustomer(null);
     setClaims([]);
+    notifyCustomerSessionChange();
   };
 
   if (loading) {

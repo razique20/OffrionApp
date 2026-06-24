@@ -18,14 +18,15 @@ import {
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 import { useUser } from '@/hooks/useUser';
-import { useCustomer } from '@/hooks/useCustomer';
+import { useCustomer, notifyCustomerSessionChange } from '@/hooks/useCustomer';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { UserRole } from '@/lib/constants';
 
 export const Navbar = () => {
-  const { user, loading, logout } = useUser();
-  const { customer } = useCustomer();
+  const { user, loading: userLoading, logout } = useUser();
+  const { customer, loading: customerLoading } = useCustomer();
+  const loading = userLoading || customerLoading;
   const pathname = usePathname();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showCustomerMenu, setShowCustomerMenu] = useState(false);
@@ -42,6 +43,7 @@ export const Navbar = () => {
       /* ignore */
     }
     setShowCustomerMenu(false);
+    notifyCustomerSessionChange();
     router.push('/');
     router.refresh();
   };
