@@ -223,7 +223,9 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Financial Treasury</h2>
-          <p className="text-muted-foreground text-sm">Manage your balances and withdrawal settings.</p>
+          <p className="text-muted-foreground text-sm">
+            {role === 'partner' ? 'Manage your balances and withdrawal settings.' : 'Manage your balances and billing.'}
+          </p>
         </div>
         <div className="flex gap-3">
           <button
@@ -233,12 +235,15 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
           >
             <Download className="w-4 h-4" /> Report
           </button>
-          <button
-            onClick={bankStatus?.isConnected ? () => setIsBankModalOpen(true) : handleOnboard}
-            className="px-5 py-2.5 bg-secondary text-xs font-bold rounded-md hover:bg-secondary/80 transition-all flex items-center gap-2"
-          >
-            <CreditCard className="w-4 h-4" /> {bankStatus?.isConnected ? 'Manage Bank' : 'Link Bank Account'}
-          </button>
+          {/* Bank linking is for receiving payouts — partners only. */}
+          {role === 'partner' && (
+            <button
+              onClick={bankStatus?.isConnected ? () => setIsBankModalOpen(true) : handleOnboard}
+              className="px-5 py-2.5 bg-secondary text-xs font-bold rounded-md hover:bg-secondary/80 transition-all flex items-center gap-2"
+            >
+              <CreditCard className="w-4 h-4" /> {bankStatus?.isConnected ? 'Manage Bank' : 'Link Bank Account'}
+            </button>
+          )}
           {role === 'merchant' && stats?.billingPreference === 'prepaid' ? (
             <button 
               onClick={() => setIsTopupModalOpen(true)}
@@ -247,11 +252,12 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
               <Plus className="w-4 h-4" /> Add Credits
             </button>
           ) : role === 'merchant' && stats?.billingPreference === 'card_on_file' ? (
-            <button 
-              onClick={handleOnboard}
-              className="px-6 py-2.5 bg-secondary text-foreground border border-border text-xs font-bold rounded-md shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+            <button
+              onClick={handleSaveCard}
+              disabled={isSubmitting}
+              className="px-6 py-2.5 bg-secondary text-foreground border border-border text-xs font-bold rounded-md shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center gap-2"
             >
-              <CreditCard className="w-4 h-4" /> Manage Card
+              <CreditCard className="w-4 h-4" /> {cardStatus?.hasCard ? 'Manage Card' : 'Add Card'}
             </button>
           ) : (
             <button 
