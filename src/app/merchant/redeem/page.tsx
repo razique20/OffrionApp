@@ -8,11 +8,7 @@ import {
   ArrowRight,
   Loader2,
   RotateCcw,
-  Sparkles,
-  DollarSign,
-  Users,
   Tag,
-  ShieldCheck,
   QrCode,
   Clock,
   TrendingUp,
@@ -338,28 +334,9 @@ export default function MerchantRedeemPage() {
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-500" />
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Commission Breakdown</p>
-                  </div>
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="p-3 bg-amber-500/5 border border-amber-500/10 rounded-md text-center">
-                      <DollarSign className="w-4 h-4 text-amber-500 mx-auto mb-1" />
-                      <p className="text-xs text-muted-foreground">Total</p>
-                      <p className="text-sm font-bold">{formatCurrency(result.commission.total)}</p>
-                    </div>
-                    <div className="p-3 bg-blue-500/5 border border-blue-500/10 rounded-md text-center">
-                      <Users className="w-4 h-4 text-blue-500 mx-auto mb-1" />
-                      <p className="text-xs text-muted-foreground">Partner</p>
-                      <p className="text-sm font-bold text-blue-500">{formatCurrency(result.commission.partnerShare)}</p>
-                    </div>
-                    <div className="p-3 bg-muted border border-primary/10 rounded-md text-center">
-                      <ShieldCheck className="w-4 h-4 text-foreground mx-auto mb-1" />
-                      <p className="text-xs text-muted-foreground">Platform</p>
-                      <p className="text-sm font-bold text-foreground">{formatCurrency(result.commission.platformShare)}</p>
-                    </div>
-                  </div>
+                <div className="flex items-center justify-between px-4 py-3 border-t border-border/60">
+                  <p className="text-xs text-muted-foreground font-medium">Service fee</p>
+                  <p className="text-sm font-bold text-foreground">{formatCurrency(result.commission.total)}</p>
                 </div>
               </div>
 
