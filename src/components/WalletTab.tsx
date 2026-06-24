@@ -37,6 +37,7 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
   const [topupAmount, setTopupAmount] = useState('100');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bankStatus, setBankStatus] = useState<any>(null);
+  const [cardStatus, setCardStatus] = useState<any>(null);
 
   useEffect(() => {
     fetchData();
@@ -50,22 +51,24 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
   const fetchData = async (silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const [statsRes, ledgerRes, bankRes] = await Promise.all([
+      const [statsRes, ledgerRes, bankRes, cardRes] = await Promise.all([
         fetch('/api/wallet/stats'),
         fetch('/api/wallet/transactions'),
-        fetch('/api/wallet/bank')
+        fetch('/api/wallet/bank'),
+        role === 'merchant' ? fetch('/api/wallet/card') : Promise.resolve(null),
       ]);
-      
+
       const statsJson = await statsRes.json();
       const ledgerJson = await ledgerRes.json();
       const bankJson = await bankRes.json();
-      
+
       if (!statsRes.ok) throw new Error(statsJson.error || 'Failed to fetch stats');
       if (!ledgerRes.ok) throw new Error(ledgerJson.error || 'Failed to fetch ledger');
-      
+
       setStats(statsJson);
       setLedger(ledgerJson.ledger);
       setBankStatus(bankJson);
+      if (cardRes) setCardStatus(await cardRes.json());
     } catch (err: any) {
       if (!silent) setError(err.message);
       else console.error('Silent Refresh Error:', err);
@@ -94,24 +97,52 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
     window.open('/api/wallet/report?format=csv', '_blank');
   };
 
-  const handleSettle = async () => {
+  const handleSaveCard = async () => {
+    setIsSubmitting(true);
+    try {
+      const res = await fetch('/api/wallet/card', { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Could not start card setup');
+      window.location.href = json.url; // redirect to Stripe hosted setup
+    } catch (err: any) {
+      alert(err.message);
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSettle = async (settleMethod: 'balance' | 'card' = 'balance') => {
     const liability = stats?.accruedLiability || 0;
     const balance = stats?.balance || 0;
     if (liability <= 0) return;
-    if (balance <= 0) {
-      alert('Insufficient wallet balance. Top up your wallet to settle this liability.');
-      return;
+
+    let confirmMsg: string;
+    if (settleMethod === 'card') {
+      if (!cardStatus?.hasCard) {
+        alert('No saved card. Add a card on file first.');
+        return;
+      }
+      const c = cardStatus.card;
+      confirmMsg = `Charge ${formatCurrency(liability)} to your ${c?.brand || 'card'} ending ${c?.last4 || '••••'}?`;
+    } else {
+      if (balance <= 0) {
+        alert('Insufficient wallet balance. Top up your wallet to settle this liability.');
+        return;
+      }
+      const willSettle = Math.min(balance, liability);
+      const partial = willSettle < liability;
+      confirmMsg = partial
+        ? `Your balance (${formatCurrency(balance)}) only covers part of the ${formatCurrency(liability)} liability. Settle ${formatCurrency(willSettle)} now from your balance?`
+        : `Settle the full ${formatCurrency(liability)} liability from your wallet balance?`;
     }
-    const willSettle = Math.min(balance, liability);
-    const partial = willSettle < liability;
-    const confirmMsg = partial
-      ? `Your balance (${formatCurrency(balance)}) only covers part of the ${formatCurrency(liability)} liability. Settle ${formatCurrency(willSettle)} now from your balance?`
-      : `Settle the full ${formatCurrency(liability)} liability from your wallet balance?`;
     if (!confirm(confirmMsg)) return;
 
     setIsSubmitting(true);
     try {
-      const res = await fetch('/api/wallet/settle', { method: 'POST' });
+      const res = await fetch('/api/wallet/settle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ method: settleMethod }),
+      });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Settlement failed');
       await fetchData(true);
@@ -309,14 +340,26 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
               color="text-amber-500"
               bg="bg-amber-500/10"
               action={(stats.accruedLiability || 0) > 0 && (
-                <button
-                  onClick={handleSettle}
-                  disabled={isSubmitting}
-                  title={(stats?.balance || 0) <= 0 ? 'Top up your wallet balance to settle' : 'Settle from wallet balance'}
-                  className="mt-5 w-full py-2.5 rounded-md text-xs font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20 hover:bg-amber-500 hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Settle from Balance'}
-                </button>
+                <div className="mt-5 flex flex-col gap-2">
+                  <button
+                    onClick={() => handleSettle('balance')}
+                    disabled={isSubmitting}
+                    title={(stats?.balance || 0) <= 0 ? 'Top up your wallet balance to settle' : 'Settle from wallet balance'}
+                    className="w-full py-2.5 rounded-md text-xs font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20 hover:bg-amber-500 hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Settle from Balance'}
+                  </button>
+                  {cardStatus?.hasCard && (
+                    <button
+                      onClick={() => handleSettle('card')}
+                      disabled={isSubmitting}
+                      title={`Charge your ${cardStatus.card?.brand || 'card'} ending ${cardStatus.card?.last4 || ''}`}
+                      className="w-full py-2.5 rounded-md text-xs font-bold bg-secondary border border-border hover:bg-secondary/70 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      <CreditCard className="w-3.5 h-3.5" /> Charge Card ····{cardStatus.card?.last4}
+                    </button>
+                  )}
+                </div>
               )}
             />
           </>
@@ -324,11 +367,8 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Earnings Chart — spans full width for merchants (no payout card) */}
-        <div className={cn(
-          "p-8 bg-card border border-border rounded-md shadow-none",
-          role === 'partner' ? "lg:col-span-2" : "lg:col-span-3"
-        )}>
+        {/* Earnings Chart */}
+        <div className="lg:col-span-2 p-8 bg-card border border-border rounded-md shadow-none">
            <div className="flex justify-between items-center mb-8">
               <h3 className="text-xl font-bold">Revenue Growth</h3>
               <div className="p-2 bg-secondary rounded-lg"><TrendingUp className="w-5 h-5 text-foreground" /></div>
@@ -370,6 +410,41 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
               className="w-full py-4 mt-8 bg-secondary text-xs font-bold rounded-md hover:bg-secondary/80 transition-all flex items-center justify-center gap-2"
              >
                 {bankStatus?.isConnected ? 'Identity Verification' : 'Link Bank Account'} <ExternalLink className="w-4 h-4" />
+             </button>
+          </div>
+        )}
+
+        {/* Payment Method — merchants only; a card on file to charge for accrued liability */}
+        {role === 'merchant' && (
+          <div className="p-8 bg-card border border-border rounded-md shadow-none flex flex-col justify-between overflow-hidden relative">
+             <div className="absolute top-0 right-0 p-8 opacity-5">
+                <CreditCard className="w-32 h-32" />
+             </div>
+             <div className="relative z-10">
+                <h3 className="text-xl font-bold mb-4">Payment Method</h3>
+                <div className="p-4 bg-secondary/50 rounded-md border border-border mb-6">
+                   <div className="flex items-center gap-3 mb-2">
+                      <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center border border-border shadow-none">
+                         <CreditCard className="w-4 h-4" />
+                      </div>
+                      <span className="text-sm font-bold capitalize">
+                        {cardStatus?.hasCard ? `${cardStatus.card?.brand} ···· ${cardStatus.card?.last4}` : 'No card on file'}
+                      </span>
+                   </div>
+                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Status: <span className={cardStatus?.hasCard ? "text-emerald-500" : "text-amber-500"}>{cardStatus?.hasCard ? 'Active' : 'Not set up'}</span></p>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                    {cardStatus?.hasCard
+                      ? "Your card is saved. You can settle accrued commission liability directly from it."
+                      : "Save a card to settle accrued commission liability without pre-funding your wallet."}
+                </p>
+             </div>
+             <button
+              onClick={handleSaveCard}
+              disabled={isSubmitting}
+              className="w-full py-4 mt-8 bg-secondary text-xs font-bold rounded-md hover:bg-secondary/80 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+             >
+                {cardStatus?.hasCard ? 'Update Card' : 'Add Card on File'} <ExternalLink className="w-4 h-4" />
              </button>
           </div>
         )}

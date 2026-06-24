@@ -28,6 +28,51 @@ export async function POST(req: Request) {
     const session: any = event.data.object;
     const { userId, plan, type, amount } = session.metadata;
 
+    if (type === 'merchant_card_setup') {
+      // A merchant saved a billing card via setup-mode Checkout. Resolve the
+      // payment method from the SetupIntent, make it the customer's default, and
+      // store its brand/last4 on the merchant profile for charging + display.
+      if (!userId) {
+        console.error('Missing userId in card-setup session metadata');
+        return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
+      }
+
+      const MerchantProfile = (await import('@/models/MerchantProfile')).default;
+
+      try {
+        const setupIntent = await stripe.setupIntents.retrieve(session.setup_intent as string);
+        const pmId = setupIntent.payment_method as string;
+        if (!pmId) {
+          console.error('No payment method on setup intent');
+          return NextResponse.json({ received: true });
+        }
+
+        const pm = await stripe.paymentMethods.retrieve(pmId);
+
+        // Make this card the default for future off-session charges.
+        if (session.customer) {
+          await stripe.customers.update(session.customer as string, {
+            invoice_settings: { default_payment_method: pmId },
+          });
+        }
+
+        await MerchantProfile.findOneAndUpdate(
+          { userId },
+          {
+            stripeCustomerId: session.customer,
+            paymentMethodId: pmId,
+            cardBrand: pm.card?.brand,
+            cardLast4: pm.card?.last4,
+          }
+        );
+
+        console.log(`Saved card-on-file for merchant ${userId}: ${pm.card?.brand} ****${pm.card?.last4}`);
+      } catch (err: any) {
+        console.error('Card setup processing error:', err.message);
+      }
+      return NextResponse.json({ received: true });
+    }
+
     if (type === 'wallet_topup') {
       if (!userId || !amount) {
         console.error('Missing userId or amount in top-up session metadata');
