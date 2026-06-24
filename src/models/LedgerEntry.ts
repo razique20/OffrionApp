@@ -49,6 +49,13 @@ const LedgerEntrySchema: Schema = new Schema(
   { timestamps: true }
 );
 
+// Idempotency guard for Stripe-driven entries (e.g. top-ups): at most one ledger
+// entry per Stripe Checkout Session, so redelivered webhooks can't double-credit.
+LedgerEntrySchema.index(
+  { 'metadata.stripeSessionId': 1 },
+  { unique: true, partialFilterExpression: { 'metadata.stripeSessionId': { $exists: true } } }
+);
+
 const LedgerEntry: Model<ILedgerEntry> =
   mongoose.models.LedgerEntry || mongoose.model<ILedgerEntry>('LedgerEntry', LedgerEntrySchema);
 

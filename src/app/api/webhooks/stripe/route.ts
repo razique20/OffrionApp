@@ -35,6 +35,28 @@ export async function POST(req: Request) {
       }
 
       const MerchantProfile = (await import('@/models/MerchantProfile')).default;
+      const LedgerEntry = (await import('@/models/LedgerEntry')).default;
+
+      // Idempotency gate: create the topup ledger entry FIRST. A unique index on
+      // metadata.stripeSessionId means a redelivered event throws a duplicate-key
+      // error here — before we touch the balance — so we never double-credit.
+      try {
+        await LedgerEntry.create({
+          ownerId: userId,
+          scope: 'merchant',
+          type: 'topup',
+          amount: Number(amount),
+          description: 'Wallet top-up via Stripe',
+          relatedMerchantId: userId,
+          metadata: { stripeSessionId: session.id },
+        });
+      } catch (err: any) {
+        if (err?.code === 11000) {
+          console.log(`Top-up for session ${session.id} already processed; skipping.`);
+          return NextResponse.json({ received: true, duplicate: true });
+        }
+        throw err;
+      }
 
       // Upsert so a top-up always credits, even if the merchant profile was
       // never created via KYC yet. Seed the schema-required fields from the
@@ -53,6 +75,12 @@ export async function POST(req: Request) {
           },
         },
         { upsert: true, new: true }
+      );
+
+      // Backfill the resulting balance onto the ledger entry for a clean audit trail.
+      await LedgerEntry.updateOne(
+        { 'metadata.stripeSessionId': session.id },
+        { $set: { balanceAfter: updated?.balance } }
       );
 
       console.log(`Successfully topped up wallet for user ${userId} with $${amount}. New balance: ${updated?.balance}`);
