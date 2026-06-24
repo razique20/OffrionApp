@@ -58,6 +58,7 @@ export const Navbar = () => {
         <div className="flex items-center gap-8">
           <div className="hidden md:flex items-center gap-1">
             {[
+              { label: 'Deals', href: '/deals' },
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
               { label: 'Showcase', href: '/showcase' },
@@ -96,6 +97,13 @@ export const Navbar = () => {
                   {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 </button>
               )}
+
+              <Link
+                href="/account"
+                className="text-[12px] font-medium text-muted-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
+              >
+                Account
+              </Link>
 
               {loading ? (
                 <div className="w-8 h-8 bg-secondary animate-pulse rounded-full"></div>
@@ -203,6 +211,7 @@ export const Navbar = () => {
         <div className="md:hidden absolute top-full left-0 w-full bg-background border-y border-border p-8 flex flex-col gap-8 shadow-2xl animate-in fade-in slide-in-from-top-4">
           <div className="flex flex-col gap-6">
             {[
+              { label: 'Deals', href: '/deals' },
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
               { label: 'Showcase', href: '/showcase' },
@@ -225,6 +234,13 @@ export const Navbar = () => {
           
           {user ? (
             <div className="flex flex-col gap-4 mt-4 pt-8 border-t border-border/30">
+              <Link
+                href="/account"
+                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                My Account
+              </Link>
               <button
                 onClick={() => {
                   logout();
@@ -237,6 +253,13 @@ export const Navbar = () => {
             </div>
           ) : (
             <div className="flex flex-col gap-4 mt-4 pt-8 border-t border-border/30">
+              <Link
+                href="/account"
+                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                My Account
+              </Link>
               <Link
                 href="/auth/login"
                 className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
