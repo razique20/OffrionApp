@@ -53,6 +53,7 @@ export default function AdminDashboard() {
   const [selectedCommissions, setSelectedCommissions] = useState<string[]>([]);
   const [reviewSubTab, setReviewSubTab] = useState<'merchants' | 'deals' | 'funds' | 'regions'>('merchants');
   const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+  const [tableSearch, setTableSearch] = useState('');
 
   // Editable User Fields
   const [editCountry, setEditCountry] = useState('');
@@ -462,7 +463,7 @@ export default function AdminDashboard() {
               return (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => { setActiveTab(tab); setTableSearch(''); }}
                   className={cn(
                     "flex items-center gap-2 py-4 text-sm font-medium transition-all relative whitespace-nowrap",
                     isActive
@@ -619,7 +620,12 @@ export default function AdminDashboard() {
                   <div className="flex gap-4">
                      <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 opacity-30" />
-                        <input placeholder="Filter results..." className="bg-background border border-border rounded-md pl-9 pr-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-foreground w-64 transition-all" />
+                        <input
+                          value={tableSearch}
+                          onChange={(e) => setTableSearch(e.target.value)}
+                          placeholder="Filter by name or ID..."
+                          className="bg-background border border-border rounded-md pl-9 pr-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-foreground w-64 transition-all"
+                        />
                      </div>
                   </div>
                 </div>
@@ -634,7 +640,18 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
-                      {data.map((item) => (
+                      {(() => {
+                        const q = tableSearch.trim().toLowerCase().replace(/^#/, '');
+                        const filtered = q
+                          ? data.filter((item) => {
+                              const name = (item.name || item.title || '').toLowerCase();
+                              const email = (item.email || '').toLowerCase();
+                              const shortId = item._id.slice(-8).toLowerCase();
+                              const fullId = item._id.toLowerCase();
+                              return name.includes(q) || email.includes(q) || shortId.includes(q) || fullId.includes(q);
+                            })
+                          : data;
+                        return filtered.map((item) => (
                         <tr key={item._id} className="group hover:bg-secondary/30 transition-colors">
                           <td className="px-8 py-6">
                             <div className="flex items-center gap-4">
@@ -682,13 +699,25 @@ export default function AdminDashboard() {
                              </div>
                           </td>
                         </tr>
-                      ))}
+                        ));
+                      })()}
                     </tbody>
                   </table>
                   {data.length === 0 && !loading && (
                     <div className="p-32 text-center opacity-30">
                        <ShoppingBag className="w-12 h-12 mx-auto mb-4" />
                        <p className="text-xs font-black uppercase tracking-[0.2em]">No records in current context</p>
+                    </div>
+                  )}
+                  {data.length > 0 && tableSearch.trim() && data.filter((item) => {
+                    const q = tableSearch.trim().toLowerCase().replace(/^#/, '');
+                    const name = (item.name || item.title || '').toLowerCase();
+                    const email = (item.email || '').toLowerCase();
+                    return name.includes(q) || email.includes(q) || item._id.slice(-8).toLowerCase().includes(q) || item._id.toLowerCase().includes(q);
+                  }).length === 0 && (
+                    <div className="p-32 text-center opacity-30">
+                       <Search className="w-12 h-12 mx-auto mb-4" />
+                       <p className="text-xs font-black uppercase tracking-[0.2em]">No matches for &quot;{tableSearch}&quot;</p>
                     </div>
                   )}
                 </div>
