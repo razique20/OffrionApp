@@ -324,8 +324,11 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Earnings Chart */}
-        <div className="lg:col-span-2 p-8 bg-card border border-border rounded-md shadow-none">
+        {/* Earnings Chart — spans full width for merchants (no payout card) */}
+        <div className={cn(
+          "p-8 bg-card border border-border rounded-md shadow-none",
+          role === 'partner' ? "lg:col-span-2" : "lg:col-span-3"
+        )}>
            <div className="flex justify-between items-center mb-8">
               <h3 className="text-xl font-bold">Revenue Growth</h3>
               <div className="p-2 bg-secondary rounded-lg"><TrendingUp className="w-5 h-5 text-foreground" /></div>
@@ -339,35 +342,37 @@ export default function WalletTab({ role }: { role: 'partner' | 'merchant' }) {
            </div>
         </div>
 
-        {/* Security & Settings Card */}
-        <div className="p-8 bg-card border border-border rounded-md shadow-none flex flex-col justify-between overflow-hidden relative">
-           <div className="absolute top-0 right-0 p-8 opacity-5">
-              <CreditCard className="w-32 h-32" />
-           </div>
-           <div className="relative z-10">
-              <h3 className="text-xl font-bold mb-4">Payout Method</h3>
-              <div className="p-4 bg-secondary/50 rounded-md border border-border mb-6">
-                 <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center border border-border shadow-none">
-                       <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-3" />
-                    </div>
-                    <span className="text-sm font-bold">{bankStatus?.bankInfo ? `${bankStatus.bankInfo.bankName} (**** ${bankStatus.bankInfo.last4})` : 'Stripe Connect'}</span>
-                 </div>
-                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Status: <span className={bankStatus?.payoutsEnabled ? "text-emerald-500" : "text-amber-500"}>{bankStatus?.payoutsEnabled ? 'Active' : 'Pending Setup'}</span></p>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                  {bankStatus?.payoutsEnabled 
-                    ? "Your bank is linked. Funds can be withdrawn to your account instantly."
-                    : "Complete your onboarding on Stripe to enable payouts to your bank account."}
-              </p>
-           </div>
-           <button 
-            onClick={handleOnboard}
-            className="w-full py-4 mt-8 bg-secondary text-xs font-bold rounded-md hover:bg-secondary/80 transition-all flex items-center justify-center gap-2"
-           >
-              {bankStatus?.isConnected ? 'Identity Verification' : 'Link Bank Account'} <ExternalLink className="w-4 h-4" />
-           </button>
-        </div>
+        {/* Payout Method — partners only; merchants pay in (top-up/settle) and never withdraw */}
+        {role === 'partner' && (
+          <div className="p-8 bg-card border border-border rounded-md shadow-none flex flex-col justify-between overflow-hidden relative">
+             <div className="absolute top-0 right-0 p-8 opacity-5">
+                <CreditCard className="w-32 h-32" />
+             </div>
+             <div className="relative z-10">
+                <h3 className="text-xl font-bold mb-4">Payout Method</h3>
+                <div className="p-4 bg-secondary/50 rounded-md border border-border mb-6">
+                   <div className="flex items-center gap-3 mb-2">
+                      <div className="w-8 h-8 bg-background rounded-lg flex items-center justify-center border border-border shadow-none">
+                         <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-3" />
+                      </div>
+                      <span className="text-sm font-bold">{bankStatus?.bankInfo ? `${bankStatus.bankInfo.bankName} (**** ${bankStatus.bankInfo.last4})` : 'Stripe Connect'}</span>
+                   </div>
+                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Status: <span className={bankStatus?.payoutsEnabled ? "text-emerald-500" : "text-amber-500"}>{bankStatus?.payoutsEnabled ? 'Active' : 'Pending Setup'}</span></p>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                    {bankStatus?.payoutsEnabled
+                      ? "Your bank is linked. Funds can be withdrawn to your account instantly."
+                      : "Complete your onboarding on Stripe to enable payouts to your bank account."}
+                </p>
+             </div>
+             <button
+              onClick={handleOnboard}
+              className="w-full py-4 mt-8 bg-secondary text-xs font-bold rounded-md hover:bg-secondary/80 transition-all flex items-center justify-center gap-2"
+             >
+                {bankStatus?.isConnected ? 'Identity Verification' : 'Link Bank Account'} <ExternalLink className="w-4 h-4" />
+             </button>
+          </div>
+        )}
       </div>
 
       {/* Ledger */}
