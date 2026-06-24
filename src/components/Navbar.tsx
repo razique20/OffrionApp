@@ -16,12 +16,14 @@ import {
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useUser } from '@/hooks/useUser';
+import { useCustomer } from '@/hooks/useCustomer';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { UserRole } from '@/lib/constants';
 
 export const Navbar = () => {
   const { user, loading, logout } = useUser();
+  const { customer } = useCustomer();
   const pathname = usePathname();
   const [showDropdown, setShowDropdown] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -100,9 +102,10 @@ export const Navbar = () => {
 
               <Link
                 href="/account"
-                className="text-[12px] font-medium text-muted-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
+                className="flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
               >
-                Account
+                <User className="w-3.5 h-3.5" />
+                {customer ? customer.name.split(' ')[0] : 'Guest'}
               </Link>
 
               {loading ? (
@@ -239,7 +242,7 @@ export const Navbar = () => {
                 className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                My Account
+                {customer ? `My Account · ${customer.name.split(' ')[0]}` : 'Account · Guest'}
               </Link>
               <button
                 onClick={() => {
@@ -258,7 +261,7 @@ export const Navbar = () => {
                 className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                My Account
+                {customer ? `My Account · ${customer.name.split(' ')[0]}` : 'Account · Guest'}
               </Link>
               <Link
                 href="/auth/login"
