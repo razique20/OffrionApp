@@ -328,7 +328,7 @@ export default function PartnerDashboard() {
                       </span>
                     </td>
                     <td className="px-8 py-5 text-right font-bold text-sm text-foreground">
-                      {formatCurrency((t.amount * (t.dealId?.commissionPercentage || 10)) / 100 * 0.7)}
+                      {t.partnerCommission != null ? formatCurrency(t.partnerCommission) : '—'}
                     </td>
                   </tr>
                 ))
