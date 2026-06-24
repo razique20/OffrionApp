@@ -245,6 +245,14 @@ export const Navbar = () => {
                 </div>
               ) : (
                 <>
+                  <Link
+                    href="/account"
+                    className="flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    Shopper Sign In
+                  </Link>
+                  <div className="h-4 w-px bg-border/40" />
                   <Link href="/auth/login" className="text-[12px] font-medium text-muted-foreground/80 hover:text-foreground transition-colors whitespace-nowrap">Sign In</Link>
                   <Link
                     href="/auth/register"
