@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, use } from 'react';
 import Link from 'next/link';
-import { Loader2, ShoppingBag, ArrowLeft, CheckCircle2, Copy, Clock, AlertCircle, MapPin } from 'lucide-react';
+import { Loader2, ShoppingBag, ArrowLeft, CheckCircle2, Copy, Clock, AlertCircle, MapPin, Tag, Sparkles, Calendar, Users, QrCode, Store, BadgeCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type Deal = {
@@ -16,6 +16,8 @@ type Deal = {
   emirate?: string;
   landmark?: string;
   tags?: string[];
+  dealType?: string;
+  eventType?: string;
   usageLimit?: number;
   currentUsage?: number;
   validUntil?: string;
@@ -106,104 +108,166 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
     );
   }
 
+  const validUntil = deal.validUntil ? new Date(deal.validUntil) : null;
+  const usageLeft = deal.usageLimit && deal.usageLimit > 0
+    ? Math.max(0, deal.usageLimit - (deal.currentUsage || 0))
+    : null;
+  const location = [deal.landmark, deal.emirate].filter(Boolean).join(', ');
+
+  const chips = [
+    deal.categoryId?.name && { icon: Tag, label: deal.categoryId.name },
+    deal.dealType && { icon: Sparkles, label: deal.dealType.replace(/-/g, ' ') },
+    validUntil && { icon: Calendar, label: `Until ${validUntil.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}` },
+    usageLeft !== null && { icon: Users, label: `${usageLeft} left` },
+  ].filter(Boolean) as { icon: React.ElementType; label: string }[];
+
   return (
     <main className="min-h-screen bg-background">
-      <div className="max-w-5xl mx-auto px-6 py-12">
+      <div className="max-w-6xl mx-auto px-6 py-10">
         <Link href="/deals" className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" /> All deals
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Image */}
-          <div className="relative aspect-[4/3] bg-secondary rounded-3xl overflow-hidden">
-            {deal.images?.[0] ? (
-              <img src={deal.images[0]} alt={deal.title} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center opacity-20">
-                <ShoppingBag className="w-16 h-16" />
-              </div>
-            )}
-            {deal.discountPercentage > 0 && (
-              <span className="absolute top-4 left-4 bg-primary text-primary-foreground text-sm font-black px-3 py-1.5 rounded-full">
-                -{deal.discountPercentage}% OFF
-              </span>
-            )}
-          </div>
-
-          {/* Details + claim */}
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground mb-2">
-              {deal.merchantId?.name || deal.categoryId?.name || 'Deal'}
-            </p>
-            <h1 className="text-4xl font-black tracking-tighter mb-4">{deal.title}</h1>
-            <p className="text-muted-foreground leading-relaxed mb-6">{deal.description}</p>
-
-            <div className="flex items-baseline gap-3 mb-6">
-              <span className="text-4xl font-black">${deal.discountedPrice}</span>
-              {deal.originalPrice > deal.discountedPrice && (
-                <span className="text-xl text-muted-foreground line-through">${deal.originalPrice}</span>
+        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8 lg:gap-12 items-start">
+          {/* ── Left: hero + content ── */}
+          <div className="space-y-8">
+            {/* Hero image */}
+            <div className="relative aspect-[16/10] bg-secondary rounded-3xl overflow-hidden">
+              {deal.images?.[0] ? (
+                <img src={deal.images[0]} alt={deal.title} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center opacity-20">
+                  <ShoppingBag className="w-16 h-16" />
+                </div>
+              )}
+              {deal.discountPercentage > 0 && (
+                <span className="absolute top-4 left-4 bg-primary text-primary-foreground text-sm font-black px-3 py-1.5 rounded-full shadow-lg">
+                  -{deal.discountPercentage}% OFF
+                </span>
               )}
             </div>
 
-            {(deal.emirate || deal.landmark) && (
-              <p className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
-                <MapPin className="w-4 h-4" /> {[deal.landmark, deal.emirate].filter(Boolean).join(', ')}
+            {/* Merchant + title + description */}
+            <div>
+              <p className="flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground mb-3">
+                <Store className="w-3.5 h-3.5" />
+                {deal.merchantId?.name || deal.categoryId?.name || 'Deal'}
               </p>
+              <h1 className="text-4xl font-black tracking-tighter mb-4">{deal.title}</h1>
+              <p className="text-muted-foreground leading-relaxed">{deal.description}</p>
+            </div>
+
+            {/* Detail chips */}
+            {chips.length > 0 && (
+              <div className="flex flex-wrap gap-2.5">
+                {chips.map((c, i) => (
+                  <span key={i} className="inline-flex items-center gap-1.5 bg-secondary/60 border border-border rounded-full px-3.5 py-1.5 text-xs font-semibold capitalize">
+                    <c.icon className="w-3.5 h-3.5 text-muted-foreground" /> {c.label}
+                  </span>
+                ))}
+              </div>
             )}
 
-            {/* Claim panel */}
-            {claim ? (
-              <div className="border-2 border-emerald-500/40 bg-emerald-500/5 rounded-2xl p-6">
-                <div className="flex items-center gap-2 text-emerald-600 font-black uppercase tracking-wider text-sm mb-4">
-                  <CheckCircle2 className="w-5 h-5" /> Deal Claimed
+            {/* Location block */}
+            {location && (
+              <div className="border border-border rounded-2xl p-5 flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+                  <MapPin className="w-5 h-5" />
                 </div>
-                <p className="text-sm text-muted-foreground mb-3">Show this code at the merchant to redeem:</p>
-                <button
-                  onClick={copyCode}
-                  className="w-full flex items-center justify-between bg-background border border-border rounded-xl px-5 py-4 mb-4 hover:border-foreground/30 transition-colors"
-                >
-                  <span className="text-3xl font-black tracking-[0.3em] font-mono">{claim.redeemCode}</span>
-                  <span className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
-                    {copied ? <><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Copied</> : <><Copy className="w-4 h-4" /> Copy</>}
-                  </span>
-                </button>
-                <div className="flex items-start gap-2 text-xs text-amber-600 bg-amber-500/10 rounded-lg p-3">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                  <span>Only valid once the merchant scans it on their terminal. An un-redeemed code means the discount has not been applied — make sure they complete it.</span>
+                <div>
+                  <p className="text-xs font-black uppercase tracking-wider text-muted-foreground mb-0.5">Location</p>
+                  <p className="font-bold tracking-tight">{location}</p>
                 </div>
-                {claim.expiresAt && (
-                  <p className="flex items-center gap-1.5 text-xs text-muted-foreground mt-3">
-                    <Clock className="w-3.5 h-3.5" /> Expires {new Date(claim.expiresAt).toLocaleString()}
-                  </p>
-                )}
-              </div>
-            ) : (
-              <div>
-                {customerName ? (
-                  <p className="text-xs text-muted-foreground mb-3">Claiming as <span className="font-bold text-foreground">{customerName}</span></p>
-                ) : (
-                  <p className="text-xs text-muted-foreground mb-3">
-                    Claiming as guest.{' '}
-                    <Link href="/account" className="font-bold text-primary underline">Log in</Link>{' '}
-                    to save it to your account.
-                  </p>
-                )}
-                <button
-                  onClick={handleClaim}
-                  disabled={claiming}
-                  className={cn(
-                    'w-full bg-primary text-primary-foreground font-black uppercase tracking-wider text-sm rounded-xl py-4 transition-all hover:opacity-90 disabled:opacity-60 flex items-center justify-center gap-2'
-                  )}
-                >
-                  {claiming ? <><Loader2 className="w-4 h-4 animate-spin" /> Claiming...</> : 'Claim Deal — Get Code'}
-                </button>
-                {error && (
-                  <p className="flex items-center gap-2 text-sm text-red-500 mt-3">
-                    <AlertCircle className="w-4 h-4" /> {error}
-                  </p>
-                )}
               </div>
             )}
+
+            {/* How to redeem */}
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">How it works</p>
+              <div className="grid sm:grid-cols-3 gap-4">
+                {[
+                  { icon: BadgeCheck, title: 'Claim the deal', desc: 'Get your one-time redeem code instantly.' },
+                  { icon: QrCode, title: 'Show the code', desc: 'Present it at the merchant when you visit.' },
+                  { icon: CheckCircle2, title: 'They scan it', desc: 'The discount applies once the merchant records it.' },
+                ].map((step, i) => (
+                  <div key={i} className="border border-border rounded-2xl p-4">
+                    <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center mb-3">
+                      <step.icon className="w-4 h-4" />
+                    </div>
+                    <p className="text-sm font-bold tracking-tight mb-1">{i + 1}. {step.title}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{step.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Right: sticky claim card ── */}
+          <div className="lg:sticky lg:top-24">
+            <div className="border border-border rounded-3xl p-6 shadow-sm bg-card">
+              <div className="flex items-baseline gap-3 mb-1">
+                <span className="text-5xl font-black tracking-tighter">${deal.discountedPrice}</span>
+                {deal.originalPrice > deal.discountedPrice && (
+                  <span className="text-xl text-muted-foreground line-through">${deal.originalPrice}</span>
+                )}
+              </div>
+              {deal.discountPercentage > 0 && (
+                <p className="text-sm font-bold text-emerald-600 mb-5">
+                  You save ${deal.originalPrice - deal.discountedPrice} ({deal.discountPercentage}% off)
+                </p>
+              )}
+
+              {claim ? (
+                <div className="border-2 border-emerald-500/40 bg-emerald-500/5 rounded-2xl p-5 mt-2">
+                  <div className="flex items-center gap-2 text-emerald-600 font-black uppercase tracking-wider text-sm mb-4">
+                    <CheckCircle2 className="w-5 h-5" /> Deal Claimed
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">Show this code at the merchant:</p>
+                  <button
+                    onClick={copyCode}
+                    className="w-full flex items-center justify-between bg-background border border-border rounded-xl px-5 py-4 mb-4 hover:border-foreground/30 transition-colors"
+                  >
+                    <span className="text-2xl font-black tracking-[0.25em] font-mono">{claim.redeemCode}</span>
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
+                      {copied ? <><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Copied</> : <><Copy className="w-4 h-4" /> Copy</>}
+                    </span>
+                  </button>
+                  <div className="flex items-start gap-2 text-xs text-amber-600 bg-amber-500/10 rounded-lg p-3">
+                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>Valid only once the merchant scans it. An un-redeemed code means the discount hasn&apos;t been applied — make sure they complete it.</span>
+                  </div>
+                  {claim.expiresAt && (
+                    <p className="flex items-center gap-1.5 text-xs text-muted-foreground mt-3">
+                      <Clock className="w-3.5 h-3.5" /> Expires {new Date(claim.expiresAt).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={handleClaim}
+                    disabled={claiming}
+                    className={cn(
+                      'w-full bg-primary text-primary-foreground font-black uppercase tracking-wider text-sm rounded-xl py-4 transition-all hover:opacity-90 disabled:opacity-60 flex items-center justify-center gap-2'
+                    )}
+                  >
+                    {claiming ? <><Loader2 className="w-4 h-4 animate-spin" /> Claiming...</> : 'Claim Deal — Get Code'}
+                  </button>
+                  {error && (
+                    <p className="flex items-center gap-2 text-sm text-red-500 mt-3">
+                      <AlertCircle className="w-4 h-4" /> {error}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-4 text-center">
+                    {customerName ? (
+                      <>Claiming as <span className="font-bold text-foreground">{customerName}</span></>
+                    ) : (
+                      <>Claiming as guest · <Link href="/account" className="font-bold text-primary underline">Log in</Link> to save it</>
+                    )}
+                  </p>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
