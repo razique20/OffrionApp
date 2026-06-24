@@ -77,7 +77,7 @@ export const Navbar = () => {
         <div className="flex items-center gap-8">
           <div className="hidden md:flex items-center gap-1">
             {[
-              { label: 'Deals', href: '/deals' },
+              ...(customer ? [{ label: 'Deals', href: '/deals' }] : []),
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
               { label: 'Showcase', href: '/showcase' },
@@ -281,7 +281,7 @@ export const Navbar = () => {
         <div className="md:hidden absolute top-full left-0 w-full bg-background border-y border-border p-8 flex flex-col gap-8 shadow-2xl animate-in fade-in slide-in-from-top-4">
           <div className="flex flex-col gap-6">
             {[
-              { label: 'Deals', href: '/deals' },
+              ...(customer ? [{ label: 'Deals', href: '/deals' }] : []),
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
               { label: 'Showcase', href: '/showcase' },
