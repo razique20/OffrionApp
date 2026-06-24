@@ -5,7 +5,6 @@ import Deal from '@/models/Deal';
 import Commission from '@/models/Commission';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import MerchantProfile from '@/models/MerchantProfile';
-import mongoose from 'mongoose';
 import { z } from 'zod';
 import { dispatchWebhook } from '@/lib/webhooks';
 
@@ -57,10 +56,17 @@ export async function POST(req: Request) {
     }
 
     // --- Automated Commission Engine ---
+    // Split depends on the claim channel, not on whether a customer account exists:
+    //  - 'partner' claims keep the standard 70/30 partner/platform split.
+    //  - 'direct' (first-party storefront) claims have no partner, so the
+    //    platform takes the full commission.
+    const isDirect = transaction.channel === 'direct' || !transaction.partnerId;
     const commissionRate = deal.commissionPercentage / 100;
     const totalCommission = deal.discountedPrice * commissionRate;
-    const partnerShare = Math.round(totalCommission * 0.70 * 100) / 100;
-    const platformShare = Math.round(totalCommission * 0.30 * 100) / 100;
+    const partnerShare = isDirect ? 0 : Math.round(totalCommission * 0.70 * 100) / 100;
+    const platformShare = isDirect
+      ? Math.round(totalCommission * 100) / 100
+      : Math.round(totalCommission * 0.30 * 100) / 100;
 
     // --- Wallet Deduction Logic ---
     // Perform balance check BEFORE modifying the transaction status.
@@ -115,14 +121,14 @@ export async function POST(req: Request) {
     await AnalyticsEvent.create({
       type: 'conversion',
       dealId: deal._id,
-      partnerId: new mongoose.Types.ObjectId(transaction.partnerId.toString()),
+      partnerId: transaction.partnerId,
       merchantId: deal.merchantId,
-      metadata: { transactionId: transaction._id },
+      metadata: { transactionId: transaction._id, channel: transaction.channel },
     });
 
     const commission = await Commission.create({
       transactionId: transaction._id,
-      partnerId: new mongoose.Types.ObjectId(transaction.partnerId.toString()),
+      partnerId: transaction.partnerId,
       merchantId: deal.merchantId,
       amount: Math.round(totalCommission * 100) / 100,
       partnerShare,
@@ -131,18 +137,21 @@ export async function POST(req: Request) {
     });
 
     // --- Dispatch Real-Time Webhook (Fire-and-forget) ---
-    dispatchWebhook(
-      transaction.partnerId.toString(),
-      'deal.redeemed',
-      {
-        transactionId: transaction._id,
-        dealId: deal._id,
-        dealTitle: deal.title,
-        amount: deal.discountedPrice,
-        partnerShare: commission.partnerShare,
-        redeemedAt: transaction.redeemedAt,
-      }
-    ).catch(err => console.error('[Webhook Trigger Error]:', err));
+    // Only partner-channel claims notify a partner — direct claims have none.
+    if (!isDirect && transaction.partnerId) {
+      dispatchWebhook(
+        transaction.partnerId.toString(),
+        'deal.redeemed',
+        {
+          transactionId: transaction._id,
+          dealId: deal._id,
+          dealTitle: deal.title,
+          amount: deal.discountedPrice,
+          partnerShare: commission.partnerShare,
+          redeemedAt: transaction.redeemedAt,
+        }
+      ).catch(err => console.error('[Webhook Trigger Error]:', err));
+    }
 
     return NextResponse.json({ 
       message: 'Deal redeemed successfully',

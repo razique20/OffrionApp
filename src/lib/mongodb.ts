@@ -7,6 +7,7 @@ import '@/models/AnalyticsEvent';
 import '@/models/Transaction';
 import '@/models/MerchantProfile';
 import '@/models/Commission';
+import '@/models/Customer';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/offrion_deals';
 

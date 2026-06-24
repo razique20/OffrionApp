@@ -13,6 +13,9 @@ const conversionSchema = z.object({
   dealId: z.string(),
   amount: z.number().positive(),
   currency: z.string().default('USD'),
+  // Optional: a logged-in customer's id, if the partner integrates our accounts.
+  // The claim stays channel: 'partner' and keeps the 70/30 split regardless.
+  customerId: z.string().optional(),
   metadata: z.any().optional(),
 });
 
@@ -45,7 +48,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: err.message }, { status });
     }
 
-    const { dealId, amount, currency, metadata } = conversionSchema.parse(body);
+    const { dealId, amount, currency, customerId, metadata } = conversionSchema.parse(body);
 
 
     const deal = await Deal.findById(dealId);
@@ -72,6 +75,10 @@ export async function POST(req: Request) {
       merchantId: deal.merchantId,
       apiKeyId: apiKey._id,
       partnerId: new mongoose.Types.ObjectId(apiKey.partnerId.toString()),
+      channel: 'partner',
+      customerId: customerId && mongoose.Types.ObjectId.isValid(customerId)
+        ? new mongoose.Types.ObjectId(customerId)
+        : undefined,
       amount,
       currency,
       status: 'pending',
