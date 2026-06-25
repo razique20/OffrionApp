@@ -145,18 +145,27 @@ export default function AccountPage() {
     notifyCustomerSessionChange();
   };
 
-  // Logged-in shows the app shell (tabs); logged-out/auth keeps its own simple
-  // back-to-home bar and hides the shell tabs.
+  // Keep the app shell (tabs) visible while loading and when logged in, so the
+  // shell doesn't flash away on navigation to /account. Only the settled
+  // logged-out auth screen hides the tabs (it has its own back-to-home bar).
+  const loggedOut = !loading && !customer;
   useSetMobileChrome(
-    { title: 'My Account', showShell: !loading && !!customer },
-    [loading, customer]
+    { title: 'My Account', showShell: !loggedOut },
+    [loggedOut]
   );
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-      </main>
+      <>
+        {/* Desktop spinner */}
+        <main className="hidden md:flex min-h-screen items-center justify-center bg-background">
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        </main>
+        {/* Mobile spinner — content only, shell stays mounted from the layout */}
+        <div className="md:hidden flex items-center justify-center py-32">
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        </div>
+      </>
     );
   }
 
