@@ -8,13 +8,15 @@ import { Footer } from './Footer';
 export const ConditionalNavFooter = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   
-  // Hide navbar/footer on dashboard, admin, and auth pages
-  const isDashboard = pathname?.startsWith('/merchant') ||
+  // Hide navbar/footer on dashboard, admin, auth, and the standalone coupon
+  // landing page (/c/[code]), which is a self-contained branded surface.
+  const isChromeless = pathname?.startsWith('/merchant') ||
                      pathname?.startsWith('/partner') ||
                      pathname?.startsWith('/admin') ||
-                     pathname?.startsWith('/auth');
+                     pathname?.startsWith('/auth') ||
+                     pathname?.startsWith('/c/');
 
-  if (isDashboard) {
+  if (isChromeless) {
     return <>{children}</>;
   }
 
