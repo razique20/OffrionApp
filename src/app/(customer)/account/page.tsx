@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus, Copy, ArrowLeft } from 'lucide-react';
+import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus, Copy, ArrowLeft, Tag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { notifyCustomerSessionChange } from '@/hooks/useCustomer';
 import { useSetMobileChrome } from '@/components/customer/MobileChromeContext';
@@ -16,7 +16,7 @@ type Claim = {
   expiresAt: string | null;
   channel: string;
   createdAt: string;
-  deal: { id: string; title: string; image: string | null; discountedPrice: number; discountPercentage: number } | null;
+  deal: { id: string; title: string; image: string | null; originalPrice: number; discountedPrice: number; discountPercentage: number } | null;
 };
 
 export default function AccountPage() {
@@ -330,6 +330,13 @@ export default function AccountPage() {
                         </p>
                       );
                     })()}
+                    {c.deal && c.deal.originalPrice > c.deal.discountedPrice && (
+                      <p className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 mt-1">
+                        <Tag className="w-3 h-3" />
+                        {redeemed ? 'You saved' : "You'll save"} ${c.deal.originalPrice - c.deal.discountedPrice}
+                        {c.deal.discountPercentage > 0 && <span className="text-emerald-600/70 font-semibold"> ({c.deal.discountPercentage}% off)</span>}
+                      </p>
+                    )}
                   </div>
                   <div className={cn(
                     'flex items-center gap-1.5 text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-full shrink-0',
