@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { notifyCustomerSessionChange } from '@/hooks/useCustomer';
+import { CustomerMobileChrome } from '@/components/CustomerMobileChrome';
 
 type Customer = { id: string; name: string; email: string };
 type Claim = {
@@ -221,21 +222,11 @@ export default function AccountPage() {
     );
   }
 
-  // Logged in — show account + claim history
-  return (
-    <main className="min-h-screen bg-background">
-      <div className="max-w-3xl mx-auto px-6 pt-28 pb-16">
-        <div className="flex items-start justify-between mb-12">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground mb-2">My Account</p>
-            <h1 className="text-4xl font-black tracking-tighter">{customer.name}</h1>
-            <p className="text-muted-foreground mt-1">{customer.email}</p>
-          </div>
-          <button onClick={logout} className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors">
-            <LogOut className="w-4 h-4" /> Log out
-          </button>
-        </div>
-
+  // Logged in — show account + claim history.
+  // Shared body (link-coupon + claims), reused by the desktop layout and the
+  // mobile app chrome below.
+  const accountBody = (
+    <>
         {/* Link a coupon received elsewhere (e.g. a partner app) */}
         <div className="border border-border rounded-2xl p-5 mb-10 bg-card">
           <div className="flex items-center gap-2 mb-1.5">
@@ -333,7 +324,41 @@ export default function AccountPage() {
             })}
           </div>
         )}
-      </div>
-    </main>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop / web — keep the existing layout with marketing chrome */}
+      <main className="hidden md:block min-h-screen bg-background">
+        <div className="max-w-3xl mx-auto px-6 pt-28 pb-16">
+          <div className="flex items-start justify-between mb-12">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground mb-2">My Account</p>
+              <h1 className="text-4xl font-black tracking-tighter">{customer.name}</h1>
+              <p className="text-muted-foreground mt-1">{customer.email}</p>
+            </div>
+            <button onClick={logout} className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors">
+              <LogOut className="w-4 h-4" /> Log out
+            </button>
+          </div>
+          {accountBody}
+        </div>
+      </main>
+
+      {/* Mobile — native app style: top bar + bottom tabs */}
+      <CustomerMobileChrome title="My Account">
+        <div className="flex items-center justify-between mb-6">
+          <div className="min-w-0">
+            <h2 className="text-xl font-black tracking-tight truncate">{customer.name}</h2>
+            <p className="text-xs text-muted-foreground truncate">{customer.email}</p>
+          </div>
+          <button onClick={logout} className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground shrink-0">
+            <LogOut className="w-4 h-4" /> Log out
+          </button>
+        </div>
+        {accountBody}
+      </CustomerMobileChrome>
+    </>
   );
 }
