@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { notifyCustomerSessionChange } from '@/hooks/useCustomer';
 
@@ -28,21 +28,56 @@ export default function AccountPage() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Link a coupon code (e.g. one received from a partner app)
+  const [linkCode, setLinkCode] = useState('');
+  const [linking, setLinking] = useState(false);
+  const [linkMsg, setLinkMsg] = useState<{ text: string; ok: boolean } | null>(null);
+
+  const loadClaims = useCallback(async () => {
+    const claimsRes = await fetch('/api/customer/claims');
+    if (claimsRes.ok) setClaims((await claimsRes.json()).claims || []);
+  }, []);
+
   const loadSession = useCallback(async () => {
     try {
       const res = await fetch('/api/customer/auth/me');
       if (res.ok) {
         const json = await res.json();
         setCustomer(json.customer);
-        const claimsRes = await fetch('/api/customer/claims');
-        if (claimsRes.ok) setClaims((await claimsRes.json()).claims || []);
+        await loadClaims();
       } else {
         setCustomer(null);
       }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [loadClaims]);
+
+  const handleLinkCoupon = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!linkCode.trim()) return;
+    setLinking(true);
+    setLinkMsg(null);
+    try {
+      const res = await fetch('/api/customer/claims/link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: linkCode.trim() }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setLinkMsg({ text: typeof json.error === 'string' ? json.error : 'Could not link that code.', ok: false });
+        return;
+      }
+      setLinkMsg({ text: json.message || 'Coupon linked.', ok: true });
+      setLinkCode('');
+      await loadClaims();
+    } catch {
+      setLinkMsg({ text: 'Network error. Please try again.', ok: false });
+    } finally {
+      setLinking(false);
+    }
+  };
 
   useEffect(() => { loadSession(); }, [loadSession]);
 
@@ -171,6 +206,38 @@ export default function AccountPage() {
           <button onClick={logout} className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors">
             <LogOut className="w-4 h-4" /> Log out
           </button>
+        </div>
+
+        {/* Link a coupon received elsewhere (e.g. a partner app) */}
+        <div className="border border-border rounded-2xl p-5 mb-10 bg-card">
+          <div className="flex items-center gap-2 mb-1.5">
+            <Plus className="w-4 h-4" />
+            <h2 className="text-sm font-black uppercase tracking-wider">Link a coupon</h2>
+          </div>
+          <p className="text-xs text-muted-foreground mb-4">
+            Got a code from a partner app? Add it here to track it in your account. Your discount is unaffected.
+          </p>
+          <form onSubmit={handleLinkCoupon} className="flex gap-2">
+            <input
+              value={linkCode}
+              onChange={(e) => { setLinkCode(e.target.value.toUpperCase()); setLinkMsg(null); }}
+              placeholder="Enter code (e.g. BL6XHT)"
+              maxLength={12}
+              className="flex-1 bg-secondary/40 border border-border rounded-xl px-4 py-2.5 text-sm font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-foreground/20"
+            />
+            <button
+              type="submit"
+              disabled={linking || !linkCode.trim()}
+              className="px-5 py-2.5 bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider rounded-xl hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+            >
+              {linking ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Link'}
+            </button>
+          </form>
+          {linkMsg && (
+            <p className={cn('flex items-center gap-2 text-xs mt-3', linkMsg.ok ? 'text-emerald-600' : 'text-red-500')}>
+              {linkMsg.ok ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />} {linkMsg.text}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center gap-2 mb-6">
