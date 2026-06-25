@@ -214,9 +214,6 @@ export default function AccountPage() {
               {mode === 'login' ? 'Sign up' : 'Log in'}
             </button>
           </p>
-          <p className="text-center text-xs text-muted-foreground mt-4">
-            <Link href="/deals" className="underline">Browse deals as guest</Link>
-          </p>
         </div>
       </main>
     );

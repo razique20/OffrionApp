@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Search, Loader2, Tag, ArrowRight, ShoppingBag } from 'lucide-react';
+import { CustomerMobileChrome } from '@/components/CustomerMobileChrome';
 
 type Deal = {
   _id: string;
@@ -42,18 +43,11 @@ export default function DealsBrowsePage() {
 
   useEffect(() => { load(); }, [load]);
 
-  return (
-    <main className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-6 pt-28 pb-16">
-        <div className="mb-10">
-          <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground mb-3">Offrion Deals</p>
-          <h1 className="text-5xl font-black tracking-tighter mb-4">Browse Deals</h1>
-          <p className="text-lg text-muted-foreground">Claim a deal, show the code at the merchant, and save.</p>
-        </div>
-
+  const searchAndGrid = (
+    <>
         <form
           onSubmit={(e) => { e.preventDefault(); setQuery(search); }}
-          className="relative mb-12 max-w-xl"
+          className="relative mb-8 md:mb-12 max-w-xl"
         >
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40" />
           <input
@@ -127,7 +121,27 @@ export default function DealsBrowsePage() {
             ))}
           </div>
         )}
-      </div>
-    </main>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop / web — existing layout with marketing chrome */}
+      <main className="hidden md:block min-h-screen bg-background">
+        <div className="max-w-6xl mx-auto px-6 pt-28 pb-16">
+          <div className="mb-10">
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground mb-3">Offrion Deals</p>
+            <h1 className="text-5xl font-black tracking-tighter mb-4">Browse Deals</h1>
+            <p className="text-lg text-muted-foreground">Claim a deal, show the code at the merchant, and save.</p>
+          </div>
+          {searchAndGrid}
+        </div>
+      </main>
+
+      {/* Mobile — native app style */}
+      <CustomerMobileChrome title="Deals">
+        {searchAndGrid}
+      </CustomerMobileChrome>
+    </>
   );
 }
