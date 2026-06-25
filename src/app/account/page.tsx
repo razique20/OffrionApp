@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus, Copy } from 'lucide-react';
+import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus, Copy, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { notifyCustomerSessionChange } from '@/hooks/useCustomer';
 import { CustomerMobileChrome } from '@/components/CustomerMobileChrome';
@@ -156,7 +156,15 @@ export default function AccountPage() {
   // Logged out — show auth form
   if (!customer) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-background px-6">
+      <main className="min-h-screen flex flex-col bg-background">
+        {/* Mobile-only top bar so guests can leave the auth screen */}
+        <header className="md:hidden sticky top-0 z-40 h-14 flex items-center border-b border-border bg-background/90 backdrop-blur-md px-4">
+          <Link href="/deals" className="flex items-center gap-1.5 text-sm font-bold" aria-label="Back to deals">
+            <ArrowLeft className="w-5 h-5" /> Deals
+          </Link>
+        </header>
+
+        <div className="flex-1 flex items-center justify-center px-6 py-10">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground mb-3">Offrion</p>
@@ -214,6 +222,7 @@ export default function AccountPage() {
               {mode === 'login' ? 'Sign up' : 'Log in'}
             </button>
           </p>
+        </div>
         </div>
       </main>
     );
