@@ -52,7 +52,7 @@ export default function AdminDashboard() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [selectedCommissions, setSelectedCommissions] = useState<string[]>([]);
-  const [reviewSubTab, setReviewSubTab] = useState<'merchants' | 'deals' | 'funds' | 'regions'>('merchants');
+  const [reviewSubTab, setReviewSubTab] = useState<'merchants' | 'deals' | 'funds' | 'regions' | 'storefront'>('merchants');
   const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const [tableSearch, setTableSearch] = useState('');
 
@@ -78,7 +78,7 @@ export default function AdminDashboard() {
   }, [activeTab]);
 
   const [financials, setFinancials] = useState<any>(null);
-  const [moderationData, setModerationData] = useState<any>({ deals: [], merchants: [], commissions: [], regionalRequests: [] });
+  const [moderationData, setModerationData] = useState<any>({ deals: [], merchants: [], commissions: [], regionalRequests: [], storefrontRequests: [] });
 
   const fetchFinancials = async () => {
     setLoading(true);
@@ -256,6 +256,34 @@ export default function AdminDashboard() {
         showNotification(json.message || 'Storefront visibility updated');
       } else {
         showNotification(json.error || 'Failed to update storefront visibility', 'error');
+      }
+    } catch (err: any) {
+      showNotification(err.message || 'Network error occurred', 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleReviewStorefront = async (dealId: string, visible: boolean) => {
+    setActionLoading(dealId);
+    try {
+      const res = await fetch(`/api/admin/deals/${dealId}/storefront`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visible, clearRequest: !visible }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        // Remove from the pending queue either way (approved -> visible;
+        // declined -> request cleared, stays hidden).
+        setModerationData({
+          ...moderationData,
+          storefrontRequests: moderationData.storefrontRequests.filter((d: any) => d._id !== dealId),
+        });
+        showNotification(visible ? 'Deal approved for the customer storefront' : 'Storefront request declined');
+        fetchStats();
+      } else {
+        showNotification(json.error || 'Failed to update request', 'error');
       }
     } catch (err: any) {
       showNotification(err.message || 'Network error occurred', 'error');
@@ -495,9 +523,9 @@ export default function AdminDashboard() {
                   )}
                 >
                   <span className="capitalize">{tab}</span>
-                  {tab === 'review' && moderationData.deals.length + moderationData.merchants.length + moderationData.regionalRequests.length > 0 && (
+                  {tab === 'review' && moderationData.deals.length + moderationData.merchants.length + moderationData.regionalRequests.length + (moderationData.storefrontRequests?.length || 0) > 0 && (
                     <span className="w-5 h-5 bg-accent text-foreground text-[10px] flex items-center justify-center rounded-md font-bold mb-0.5 ml-2">
-                      {moderationData.deals.length + moderationData.merchants.length + moderationData.regionalRequests.length}
+                      {moderationData.deals.length + moderationData.merchants.length + moderationData.regionalRequests.length + (moderationData.storefrontRequests?.length || 0)}
                     </span>
                   )}
                   {isActive && (
@@ -773,7 +801,7 @@ export default function AdminDashboard() {
             {activeTab === 'review' && (
               <div className="space-y-8">
                 <div className="flex border-b border-border">
-                  {(['merchants', 'deals', 'funds', 'regions'] as const).map(sub => (
+                  {(['merchants', 'deals', 'funds', 'regions', 'storefront'] as const).map(sub => (
                     <button
                       key={sub}
                       onClick={() => setReviewSubTab(sub)}
@@ -788,6 +816,7 @@ export default function AdminDashboard() {
                         {sub === 'deals' && moderationData.deals.length}
                         {sub === 'funds' && moderationData.commissions.length}
                         {sub === 'regions' && moderationData.regionalRequests.length}
+                        {sub === 'storefront' && (moderationData.storefrontRequests?.length || 0)}
                       </span>
                       {reviewSubTab === sub && <div className="absolute bottom-[-1px] left-0 right-0 h-[3px] bg-foreground rounded-t-full" />}
                     </button>
@@ -883,6 +912,31 @@ export default function AdminDashboard() {
                                   <td className="px-8 py-8 text-right space-x-3">
                                      <button onClick={() => handleModerateCommission(c._id, 'paid')} className="px-8 py-3.5 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-[0.1em] rounded-md hover:opacity-90 transition-all">Approve Payout</button>
                                      <button onClick={() => handleModerateCommission(c._id, 'rejected')} className="px-8 py-3.5 bg-red-600/10 text-red-600 text-[10px] font-black uppercase tracking-[0.1em] rounded-md hover:bg-red-600 hover:text-white transition-all">Deny</button>
+                                  </td>
+                               </tr>
+                            ))}
+
+                            {reviewSubTab === 'storefront' && (moderationData.storefrontRequests?.length || 0) === 0 && (
+                               <tr><td className="p-32 text-center opacity-30 text-[10px] font-black uppercase tracking-widest">No storefront listing requests</td></tr>
+                            )}
+                            {reviewSubTab === 'storefront' && (moderationData.storefrontRequests || []).map((d: any) => (
+                               <tr key={d._id} className="group hover:bg-secondary/20 transition-colors">
+                                  <td className="px-8 py-8">
+                                    <div className="flex items-center gap-6">
+                                      <div className="w-12 h-12 rounded bg-secondary border border-border overflow-hidden flex items-center justify-center">
+                                        {d.images?.[0]
+                                          ? <img src={d.images[0]} alt="" className="w-full h-full object-cover" />
+                                          : <Store className="w-5 h-5 opacity-50" />}
+                                      </div>
+                                      <div>
+                                        <p className="text-lg font-bold tracking-tighter leading-none mb-2">{d.title}</p>
+                                        <p className="text-xs font-medium opacity-50">{d.merchantId?.name || 'Unknown'} • {d.categoryId?.name || 'Uncategorized'} • -{d.discountPercentage}%</p>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td className="px-8 py-8 text-right space-x-3">
+                                     <button onClick={() => handleReviewStorefront(d._id, true)} disabled={actionLoading === d._id} className="px-8 py-3.5 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-[0.1em] rounded-md hover:opacity-90 transition-all disabled:opacity-50">Approve for Storefront</button>
+                                     <button onClick={() => handleReviewStorefront(d._id, false)} disabled={actionLoading === d._id} className="px-8 py-3.5 bg-red-600/10 text-red-600 text-[10px] font-black uppercase tracking-[0.1em] rounded-md hover:bg-red-600 hover:text-white transition-all disabled:opacity-50">Decline</button>
                                   </td>
                                </tr>
                             ))}

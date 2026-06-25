@@ -18,14 +18,19 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     }
 
     const { id } = await params;
-    const { visible } = await req.json();
+    const { visible, clearRequest } = await req.json();
     if (typeof visible !== 'boolean') {
       return NextResponse.json({ error: 'visible (boolean) is required' }, { status: 400 });
     }
 
+    // Approving sets visible. Declining (clearRequest) also clears the merchant's
+    // pending request so it leaves the review queue.
+    const update: any = { storefrontVisible: visible };
+    if (clearRequest) update.storefrontRequested = false;
+
     const deal = await Deal.findByIdAndUpdate(
       id,
-      { storefrontVisible: visible },
+      update,
       { returnDocument: 'after' }
     );
     if (!deal) {
