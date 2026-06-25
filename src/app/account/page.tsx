@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus } from 'lucide-react';
+import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { notifyCustomerSessionChange } from '@/hooks/useCustomer';
 
@@ -27,6 +27,34 @@ export default function AccountPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  // Ticks every second so the expiry countdown on pending claims stays live.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const copyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode((c) => (c === code ? null : c)), 1500);
+  };
+
+  // Time-left label: countdown when < 24h, otherwise a short date.
+  const expiryLabel = (expiresAt: string): { text: string; urgent: boolean } => {
+    const ms = new Date(expiresAt).getTime() - now;
+    if (ms <= 0) return { text: 'Expired', urgent: true };
+    const h = Math.floor(ms / 3_600_000);
+    const mIn = Math.floor((ms % 3_600_000) / 60_000);
+    const s = Math.floor((ms % 60_000) / 1000);
+    if (h >= 24) {
+      return { text: `Expires ${new Date(expiresAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`, urgent: false };
+    }
+    if (h >= 1) return { text: `Expires in ${h}h ${mIn}m`, urgent: h < 6 };
+    return { text: `Expires in ${mIn}m ${s}s`, urgent: true };
+  };
 
   // Link a coupon code (e.g. one received from a partner app)
   const [linkCode, setLinkCode] = useState('');
@@ -255,7 +283,7 @@ export default function AccountPage() {
           <div className="space-y-3">
             {claims.map((c) => {
               const redeemed = c.status === 'completed';
-              const expired = !redeemed && c.expiresAt && new Date(c.expiresAt) < new Date();
+              const expired = !redeemed && !!c.expiresAt && new Date(c.expiresAt).getTime() < now;
               return (
                 <div key={c.id} className="flex items-center gap-4 border border-border rounded-2xl p-4 bg-card">
                   <div className="w-16 h-16 rounded-xl bg-secondary overflow-hidden shrink-0">
@@ -265,9 +293,30 @@ export default function AccountPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-bold tracking-tight truncate">{c.deal?.title || 'Deal'}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Code <span className="font-mono font-bold tracking-widest text-foreground">{c.redeemCode}</span>
-                    </p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs text-muted-foreground">
+                        Code <span className="font-mono font-bold tracking-widest text-foreground">{c.redeemCode}</span>
+                      </span>
+                      {!redeemed && !expired && (
+                        <button
+                          onClick={() => copyCode(c.redeemCode)}
+                          className="inline-flex items-center gap-1 text-[10px] font-bold text-muted-foreground hover:text-foreground transition-colors"
+                          title="Copy code"
+                        >
+                          {copiedCode === c.redeemCode
+                            ? <><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Copied</>
+                            : <><Copy className="w-3 h-3" /> Copy</>}
+                        </button>
+                      )}
+                    </div>
+                    {!redeemed && c.expiresAt && (() => {
+                      const e = expiryLabel(c.expiresAt);
+                      return (
+                        <p className={cn('flex items-center gap-1 text-[11px] mt-1', e.urgent ? 'text-red-500 font-semibold' : 'text-muted-foreground')}>
+                          <Clock className="w-3 h-3" /> {e.text}
+                        </p>
+                      );
+                    })()}
                   </div>
                   <div className={cn(
                     'flex items-center gap-1.5 text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-full shrink-0',
