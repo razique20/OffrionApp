@@ -6,7 +6,6 @@ import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plu
 import { cn } from '@/lib/utils';
 import { notifyCustomerSessionChange } from '@/hooks/useCustomer';
 import { useSetMobileChrome } from '@/components/customer/MobileChromeContext';
-import { displayRedeemCode } from '@/lib/redeemCode';
 
 type Customer = { id: string; name: string; email: string };
 type Claim = {
@@ -39,8 +38,7 @@ export default function AccountPage() {
   }, []);
 
   const copyCode = (code: string) => {
-    // Copy the branded form so the customer keeps the OFFRION- prefix.
-    navigator.clipboard.writeText(displayRedeemCode(code));
+    navigator.clipboard.writeText(code);
     setCopiedCode(code);
     setTimeout(() => setCopiedCode((c) => (c === code ? null : c)), 1500);
   };
@@ -330,7 +328,7 @@ export default function AccountPage() {
                     <p className="font-bold tracking-tight truncate">{c.deal?.title || 'Deal'}</p>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-xs text-muted-foreground">
-                        Code <span className="font-mono font-bold tracking-widest text-foreground">{displayRedeemCode(c.redeemCode)}</span>
+                        Code <span className="font-mono font-bold tracking-widest text-foreground">{c.redeemCode}</span>
                       </span>
                       {!redeemed && !expired && (
                         <button
