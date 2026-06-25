@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Search, Loader2, Tag, ArrowRight, ShoppingBag } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useSetMobileChrome } from '@/components/customer/MobileChromeContext';
 
 type Deal = {
@@ -25,12 +26,15 @@ export default function DealsBrowsePage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState('');
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ limit: '24' });
       if (query.trim()) params.set('search', query.trim());
+      if (activeCategory) params.set('categoryId', activeCategory);
       const res = await fetch(`/api/storefront/deals?${params.toString()}`);
       const json = await res.json();
       setDeals(json.deals || []);
@@ -39,9 +43,16 @@ export default function DealsBrowsePage() {
     } finally {
       setLoading(false);
     }
-  }, [query]);
+  }, [query, activeCategory]);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    fetch('/api/storefront/categories')
+      .then((r) => r.json())
+      .then((j) => setCategories(j.categories || []))
+      .catch(() => setCategories([]));
+  }, []);
 
   useSetMobileChrome({ title: 'Deals' }, []);
 
@@ -49,7 +60,7 @@ export default function DealsBrowsePage() {
     <>
         <form
           onSubmit={(e) => { e.preventDefault(); setQuery(search); }}
-          className="relative mb-8 md:mb-12 max-w-xl"
+          className="relative mb-4 md:mb-5 max-w-xl"
         >
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40" />
           <input
@@ -59,6 +70,37 @@ export default function DealsBrowsePage() {
             className="w-full bg-secondary/40 border border-border rounded-xl pl-11 pr-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 transition-all"
           />
         </form>
+
+        {/* Category filter */}
+        {categories.length > 0 && (
+          <div className="flex gap-2 overflow-x-auto pb-2 mb-6 md:mb-10 -mx-4 px-4 md:mx-0 md:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <button
+              onClick={() => setActiveCategory(null)}
+              className={cn(
+                'shrink-0 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap border transition-colors',
+                activeCategory === null
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-secondary/40 border-border text-muted-foreground hover:text-foreground'
+              )}
+            >
+              All
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={cn(
+                  'shrink-0 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap border transition-colors',
+                  activeCategory === cat.id
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'bg-secondary/40 border-border text-muted-foreground hover:text-foreground'
+                )}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        )}
 
         {loading ? (
           <div className="flex items-center justify-center py-32 text-muted-foreground">
