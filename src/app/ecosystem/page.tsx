@@ -37,7 +37,7 @@ export default function EcosystemPage() {
           {/* Three roles — card grid */}
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 items-stretch">
             {/* Merchant */}
-            <div className="group relative flex flex-col p-7 rounded-3xl border border-border bg-card hover:border-[#F97316]/40 hover:-translate-y-1 hover:shadow-lg transition-all">
+            <div className="group relative flex flex-col p-7 rounded-3xl border border-border bg-card hover:-translate-y-1 hover:shadow-lg transition-all">
               <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ background: '#F9731615' }}>
                 <ShoppingBag className="w-7 h-7" style={{ color: '#F97316' }} />
               </div>
@@ -52,7 +52,7 @@ export default function EcosystemPage() {
             </div>
 
             {/* Partner — featured */}
-            <div className="group relative flex flex-col p-7 rounded-3xl border border-border bg-card hover:border-[#A855F7]/40 hover:-translate-y-1 hover:shadow-lg transition-all">
+            <div className="group relative flex flex-col p-7 rounded-3xl border border-border bg-card hover:-translate-y-1 hover:shadow-lg transition-all">
               <div className="relative flex items-center justify-between mb-6">
                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: '#A855F715' }}>
                   <Globe className="w-7 h-7" style={{ color: '#A855F7' }} />
@@ -70,7 +70,7 @@ export default function EcosystemPage() {
             </div>
 
             {/* Platform */}
-            <div className="group relative flex flex-col p-7 rounded-3xl border border-border bg-card hover:border-[#A855F7]/40 hover:-translate-y-1 hover:shadow-lg transition-all">
+            <div className="group relative flex flex-col p-7 rounded-3xl border border-border bg-card hover:-translate-y-1 hover:shadow-lg transition-all">
               <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ background: '#A855F715' }}>
                 <Zap className="w-7 h-7" style={{ color: '#A855F7' }} />
               </div>
