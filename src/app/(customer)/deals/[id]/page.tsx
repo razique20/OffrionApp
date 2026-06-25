@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, use } from 'react';
 import Link from 'next/link';
 import { Loader2, ShoppingBag, ArrowLeft, CheckCircle2, Copy, Clock, AlertCircle, MapPin, Tag, Sparkles, Calendar, Users, QrCode, Store, BadgeCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { CustomerMobileChrome } from '@/components/CustomerMobileChrome';
+import { useSetMobileChrome } from '@/components/customer/MobileChromeContext';
 
 type Deal = {
   _id: string;
@@ -90,6 +90,28 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
+
+  // Register the mobile shell (title, back, sticky claim/copy bar) for the layout.
+  useSetMobileChrome({
+    title: deal?.title || 'Deal',
+    back: true,
+    bottomBar: !deal ? null : claim ? (
+      <button
+        onClick={copyCode}
+        className="w-full flex items-center justify-center gap-2 bg-emerald-500/10 text-emerald-600 border border-emerald-500/30 font-black uppercase tracking-wider text-sm rounded-xl py-3.5"
+      >
+        {copied ? <><CheckCircle2 className="w-4 h-4" /> Code Copied</> : <><Copy className="w-4 h-4" /> Copy Code {claim.redeemCode}</>}
+      </button>
+    ) : (
+      <button
+        onClick={handleClaim}
+        disabled={claiming}
+        className="w-full bg-primary text-primary-foreground font-black uppercase tracking-wider text-sm rounded-xl py-3.5 disabled:opacity-60 flex items-center justify-center gap-2"
+      >
+        {claiming ? <><Loader2 className="w-4 h-4 animate-spin" /> Claiming...</> : `Claim — $${deal.discountedPrice}`}
+      </button>
+    ),
+  }, [deal, claim, copied, claiming]);
 
   if (loading) {
     return (
@@ -299,29 +321,8 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
       </div>
     </main>
 
-    {/* Mobile — native app style with sticky bottom claim bar */}
-    <CustomerMobileChrome
-      title={deal.title}
-      back
-      bottomBar={
-        claim ? (
-          <button
-            onClick={copyCode}
-            className="w-full flex items-center justify-center gap-2 bg-emerald-500/10 text-emerald-600 border border-emerald-500/30 font-black uppercase tracking-wider text-sm rounded-xl py-3.5"
-          >
-            {copied ? <><CheckCircle2 className="w-4 h-4" /> Code Copied</> : <><Copy className="w-4 h-4" /> Copy Code {claim.redeemCode}</>}
-          </button>
-        ) : (
-          <button
-            onClick={handleClaim}
-            disabled={claiming}
-            className="w-full bg-primary text-primary-foreground font-black uppercase tracking-wider text-sm rounded-xl py-3.5 disabled:opacity-60 flex items-center justify-center gap-2"
-          >
-            {claiming ? <><Loader2 className="w-4 h-4 animate-spin" /> Claiming...</> : `Claim — $${deal.discountedPrice}`}
-          </button>
-        )
-      }
-    >
+    {/* Mobile — content only; layout provides shell + sticky bottom claim bar */}
+    <div className="md:hidden px-4 pt-5 pb-40">
       {/* Hero */}
       <div className="relative aspect-[16/10] bg-secondary rounded-2xl overflow-hidden mb-5">
         {deal.images?.[0] ? (
@@ -395,7 +396,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
         </p>
       )}
       {error && <p className="flex items-center gap-2 text-sm text-red-500 mt-4"><AlertCircle className="w-4 h-4" /> {error}</p>}
-    </CustomerMobileChrome>
+    </div>
     </>
   );
 }

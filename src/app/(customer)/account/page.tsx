@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus, Copy, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { notifyCustomerSessionChange } from '@/hooks/useCustomer';
-import { CustomerMobileChrome } from '@/components/CustomerMobileChrome';
+import { useSetMobileChrome } from '@/components/customer/MobileChromeContext';
 
 type Customer = { id: string; name: string; email: string };
 type Claim = {
@@ -144,6 +144,13 @@ export default function AccountPage() {
     setClaims([]);
     notifyCustomerSessionChange();
   };
+
+  // Logged-in shows the app shell (tabs); logged-out/auth keeps its own simple
+  // back-to-home bar and hides the shell tabs.
+  useSetMobileChrome(
+    { title: 'My Account', showShell: !loading && !!customer },
+    [loading, customer]
+  );
 
   if (loading) {
     return (
@@ -352,8 +359,8 @@ export default function AccountPage() {
         </div>
       </main>
 
-      {/* Mobile — native app style: top bar + bottom tabs */}
-      <CustomerMobileChrome title="My Account">
+      {/* Mobile — content only; layout provides the persistent shell */}
+      <div className="md:hidden px-4 pt-5 pb-24">
         <div className="flex items-center justify-between mb-6">
           <div className="min-w-0">
             <h2 className="text-xl font-black tracking-tight truncate">{customer.name}</h2>
@@ -364,7 +371,7 @@ export default function AccountPage() {
           </button>
         </div>
         {accountBody}
-      </CustomerMobileChrome>
+      </div>
     </>
   );
 }

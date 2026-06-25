@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Search, Loader2, Tag, ArrowRight, ShoppingBag } from 'lucide-react';
-import { CustomerMobileChrome } from '@/components/CustomerMobileChrome';
+import { useSetMobileChrome } from '@/components/customer/MobileChromeContext';
 
 type Deal = {
   _id: string;
@@ -42,6 +42,8 @@ export default function DealsBrowsePage() {
   }, [query]);
 
   useEffect(() => { load(); }, [load]);
+
+  useSetMobileChrome({ title: 'Deals' }, []);
 
   const searchAndGrid = (
     <>
@@ -138,10 +140,10 @@ export default function DealsBrowsePage() {
         </div>
       </main>
 
-      {/* Mobile — native app style */}
-      <CustomerMobileChrome title="Deals">
+      {/* Mobile — content only; the (customer) layout provides the persistent shell */}
+      <div className="md:hidden px-4 pt-5 pb-24">
         {searchAndGrid}
-      </CustomerMobileChrome>
+      </div>
     </>
   );
 }
