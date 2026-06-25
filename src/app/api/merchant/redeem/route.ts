@@ -7,10 +7,12 @@ import AnalyticsEvent from '@/models/AnalyticsEvent';
 import MerchantProfile from '@/models/MerchantProfile';
 import { z } from 'zod';
 import { dispatchWebhook } from '@/lib/webhooks';
+import { normalizeRedeemCode } from '@/lib/redeemCode';
 
 const redeemSchema = z.object({
   transactionId: z.string().optional(),
-  redeemCode: z.string().length(6).optional(),
+  // Accept the code with or without the OFFRION- prefix / spaces; normalized below.
+  redeemCode: z.string().min(4).max(40).optional(),
 }).refine(
   (data) => data.transactionId || data.redeemCode,
   { message: 'Either transactionId or redeemCode is required' }
@@ -28,14 +30,14 @@ export async function POST(req: Request) {
 
     const { transactionId, redeemCode } = redeemSchema.parse(body);
 
-    // Look up transaction by ID or 6-digit redeem code
+    // Look up transaction by ID or redeem code (prefix/spacing tolerant)
     let transaction;
     if (transactionId) {
       transaction = await Transaction.findById(transactionId).populate('dealId');
     } else {
-      transaction = await Transaction.findOne({ 
-        qrCode: redeemCode!.toUpperCase(), 
-        status: 'pending' 
+      transaction = await Transaction.findOne({
+        qrCode: normalizeRedeemCode(redeemCode!),
+        status: 'pending'
       }).populate('dealId');
     }
 

@@ -6,6 +6,7 @@ import AnalyticsEvent from '@/models/AnalyticsEvent';
 import Transaction from '@/models/Transaction';
 import Commission from '@/models/Commission';
 import { checkIpRateLimit } from '@/lib/ipRateLimit';
+import { displayRedeemCode } from '@/lib/redeemCode';
 import { z } from 'zod';
 import mongoose from 'mongoose';
 
@@ -104,10 +105,25 @@ export async function POST(req: Request) {
     // 3. Update Deal Usage
     await Deal.findByIdAndUpdate(dealId, { $inc: { currentUsage: 1 } });
 
-    const response = NextResponse.json({ 
+    // Customer-facing branding + links so partners can surface Offrion (and let
+    // end users save the coupon to their Offrion account).
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://offrion.app';
+    const displayCode = displayRedeemCode(transaction.qrCode!);
+
+    const response = NextResponse.json({
       message: 'Conversion tracked. Redemption code generated.',
       transactionId: transaction._id,
-      redeemCode: transaction.qrCode,
+      redeemCode: transaction.qrCode,          // raw 6-char code (for redemption)
+      displayCode,                              // branded form: OFFRION-XXXXXX
+      // Branded redemption landing page (deal + code + "save to account").
+      redemptionUrl: `${baseUrl}/c/${transaction.qrCode}`,
+      // Deep link: customer logs in (if needed) and the coupon auto-links.
+      customerLinkUrl: `${baseUrl}/account?link=${transaction.qrCode}`,
+      branding: {
+        poweredBy: 'Offrion',
+        tagline: 'Save & track your deals at Offrion',
+        url: baseUrl,
+      },
       status: 'pending'
     });
 

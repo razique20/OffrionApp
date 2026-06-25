@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Loader2, ShoppingBag, ArrowLeft, CheckCircle2, Copy, Clock, AlertCircle, MapPin, Tag, Sparkles, Calendar, Users, QrCode, Store, BadgeCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSetMobileChrome } from '@/components/customer/MobileChromeContext';
+import { displayRedeemCode } from '@/lib/redeemCode';
 
 type Deal = {
   _id: string;
@@ -86,7 +87,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
 
   const copyCode = () => {
     if (!claim) return;
-    navigator.clipboard.writeText(claim.redeemCode);
+    navigator.clipboard.writeText(displayRedeemCode(claim.redeemCode));
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -100,7 +101,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
         onClick={copyCode}
         className="w-full flex items-center justify-center gap-2 bg-emerald-500/10 text-emerald-600 border border-emerald-500/30 font-black uppercase tracking-wider text-sm rounded-xl py-3.5"
       >
-        {copied ? <><CheckCircle2 className="w-4 h-4" /> Code Copied</> : <><Copy className="w-4 h-4" /> Copy Code {claim.redeemCode}</>}
+        {copied ? <><CheckCircle2 className="w-4 h-4" /> Code Copied</> : <><Copy className="w-4 h-4" /> Copy Code {displayRedeemCode(claim.redeemCode)}</>}
       </button>
     ) : (
       <button
@@ -155,7 +156,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
         onClick={copyCode}
         className="w-full flex items-center justify-between bg-background border border-border rounded-xl px-5 py-4 mb-3 hover:border-foreground/30 transition-colors"
       >
-        <span className="text-2xl font-black tracking-[0.25em] font-mono">{claim?.redeemCode}</span>
+        <span className="text-2xl font-black tracking-[0.25em] font-mono">{displayRedeemCode(claim?.redeemCode || "")}</span>
         <span className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
           {copied ? <><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Copied</> : <><Copy className="w-4 h-4" /> Copy</>}
         </span>
@@ -275,7 +276,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
                     onClick={copyCode}
                     className="w-full flex items-center justify-between bg-background border border-border rounded-xl px-5 py-4 mb-4 hover:border-foreground/30 transition-colors"
                   >
-                    <span className="text-2xl font-black tracking-[0.25em] font-mono">{claim.redeemCode}</span>
+                    <span className="text-2xl font-black tracking-[0.25em] font-mono">{displayRedeemCode(claim.redeemCode)}</span>
                     <span className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
                       {copied ? <><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Copied</> : <><Copy className="w-4 h-4" /> Copy</>}
                     </span>

@@ -6,6 +6,7 @@ import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plu
 import { cn } from '@/lib/utils';
 import { notifyCustomerSessionChange } from '@/hooks/useCustomer';
 import { useSetMobileChrome } from '@/components/customer/MobileChromeContext';
+import { displayRedeemCode } from '@/lib/redeemCode';
 
 type Customer = { id: string; name: string; email: string };
 type Claim = {
@@ -38,7 +39,8 @@ export default function AccountPage() {
   }, []);
 
   const copyCode = (code: string) => {
-    navigator.clipboard.writeText(code);
+    // Copy the branded form so the customer keeps the OFFRION- prefix.
+    navigator.clipboard.writeText(displayRedeemCode(code));
     setCopiedCode(code);
     setTimeout(() => setCopiedCode((c) => (c === code ? null : c)), 1500);
   };
@@ -82,16 +84,15 @@ export default function AccountPage() {
     }
   }, [loadClaims]);
 
-  const handleLinkCoupon = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!linkCode.trim()) return;
+  const linkCouponCode = useCallback(async (code: string) => {
+    if (!code.trim()) return;
     setLinking(true);
     setLinkMsg(null);
     try {
       const res = await fetch('/api/customer/claims/link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: linkCode.trim() }),
+        body: JSON.stringify({ code: code.trim() }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -106,9 +107,30 @@ export default function AccountPage() {
     } finally {
       setLinking(false);
     }
+  }, [loadClaims]);
+
+  const handleLinkCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+    linkCouponCode(linkCode);
   };
 
   useEffect(() => { loadSession(); }, [loadSession]);
+
+  // Deep link from a partner app: /account?link=CODE. Once the customer is
+  // logged in, auto-link the coupon; if logged out, prefill the box so it's
+  // ready (and auto-links right after they log in). Runs once per code.
+  const [autoLinked, setAutoLinked] = useState(false);
+  useEffect(() => {
+    if (autoLinked) return;
+    const code = new URLSearchParams(window.location.search).get('link');
+    if (!code) return;
+    if (customer) {
+      setAutoLinked(true);
+      linkCouponCode(code);
+    } else if (!loading) {
+      setLinkCode(code.toUpperCase());
+    }
+  }, [customer, loading, autoLinked, linkCouponCode]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -262,7 +284,7 @@ export default function AccountPage() {
             <input
               value={linkCode}
               onChange={(e) => { setLinkCode(e.target.value.toUpperCase()); setLinkMsg(null); }}
-              placeholder="Enter code (e.g. BL6XHT)"
+              placeholder="Enter code (e.g. OFFRION-BL6XHT)"
               maxLength={12}
               className="flex-1 bg-secondary/40 border border-border rounded-xl px-4 py-2.5 text-sm font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-foreground/20"
             />
@@ -308,7 +330,7 @@ export default function AccountPage() {
                     <p className="font-bold tracking-tight truncate">{c.deal?.title || 'Deal'}</p>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-xs text-muted-foreground">
-                        Code <span className="font-mono font-bold tracking-widest text-foreground">{c.redeemCode}</span>
+                        Code <span className="font-mono font-bold tracking-widest text-foreground">{displayRedeemCode(c.redeemCode)}</span>
                       </span>
                       {!redeemed && !expired && (
                         <button

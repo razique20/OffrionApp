@@ -3,10 +3,11 @@ import dbConnect from '@/lib/mongodb';
 import Transaction from '@/models/Transaction';
 import { getCustomerFromRequest } from '@/lib/auth-customer';
 import { checkIpRateLimit } from '@/lib/ipRateLimit';
+import { normalizeRedeemCode } from '@/lib/redeemCode';
 import { z } from 'zod';
 
 const linkSchema = z.object({
-  code: z.string().min(4).max(12),
+  code: z.string().min(4).max(40),
 });
 
 /**
@@ -34,7 +35,10 @@ export async function POST(req: Request) {
 
     await dbConnect();
     const { code } = linkSchema.parse(await req.json());
-    const normalized = code.trim().toUpperCase();
+    const normalized = normalizeRedeemCode(code);
+    if (!normalized) {
+      return NextResponse.json({ error: 'Enter a valid coupon code.' }, { status: 400 });
+    }
 
     const transaction = await Transaction.findOne({ qrCode: normalized }).populate('dealId', 'title');
     if (!transaction) {
