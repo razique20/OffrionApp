@@ -43,6 +43,7 @@ export async function POST(req: Request) {
       _id: dealId,
       isActive: true,
       status: 'active',
+      storefrontVisible: true,
       validUntil: { $gte: new Date() },
     });
     if (!deal) {

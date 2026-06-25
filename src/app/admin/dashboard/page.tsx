@@ -20,6 +20,7 @@ import {
   ExternalLink,
   ChevronRight,
   Clock,
+  Store,
   Download,
   MapPin
 } from 'lucide-react';
@@ -235,6 +236,28 @@ export default function AdminDashboard() {
       }
     } catch (err: any) {
       console.error(err);
+      showNotification(err.message || 'Network error occurred', 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleToggleStorefront = async (dealId: string, visible: boolean) => {
+    setActionLoading(dealId);
+    try {
+      const res = await fetch(`/api/admin/deals/${dealId}/storefront`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visible }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        setData(data.map((d) => (d._id === dealId ? { ...d, storefrontVisible: visible } : d)));
+        showNotification(json.message || 'Storefront visibility updated');
+      } else {
+        showNotification(json.error || 'Failed to update storefront visibility', 'error');
+      }
+    } catch (err: any) {
       showNotification(err.message || 'Network error occurred', 'error');
     } finally {
       setActionLoading(null);
@@ -684,7 +707,29 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-8 py-6 text-right">
                              <div className="flex items-center justify-end gap-2">
-                                <button 
+                                {activeTab === 'deals' && (
+                                  <button
+                                    onClick={() => handleToggleStorefront(item._id, !item.storefrontVisible)}
+                                    disabled={actionLoading === item._id}
+                                    title={item.storefrontVisible
+                                      ? 'Visible on customer storefront — click to hide'
+                                      : item.storefrontRequested
+                                        ? 'Merchant requested listing — click to show on storefront'
+                                        : 'Hidden from customers — click to show on storefront'}
+                                    className={cn(
+                                      "px-2.5 py-2 rounded-md text-[10px] font-black uppercase tracking-widest border transition-all flex items-center gap-1.5 disabled:opacity-50",
+                                      item.storefrontVisible
+                                        ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
+                                        : item.storefrontRequested
+                                          ? "bg-amber-500/10 text-amber-600 border-amber-500/30"
+                                          : "bg-secondary text-muted-foreground border-border opacity-0 group-hover:opacity-100"
+                                    )}
+                                  >
+                                    <Store className="w-3.5 h-3.5" />
+                                    {item.storefrontVisible ? 'Listed' : item.storefrontRequested ? 'Requested' : 'List'}
+                                  </button>
+                                )}
+                                <button
                                  onClick={() => { setSelectedItem(item); setIsDeleteOpen(true); }}
                                  className="px-3 py-2 text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/10 rounded-md"
                                 >

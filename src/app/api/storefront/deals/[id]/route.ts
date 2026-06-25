@@ -18,6 +18,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       _id: id,
       isActive: true,
       status: 'active',
+      storefrontVisible: true,
       validUntil: { $gte: new Date() },
     })
       .populate('merchantId', 'name')

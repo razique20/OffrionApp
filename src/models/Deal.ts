@@ -34,6 +34,10 @@ export interface IDeal extends Document {
   isActive: boolean;
   isHot: boolean;
   isFeatured: boolean;
+  // First-party customer storefront visibility. Deals are private by default;
+  // a merchant can request listing, and an admin approves it (storefrontVisible).
+  storefrontRequested: boolean;
+  storefrontVisible: boolean;
   priorityScore: number;
   createdAt: Date;
   updatedAt: Date;
@@ -97,6 +101,8 @@ const DealSchema: Schema = new Schema(
     isActive: { type: Boolean, default: false, index: true },
     isHot: { type: Boolean, default: false, index: true },
     isFeatured: { type: Boolean, default: false, index: true },
+    storefrontRequested: { type: Boolean, default: false, index: true },
+    storefrontVisible: { type: Boolean, default: false, index: true },
     priorityScore: { type: Number, default: 0 },
   },
   { timestamps: true }

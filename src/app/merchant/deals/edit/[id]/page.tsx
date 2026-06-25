@@ -27,6 +27,7 @@ export default function EditDealPage() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [storefrontVisible, setStorefrontVisible] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -46,6 +47,7 @@ export default function EditDealPage() {
     eventType: 'general',
     dealType: 'percentage',
     targetAudience: ['all'] as string[],
+    storefrontRequested: false,
   });
 
   useEffect(() => {
@@ -89,7 +91,9 @@ export default function EditDealPage() {
           eventType: deal.eventType || 'general',
           dealType: deal.dealType || 'percentage',
           targetAudience: deal.targetAudience || ['all'],
+          storefrontRequested: !!deal.storefrontRequested,
         });
+        setStorefrontVisible(!!deal.storefrontVisible);
         setLoading(false);
       })
       .catch(err => {
@@ -444,8 +448,35 @@ export default function EditDealPage() {
             />
           </div>
 
+          {/* Customer storefront listing */}
           <div className="pt-6 border-t border-border">
-            <button 
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.storefrontRequested}
+                onChange={(e) => setFormData({ ...formData, storefrontRequested: e.target.checked })}
+                className="mt-1 w-4 h-4 accent-foreground"
+              />
+              <div>
+                <p className="text-sm font-bold">List on the Offrion customer storefront</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Request to show this deal publicly to customers on Offrion. An admin reviews and approves listings.
+                </p>
+                <p className="text-[11px] font-bold mt-1.5">
+                  {storefrontVisible ? (
+                    <span className="text-emerald-600">● Live on the customer storefront</span>
+                  ) : formData.storefrontRequested ? (
+                    <span className="text-amber-600">● Pending admin approval</span>
+                  ) : (
+                    <span className="text-muted-foreground">● Not listed</span>
+                  )}
+                </p>
+              </div>
+            </label>
+          </div>
+
+          <div className="pt-6 border-t border-border">
+            <button
               type="submit"
               disabled={saving}
               className="w-full bg-secondary text-foreground border border-border font-bold py-4 rounded-md shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"

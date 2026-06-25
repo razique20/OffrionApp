@@ -20,6 +20,7 @@ export async function GET(req: Request) {
     const query: any = {
       isActive: true,
       status: 'active',
+      storefrontVisible: true, // admin-approved for the public customer storefront
       validUntil: { $gte: new Date() },
     };
 
