@@ -157,10 +157,10 @@ export default function AccountPage() {
   if (!customer) {
     return (
       <main className="min-h-screen flex flex-col bg-background">
-        {/* Mobile-only top bar so guests can leave the auth screen */}
+        {/* Mobile-only top bar so the customer can leave the auth screen back to the landing page */}
         <header className="md:hidden sticky top-0 z-40 h-14 flex items-center border-b border-border bg-background/90 backdrop-blur-md px-4">
-          <Link href="/deals" className="flex items-center gap-1.5 text-sm font-bold" aria-label="Back to deals">
-            <ArrowLeft className="w-5 h-5" /> Deals
+          <Link href="/" className="flex items-center gap-1.5 text-sm font-bold" aria-label="Back to home">
+            <ArrowLeft className="w-5 h-5" /> Home
           </Link>
         </header>
 
