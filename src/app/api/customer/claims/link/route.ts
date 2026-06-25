@@ -40,9 +40,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Enter a valid coupon code.' }, { status: 400 });
     }
 
+    // Stored codes are 6 characters. A shorter value is almost always a
+    // truncated paste, so guide the user to recopy the whole code.
+    if (normalized.length < 6) {
+      return NextResponse.json({
+        error: "That code looks incomplete — please copy the full code (e.g. OFFRION-XXXXXX) and try again.",
+      }, { status: 400 });
+    }
+
     const transaction = await Transaction.findOne({ qrCode: normalized }).populate('dealId', 'title');
     if (!transaction) {
-      return NextResponse.json({ error: 'No coupon found for that code.' }, { status: 404 });
+      return NextResponse.json({ error: 'No coupon found for that code. Double-check you copied it correctly.' }, { status: 404 });
     }
 
     // Already linked?

@@ -283,7 +283,7 @@ export default function AccountPage() {
               value={linkCode}
               onChange={(e) => { setLinkCode(e.target.value.toUpperCase()); setLinkMsg(null); }}
               placeholder="Enter code (e.g. OFFRION-BL6XHT)"
-              maxLength={12}
+              maxLength={40}
               className="flex-1 bg-secondary/40 border border-border rounded-xl px-4 py-2.5 text-sm font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-foreground/20"
             />
             <button
