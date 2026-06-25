@@ -52,8 +52,7 @@ export default function EcosystemPage() {
             </div>
 
             {/* Partner — featured */}
-            <div className="group relative flex flex-col p-7 rounded-3xl border border-[#A855F7]/40 bg-card overflow-hidden ring-1 ring-[#A855F7]/10 hover:border-[#A855F7]/60 hover:-translate-y-1 hover:shadow-lg transition-all md:-mt-4 md:mb-4">
-              <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(160deg, #A855F70F, transparent 55%)' }} />
+            <div className="group relative flex flex-col p-7 rounded-3xl border border-border bg-card hover:border-[#A855F7]/40 hover:-translate-y-1 hover:shadow-lg transition-all">
               <div className="relative flex items-center justify-between mb-6">
                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: '#A855F715' }}>
                   <Globe className="w-7 h-7" style={{ color: '#A855F7' }} />
@@ -64,7 +63,7 @@ export default function EcosystemPage() {
               <p className="relative text-sm text-muted-foreground leading-relaxed flex-1">
                 Integrates the deals API into their apps — Fintech, E-commerce, Social. Earns the lion&apos;s share of the generated commission.
               </p>
-              <div className="relative mt-6 pt-5 border-t border-[#A855F7]/20">
+              <div className="relative mt-6 pt-5 border-t border-border">
                 <div className="text-xs font-medium text-muted-foreground mb-1">Commission Share</div>
                 <div className="font-bold text-4xl bg-gradient-to-r from-[#A855F7] to-[#F97316] bg-clip-text text-transparent">70%</div>
               </div>
