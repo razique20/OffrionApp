@@ -25,7 +25,7 @@ export default function PublicDocsPage() {
     <div className="min-h-screen bg-background flex flex-col">
       
       
-      <main className="max-w-7xl mx-auto px-6 py-20 w-full flex-1">
+      <main className="max-w-7xl mx-auto px-6 pt-32 pb-20 w-full flex-1">
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Sidebar Navigation */}
           <aside className="lg:w-64 shrink-0 space-y-8 sticky top-32 h-fit">
