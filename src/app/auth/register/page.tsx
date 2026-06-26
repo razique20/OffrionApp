@@ -268,6 +268,30 @@ const ROLE_IMAGES: Record<'merchant' | 'partner', string> = {
   partner: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80',
 };
 
+// Role-specific copy shown over the image.
+const ROLE_COPY: Record<'merchant' | 'partner', {
+  heading: React.ReactNode;
+  sub: string;
+  stats: { label: string; value: string }[];
+}> = {
+  merchant: {
+    heading: <>Bring customers<br />through your door.</>,
+    sub: 'List a deal once and reach people across dozens of apps. Only pay when someone actually shows up.',
+    stats: [
+      { label: 'Upfront cost', value: 'Zero' },
+      { label: 'You pay', value: 'Per visit' },
+    ],
+  },
+  partner: {
+    heading: <>Reward users.<br />Earn on every visit.</>,
+    sub: 'Drop in one API to offer your users real local deals — and earn the lion’s share on every redemption.',
+    stats: [
+      { label: 'Commission', value: '70%' },
+      { label: 'Settlement', value: 'Automatic' },
+    ],
+  },
+};
+
 // Initializes the shared role from the ?role= URL param (must be under Suspense).
 function RoleParamInit({ onRole }: { onRole: (r: 'merchant' | 'partner') => void }) {
   const searchParams = useSearchParams();
@@ -315,27 +339,29 @@ export default function RegisterPage() {
             {/* Readability overlay */}
             <div className="absolute inset-0 bg-background/72 backdrop-blur-[1px]" />
 
-            {/* Content */}
+            {/* Content — role-specific */}
             <div className="relative z-10 max-w-md px-12 text-center">
+              <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-secondary/60 border border-border/50 backdrop-blur-sm">
+                {role === 'merchant'
+                  ? <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
+                  : <Handshake className="w-3.5 h-3.5 text-muted-foreground" />}
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground capitalize">{role}</span>
+              </div>
               <h1 className="text-4xl xl:text-5xl font-black tracking-tight leading-[1.1] text-foreground mb-5">
-                Start earning<br />from day one.
+                {ROLE_COPY[role].heading}
               </h1>
               <p className="text-muted-foreground leading-relaxed text-base mb-12">
-                Merchants publish deals. Partners distribute them. Everyone earns — automatically.
+                {ROLE_COPY[role].sub}
               </p>
 
-              {/* Two mini cards */}
+              {/* Role stats */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-4 rounded-md bg-secondary/50 border border-border/50 backdrop-blur-sm text-left">
-                  <Briefcase className="w-4 h-4 text-muted-foreground mb-2" />
-                  <p className="text-xs text-muted-foreground font-medium">Merchants</p>
-                  <p className="text-sm text-foreground font-semibold">Zero upfront cost</p>
-                </div>
-                <div className="p-4 rounded-md bg-secondary/50 border border-border/50 backdrop-blur-sm text-left">
-                  <Handshake className="w-4 h-4 text-muted-foreground mb-2" />
-                  <p className="text-xs text-muted-foreground font-medium">Partners</p>
-                  <p className="text-sm text-foreground font-semibold">70% commission</p>
-                </div>
+                {ROLE_COPY[role].stats.map((s) => (
+                  <div key={s.label} className="p-4 rounded-md bg-secondary/50 border border-border/50 backdrop-blur-sm text-left">
+                    <p className="text-xs text-muted-foreground font-medium">{s.label}</p>
+                    <p className="text-sm text-foreground font-semibold">{s.value}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
