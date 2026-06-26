@@ -7,8 +7,8 @@ import { cn } from '@/lib/utils';
 const FAQS = [
   { q: "Is the Geo-Search API globally redundant?", a: "Yes, our MongoDB cluster uses GeoJSON indexing across multiple regions to ensure <100ms latency worldwide." },
   { q: "How are commissions distributed?", a: "The partner who referred the customer gets 70% of the commission, and the platform retains 30%. This is calculated instantly." },
-  { q: "Can we use custom domain for deals?", a: "Merchant Pro and Enterprise tiers support white-label portals with custom CNAME mapping." },
-  { q: "How do I upgrade my plan?", a: "Go to Settings > Billing and select your preferred plan. Upgrades are instantaneous." },
+  { q: "Can we use a custom domain for deals?", a: "Yes — white-label portals with custom CNAME mapping are available to beta partners on request." },
+  { q: "What does it cost during beta?", a: "Offrion is free while we're in beta. There are no plans or billing yet — early partners help us shape pricing before we introduce it." },
   { q: "What happens if a deal is expired?", a: "Expired deals are automatically removed from partner search results but remain visible in your merchant archives." },
 ];
 

@@ -4,8 +4,10 @@ export interface ITransaction extends Document {
   dealId: mongoose.Types.ObjectId;
   merchantId: mongoose.Types.ObjectId;
   apiKeyId?: mongoose.Types.ObjectId;
-  partnerId: mongoose.Types.ObjectId;
-  userId?: mongoose.Types.ObjectId; // End user if tracked
+  partnerId?: mongoose.Types.ObjectId; // Absent for first-party 'direct' claims
+  channel: 'partner' | 'direct'; // How the claim originated
+  customerId?: mongoose.Types.ObjectId; // First-party customer account, if logged in
+  userId?: mongoose.Types.ObjectId; // End user if tracked (legacy)
   amount: number;
   currency: string;
   status: 'pending' | 'completed' | 'cancelled' | 'refunded';
@@ -21,7 +23,14 @@ const TransactionSchema: Schema = new Schema(
     dealId: { type: Schema.Types.ObjectId, ref: 'Deal', required: true, index: true },
     merchantId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     apiKeyId: { type: Schema.Types.ObjectId, ref: 'APIKey', index: true },
-    partnerId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    partnerId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
+    channel: {
+      type: String,
+      enum: ['partner', 'direct'],
+      default: 'partner',
+      index: true,
+    },
+    customerId: { type: Schema.Types.ObjectId, ref: 'Customer', index: true },
     userId: { type: Schema.Types.ObjectId, ref: 'User' },
     amount: { type: Number, required: true },
     currency: { type: String, default: 'USD' },

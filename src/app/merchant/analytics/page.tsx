@@ -59,7 +59,7 @@ function MerchantAnalyticsContent() {
         <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
         <h3 className="text-xl font-bold mb-2">Analytics Error</h3>
         <p className="text-sm text-muted-foreground mb-6">{error}</p>
-        <button onClick={() => window.location.reload()} className="px-6 py-2 bg-primary text-foreground rounded-md font-bold">Retry</button>
+        <button onClick={() => window.location.reload()} className="px-6 py-2 bg-primary text-primary-foreground rounded-md font-bold">Retry</button>
       </div>
     </div>
   );
@@ -68,14 +68,14 @@ function MerchantAnalyticsContent() {
     { name: 'Impressions', value: data?.stats?.impressions || 0, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { name: 'Clicks', value: data?.stats?.clicks || 0, icon: MousePointer2, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     { name: 'Conversions', value: data?.stats?.conversions || 0, icon: ShoppingBag, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { name: 'Net Revenue', value: formatCurrency(data?.stats?.netRevenue || 0), icon: DollarSign, color: 'text-white', bg: 'bg-secondary' },
+    { name: 'Net Revenue', value: formatCurrency(data?.stats?.netRevenue || 0), icon: DollarSign, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
   ];
 
   return (
     <div className="space-y-8 pb-10 transition-all duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Analytics & Insights</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Analytics &amp; Insights</h1>
           <p className="text-muted-foreground flex items-center gap-2 mt-1">
             Live business performance and conversion metrics.
           </p>

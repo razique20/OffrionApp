@@ -290,8 +290,8 @@ export default function SettingsForm() {
       }}
       className={cn(
         "w-full flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-md transition-all",
-        activeTab === id 
-          ? "bg-secondary text-white border border-border shadow-none" 
+        activeTab === id
+          ? "bg-secondary text-foreground border border-border shadow-none"
           : "text-muted-foreground hover:text-foreground hover:bg-secondary"
       )}
     >
@@ -818,7 +818,7 @@ export default function SettingsForm() {
                                )}
                                
                                <div className="mb-4">
-                                  <h5 className="font-bold text-base">{plan.name} {isCurrent && <span className="ml-1 text-[10px] bg-primary text-foreground px-1.5 py-0.5 rounded-full uppercase tracking-tighter">Current</span>}</h5>
+                                  <h5 className="font-bold text-base">{plan.name} {isCurrent && <span className="ml-1 text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full uppercase tracking-tighter">Current</span>}</h5>
                                   <div className="flex items-baseline gap-1 mt-1">
                                     <span className="text-2xl font-black">{plan.price}</span>
                                     {plan.id !== 'enterprise' && <span className="text-[10px] text-muted-foreground font-bold uppercase">/mo</span>}
@@ -838,9 +838,9 @@ export default function SettingsForm() {
                                  onClick={() => plan.id === 'enterprise' ? window.location.href = 'mailto:sales@offrion.com' : handleManageSubscription(fullId)}
                                  className={cn(
                                    "w-full py-2.5 rounded-md font-bold text-xs transition-all",
-                                   isCurrent ? "bg-secondary text-white cursor-default" : 
+                                   isCurrent ? "bg-secondary text-foreground cursor-default" : 
                                    (plan.id === 'free' && isPaid) ? "bg-muted text-muted-foreground cursor-not-allowed opacity-50" :
-                                   "bg-secondary text-white border border-border shadow-none active:scale-95"
+                                   "bg-secondary text-foreground border border-border shadow-none active:scale-95"
                                  )}
                                >
                                  {isCurrent ? 'Active Plan' : 

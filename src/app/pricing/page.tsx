@@ -8,7 +8,6 @@ import {
   BarChart3,
   Globe,
 } from 'lucide-react';
-import { InteractivePricing } from '@/components/InteractivePricing';
 import FAQSupport from '@/components/FAQSupport';
 
 export default function PricingPage() {
@@ -16,43 +15,70 @@ export default function PricingPage() {
     <div className="min-h-screen bg-background">
       <main className="pt-24 md:pt-32">
 
-        {/* ── Hero ── */}
-        <section className="px-6 py-12 md:py-20 flex flex-col items-center text-center max-w-4xl mx-auto relative overflow-hidden">
-          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[200px] rounded-full bg-[#A855F7] opacity-[0.06] blur-[80px] -z-10" />
+        {/* ── Hero (image background) ── */}
+        <div className="relative overflow-hidden">
+          {/* Background image */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?auto=format&fit=crop&w=2000&q=80"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center z-0"
+          />
+          <div className="absolute inset-0 z-0 bg-background/60 dark:bg-background/65" />
+
+        <section className="relative z-10 px-6 py-12 md:py-20 flex flex-col items-center text-center max-w-4xl mx-auto overflow-hidden">
+          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[200px] rounded-full bg-foreground opacity-[0.06] blur-[80px] z-0" />
 
           <div className="inline-flex items-center gap-2 mb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#A855F7]" />
-            <span className="h-1.5 w-1.5 rounded-full bg-[#F97316]" />
-            <span className="h-1.5 w-1.5 rounded-full bg-[#EF4444]" />
-            <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E]" />
-            <span className="text-xs font-medium text-muted-foreground ml-1">Transparent Infrastructure</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
+            <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
+            <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
+            <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
+            <span className="text-xs font-medium text-muted-foreground ml-1">Now in Beta</span>
           </div>
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] mb-6 animate-in fade-in slide-in-from-bottom-3 duration-700">
-            Scalable costs for{' '}
-            <span className="bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444] bg-clip-text text-transparent">
-              performance tech.
+            Free while we&apos;re in{' '}
+            <span className="text-foreground">
+              beta.
             </span>
           </h1>
 
           <p className="text-muted-foreground text-lg md:text-xl max-w-xl animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            Built for growth. Choose a tier that matches your business velocity, with zero upfront costs on our Starter plan.
+            We&apos;re building Offrion alongside our first partners. The platform is free to use during beta — no plans, no
+            credit card. Pricing arrives once we&apos;ve shaped it together.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            <Link
+              href="/auth/register"
+              className="w-full sm:w-auto px-10 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
+              style={{ background: 'var(--foreground)' }}
+            >
+              Get early access
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/docs"
+              className="w-full sm:w-auto px-10 py-4 bg-secondary border border-border text-foreground rounded-full text-sm font-semibold hover:bg-secondary/70 transition-all flex items-center justify-center gap-3"
+            >
+              <Zap className="w-4 h-4" style={{ color: 'var(--foreground)' }} />
+              Read API Docs
+            </Link>
+          </div>
+          <p className="text-xs text-muted-foreground pt-6">
+            Free during beta &middot; No credit card &middot; Early partners help shape pricing
           </p>
         </section>
-
-        {/* ── Interactive Pricing ── */}
-        <section className="px-6 pb-24 md:pb-32 relative">
-          <div className="absolute inset-x-0 top-0 h-[500px] -z-10" style={{ background: 'radial-gradient(circle at center, #A855F708 0%, transparent 70%)' }} />
-          <InteractivePricing />
-        </section>
+        </div>
 
         {/* ── Feature Comparison ── */}
         <section className="py-24 md:py-32 bg-card/30 border-y border-border px-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[400px] h-[300px] rounded-full bg-[#F97316] opacity-[0.04] blur-[100px] -z-10" />
+          <div className="absolute top-0 right-0 w-[400px] h-[300px] rounded-full bg-foreground opacity-[0.04] blur-[100px] -z-10" />
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border mb-4">
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'linear-gradient(to right, #A855F7, #F97316)' }} />
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--foreground)' }} />
                 <span className="text-xs font-medium text-foreground">What's included</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Deep Technical Comparison</h2>
@@ -64,19 +90,19 @@ export default function PricingPage() {
                 {
                   title: 'Core Infrastructure',
                   icon: Globe,
-                  color: '#A855F7',
+                  color: 'var(--foreground)',
                   features: ['Geo-spatial discovery engine', 'QR-based secure redemption', 'Real-time payout ledger', 'Sub-100ms API response'],
                 },
                 {
                   title: 'Scale & Limits',
                   icon: BarChart3,
-                  color: '#F97316',
-                  features: ['Unlimited deal capacity (Growth+)', 'High-volume node clusters', 'On-premise database sync', 'Custom rate limiting'],
+                  color: 'var(--foreground)',
+                  features: ['Unlimited deal capacity', 'High-volume node clusters', 'On-premise database sync', 'Custom rate limiting'],
                 },
                 {
                   title: 'Trust & Safety',
                   icon: ShieldCheck,
-                  color: '#22C55E',
+                  color: 'var(--foreground)',
                   features: ['SOC-2 compliance logs', 'Mandatory visual verification', 'Fraud detection engine', 'Custom SLA guarantees'],
                 },
               ].map((group) => (
@@ -108,7 +134,7 @@ export default function PricingPage() {
                 <HelpCircle className="w-3.5 h-3.5 text-muted-foreground" />
                 <span className="text-xs font-medium text-muted-foreground">Common Questions</span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Billing & Payouts</h2>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Beta & Payouts</h2>
             </div>
             <FAQSupport />
           </div>
@@ -116,25 +142,25 @@ export default function PricingPage() {
 
         {/* ── Final CTA ── */}
         <section className="py-24 md:py-32 px-6 text-center relative overflow-hidden">
-          <div className="absolute inset-0 -z-10" style={{ background: 'linear-gradient(135deg, #A855F708 0%, #F9731608 50%, #EF444408 100%)' }} />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-gradient-to-r from-transparent via-[#A855F7]/40 to-transparent" />
-          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-[#A855F7] opacity-[0.06] blur-[80px] -z-10" />
+          <div className="absolute inset-0 -z-10" style={{ background: 'var(--secondary)' }} />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-border" />
+          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-foreground opacity-[0.06] blur-[80px] -z-10" />
 
           <div className="max-w-4xl mx-auto space-y-8">
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
               Ready to{' '}
-              <span className="bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444] bg-clip-text text-transparent">
+              <span className="text-foreground">
                 start scaling?
               </span>
             </h2>
             <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              Launch your first deal in minutes with our Starter plan. No credit card required to begin testing.
+              Launch your first deal in minutes. Free during beta — no credit card required to begin testing.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 href="/auth/register"
-                className="w-full sm:w-auto px-10 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
-                style={{ background: 'linear-gradient(to right, #A855F7, #F97316)' }}
+                className="w-full sm:w-auto px-10 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
+                style={{ background: 'var(--foreground)' }}
               >
                 Create Free Account
                 <ChevronRight className="w-4 h-4" />
@@ -143,7 +169,7 @@ export default function PricingPage() {
                 href="/docs"
                 className="w-full sm:w-auto px-10 py-4 bg-secondary border border-border text-foreground rounded-full text-sm font-semibold hover:bg-secondary/70 transition-all flex items-center justify-center gap-3"
               >
-                <Zap className="w-4 h-4" style={{ color: '#F97316' }} />
+                <Zap className="w-4 h-4" style={{ color: 'var(--foreground)' }} />
                 Read API Docs
               </Link>
             </div>

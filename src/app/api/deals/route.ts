@@ -80,7 +80,9 @@ export async function GET(req: Request) {
     }
 
     // 3. Build Query
-    const query: any = { isActive: true };
+    // Always exclude paused (isActive:false) AND expired (validUntil in the past) deals,
+    // regardless of caller params. The from/to/activeNow filters below merge into validUntil.
+    const query: any = { isActive: true, validUntil: { $gte: new Date() } };
 
     // Regional Access Enforcement for Partners (Strict Zero-Access Default)
     const partner = await User.findById(apiKey.partnerId).select('accessCountries');

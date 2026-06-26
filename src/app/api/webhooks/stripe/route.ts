@@ -28,6 +28,51 @@ export async function POST(req: Request) {
     const session: any = event.data.object;
     const { userId, plan, type, amount } = session.metadata;
 
+    if (type === 'merchant_card_setup') {
+      // A merchant saved a billing card via setup-mode Checkout. Resolve the
+      // payment method from the SetupIntent, make it the customer's default, and
+      // store its brand/last4 on the merchant profile for charging + display.
+      if (!userId) {
+        console.error('Missing userId in card-setup session metadata');
+        return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
+      }
+
+      const MerchantProfile = (await import('@/models/MerchantProfile')).default;
+
+      try {
+        const setupIntent = await stripe.setupIntents.retrieve(session.setup_intent as string);
+        const pmId = setupIntent.payment_method as string;
+        if (!pmId) {
+          console.error('No payment method on setup intent');
+          return NextResponse.json({ received: true });
+        }
+
+        const pm = await stripe.paymentMethods.retrieve(pmId);
+
+        // Make this card the default for future off-session charges.
+        if (session.customer) {
+          await stripe.customers.update(session.customer as string, {
+            invoice_settings: { default_payment_method: pmId },
+          });
+        }
+
+        await MerchantProfile.findOneAndUpdate(
+          { userId },
+          {
+            stripeCustomerId: session.customer,
+            paymentMethodId: pmId,
+            cardBrand: pm.card?.brand,
+            cardLast4: pm.card?.last4,
+          }
+        );
+
+        console.log(`Saved card-on-file for merchant ${userId}: ${pm.card?.brand} ****${pm.card?.last4}`);
+      } catch (err: any) {
+        console.error('Card setup processing error:', err.message);
+      }
+      return NextResponse.json({ received: true });
+    }
+
     if (type === 'wallet_topup') {
       if (!userId || !amount) {
         console.error('Missing userId or amount in top-up session metadata');
@@ -35,12 +80,55 @@ export async function POST(req: Request) {
       }
 
       const MerchantProfile = (await import('@/models/MerchantProfile')).default;
-      await MerchantProfile.findOneAndUpdate(
+      const LedgerEntry = (await import('@/models/LedgerEntry')).default;
+
+      // Idempotency gate: create the topup ledger entry FIRST. A unique index on
+      // metadata.stripeSessionId means a redelivered event throws a duplicate-key
+      // error here — before we touch the balance — so we never double-credit.
+      try {
+        await LedgerEntry.create({
+          ownerId: userId,
+          scope: 'merchant',
+          type: 'topup',
+          amount: Number(amount),
+          description: 'Wallet top-up via Stripe',
+          relatedMerchantId: userId,
+          metadata: { stripeSessionId: session.id },
+        });
+      } catch (err: any) {
+        if (err?.code === 11000) {
+          console.log(`Top-up for session ${session.id} already processed; skipping.`);
+          return NextResponse.json({ received: true, duplicate: true });
+        }
+        throw err;
+      }
+
+      // Upsert so a top-up always credits, even if the merchant profile was
+      // never created via KYC yet. Seed the schema-required fields from the
+      // user record on insert.
+      const topupUser = await User.findById(userId);
+      const updated = await MerchantProfile.findOneAndUpdate(
         { userId },
-        { $inc: { balance: Number(amount) } }
+        {
+          $inc: { balance: Number(amount) },
+          $setOnInsert: {
+            businessName: topupUser?.name || 'My Business',
+            contactEmail: topupUser?.email || 'unknown@offrion.com',
+            contactPhone: 'N/A',
+            address: 'N/A',
+            billingPreference: 'prepaid',
+          },
+        },
+        { upsert: true, new: true }
       );
 
-      console.log(`Successfully topped up wallet for user ${userId} with $${amount}`);
+      // Backfill the resulting balance onto the ledger entry for a clean audit trail.
+      await LedgerEntry.updateOne(
+        { 'metadata.stripeSessionId': session.id },
+        { $set: { balanceAfter: updated?.balance } }
+      );
+
+      console.log(`Successfully topped up wallet for user ${userId} with $${amount}. New balance: ${updated?.balance}`);
       return NextResponse.json({ received: true });
     }
 

@@ -22,6 +22,11 @@ export interface IMerchantProfile extends Document {
   accruedLiability: number; // For Card-on-file (Opt 2) - unbilled commissions
   creditLimit: number; // Max accrued liability for Card-on-file
   lastBillingDate?: Date;
+  // Card-on-file (Opt 2): a saved card the merchant can be charged for liability.
+  stripeCustomerId?: string;
+  paymentMethodId?: string;
+  cardBrand?: string;
+  cardLast4?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,6 +62,10 @@ const MerchantProfileSchema: Schema = new Schema(
     accruedLiability: { type: Number, default: 0 },
     creditLimit: { type: Number, default: 0 },
     lastBillingDate: { type: Date },
+    stripeCustomerId: { type: String },
+    paymentMethodId: { type: String },
+    cardBrand: { type: String },
+    cardLast4: { type: String },
   },
   { timestamps: true }
 );

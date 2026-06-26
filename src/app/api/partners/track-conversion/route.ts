@@ -6,6 +6,7 @@ import AnalyticsEvent from '@/models/AnalyticsEvent';
 import Transaction from '@/models/Transaction';
 import Commission from '@/models/Commission';
 import { checkIpRateLimit } from '@/lib/ipRateLimit';
+import { displayRedeemCode } from '@/lib/redeemCode';
 import { z } from 'zod';
 import mongoose from 'mongoose';
 
@@ -13,6 +14,9 @@ const conversionSchema = z.object({
   dealId: z.string(),
   amount: z.number().positive(),
   currency: z.string().default('USD'),
+  // Optional: a logged-in customer's id, if the partner integrates our accounts.
+  // The claim stays channel: 'partner' and keeps the 70/30 split regardless.
+  customerId: z.string().optional(),
   metadata: z.any().optional(),
 });
 
@@ -45,7 +49,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: err.message }, { status });
     }
 
-    const { dealId, amount, currency, metadata } = conversionSchema.parse(body);
+    const { dealId, amount, currency, customerId, metadata } = conversionSchema.parse(body);
 
 
     const deal = await Deal.findById(dealId);
@@ -72,6 +76,10 @@ export async function POST(req: Request) {
       merchantId: deal.merchantId,
       apiKeyId: apiKey._id,
       partnerId: new mongoose.Types.ObjectId(apiKey.partnerId.toString()),
+      channel: 'partner',
+      customerId: customerId && mongoose.Types.ObjectId.isValid(customerId)
+        ? new mongoose.Types.ObjectId(customerId)
+        : undefined,
       amount,
       currency,
       status: 'pending',
@@ -97,10 +105,25 @@ export async function POST(req: Request) {
     // 3. Update Deal Usage
     await Deal.findByIdAndUpdate(dealId, { $inc: { currentUsage: 1 } });
 
-    const response = NextResponse.json({ 
+    // Customer-facing branding + links so partners can surface Offrion (and let
+    // end users save the coupon to their Offrion account).
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://offrion.app';
+    const displayCode = displayRedeemCode(transaction.qrCode!);
+
+    const response = NextResponse.json({
       message: 'Conversion tracked. Redemption code generated.',
       transactionId: transaction._id,
-      redeemCode: transaction.qrCode,
+      redeemCode: transaction.qrCode,          // raw 6-char code (for redemption)
+      displayCode,                              // branded form: OFFRION-XXXXXX
+      // Branded redemption landing page (deal + code + "save to account").
+      redemptionUrl: `${baseUrl}/c/${transaction.qrCode}`,
+      // Deep link: customer logs in (if needed) and the coupon auto-links.
+      customerLinkUrl: `${baseUrl}/account?link=${transaction.qrCode}`,
+      branding: {
+        poweredBy: 'Offrion',
+        tagline: 'Save & track your deals at Offrion',
+        url: baseUrl,
+      },
       status: 'pending'
     });
 

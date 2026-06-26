@@ -8,10 +8,9 @@ import { Briefcase, Handshake, Loader2, AlertCircle, ArrowRight, CheckCircle2, E
 import { cn } from '@/lib/utils';
 import { COUNTRIES } from '@/constants/locations';
 
-function RegisterForm() {
+function RegisterForm({ role, setRole }: { role: 'merchant' | 'partner'; setRole: (r: 'merchant' | 'partner') => void }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [role, setRole] = useState<'merchant' | 'partner'>('partner');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,13 +20,6 @@ function RegisterForm() {
   const [success, setSuccess] = useState(false);
   const [country, setCountry] = useState('United Arab Emirates');
   const [accessCountries, setAccessCountries] = useState<string[]>(['United Arab Emirates']);
-
-  useEffect(() => {
-    const roleParam = searchParams.get('role');
-    if (roleParam === 'merchant' || roleParam === 'partner') {
-      setRole(roleParam);
-    }
-  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -269,54 +261,107 @@ const LoadingForm = () => (
   </div>
 );
 
+// Role-specific background image for the register panel (reads the same ?role=
+// param the form uses, so the image matches the selected role).
+const ROLE_IMAGES: Record<'merchant' | 'partner', string> = {
+  merchant: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80',
+  partner: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80',
+};
+
+// Role-specific copy shown over the image.
+const ROLE_COPY: Record<'merchant' | 'partner', {
+  heading: React.ReactNode;
+  sub: string;
+  stats: { label: string; value: string }[];
+}> = {
+  merchant: {
+    heading: <>Bring customers<br />through your door.</>,
+    sub: 'List a deal once and reach people across dozens of apps. Only pay when someone actually shows up.',
+    stats: [
+      { label: 'Upfront cost', value: 'Zero' },
+      { label: 'You pay', value: 'Per visit' },
+    ],
+  },
+  partner: {
+    heading: <>Reward users.<br />Earn on every visit.</>,
+    sub: 'Drop in one API to offer your users real local deals — and earn the lion’s share on every redemption.',
+    stats: [
+      { label: 'Commission', value: '70%' },
+      { label: 'Settlement', value: 'Automatic' },
+    ],
+  },
+};
+
+// Initializes the shared role from the ?role= URL param (must be under Suspense).
+function RoleParamInit({ onRole }: { onRole: (r: 'merchant' | 'partner') => void }) {
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const r = searchParams.get('role');
+    if (r === 'merchant' || r === 'partner') onRole(r);
+  }, [searchParams, onRole]);
+  return null;
+}
+
 export default function RegisterPage() {
+  // Shared role: drives both the form and the side image, so toggling the role
+  // in the form switches the image too. Initialize from the URL on the client to
+  // avoid a flash of the wrong image when arriving via ?role=merchant.
+  const [role, setRole] = useState<'merchant' | 'partner'>(() => {
+    if (typeof window !== 'undefined') {
+      const r = new URLSearchParams(window.location.search).get('role');
+      if (r === 'merchant' || r === 'partner') return r;
+    }
+    return 'partner';
+  });
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      
+
+      <Suspense fallback={null}>
+        <RoleParamInit onRole={setRole} />
+      </Suspense>
+
       <main className="flex-1 w-full pt-20">
         <div className="flex flex-col lg:flex-row w-full min-h-[calc(100svh-80px)]">
 
           {/* ── Left: Form ── */}
           <div className="w-full lg:w-1/2 flex items-center justify-center px-5 py-12 sm:px-8 overflow-y-auto">
             <Suspense fallback={<LoadingForm />}>
-              <RegisterForm />
+              <RegisterForm role={role} setRole={setRole} />
             </Suspense>
           </div>
-          
-          {/* ── Right: Atmospheric Brand Panel ── */}
-          <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center bg-card border-l border-border">
-            {/* Gradient orbs */}
-            <div className="absolute top-1/3 right-1/3 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[180px] pointer-events-none" />
-            <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-secondary rounded-full blur-[160px] pointer-events-none" />
-            
-            {/* Dot grid */}
-            <div className="absolute inset-0 opacity-[0.04]" style={{ 
-              backgroundImage: 'radial-gradient(circle, var(--foreground) 1px, transparent 1px)', 
-              backgroundSize: '32px 32px' 
-            }} />
 
-            {/* Content */}
+          {/* ── Right: Role-specific image panel ── */}
+          <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center border-l border-border">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ROLE_IMAGES[role]} alt="" className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500" />
+            {/* Readability overlay */}
+            <div className="absolute inset-0 bg-background/72 backdrop-blur-[1px]" />
+
+            {/* Content — role-specific */}
             <div className="relative z-10 max-w-md px-12 text-center">
+              <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-secondary/60 border border-border/50 backdrop-blur-sm">
+                {role === 'merchant'
+                  ? <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
+                  : <Handshake className="w-3.5 h-3.5 text-muted-foreground" />}
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground capitalize">{role}</span>
+              </div>
               <h1 className="text-4xl xl:text-5xl font-black tracking-tight leading-[1.1] text-foreground mb-5">
-                Start earning<br />from day one.
+                {ROLE_COPY[role].heading}
               </h1>
               <p className="text-muted-foreground leading-relaxed text-base mb-12">
-                Merchants publish deals. Partners distribute them. Everyone earns — automatically.
+                {ROLE_COPY[role].sub}
               </p>
 
-              {/* Two mini cards */}
+              {/* Role stats */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-4 rounded-md bg-secondary/50 border border-border/50 backdrop-blur-sm text-left">
-                  <Briefcase className="w-4 h-4 text-muted-foreground mb-2" />
-                  <p className="text-xs text-muted-foreground font-medium">Merchants</p>
-                  <p className="text-sm text-foreground font-semibold">Zero upfront cost</p>
-                </div>
-                <div className="p-4 rounded-md bg-secondary/50 border border-border/50 backdrop-blur-sm text-left">
-                  <Handshake className="w-4 h-4 text-muted-foreground mb-2" />
-                  <p className="text-xs text-muted-foreground font-medium">Partners</p>
-                  <p className="text-sm text-foreground font-semibold">70% commission</p>
-                </div>
+                {ROLE_COPY[role].stats.map((s) => (
+                  <div key={s.label} className="p-4 rounded-md bg-secondary/50 border border-border/50 backdrop-blur-sm text-left">
+                    <p className="text-xs text-muted-foreground font-medium">{s.label}</p>
+                    <p className="text-sm text-foreground font-semibold">{s.value}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

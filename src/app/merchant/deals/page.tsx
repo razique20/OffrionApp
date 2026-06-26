@@ -6,13 +6,15 @@ import {
   Plus, 
   Search, 
   Filter, 
-  Edit3, 
-  Trash2, 
+  Edit3,
+  Trash2,
   ExternalLink,
   Tag,
   MapPin,
   Clock,
-  Layers
+  Layers,
+  Pause,
+  Play
 } from 'lucide-react';
 import { cn, formatCurrency, formatDate } from '@/lib/utils';
 import { AlertCircle } from 'lucide-react';
@@ -55,6 +57,28 @@ export default function MerchantDealsPage() {
     });
     if (res.ok) {
       setDeals(deals.filter(d => d._id !== id));
+    }
+  };
+
+  const handleToggleActive = async (deal: any) => {
+    const isExpired = deal.validUntil && new Date(deal.validUntil).getTime() < Date.now();
+    // Resuming an expired deal would create an "active but past its date" state, so block it.
+    if (!deal.isActive && isExpired) {
+      alert('This deal has expired. Edit it with a new end date to make it active again.');
+      return;
+    }
+    const next = !deal.isActive;
+    // Optimistic update
+    setDeals(deals.map(d => d._id === deal._id ? { ...d, isActive: next } : d));
+    const res = await fetch(`/api/merchant/deals/${deal._id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isActive: next }),
+    });
+    if (!res.ok) {
+      // Roll back on failure
+      setDeals(deals.map(d => d._id === deal._id ? { ...d, isActive: deal.isActive } : d));
     }
   };
 
@@ -141,7 +165,9 @@ export default function MerchantDealsPage() {
                   </div>
                 )}
                 <div className="absolute top-4 right-4 bg-background/80  px-3 py-1 rounded-full text-xs font-bold border border-border">
-                  {deal.isActive ? (
+                  {deal.validUntil && new Date(deal.validUntil).getTime() < Date.now() ? (
+                    <span className="text-amber-500">Expired</span>
+                  ) : deal.isActive ? (
                     <span className="text-foreground">Active</span>
                   ) : (
                     <span className="text-destructive">Inactive</span>
@@ -156,7 +182,29 @@ export default function MerchantDealsPage() {
                     <span className="text-[10px] font-mono text-muted-foreground bg-secondary/50 px-1.5 py-0.5 rounded uppercase self-start">ID: {deal._id}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Link 
+                    {(() => {
+                      const isExpired = deal.validUntil && new Date(deal.validUntil).getTime() < Date.now();
+                      const canResume = !deal.isActive && !isExpired;
+                      const disabled = !deal.isActive && isExpired;
+                      return (
+                        <button
+                          onClick={() => handleToggleActive(deal)}
+                          disabled={disabled}
+                          title={disabled ? 'Expired — edit the end date to reactivate' : deal.isActive ? 'Pause deal' : 'Resume deal'}
+                          className={cn(
+                            "p-2 rounded-lg transition-colors text-muted-foreground",
+                            disabled
+                              ? "opacity-40 cursor-not-allowed"
+                              : canResume
+                                ? "hover:bg-emerald-500/10 hover:text-emerald-500"
+                                : "hover:bg-secondary hover:text-foreground"
+                          )}
+                        >
+                          {deal.isActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                        </button>
+                      );
+                    })()}
+                    <Link
                       href={`/merchant/deals/edit/${deal._id}`}
                       className="p-2 hover:bg-secondary rounded-lg transition-colors text-muted-foreground hover:text-foreground"
                     >

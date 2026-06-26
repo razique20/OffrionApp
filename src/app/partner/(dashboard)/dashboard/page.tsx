@@ -171,8 +171,10 @@ export default function PartnerDashboard() {
         {/* API Keys */}
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <Key className="w-5 h-5 text-foreground" />
+            <h2 className="text-xl font-bold flex items-center gap-2.5">
+              <span className="p-1.5 rounded-md bg-purple-500/10">
+                <Key className="w-4 h-4 text-purple-500" />
+              </span>
               API Keys
             </h2>
             <button 
@@ -263,9 +265,14 @@ export default function PartnerDashboard() {
       {/* Recent Deal Claims */}
       <div className="bg-card border border-border rounded-md overflow-hidden shadow-none">
         <div className="p-8 border-b border-border flex justify-between items-center">
-          <div>
-            <h3 className="text-xl font-bold tracking-tight">Recent Deal Claims</h3>
-            <p className="text-sm text-muted-foreground">Track your referred customer redemptions.</p>
+          <div className="flex items-center gap-2.5">
+            <span className="p-1.5 rounded-md bg-blue-500/10">
+              <Activity className="w-4 h-4 text-blue-500" />
+            </span>
+            <div>
+              <h3 className="text-xl font-bold tracking-tight">Recent Deal Claims</h3>
+              <p className="text-sm text-muted-foreground">Track your referred customer redemptions.</p>
+            </div>
           </div>
           <Link href="/partner/analytics" className="text-sm font-bold text-foreground hover:underline flex items-center gap-1">
             View All Analytics <ExternalLink className="w-3.5 h-3.5" />
@@ -321,7 +328,7 @@ export default function PartnerDashboard() {
                       </span>
                     </td>
                     <td className="px-8 py-5 text-right font-bold text-sm text-foreground">
-                      {formatCurrency((t.amount * (t.dealId?.commissionPercentage || 10)) / 100 * 0.7)}
+                      {t.partnerCommission != null ? formatCurrency(t.partnerCommission) : '—'}
                     </td>
                   </tr>
                 ))

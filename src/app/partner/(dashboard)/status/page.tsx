@@ -41,8 +41,11 @@ export default function PartnerStatusPage() {
          <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-muted rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4"></div>
          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left">
+              <span className="inline-flex items-center gap-2 px-3 py-1 mb-3 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-widest">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Operational
+              </span>
               <h1 className="text-4xl font-black mb-2">System Status</h1>
-              <p className="text-muted-foreground">Real-time status of Offrion's services and infrastructure.</p>
+              <p className="text-muted-foreground">Real-time status of Offrion&apos;s services and infrastructure.</p>
             </div>
             <div className="flex items-center gap-3 px-6 py-3 bg-secondary border border-border rounded-md">
               <CheckCircle2 className="w-6 h-6 text-foreground" />

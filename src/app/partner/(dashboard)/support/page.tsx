@@ -120,7 +120,7 @@ export default function PartnerSupportPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Support & Knowledge</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Support &amp; Knowledge</h1>
           <p className="text-muted-foreground">Get help and read integration guides.</p>
         </div>
 
@@ -130,7 +130,7 @@ export default function PartnerSupportPage() {
             className={cn(
               "px-6 py-2 rounded-md text-xs font-bold transition-all",
               activeTab === 'tickets' 
-                ? "bg-secondary text-white border border-border shadow-none" 
+                ? "bg-secondary text-foreground border border-border shadow-none"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -141,7 +141,7 @@ export default function PartnerSupportPage() {
             className={cn(
               "px-6 py-2 rounded-md text-xs font-bold transition-all",
               activeTab === 'faq' 
-                ? "bg-secondary text-white border border-border shadow-none" 
+                ? "bg-secondary text-foreground border border-border shadow-none"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -246,7 +246,7 @@ export default function PartnerSupportPage() {
                            <div className={cn(
                              "p-4 rounded-md text-xs leading-relaxed border transition-all",
                              res.senderRole === 'partner' 
-                               ? "bg-secondary text-white border border-border border-transparent" 
+                               ? "bg-secondary text-foreground border border-border border-transparent"
                                : "bg-background border-border"
                            )}>
                               {res.message}
@@ -308,7 +308,7 @@ export default function PartnerSupportPage() {
                            onClick={() => setNewTicket({...newTicket, category: cat})}
                            className={cn(
                              "py-2 px-3 rounded-md border text-[10px] font-bold capitalize transition-all",
-                             newTicket.category === cat ? "bg-secondary border-primary text-white" : "bg-secondary/40 border-border text-muted-foreground"
+                             newTicket.category === cat ? "bg-secondary border-primary text-foreground" : "bg-secondary/40 border-border text-muted-foreground"
                            )}
                          >
                            {cat}

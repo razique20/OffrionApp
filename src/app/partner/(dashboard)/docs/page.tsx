@@ -671,7 +671,7 @@ function DocNavItem({ active, onClick, icon: Icon, label }: any) {
       className={cn(
         "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all",
         active 
-          ? "bg-secondary text-white border border-border shadow-none" 
+          ? "bg-secondary text-foreground border border-border shadow-none"
           : "text-muted-foreground hover:bg-secondary hover:text-foreground"
       )}
     >

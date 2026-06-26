@@ -5,6 +5,7 @@ import Transaction from '@/models/Transaction';
 import APIKey from '@/models/APIKey';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import { checkIpRateLimit } from '@/lib/ipRateLimit';
+import { displayRedeemCode } from '@/lib/redeemCode';
 import { z } from 'zod';
 import mongoose from 'mongoose';
 
@@ -75,10 +76,22 @@ export async function POST(req: Request) {
       expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48h expiry
     });
 
-    const response = NextResponse.json({ 
+    // Customer-facing branding so partner apps can show an identifiable Offrion
+    // coupon and let users save it. displayCode is the branded form; the raw
+    // qrCode remains what merchants redeem.
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://offrion.app';
+    const response = NextResponse.json({
       message: 'Click tracked successfully',
-      redeemCode: qrCode,
+      redeemCode: qrCode,                         // raw code (redemption)
+      displayCode: displayRedeemCode(qrCode),     // branded: OFFRION-XXXXXX
       transactionId: transaction._id,
+      redemptionUrl: `${baseUrl}/c/${qrCode}`,
+      customerLinkUrl: `${baseUrl}/account?link=${qrCode}`,
+      branding: {
+        poweredBy: 'Offrion',
+        tagline: 'Save & track your deals at Offrion',
+        url: baseUrl,
+      },
     });
 
     const allowedOrigin = origin || '*';
