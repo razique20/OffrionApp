@@ -12,10 +12,10 @@ export default function EcosystemPage() {
         <img
           src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=2000&q=80"
           alt=""
-          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-25 dark:opacity-20"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0"
         />
         {/* Readability overlay */}
-        <div className="absolute inset-0 z-0 bg-background/75 dark:bg-background/80" />
+        <div className="absolute inset-0 z-0 bg-background/60 dark:bg-background/65" />
 
         {/* Brand blobs */}
         <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-foreground opacity-[0.06] blur-[120px] z-0" />
