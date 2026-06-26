@@ -15,7 +15,7 @@ export default function EcosystemPage() {
           className="absolute inset-0 w-full h-full object-cover object-center z-0"
         />
         {/* Readability overlay */}
-        <div className="absolute inset-0 z-0 bg-background/60 dark:bg-background/65" />
+        <div className="absolute inset-0 z-0 bg-background/40 dark:bg-background/45" />
 
         {/* Brand blobs */}
         <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-foreground opacity-[0.06] blur-[120px] z-0" />
