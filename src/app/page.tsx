@@ -21,6 +21,18 @@ export default function LandingPage() {
 
         {/* ── Hero ── */}
         <section className="relative min-h-[88svh] lg:min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
+          {/* Right-anchored ambient background image, faded out toward the left */}
+          <div
+            className="absolute inset-y-0 right-0 w-full lg:w-[60%] -z-20 bg-cover bg-center opacity-25 dark:opacity-20 pointer-events-none"
+            style={{
+              backgroundImage: "url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1400&q=80')",
+              WebkitMaskImage: 'linear-gradient(to left, black 25%, transparent 92%)',
+              maskImage: 'linear-gradient(to left, black 25%, transparent 92%)',
+            }}
+          />
+          {/* Soften top/bottom edges of the image into the background */}
+          <div className="absolute inset-0 -z-10 pointer-events-none bg-gradient-to-b from-background via-transparent to-background" />
+
           {/* Brand gradient blobs */}
           <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full bg-[#A855F7] opacity-[0.07] blur-[120px] -z-10" />
           <div className="absolute top-10 left-1/3 w-[400px] h-[400px] rounded-full bg-[#F97316] opacity-[0.06] blur-[100px] -z-10" />
