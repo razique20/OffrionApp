@@ -420,11 +420,20 @@ export default function LandingPage() {
 
         {/* ── Final CTA ── */}
         <section className="py-24 md:py-32 px-6 text-center relative overflow-hidden">
-          <div className="absolute inset-0 -z-10" style={{ background: 'var(--secondary)' }} />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-border" />
-          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-foreground opacity-[0.06] blur-[80px] -z-10" />
+          {/* Platform background image */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&w=2000&q=80"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-40 dark:opacity-30"
+          />
+          {/* Readability overlay (stronger toward the center where the text sits) */}
+          <div className="absolute inset-0 z-0 bg-background/70" />
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-background via-background/60 to-background" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-border z-0" />
+          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-foreground opacity-[0.06] blur-[80px] z-0" />
 
-          <div className="max-w-3xl mx-auto space-y-8">
+          <div className="relative z-10 max-w-3xl mx-auto space-y-8">
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
               Ready when{' '}
               <span className="text-foreground">
