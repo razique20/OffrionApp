@@ -24,7 +24,7 @@ export default function LandingPage() {
           {/* Platform background image */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?auto=format&fit=crop&w=2000&q=80"
+            src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=2000&q=80"
             alt=""
             className="absolute inset-0 w-full h-full object-cover object-right z-0 opacity-50 dark:opacity-40"
           />
@@ -423,7 +423,7 @@ export default function LandingPage() {
           {/* Platform background image */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&w=2000&q=80"
+            src="https://images.unsplash.com/photo-1556656793-08538906a9f8?auto=format&fit=crop&w=2000&q=80"
             alt=""
             className="absolute inset-0 w-full h-full object-cover object-center z-0"
           />
