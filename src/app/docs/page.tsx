@@ -16,7 +16,11 @@ import {
   Code2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Endpoint } from '@/components/docs/Endpoint';
 
+// Base URLs referenced across the docs. Update once on the production domain.
+const API_BASE = 'https://offrion.app/api';
+const APP_BASE = 'https://offrion.app';
 
 export default function PublicDocsPage() {
   const [activeTab, setActiveTab] = useState('getting-started');
@@ -113,7 +117,7 @@ export default function PublicDocsPage() {
                 
                 <h3 className="text-2xl font-bold mb-4">Base URL</h3>
                 <div className="p-4 bg-secondary font-mono rounded-md border border-border flex items-center justify-between mb-8">
-                  <span>https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api</span>
+                  <span>{API_BASE}</span>
                   <span className="text-[10px] bg-secondary text-foreground px-2 py-1 rounded">PROD API</span>
                 </div>
 
@@ -154,7 +158,7 @@ export default function PublicDocsPage() {
                 <CodeBlock 
                   language="http"
                   code={`GET /api/deals HTTP/1.1
-Host: offrion-app-kx5c-git-main-raziquemks-projects.vercel.app
+Host: offrion.app
 x-api-key: YOUR_API_KEY`}
                 />
                 <div className="mt-8 p-6 bg-blue-500/5 border border-blue-500/20 rounded-md flex gap-4">
@@ -170,43 +174,33 @@ x-api-key: YOUR_API_KEY`}
               <DocSection title="Deals API">
                 <p className="text-muted-foreground mb-12">The primary endpoint to discover and retrieve deals.</p>
                 
-                <div className="space-y-12">
-                  <div>
-                    <EndpointLabel method="GET" path="/deals" />
-                    <p className="text-sm text-muted-foreground mb-4">List all active deals. Support multiple filters (see Advanced Filtering).</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                      <div>
-                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Query Parameters</h5>
-                        <ul className="text-xs space-y-1 text-muted-foreground">
-                          <li><code className="text-foreground">minDiscount</code> (number) - Filter by discount %</li>
-                          <li><code className="text-foreground">activeNow</code> (boolean) - Currently valid deals</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
-                        <CodeBlock 
-                          language="json"
-                          code={`{
+                <div className="space-y-8">
+                  <Endpoint
+                    method="GET"
+                    path="/deals"
+                    description="List all active deals. Supports multiple filters (see Advanced Filtering)."
+                    params={[
+                      { name: 'minDiscount', type: 'number', desc: 'Filter by minimum discount %.' },
+                      { name: 'activeNow', type: 'boolean', desc: 'Only currently-valid deals.' },
+                      { name: 'page / limit', type: 'number', desc: 'Pagination controls.' },
+                    ]}
+                    responseExample={`{
   "page": 1,
   "total": 120,
-  "deals": [{ "_id": "...", "title": "Buy 1 Get 1", "discountPercentage": 50 }]
+  "deals": [
+    { "_id": "...", "title": "Buy 1 Get 1", "discountPercentage": 50 }
+  ]
 }`}
-                        />
-                      </div>
-                    </div>
-                    <CodeBlock 
-                      code={`curl -H "x-api-key: YOUR_KEY" "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/deals"`}
-                    />
-                  </div>
+                    curl={`curl -H "x-api-key: YOUR_API_KEY" \\
+  "${API_BASE}/deals"`}
+                  />
 
-                  <div>
-                    <EndpointLabel method="GET" path="/deals/[id]" />
-                    <p className="text-sm text-muted-foreground mb-4">Retrieve details of a single deal by its ID.</p>
-                    <div className="mb-4">
-                      <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
-                      <CodeBlock 
-                        language="json"
-                        code={`{
+                  <Endpoint
+                    method="GET"
+                    path="/deals/{id}"
+                    description="Retrieve details of a single deal by its ID."
+                    params={[{ name: 'id', type: 'string', required: true, desc: 'The deal ID (path parameter).' }]}
+                    responseExample={`{
   "deal": {
     "_id": "654a123f8b...",
     "title": "Summer Flash Sale",
@@ -216,12 +210,9 @@ x-api-key: YOUR_API_KEY`}
     "discountedPrice": 10
   }
 }`}
-                      />
-                    </div>
-                    <CodeBlock 
-                      code={`curl -H "x-api-key: YOUR_KEY" "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/deals/654a123f8b..."`}
-                    />
-                  </div>
+                    curl={`curl -H "x-api-key: YOUR_API_KEY" \\
+  "${API_BASE}/deals/654a123f8b..."`}
+                  />
                 </div>
               </DocSection>
             )}
@@ -249,21 +240,18 @@ x-api-key: YOUR_API_KEY`}
             {activeTab === 'categories' && (
               <DocSection title="Categories">
                 <p className="text-muted-foreground mb-8">Fetch all available deal categories to build your navigation or filters.</p>
-                <EndpointLabel method="GET" path="/categories" />
-                <div className="mb-8">
-                  <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
-                  <CodeBlock 
-                    language="json"
-                    code={`{
+                <Endpoint
+                  method="GET"
+                  path="/categories"
+                  description="Returns every available deal category."
+                  responseExample={`{
   "count": 12,
   "categories": [
     { "_id": "...", "name": "Food & Drink", "slug": "food-drink" }
   ]
 }`}
-                  />
-                </div>
-                <CodeBlock 
-                  code={`curl -H "x-api-key: YOUR_KEY" "https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/api/categories"`}
+                  curl={`curl -H "x-api-key: YOUR_API_KEY" \\
+  "${API_BASE}/categories"`}
                 />
               </DocSection>
             )}
@@ -272,96 +260,74 @@ x-api-key: YOUR_API_KEY`}
               <DocSection title="Tracking & Attribution">
                 <p className="text-muted-foreground mb-12">Log engagement to ensure proper commission attribution.</p>
                 
-                <div className="space-y-12">
-                  <div>
-                    <EndpointLabel method="POST" path="/partners/track-click" />
-                    <p className="text-sm text-muted-foreground mb-4">Track a user clicking on a deal. Returns a redemption code for the user.</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                      <div>
-                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Payload (JSON)</h5>
-                        <ul className="text-xs space-y-1 text-muted-foreground">
-                          <li><code className="text-foreground">dealId</code> (string, required)</li>
-                          <li><code className="text-foreground">metadata</code> (object, optional)</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
-                        <CodeBlock
-                          language="json"
-                          code={`{
+                <div className="space-y-8">
+                  <Endpoint
+                    method="POST"
+                    path="/partners/track-click"
+                    description="Track a user clicking on a deal. Returns a redemption code to show the user."
+                    params={[
+                      { name: 'dealId', type: 'string', required: true, desc: 'The deal being clicked.' },
+                      { name: 'metadata', type: 'object', desc: 'Optional custom data to track.' },
+                    ]}
+                    requestBody={`{
+  "dealId": "654a123f8b",
+  "metadata": { "source": "mobile_app" }
+}`}
+                    responseExample={`{
   "message": "Click tracked successfully",
   "redeemCode": "AXTRE9",
   "displayCode": "OFFRION-AXTRE9",
   "transactionId": "654b...",
-  "redemptionUrl": "https://offrion.app/c/AXTRE9",
-  "customerLinkUrl": "https://offrion.app/account?link=AXTRE9",
+  "redemptionUrl": "${APP_BASE}/c/AXTRE9",
+  "customerLinkUrl": "${APP_BASE}/account?link=AXTRE9",
   "branding": {
     "poweredBy": "Offrion",
     "tagline": "Save & track your deals at Offrion",
-    "url": "https://offrion.app"
+    "url": "${APP_BASE}"
   }
 }`}
-                        />
-                        <ul className="text-[11px] space-y-1 text-muted-foreground mt-3">
-                          <li><code className="text-foreground">redeemCode</code> — the raw code the merchant redeems.</li>
-                          <li><code className="text-foreground">displayCode</code> — branded form to show end users (<code className="text-foreground">OFFRION-XXXXXX</code>).</li>
-                          <li><code className="text-foreground">redemptionUrl</code> — a hosted branded coupon page.</li>
-                          <li><code className="text-foreground">customerLinkUrl</code> — deep link to save the coupon to an Offrion account.</li>
-                        </ul>
-                      </div>
-                    </div>
-                    <CodeBlock 
-                      language="json"
-                      code={`{
-  "dealId": "654a123f8b",
-  "metadata": { "source": "mobile_app" }
-}`}
-                    />
-                  </div>
+                    responseFields={[
+                      { name: 'redeemCode', desc: 'The raw code the merchant redeems.' },
+                      { name: 'displayCode', desc: 'Branded form to show end users (OFFRION-XXXXXX).' },
+                      { name: 'redemptionUrl', desc: 'A hosted, branded coupon page.' },
+                      { name: 'customerLinkUrl', desc: 'Deep link to save the coupon to an Offrion account.' },
+                    ]}
+                    curl={`curl -X POST -H "x-api-key: YOUR_API_KEY" -H "Content-Type: application/json" \\
+  -d '{"dealId":"654a123f8b"}' "${API_BASE}/partners/track-click"`}
+                  />
 
-                  <div>
-                    <EndpointLabel method="POST" path="/partners/track-conversion" />
-                    <p className="text-sm text-muted-foreground mb-4">Record a successful purchase or conversion.</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                      <div>
-                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Payload (JSON)</h5>
-                        <ul className="text-xs space-y-1 text-muted-foreground">
-                          <li><code className="text-foreground">dealId</code> (string, required)</li>
-                          <li><code className="text-foreground">amount</code> (number, required)</li>
-                          <li><code className="text-foreground">currency</code> (string)</li>
-                          <li><code className="text-foreground">customerId</code> (string, optional) — links the claim to an Offrion customer (split stays partner 70 / platform 30).</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
-                        <CodeBlock
-                          language="json"
-                          code={`{
-  "message": "Conversion tracked. Redemption code generated.",
-  "transactionId": "654b...",
-  "redeemCode": "AXTRE9",
-  "displayCode": "OFFRION-AXTRE9",
-  "redemptionUrl": "https://offrion.app/c/AXTRE9",
-  "customerLinkUrl": "https://offrion.app/account?link=AXTRE9",
-  "branding": {
-    "poweredBy": "Offrion",
-    "tagline": "Save & track your deals at Offrion",
-    "url": "https://offrion.app"
-  },
-  "status": "pending"
-}`}
-                        />
-                      </div>
-                    </div>
-                    <CodeBlock
-                      language="json"
-                      code={`{
+                  <Endpoint
+                    method="POST"
+                    path="/partners/track-conversion"
+                    description="Record a successful conversion and generate the redemption code."
+                    params={[
+                      { name: 'dealId', type: 'string', required: true, desc: 'The deal converted.' },
+                      { name: 'amount', type: 'number', required: true, desc: 'Purchase value.' },
+                      { name: 'currency', type: 'string', desc: 'Defaults to USD.' },
+                      { name: 'customerId', type: 'string', desc: 'Optional. Links the claim to an Offrion customer (split stays partner 70 / platform 30).' },
+                    ]}
+                    requestBody={`{
   "dealId": "654a123f8b",
   "amount": 49.99,
   "currency": "USD"
 }`}
-                    />
-                  </div>
+                    responseExample={`{
+  "message": "Conversion tracked. Redemption code generated.",
+  "transactionId": "654b...",
+  "redeemCode": "AXTRE9",
+  "displayCode": "OFFRION-AXTRE9",
+  "redemptionUrl": "${APP_BASE}/c/AXTRE9",
+  "customerLinkUrl": "${APP_BASE}/account?link=AXTRE9",
+  "branding": {
+    "poweredBy": "Offrion",
+    "tagline": "Save & track your deals at Offrion",
+    "url": "${APP_BASE}"
+  },
+  "status": "pending"
+}`}
+                    curl={`curl -X POST -H "x-api-key: YOUR_API_KEY" -H "Content-Type: application/json" \\
+  -d '{"dealId":"654a123f8b","amount":49.99}' "${API_BASE}/partners/track-conversion"`}
+                  />
                 </div>
               </DocSection>
             )}
@@ -439,7 +405,7 @@ Content-Type: application/json
                 <h3 className="text-xl font-bold mb-4">1. Add the Script</h3>
                 <CodeBlock 
                   language="html"
-                  code={`<script src="https://offrion-app-kx5c-git-main-raziquemks-projects.vercel.app/sdk/widget.js" defer></script>`}
+                  code={`<script src="https://offrion.app/sdk/widget.js" defer></script>`}
                 />
 
                 <h3 className="text-xl font-bold mt-12 mb-4">2. Place the Container</h3>
@@ -459,21 +425,6 @@ Content-Type: application/json
       </main>
 
       
-    </div>
-  );
-}
-
-function EndpointLabel({ method, path }: { method: string, path: string }) {
-  const isPost = method === 'POST';
-  return (
-    <div className="flex items-center gap-2 mb-4">
-      <span className={cn(
-        "px-2 py-1 rounded text-xs font-bold font-mono",
-        isPost ? "bg-blue-500/20 text-blue-500" : "bg-primary/20 text-white"
-      )}>
-        {method}
-      </span>
-      <code className="text-sm font-bold font-mono text-foreground">{path}</code>
     </div>
   );
 }
