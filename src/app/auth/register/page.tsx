@@ -269,6 +269,23 @@ const LoadingForm = () => (
   </div>
 );
 
+// Role-specific background image for the register panel (reads the same ?role=
+// param the form uses, so the image matches the selected role).
+const ROLE_IMAGES: Record<'merchant' | 'partner', string> = {
+  merchant: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80',
+  partner: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80',
+};
+
+function RoleImage() {
+  const searchParams = useSearchParams();
+  const roleParam = searchParams.get('role');
+  const role = roleParam === 'merchant' ? 'merchant' : 'partner';
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={ROLE_IMAGES[role]} alt="" className="absolute inset-0 w-full h-full object-cover" />
+  );
+}
+
 export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -284,17 +301,13 @@ export default function RegisterPage() {
             </Suspense>
           </div>
           
-          {/* ── Right: Atmospheric Brand Panel ── */}
-          <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center bg-card border-l border-border">
-            {/* Gradient orbs */}
-            <div className="absolute top-1/3 right-1/3 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[180px] pointer-events-none" />
-            <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-secondary rounded-full blur-[160px] pointer-events-none" />
-            
-            {/* Dot grid */}
-            <div className="absolute inset-0 opacity-[0.04]" style={{ 
-              backgroundImage: 'radial-gradient(circle, var(--foreground) 1px, transparent 1px)', 
-              backgroundSize: '32px 32px' 
-            }} />
+          {/* ── Right: Role-specific image panel ── */}
+          <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center border-l border-border">
+            <Suspense fallback={null}>
+              <RoleImage />
+            </Suspense>
+            {/* Readability overlay */}
+            <div className="absolute inset-0 bg-background/72 backdrop-blur-[1px]" />
 
             {/* Content */}
             <div className="relative z-10 max-w-md px-12 text-center">

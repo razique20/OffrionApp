@@ -60,17 +60,16 @@ export default function LoginPage() {
       <main className="flex-1 w-full pt-20">
         <div className="flex flex-col lg:flex-row w-full min-h-[calc(100svh-80px)]">
           
-          {/* ── Left: Atmospheric Brand Panel ── */}
-          <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center bg-card border-r border-border">
-            {/* Gradient orbs */}
-            <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[180px] pointer-events-none" />
-            <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary rounded-full blur-[160px] pointer-events-none" />
-            
-            {/* Dot grid */}
-            <div className="absolute inset-0 opacity-[0.04]" style={{ 
-              backgroundImage: 'radial-gradient(circle, var(--foreground) 1px, transparent 1px)', 
-              backgroundSize: '32px 32px' 
-            }} />
+          {/* ── Left: Brand image panel ── */}
+          <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center border-r border-border">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80"
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            {/* Readability overlay */}
+            <div className="absolute inset-0 bg-background/72 backdrop-blur-[1px]" />
 
             {/* Content */}
             <div className="relative z-10 max-w-md px-12 text-center">
