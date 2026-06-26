@@ -43,7 +43,7 @@ export default function LandingPage() {
                 <br />
                 <span className="text-foreground/70">connected to the apps</span>
                 <br />
-                <span className="bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444] bg-clip-text text-transparent">
+                <span className="text-[#F97316]">
                   people already use.
                 </span>
               </h1>
@@ -117,7 +117,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold tracking-tight mb-2">{p.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-5">{p.desc}</p>
-                  <span className={`inline-flex items-center gap-2 text-sm font-semibold bg-gradient-to-r ${p.accent} bg-clip-text text-transparent`}>
+                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#F97316]">
                     {p.cta}
                     <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                   </span>
@@ -183,7 +183,7 @@ export default function LandingPage() {
               <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight leading-[1.1]">
                 Fill quiet hours,
                 <br />
-                <span className="bg-gradient-to-r from-[#F97316] to-[#EF4444] bg-clip-text text-transparent">
+                <span className="text-[#F97316]">
                   not expensive ad budgets
                 </span>
               </h2>
@@ -327,7 +327,7 @@ export default function LandingPage() {
               <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight leading-[1.1]">
                 One API. Real deals.
                 <br />
-                <span className="bg-gradient-to-r from-[#A855F7] to-[#F97316] bg-clip-text text-transparent">
+                <span className="text-[#F97316]">
                   You keep 70%.
                 </span>
               </h2>
@@ -418,7 +418,7 @@ export default function LandingPage() {
           <div className="max-w-3xl mx-auto space-y-8">
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
               Ready when{' '}
-              <span className="bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444] bg-clip-text text-transparent">
+              <span className="text-[#F97316]">
                 you are
               </span>
             </h2>

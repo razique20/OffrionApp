@@ -29,7 +29,7 @@ export default function PricingPage() {
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] mb-6 animate-in fade-in slide-in-from-bottom-3 duration-700">
             Free while we&apos;re in{' '}
-            <span className="bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444] bg-clip-text text-transparent">
+            <span className="text-[#F97316]">
               beta.
             </span>
           </h1>
@@ -138,7 +138,7 @@ export default function PricingPage() {
           <div className="max-w-4xl mx-auto space-y-8">
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
               Ready to{' '}
-              <span className="bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444] bg-clip-text text-transparent">
+              <span className="text-[#F97316]">
                 start scaling?
               </span>
             </h2>

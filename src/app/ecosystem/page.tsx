@@ -25,7 +25,7 @@ export default function EcosystemPage() {
             </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight leading-[1.05]">
               A fair{' '}
-              <span className="bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444] bg-clip-text text-transparent">
+              <span className="text-[#F97316]">
                 economic model
               </span>
             </h1>
@@ -47,7 +47,7 @@ export default function EcosystemPage() {
               </p>
               <div className="mt-6 pt-5 border-t border-border">
                 <div className="text-xs font-medium text-muted-foreground mb-1">Revenue Retention</div>
-                <div className="font-bold text-3xl bg-gradient-to-r from-[#F97316] to-[#EF4444] bg-clip-text text-transparent">85–95%</div>
+                <div className="font-bold text-3xl text-[#F97316]">85–95%</div>
               </div>
             </div>
 
@@ -65,7 +65,7 @@ export default function EcosystemPage() {
               </p>
               <div className="relative mt-6 pt-5 border-t border-border">
                 <div className="text-xs font-medium text-muted-foreground mb-1">Commission Share</div>
-                <div className="font-bold text-4xl bg-gradient-to-r from-[#A855F7] to-[#F97316] bg-clip-text text-transparent">70%</div>
+                <div className="font-bold text-4xl text-[#F97316]">70%</div>
               </div>
             </div>
 
@@ -80,7 +80,7 @@ export default function EcosystemPage() {
               </p>
               <div className="mt-6 pt-5 border-t border-border">
                 <div className="text-xs font-medium text-muted-foreground mb-1">Platform Share</div>
-                <div className="font-bold text-3xl bg-gradient-to-r from-[#A855F7] to-[#F97316] bg-clip-text text-transparent">30%</div>
+                <div className="font-bold text-3xl text-[#F97316]">30%</div>
               </div>
             </div>
           </div>
