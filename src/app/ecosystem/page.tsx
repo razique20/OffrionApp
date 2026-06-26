@@ -12,7 +12,7 @@ export default function EcosystemPage() {
           {/* Platform background image */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=2000&q=80"
+            src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=2000&q=80"
             alt=""
             className="absolute inset-0 w-full h-full object-cover object-center z-0"
           />
