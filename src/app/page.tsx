@@ -21,6 +21,17 @@ export default function LandingPage() {
 
         {/* ── Hero ── */}
         <section className="relative min-h-[88svh] lg:min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
+          {/* Platform background image */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?auto=format&fit=crop&w=2000&q=80"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-right -z-20 opacity-50 dark:opacity-40"
+          />
+          {/* Readability overlays: solid base + fade from the text side */}
+          <div className="absolute inset-0 -z-20 bg-background/55" />
+          <div className="absolute inset-0 -z-20 bg-gradient-to-r from-background via-background/85 to-background/30" />
+
           {/* Brand gradient blobs */}
           <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full bg-[#A855F7] opacity-[0.07] blur-[120px] -z-10" />
           <div className="absolute top-10 left-1/3 w-[400px] h-[400px] rounded-full bg-[#F97316] opacity-[0.06] blur-[100px] -z-10" />
