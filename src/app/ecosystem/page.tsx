@@ -89,7 +89,7 @@ export default function EcosystemPage() {
           <div className="mt-32">
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border mb-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-[#A855F7] to-[#F97316]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#F97316]" />
                 <span className="text-xs font-medium text-foreground">Platform tooling</span>
               </div>
               <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Centralized Tooling</h2>

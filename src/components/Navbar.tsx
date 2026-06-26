@@ -96,7 +96,7 @@ export const Navbar = () => {
               >
                 {link.label}
                 {pathname === link.href && (
-                  <span className="absolute bottom-0 left-3 right-3 h-px bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444]" />
+                  <span className="absolute bottom-0 left-3 right-3 h-px bg-[#F97316]" />
                 )}
               </Link>
             ))}

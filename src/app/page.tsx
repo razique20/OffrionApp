@@ -88,7 +88,6 @@ export default function LandingPage() {
                   title: 'Bring in more customers',
                   desc: 'List a deal and reach people through dozens of apps. Only pay when someone actually shows up.',
                   cta: 'Start as a merchant',
-                  accent: 'from-[#F97316] to-[#EF4444]',
                   dot: 'bg-[#F97316]',
                 },
                 {
@@ -98,7 +97,6 @@ export default function LandingPage() {
                   title: 'Reward your users & earn',
                   desc: 'Drop in one API and offer your users real local deals. Earn 70% on every redemption, settled automatically.',
                   cta: 'Start as a partner',
-                  accent: 'from-[#A855F7] to-[#F97316]',
                   dot: 'bg-[#A855F7]',
                 },
               ].map((p) => (
@@ -107,10 +105,10 @@ export default function LandingPage() {
                   href={p.href}
                   className="group relative p-7 rounded-3xl border border-border bg-card hover:border-transparent transition-all hover:-translate-y-1 hover:shadow-lg overflow-hidden"
                 >
-                  {/* Hover gradient border */}
-                  <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${p.accent} opacity-0 group-hover:opacity-10 transition-opacity -z-10`} />
+                  {/* Hover accent wash */}
+                  <div className="absolute inset-0 rounded-3xl bg-[#F97316] opacity-0 group-hover:opacity-10 transition-opacity -z-10" />
                   <div className="flex items-center gap-3 mb-5">
-                    <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${p.accent} flex items-center justify-center`}>
+                    <div className="w-11 h-11 rounded-2xl bg-[#F97316] flex items-center justify-center">
                       <p.icon className="w-5 h-5 text-white" />
                     </div>
                     <span className="text-xs font-semibold text-muted-foreground">{p.tag}</span>
@@ -132,7 +130,7 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col items-center text-center mb-16">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border mb-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-[#A855F7] to-[#F97316]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#F97316]" />
                 <span className="text-xs font-medium text-foreground">How it works</span>
               </div>
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 max-w-2xl leading-[1.1]">
@@ -144,7 +142,7 @@ export default function LandingPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-              <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-px bg-gradient-to-r from-[#A855F7]/30 via-[#F97316]/30 to-[#EF4444]/30" />
+              <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-px bg-[#F97316]/30" />
 
               {[
                 { step: '1', icon: ShoppingBag, title: 'A business lists a deal', desc: 'Set your offer, where it works, and how many people can claim it. Live in minutes.', color: '#A855F7' },
@@ -214,7 +212,7 @@ export default function LandingPage() {
                 <Link
                   href="/auth/register?role=merchant"
                   className="px-8 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all"
-                  style={{ background: 'linear-gradient(to right, #F97316, #EF4444)' }}
+                  style={{ background: '#F97316' }}
                 >
                   List your first deal
                 </Link>
@@ -234,7 +232,7 @@ export default function LandingPage() {
               <div className="relative rounded-3xl border border-border bg-background p-8">
                 <div className="flex items-center justify-between mb-8 pb-6 border-b border-border">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #F97316, #EF4444)' }}>
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: '#F97316' }}>
                       <Heart className="w-6 h-6 text-white" />
                     </div>
                     <div>
@@ -358,7 +356,7 @@ export default function LandingPage() {
               <Link
                 href="/docs"
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 transition-all group"
-                style={{ background: 'linear-gradient(to right, #A855F7, #F97316)' }}
+                style={{ background: '#F97316' }}
               >
                 Read the docs
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -430,7 +428,7 @@ export default function LandingPage() {
               <Link
                 href="/auth/register?role=merchant"
                 className="w-full sm:w-auto px-9 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
-                style={{ background: 'linear-gradient(to right, #F97316, #EF4444)' }}
+                style={{ background: '#F97316' }}
               >
                 <ShoppingBag className="w-4 h-4" />
                 I run a business
@@ -438,7 +436,7 @@ export default function LandingPage() {
               <Link
                 href="/auth/register?role=partner"
                 className="w-full sm:w-auto px-9 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
-                style={{ background: 'linear-gradient(to right, #A855F7, #F97316)' }}
+                style={{ background: '#F97316' }}
               >
                 <Code2 className="w-4 h-4" />
                 I build an app

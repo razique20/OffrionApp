@@ -43,7 +43,7 @@ export default function PricingPage() {
             <Link
               href="/auth/register"
               className="w-full sm:w-auto px-10 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
-              style={{ background: 'linear-gradient(to right, #A855F7, #F97316)' }}
+              style={{ background: '#F97316' }}
             >
               Get early access
               <ChevronRight className="w-4 h-4" />
@@ -67,7 +67,7 @@ export default function PricingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border mb-4">
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'linear-gradient(to right, #A855F7, #F97316)' }} />
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#F97316' }} />
                 <span className="text-xs font-medium text-foreground">What's included</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Deep Technical Comparison</h2>
@@ -149,7 +149,7 @@ export default function PricingPage() {
               <Link
                 href="/auth/register"
                 className="w-full sm:w-auto px-10 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
-                style={{ background: 'linear-gradient(to right, #A855F7, #F97316)' }}
+                style={{ background: '#F97316' }}
               >
                 Create Free Account
                 <ChevronRight className="w-4 h-4" />
