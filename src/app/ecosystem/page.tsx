@@ -7,12 +7,22 @@ export default function EcosystemPage() {
     <div className="min-h-screen bg-background flex flex-col">
       <main className="flex-1 pt-32 pb-24 relative overflow-hidden">
 
-        {/* Brand blobs */}
-        <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-foreground opacity-[0.06] blur-[120px] -z-10" />
-        <div className="absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full bg-foreground opacity-[0.05] blur-[100px] -z-10" />
-        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full bg-foreground opacity-[0.04] blur-[80px] -z-10" />
+        {/* Platform background image */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=2000&q=80"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-25 dark:opacity-20"
+        />
+        {/* Readability overlay */}
+        <div className="absolute inset-0 z-0 bg-background/75 dark:bg-background/80" />
 
-        <div className="max-w-7xl mx-auto px-6">
+        {/* Brand blobs */}
+        <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-foreground opacity-[0.06] blur-[120px] z-0" />
+        <div className="absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full bg-foreground opacity-[0.05] blur-[100px] z-0" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full bg-foreground opacity-[0.04] blur-[80px] z-0" />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6">
 
           {/* Header */}
           <div className="text-center mb-24 mt-12">
