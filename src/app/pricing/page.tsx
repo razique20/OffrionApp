@@ -15,9 +15,19 @@ export default function PricingPage() {
     <div className="min-h-screen bg-background">
       <main className="pt-24 md:pt-32">
 
-        {/* ── Hero ── */}
-        <section className="px-6 py-12 md:py-20 flex flex-col items-center text-center max-w-4xl mx-auto relative overflow-hidden">
-          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[200px] rounded-full bg-foreground opacity-[0.06] blur-[80px] -z-10" />
+        {/* ── Hero (image background) ── */}
+        <div className="relative overflow-hidden">
+          {/* Background image */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?auto=format&fit=crop&w=2000&q=80"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center z-0"
+          />
+          <div className="absolute inset-0 z-0 bg-background/60 dark:bg-background/65" />
+
+        <section className="relative z-10 px-6 py-12 md:py-20 flex flex-col items-center text-center max-w-4xl mx-auto overflow-hidden">
+          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[200px] rounded-full bg-foreground opacity-[0.06] blur-[80px] z-0" />
 
           <div className="inline-flex items-center gap-2 mb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
@@ -60,6 +70,7 @@ export default function PricingPage() {
             Free during beta &middot; No credit card &middot; Early partners help shape pricing
           </p>
         </section>
+        </div>
 
         {/* ── Feature Comparison ── */}
         <section className="py-24 md:py-32 bg-card/30 border-y border-border px-6 relative overflow-hidden">
