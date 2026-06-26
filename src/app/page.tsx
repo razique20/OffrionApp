@@ -21,18 +21,13 @@ export default function LandingPage() {
 
         {/* ── Hero ── */}
         <section className="relative min-h-[88svh] lg:min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
-          {/* Right-anchored ambient background image, faded toward the left and
-              softened top/bottom via a combined mask (no opaque overlay). */}
+          {/* Right-anchored ambient background image, faded toward the left. */}
           <div
             className="absolute inset-y-0 right-0 w-full lg:w-[62%] -z-10 bg-cover bg-center opacity-30 dark:opacity-20 pointer-events-none"
             style={{
               backgroundImage: "url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1400&q=80')",
-              WebkitMaskImage:
-                'linear-gradient(to left, black 20%, transparent 90%), linear-gradient(to bottom, transparent, black 18%, black 80%, transparent)',
-              WebkitMaskComposite: 'source-in',
-              maskImage:
-                'linear-gradient(to left, black 20%, transparent 90%), linear-gradient(to bottom, transparent, black 18%, black 80%, transparent)',
-              maskComposite: 'intersect',
+              WebkitMaskImage: 'linear-gradient(to left, black 25%, transparent 95%)',
+              maskImage: 'linear-gradient(to left, black 25%, transparent 95%)',
             }}
           />
 
