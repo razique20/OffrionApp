@@ -155,7 +155,7 @@ export default function LandingPage() {
                       style={{ boxShadow: `0 0 0 0 ${item.color}00` }}
                     >
                       <item.icon className="w-7 h-7" style={{ color: item.color }} />
-                      <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center"
+                      <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-background text-xs font-bold flex items-center justify-center"
                         style={{ background: item.color }}>
                         {item.step}
                       </span>
@@ -211,7 +211,7 @@ export default function LandingPage() {
               <div className="flex items-center gap-6">
                 <Link
                   href="/auth/register?role=merchant"
-                  className="px-8 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all"
+                  className="px-8 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 hover:-translate-y-0.5 transition-all"
                   style={{ background: 'var(--foreground)' }}
                 >
                   List your first deal
@@ -233,7 +233,7 @@ export default function LandingPage() {
                 <div className="flex items-center justify-between mb-8 pb-6 border-b border-border">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'var(--foreground)' }}>
-                      <Heart className="w-6 h-6 text-white" />
+                      <Heart className="w-6 h-6 text-background" />
                     </div>
                     <div>
                       <p className="text-base font-bold tracking-tight">Your dashboard</p>
@@ -355,7 +355,7 @@ export default function LandingPage() {
 
               <Link
                 href="/docs"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 transition-all group"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 transition-all group"
                 style={{ background: 'var(--foreground)' }}
               >
                 Read the docs
@@ -427,7 +427,7 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 href="/auth/register?role=merchant"
-                className="w-full sm:w-auto px-9 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
+                className="w-full sm:w-auto px-9 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
                 style={{ background: 'var(--foreground)' }}
               >
                 <ShoppingBag className="w-4 h-4" />
@@ -435,7 +435,7 @@ export default function LandingPage() {
               </Link>
               <Link
                 href="/auth/register?role=partner"
-                className="w-full sm:w-auto px-9 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
+                className="w-full sm:w-auto px-9 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
                 style={{ background: 'var(--foreground)' }}
               >
                 <Code2 className="w-4 h-4" />

@@ -42,7 +42,7 @@ export default function PricingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
             <Link
               href="/auth/register"
-              className="w-full sm:w-auto px-10 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
+              className="w-full sm:w-auto px-10 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
               style={{ background: 'var(--foreground)' }}
             >
               Get early access
@@ -148,7 +148,7 @@ export default function PricingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 href="/auth/register"
-                className="w-full sm:w-auto px-10 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
+                className="w-full sm:w-auto px-10 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
                 style={{ background: 'var(--foreground)' }}
               >
                 Create Free Account

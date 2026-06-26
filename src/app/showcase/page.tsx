@@ -207,7 +207,7 @@ const { redeemCode, transactionId } = await res.json();
                 {deal.discountPercentage}% OFF
               </span>
               {deal.isHot && (
-                <span className="bg-secondary text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                <span className="bg-secondary text-foreground text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
                   <Flame className="w-3 h-3" /> HOT
                 </span>
               )}
@@ -620,7 +620,7 @@ function CardGrid({ deals, onDealClick }: { deals: Deal[]; onDealClick: (d: Deal
               -{deal.discountPercentage}%
             </span>
             {deal.isHot && (
-              <span className="absolute top-2 left-2 bg-secondary text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+              <span className="absolute top-2 left-2 bg-secondary text-foreground text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
                 <Flame className="w-2.5 h-2.5" /> HOT
               </span>
             )}
@@ -690,7 +690,7 @@ function HotDeals({ deals, onDealClick }: { deals: Deal[]; onDealClick: (d: Deal
             <p className="text-sm font-bold truncate">{deal.title}</p>
             <p className="text-[10px] text-muted-foreground">{deal.emirate}</p>
           </div>
-          <div className="shrink-0 bg-secondary text-white text-xs font-bold px-2 py-1 rounded group-hover:bg-secondary transition-colors">
+          <div className="shrink-0 bg-secondary text-foreground text-xs font-bold px-2 py-1 rounded group-hover:bg-secondary transition-colors">
             {deal.discountPercentage}% OFF
           </div>
         </button>
@@ -918,7 +918,7 @@ function MiniDeal({ d, compact }: { d: typeof MOCK_DEALS[number]; compact?: bool
           -{d.pct}%
         </span>
         {d.hot && !compact && (
-          <span className="absolute top-1.5 left-1.5 bg-secondary text-white text-[8px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+          <span className="absolute top-1.5 left-1.5 bg-secondary text-foreground text-[8px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
             <Flame className="w-2 h-2" /> HOT
           </span>
         )}
@@ -1017,12 +1017,12 @@ const PARTNER_SITES = [
                   <p className="text-[9px] font-bold truncate">{d.title}</p>
                   <p className="text-[8px] text-muted-foreground">{d.place}</p>
                 </div>
-                <span className="text-[8px] font-bold bg-secondary text-white px-1.5 py-0.5 rounded shrink-0">
+                <span className="text-[8px] font-bold bg-secondary text-foreground px-1.5 py-0.5 rounded shrink-0">
                   -{d.pct}%
                 </span>
               </div>
             ))}
-            <button className="w-full bg-secondary text-white text-[9px] font-bold py-1.5 rounded">
+            <button className="w-full bg-secondary text-foreground text-[9px] font-bold py-1.5 rounded">
               Apply at checkout
             </button>
           </div>
@@ -1156,7 +1156,7 @@ function IdeaVisual({ idea }: { idea: IntegrationIdea }) {
               <p className="text-[10px] font-bold text-foreground">Flash Sale — 50% OFF</p>
               <p className="text-[8px] text-muted-foreground">Ends in 02:14:09</p>
             </div>
-            <span className="text-[8px] font-bold bg-secondary text-white px-1.5 py-0.5 rounded shrink-0">CLAIM</span>
+            <span className="text-[8px] font-bold bg-secondary text-foreground px-1.5 py-0.5 rounded shrink-0">CLAIM</span>
           </div>
         </div>
       );
