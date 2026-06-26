@@ -73,10 +73,10 @@ export default function PublicDocsPage() {
                   label="Categories" 
                 />
                 <DocNavItem 
-                  active={activeTab === 'tracking'} 
+                  active={activeTab === 'tracking'}
                   onClick={() => setActiveTab('tracking')}
                   icon={Activity}
-                  label="Tracking" 
+                  label="Redeem Codes"
                 />
                 <DocNavItem 
                   active={activeTab === 'webhooks'} 
@@ -257,14 +257,14 @@ x-api-key: YOUR_API_KEY`}
             )}
 
             {activeTab === 'tracking' && (
-              <DocSection title="Tracking & Attribution">
-                <p className="text-muted-foreground mb-12">Log engagement to ensure proper commission attribution.</p>
-                
+              <DocSection title="Redeem Codes">
+                <p className="text-muted-foreground mb-12">Generate the redemption code a user shows at the merchant. This call also records the click for partner attribution.</p>
+
                 <div className="space-y-8">
                   <Endpoint
                     method="POST"
                     path="/partners/track-click"
-                    description="Track a user clicking on a deal. Returns a redemption code to show the user."
+                    description="Call this when a user opens/claims a deal. It returns a redemption code (and its branded form + links) and records the click for attribution."
                     params={[
                       { name: 'dealId', type: 'string', required: true, desc: 'The deal being clicked.' },
                       { name: 'metadata', type: 'object', desc: 'Optional custom data to track.' },
@@ -297,9 +297,10 @@ x-api-key: YOUR_API_KEY`}
                   />
 
                   <Endpoint
+                    deprecated
                     method="POST"
                     path="/partners/track-conversion"
-                    description="Record a successful conversion and generate the redemption code."
+                    description="Deprecated — not required. Use /partners/track-click to generate a redemption code. This endpoint is retained for backward compatibility only."
                     params={[
                       { name: 'dealId', type: 'string', required: true, desc: 'The deal converted.' },
                       { name: 'amount', type: 'number', required: true, desc: 'Purchase value.' },

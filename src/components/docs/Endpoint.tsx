@@ -53,6 +53,7 @@ export function Endpoint({
   responseFields,
   curl,
   note,
+  deprecated,
 }: {
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   path: string;
@@ -63,15 +64,21 @@ export function Endpoint({
   responseFields?: Field[];
   curl?: string;
   note?: React.ReactNode;
+  deprecated?: boolean;
 }) {
   return (
-    <div className="border border-border rounded-2xl overflow-hidden bg-card">
+    <div className={cn('border rounded-2xl overflow-hidden bg-card', deprecated ? 'border-amber-500/40' : 'border-border')}>
       {/* Header */}
       <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-secondary/30">
         <span className={cn('px-2.5 py-1 rounded-md text-[11px] font-black font-mono tracking-wide', METHOD_STYLES[method])}>
           {method}
         </span>
-        <code className="text-sm font-bold font-mono text-foreground break-all">{path}</code>
+        <code className={cn('text-sm font-bold font-mono break-all', deprecated ? 'text-muted-foreground line-through' : 'text-foreground')}>{path}</code>
+        {deprecated && (
+          <span className="ml-auto text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600">
+            Deprecated
+          </span>
+        )}
       </div>
 
       <div className="p-6 space-y-7">
