@@ -8,10 +8,9 @@ import { Briefcase, Handshake, Loader2, AlertCircle, ArrowRight, CheckCircle2, E
 import { cn } from '@/lib/utils';
 import { COUNTRIES } from '@/constants/locations';
 
-function RegisterForm() {
+function RegisterForm({ role, setRole }: { role: 'merchant' | 'partner'; setRole: (r: 'merchant' | 'partner') => void }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [role, setRole] = useState<'merchant' | 'partner'>('partner');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,13 +20,6 @@ function RegisterForm() {
   const [success, setSuccess] = useState(false);
   const [country, setCountry] = useState('United Arab Emirates');
   const [accessCountries, setAccessCountries] = useState<string[]>(['United Arab Emirates']);
-
-  useEffect(() => {
-    const roleParam = searchParams.get('role');
-    if (roleParam === 'merchant' || roleParam === 'partner') {
-      setRole(roleParam);
-    }
-  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -276,36 +268,50 @@ const ROLE_IMAGES: Record<'merchant' | 'partner', string> = {
   partner: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80',
 };
 
-function RoleImage() {
+// Initializes the shared role from the ?role= URL param (must be under Suspense).
+function RoleParamInit({ onRole }: { onRole: (r: 'merchant' | 'partner') => void }) {
   const searchParams = useSearchParams();
-  const roleParam = searchParams.get('role');
-  const role = roleParam === 'merchant' ? 'merchant' : 'partner';
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={ROLE_IMAGES[role]} alt="" className="absolute inset-0 w-full h-full object-cover" />
-  );
+  useEffect(() => {
+    const r = searchParams.get('role');
+    if (r === 'merchant' || r === 'partner') onRole(r);
+  }, [searchParams, onRole]);
+  return null;
 }
 
 export default function RegisterPage() {
+  // Shared role: drives both the form and the side image, so toggling the role
+  // in the form switches the image too. Initialize from the URL on the client to
+  // avoid a flash of the wrong image when arriving via ?role=merchant.
+  const [role, setRole] = useState<'merchant' | 'partner'>(() => {
+    if (typeof window !== 'undefined') {
+      const r = new URLSearchParams(window.location.search).get('role');
+      if (r === 'merchant' || r === 'partner') return r;
+    }
+    return 'partner';
+  });
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      
+
+      <Suspense fallback={null}>
+        <RoleParamInit onRole={setRole} />
+      </Suspense>
+
       <main className="flex-1 w-full pt-20">
         <div className="flex flex-col lg:flex-row w-full min-h-[calc(100svh-80px)]">
 
           {/* ── Left: Form ── */}
           <div className="w-full lg:w-1/2 flex items-center justify-center px-5 py-12 sm:px-8 overflow-y-auto">
             <Suspense fallback={<LoadingForm />}>
-              <RegisterForm />
+              <RegisterForm role={role} setRole={setRole} />
             </Suspense>
           </div>
-          
+
           {/* ── Right: Role-specific image panel ── */}
           <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center border-l border-border">
-            <Suspense fallback={null}>
-              <RoleImage />
-            </Suspense>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ROLE_IMAGES[role]} alt="" className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500" />
             {/* Readability overlay */}
             <div className="absolute inset-0 bg-background/72 backdrop-blur-[1px]" />
 
