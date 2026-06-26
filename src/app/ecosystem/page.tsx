@@ -14,8 +14,8 @@ export default function EcosystemPage() {
           alt=""
           className="absolute inset-0 w-full h-full object-cover object-center z-0"
         />
-        {/* Readability overlay */}
-        <div className="absolute inset-0 z-0 bg-background/40 dark:bg-background/45" />
+        {/* Light readability overlay — keep the image mostly solid */}
+        <div className="absolute inset-0 z-0 bg-background/15 dark:bg-background/20" />
 
         {/* Brand blobs */}
         <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-foreground opacity-[0.06] blur-[120px] z-0" />
@@ -25,7 +25,9 @@ export default function EcosystemPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-6">
 
           {/* Header */}
-          <div className="text-center mb-24 mt-12">
+          <div className="relative text-center mb-24 mt-12">
+            {/* Soft backdrop so the heading stays readable over the vivid image */}
+            <div className="absolute inset-x-0 -inset-y-8 -z-0 bg-background/45 blur-2xl rounded-[3rem]" />
             <div className="inline-flex items-center gap-2 mb-6">
               <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
               <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
