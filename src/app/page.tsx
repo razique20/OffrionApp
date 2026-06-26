@@ -425,11 +425,10 @@ export default function LandingPage() {
           <img
             src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&w=2000&q=80"
             alt=""
-            className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-40 dark:opacity-30"
+            className="absolute inset-0 w-full h-full object-cover object-center z-0"
           />
-          {/* Readability overlay (stronger toward the center where the text sits) */}
-          <div className="absolute inset-0 z-0 bg-background/70" />
-          <div className="absolute inset-0 z-0 bg-gradient-to-b from-background via-background/60 to-background" />
+          {/* Single soft overlay — keeps text readable while the image shows */}
+          <div className="absolute inset-0 z-0 bg-background/55 dark:bg-background/60" />
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-border z-0" />
           <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-foreground opacity-[0.06] blur-[80px] z-0" />
 
