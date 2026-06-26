@@ -5,29 +5,29 @@ import { ShoppingBag, Globe, Zap } from 'lucide-react';
 export default function EcosystemPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <main className="flex-1 pt-32 pb-24 relative overflow-hidden">
+      <main className="flex-1">
 
-        {/* Platform background image */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?auto=format&fit=crop&w=2000&q=80"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover object-center z-0"
-        />
-        {/* Light readability overlay — keep the image mostly solid */}
-        <div className="absolute inset-0 z-0 bg-background/15 dark:bg-background/20" />
+        {/* ── Section 1: model + roles (image background) ── */}
+        <section className="relative pt-32 pb-24 overflow-hidden">
+          {/* Platform background image */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=2000&q=80"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center z-0"
+          />
+          {/* Readability overlay */}
+          <div className="absolute inset-0 z-0 bg-background/60 dark:bg-background/65" />
 
-        {/* Brand blobs */}
-        <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-foreground opacity-[0.06] blur-[120px] z-0" />
-        <div className="absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full bg-foreground opacity-[0.05] blur-[100px] z-0" />
-        <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full bg-foreground opacity-[0.04] blur-[80px] z-0" />
+          {/* Brand blobs */}
+          <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-foreground opacity-[0.06] blur-[120px] z-0" />
+          <div className="absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full bg-foreground opacity-[0.05] blur-[100px] z-0" />
+          <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full bg-foreground opacity-[0.04] blur-[80px] z-0" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
+          <div className="relative z-10 max-w-7xl mx-auto px-6">
 
           {/* Header */}
-          <div className="relative text-center mb-24 mt-12">
-            {/* Soft backdrop so the heading stays readable over the vivid image */}
-            <div className="absolute inset-x-0 -inset-y-8 -z-0 bg-background/45 blur-2xl rounded-[3rem]" />
+          <div className="text-center mb-24 mt-12">
             <div className="inline-flex items-center gap-2 mb-6">
               <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
               <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
@@ -97,8 +97,12 @@ export default function EcosystemPage() {
             </div>
           </div>
 
-          {/* Interactive Tools */}
-          <div className="mt-32">
+          </div>
+        </section>
+
+        {/* ── Section 2: tooling (plain background) ── */}
+        <section className="py-24 bg-background border-t border-border">
+          <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border mb-4">
                 <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
@@ -111,8 +115,8 @@ export default function EcosystemPage() {
             </div>
             <InteractiveShowcase />
           </div>
+        </section>
 
-        </div>
       </main>
     </div>
   );
