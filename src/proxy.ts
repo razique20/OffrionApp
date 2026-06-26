@@ -17,11 +17,16 @@ if (redisToken && redisUrl && redisToken !== 'your-upstash-token-here') {
   });
 }
 
-// Routes that don't require authentication
+// Routes that don't require staff authentication.
+// Note: /api/customer/* and /api/storefront/* are first-party customer routes
+// that authenticate themselves via the separate customer_token cookie (or are
+// intentionally public, e.g. guest browse/claim and customer signup/login).
 const publicRoutes = [
   '/',
   '/api/auth/login',
   '/api/auth/register',
+  '/api/customer',
+  '/api/storefront',
   '/api/deals/public',
   '/api/webhooks',
   '/docs',

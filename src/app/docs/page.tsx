@@ -25,7 +25,7 @@ export default function PublicDocsPage() {
     <div className="min-h-screen bg-background flex flex-col">
       
       
-      <main className="max-w-7xl mx-auto px-6 py-20 w-full flex-1">
+      <main className="max-w-7xl mx-auto px-6 pt-32 pb-20 w-full flex-1">
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Sidebar Navigation */}
           <aside className="lg:w-64 shrink-0 space-y-8 sticky top-32 h-fit">
@@ -286,14 +286,28 @@ x-api-key: YOUR_API_KEY`}
                       </div>
                       <div>
                         <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
-                        <CodeBlock 
+                        <CodeBlock
                           language="json"
                           code={`{
   "message": "Click tracked successfully",
   "redeemCode": "AXTRE9",
-  "transactionId": "654b..."
+  "displayCode": "OFFRION-AXTRE9",
+  "transactionId": "654b...",
+  "redemptionUrl": "https://offrion.app/c/AXTRE9",
+  "customerLinkUrl": "https://offrion.app/account?link=AXTRE9",
+  "branding": {
+    "poweredBy": "Offrion",
+    "tagline": "Save & track your deals at Offrion",
+    "url": "https://offrion.app"
+  }
 }`}
                         />
+                        <ul className="text-[11px] space-y-1 text-muted-foreground mt-3">
+                          <li><code className="text-foreground">redeemCode</code> — the raw code the merchant redeems.</li>
+                          <li><code className="text-foreground">displayCode</code> — branded form to show end users (<code className="text-foreground">OFFRION-XXXXXX</code>).</li>
+                          <li><code className="text-foreground">redemptionUrl</code> — a hosted branded coupon page.</li>
+                          <li><code className="text-foreground">customerLinkUrl</code> — deep link to save the coupon to an Offrion account.</li>
+                        </ul>
                       </div>
                     </div>
                     <CodeBlock 
@@ -315,21 +329,31 @@ x-api-key: YOUR_API_KEY`}
                           <li><code className="text-foreground">dealId</code> (string, required)</li>
                           <li><code className="text-foreground">amount</code> (number, required)</li>
                           <li><code className="text-foreground">currency</code> (string)</li>
+                          <li><code className="text-foreground">customerId</code> (string, optional) — links the claim to an Offrion customer (split stays partner 70 / platform 30).</li>
                         </ul>
                       </div>
                       <div>
                         <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Response (200 OK)</h5>
-                        <CodeBlock 
+                        <CodeBlock
                           language="json"
                           code={`{
-  "message": "Conversion tracked",
+  "message": "Conversion tracked. Redemption code generated.",
   "transactionId": "654b...",
+  "redeemCode": "AXTRE9",
+  "displayCode": "OFFRION-AXTRE9",
+  "redemptionUrl": "https://offrion.app/c/AXTRE9",
+  "customerLinkUrl": "https://offrion.app/account?link=AXTRE9",
+  "branding": {
+    "poweredBy": "Offrion",
+    "tagline": "Save & track your deals at Offrion",
+    "url": "https://offrion.app"
+  },
   "status": "pending"
 }`}
                         />
                       </div>
                     </div>
-                    <CodeBlock 
+                    <CodeBlock
                       language="json"
                       code={`{
   "dealId": "654a123f8b",

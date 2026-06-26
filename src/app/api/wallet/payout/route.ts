@@ -19,8 +19,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (role !== 'partner' && role !== 'merchant') {
-        return NextResponse.json({ error: 'Unauthorized role' }, { status: 403 });
+    // Only partners earn a withdrawable balance (their commission share).
+    // Merchants pay commission, they don't accrue earnings, so they cannot
+    // withdraw from this endpoint.
+    if (role !== 'partner') {
+        return NextResponse.json({ error: 'Only partners can request payouts' }, { status: 403 });
     }
 
     const user = await User.findById(userId);
@@ -42,13 +45,13 @@ export async function POST(req: Request) {
 
     const userObjectId = new mongoose.Types.ObjectId(userId);
 
-    // 1. Check withrawable balance
+    // 1. Check withdrawable balance (sum of the partner's share on cleared commissions)
     const stats = await Commission.aggregate([
-      { $match: { [role === 'partner' ? 'partnerId' : 'merchantId']: userObjectId, status: 'cleared' } },
+      { $match: { partnerId: userObjectId, status: 'cleared' } },
       {
         $group: {
           _id: null,
-          withdrawableBalance: { $sum: role === 'partner' ? '$partnerShare' : '$amount' },
+          withdrawableBalance: { $sum: '$partnerShare' },
         },
       },
     ]);
@@ -76,15 +79,26 @@ export async function POST(req: Request) {
         stripeTransferId = transfer.id;
       } catch (stripeErr: any) {
         console.error('Stripe Transfer Error:', stripeErr);
-        
-        // Fallback for Demo Mode or balance issues
-        if (isDemoMode || stripeErr.code === 'balance_insufficient') {
-            console.warn('⚠️ PROTOTYPE FALLBACK: Mocking successful payout despite Stripe error.');
+
+        // Only mock a payout when DEMO_MODE is explicitly enabled. Never fake a
+        // successful transfer in production (e.g. on balance_insufficient) — that
+        // would mark commissions paid without any money actually moving.
+        if (isDemoMode) {
+            console.warn('⚠️ DEMO MODE: Mocking successful payout despite Stripe error.');
             stripeTransferId = `mock_tr_${Math.random().toString(36).slice(2, 9)}`;
+        } else if (stripeErr.code === 'balance_insufficient') {
+            // The partner's earnings are valid, but the platform's Stripe balance
+            // hasn't settled the underlying charges yet (card funds are typically
+            // pending for a couple of days). This is temporary — surface it clearly
+            // and DO NOT mark commissions paid, so the partner can retry later.
+            return NextResponse.json({
+                error: 'Funds are still settling and not yet available for payout. Please try again in a day or two.',
+                code: 'funds_settling',
+            }, { status: 402 });
         } else {
-            return NextResponse.json({ 
+            return NextResponse.json({
                 error: `Stripe Payout Failed: ${stripeErr.message}`,
-                code: stripeErr.code 
+                code: stripeErr.code
             }, { status: 500 });
         }
       }
@@ -100,18 +114,18 @@ export async function POST(req: Request) {
       referenceId: stripeTransferId,
     });
 
-    // 4. Mark matching commissions as 'paid'
+    // 4. Mark matching commissions as 'paid' (partner share covers the payout)
     let remainingToPay = amount;
-    const clearedCommissions = await Commission.find({ 
-        [role === 'partner' ? 'partnerId' : 'merchantId']: userObjectId, 
-        status: 'cleared' 
+    const clearedCommissions = await Commission.find({
+        partnerId: userObjectId,
+        status: 'cleared'
     }).sort({ createdAt: 1 });
 
     for (const comm of clearedCommissions) {
         if (remainingToPay <= 0) break;
-        comm.status = 'paid'; 
+        comm.status = 'paid';
         await comm.save();
-        remainingToPay -= (role === 'partner' ? comm.partnerShare : comm.amount);
+        remainingToPay -= comm.partnerShare;
     }
 
     return NextResponse.json({

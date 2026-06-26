@@ -23,6 +23,8 @@ const dealSchema = z.object({
   validUntil: z.string().transform((str) => new Date(str)).optional(),
   usageLimit: z.number().int().nonnegative().optional(),
   isActive: z.boolean().optional(),
+  // Merchant opt-in to be listed on the customer storefront (admin still approves).
+  storefrontRequested: z.boolean().optional(),
   emirate: z.string().optional(),
   landmark: z.string().optional(),
 });
@@ -73,9 +75,16 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
     const validatedData = dealSchema.parse(body);
 
+    // If the merchant withdraws their storefront request, also drop it from the
+    // storefront immediately (admin would need to re-approve to relist).
+    const update: any = { ...validatedData };
+    if (validatedData.storefrontRequested === false) {
+      update.storefrontVisible = false;
+    }
+
     const deal = await Deal.findOneAndUpdate(
       { _id: id, merchantId: userId },
-      { ...validatedData },
+      update,
       { new: true }
     );
 

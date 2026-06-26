@@ -13,21 +13,40 @@ import {
   ShieldCheck,
   Menu,
   X,
+  Ticket,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 import { useUser } from '@/hooks/useUser';
+import { useCustomer, notifyCustomerSessionChange } from '@/hooks/useCustomer';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 import { UserRole } from '@/lib/constants';
 
 export const Navbar = () => {
-  const { user, loading, logout } = useUser();
+  const { user, loading: userLoading, logout } = useUser();
+  const { customer, loading: customerLoading } = useCustomer();
+  const loading = userLoading || customerLoading;
   const pathname = usePathname();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showCustomerMenu, setShowCustomerMenu] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
+
+  const customerLogout = async () => {
+    try {
+      await fetch('/api/customer/auth/logout', { method: 'POST' });
+    } catch {
+      /* ignore */
+    }
+    setShowCustomerMenu(false);
+    notifyCustomerSessionChange();
+    router.push('/');
+    router.refresh();
+  };
 
   const dashboardHref = pathname.startsWith('/merchant') ? '/merchant/dashboard' :
     pathname.startsWith('/admin') ? '/admin/dashboard' :
@@ -58,6 +77,7 @@ export const Navbar = () => {
         <div className="flex items-center gap-8">
           <div className="hidden md:flex items-center gap-1">
             {[
+              ...(customer ? [{ label: 'Deals', href: '/deals' }] : []),
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
               { label: 'Showcase', href: '/showcase' },
@@ -76,7 +96,7 @@ export const Navbar = () => {
               >
                 {link.label}
                 {pathname === link.href && (
-                  <span className="absolute bottom-0 left-3 right-3 h-px bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444]" />
+                  <span className="absolute bottom-0 left-3 right-3 h-px bg-[#F97316]" />
                 )}
               </Link>
             ))}
@@ -175,11 +195,69 @@ export const Navbar = () => {
                     </>
                   )}
                 </div>
+              ) : customer ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowCustomerMenu(!showCustomerMenu)}
+                    className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full border border-border bg-secondary/50 hover:bg-secondary transition-all"
+                  >
+                    <span className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center text-[11px] font-bold uppercase">
+                      {customer.name.charAt(0)}
+                    </span>
+                    <span className="text-[12px] font-medium whitespace-nowrap">{customer.name.split(' ')[0]}</span>
+                  </button>
+
+                  {showCustomerMenu && (
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setShowCustomerMenu(false)}></div>
+                      <div className="absolute right-0 mt-2 w-56 bg-card border border-border shadow-2xl z-20 py-2 animate-in fade-in zoom-in-95 duration-200 origin-top-right rounded-md">
+                        <div className="px-4 py-2 border-b border-border/10 mb-1">
+                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em]">Shopper</p>
+                          <p className="text-sm font-bold truncate">{customer.name}</p>
+                          <p className="text-[11px] text-muted-foreground truncate">{customer.email}</p>
+                        </div>
+                        <Link
+                          href="/account"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold hover:bg-secondary transition-colors"
+                          onClick={() => setShowCustomerMenu(false)}
+                        >
+                          <User className="w-4 h-4" />
+                          My Account
+                        </Link>
+                        <Link
+                          href="/deals"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium hover:bg-secondary transition-colors"
+                          onClick={() => setShowCustomerMenu(false)}
+                        >
+                          <Ticket className="w-4 h-4" />
+                          Browse Deals
+                        </Link>
+                        <div className="border-t border-border/10 my-1 pt-1">
+                          <button
+                            onClick={customerLogout}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-destructive hover:bg-destructive/5 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            Log Out
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               ) : (
                 <>
+                  <Link
+                    href="/account"
+                    className="flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground/80 hover:text-foreground transition-colors whitespace-nowrap"
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    Shopper Sign In
+                  </Link>
+                  <div className="h-4 w-px bg-border/40" />
                   <Link href="/auth/login" className="text-[12px] font-medium text-muted-foreground/80 hover:text-foreground transition-colors whitespace-nowrap">Sign In</Link>
-                  <Link 
-                    href="/auth/register" 
+                  <Link
+                    href="/auth/register"
                     className="px-3 py-1 bg-foreground text-background rounded-full text-[12px] font-medium hover:opacity-90 transition-all whitespace-nowrap"
                   >
                     Get Started
@@ -203,6 +281,7 @@ export const Navbar = () => {
         <div className="md:hidden absolute top-full left-0 w-full bg-background border-y border-border p-8 flex flex-col gap-8 shadow-2xl animate-in fade-in slide-in-from-top-4">
           <div className="flex flex-col gap-6">
             {[
+              ...(customer ? [{ label: 'Deals', href: '/deals' }] : []),
               { label: 'Ecosystem', href: '/ecosystem' },
               { label: 'Docs', href: '/docs' },
               { label: 'Showcase', href: '/showcase' },
@@ -235,8 +314,35 @@ export const Navbar = () => {
                 Sign Out
               </button>
             </div>
+          ) : customer ? (
+            <div className="flex flex-col gap-4 mt-4 pt-8 border-t border-border/30">
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em]">Shopper · {customer.name}</p>
+              <Link
+                href="/account"
+                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                My Account
+              </Link>
+              <button
+                onClick={() => {
+                  customerLogout();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black text-destructive"
+              >
+                Log Out
+              </button>
+            </div>
           ) : (
             <div className="flex flex-col gap-4 mt-4 pt-8 border-t border-border/30">
+              <Link
+                href="/account"
+                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Shopper Account
+              </Link>
               <Link
                 href="/auth/login"
                 className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"

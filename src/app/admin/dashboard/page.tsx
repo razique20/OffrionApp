@@ -20,6 +20,7 @@ import {
   ExternalLink,
   ChevronRight,
   Clock,
+  Store,
   Download,
   MapPin
 } from 'lucide-react';
@@ -51,8 +52,9 @@ export default function AdminDashboard() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [selectedCommissions, setSelectedCommissions] = useState<string[]>([]);
-  const [reviewSubTab, setReviewSubTab] = useState<'merchants' | 'deals' | 'funds' | 'regions'>('merchants');
+  const [reviewSubTab, setReviewSubTab] = useState<'merchants' | 'deals' | 'funds' | 'regions' | 'storefront'>('merchants');
   const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+  const [tableSearch, setTableSearch] = useState('');
 
   // Editable User Fields
   const [editCountry, setEditCountry] = useState('');
@@ -76,7 +78,7 @@ export default function AdminDashboard() {
   }, [activeTab]);
 
   const [financials, setFinancials] = useState<any>(null);
-  const [moderationData, setModerationData] = useState<any>({ deals: [], merchants: [], commissions: [], regionalRequests: [] });
+  const [moderationData, setModerationData] = useState<any>({ deals: [], merchants: [], commissions: [], regionalRequests: [], storefrontRequests: [] });
 
   const fetchFinancials = async () => {
     setLoading(true);
@@ -234,6 +236,56 @@ export default function AdminDashboard() {
       }
     } catch (err: any) {
       console.error(err);
+      showNotification(err.message || 'Network error occurred', 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleToggleStorefront = async (dealId: string, visible: boolean) => {
+    setActionLoading(dealId);
+    try {
+      const res = await fetch(`/api/admin/deals/${dealId}/storefront`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visible }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        setData(data.map((d) => (d._id === dealId ? { ...d, storefrontVisible: visible } : d)));
+        showNotification(json.message || 'Storefront visibility updated');
+      } else {
+        showNotification(json.error || 'Failed to update storefront visibility', 'error');
+      }
+    } catch (err: any) {
+      showNotification(err.message || 'Network error occurred', 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleReviewStorefront = async (dealId: string, visible: boolean) => {
+    setActionLoading(dealId);
+    try {
+      const res = await fetch(`/api/admin/deals/${dealId}/storefront`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visible, clearRequest: !visible }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        // Remove from the pending queue either way (approved -> visible;
+        // declined -> request cleared, stays hidden).
+        setModerationData({
+          ...moderationData,
+          storefrontRequests: moderationData.storefrontRequests.filter((d: any) => d._id !== dealId),
+        });
+        showNotification(visible ? 'Deal approved for the customer storefront' : 'Storefront request declined');
+        fetchStats();
+      } else {
+        showNotification(json.error || 'Failed to update request', 'error');
+      }
+    } catch (err: any) {
       showNotification(err.message || 'Network error occurred', 'error');
     } finally {
       setActionLoading(null);
@@ -462,7 +514,7 @@ export default function AdminDashboard() {
               return (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => { setActiveTab(tab); setTableSearch(''); }}
                   className={cn(
                     "flex items-center gap-2 py-4 text-sm font-medium transition-all relative whitespace-nowrap",
                     isActive
@@ -471,9 +523,9 @@ export default function AdminDashboard() {
                   )}
                 >
                   <span className="capitalize">{tab}</span>
-                  {tab === 'review' && moderationData.deals.length + moderationData.merchants.length + moderationData.regionalRequests.length > 0 && (
+                  {tab === 'review' && moderationData.deals.length + moderationData.merchants.length + moderationData.regionalRequests.length + (moderationData.storefrontRequests?.length || 0) > 0 && (
                     <span className="w-5 h-5 bg-accent text-foreground text-[10px] flex items-center justify-center rounded-md font-bold mb-0.5 ml-2">
-                      {moderationData.deals.length + moderationData.merchants.length + moderationData.regionalRequests.length}
+                      {moderationData.deals.length + moderationData.merchants.length + moderationData.regionalRequests.length + (moderationData.storefrontRequests?.length || 0)}
                     </span>
                   )}
                   {isActive && (
@@ -619,7 +671,12 @@ export default function AdminDashboard() {
                   <div className="flex gap-4">
                      <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 opacity-30" />
-                        <input placeholder="Filter results..." className="bg-background border border-border rounded-md pl-9 pr-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-foreground w-64 transition-all" />
+                        <input
+                          value={tableSearch}
+                          onChange={(e) => setTableSearch(e.target.value)}
+                          placeholder="Filter by name or ID..."
+                          className="bg-background border border-border rounded-md pl-9 pr-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-foreground w-64 transition-all"
+                        />
                      </div>
                   </div>
                 </div>
@@ -634,7 +691,18 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
-                      {data.map((item) => (
+                      {(() => {
+                        const q = tableSearch.trim().toLowerCase().replace(/^#/, '');
+                        const filtered = q
+                          ? data.filter((item) => {
+                              const name = (item.name || item.title || '').toLowerCase();
+                              const email = (item.email || '').toLowerCase();
+                              const shortId = item._id.slice(-8).toLowerCase();
+                              const fullId = item._id.toLowerCase();
+                              return name.includes(q) || email.includes(q) || shortId.includes(q) || fullId.includes(q);
+                            })
+                          : data;
+                        return filtered.map((item) => (
                         <tr key={item._id} className="group hover:bg-secondary/30 transition-colors">
                           <td className="px-8 py-6">
                             <div className="flex items-center gap-4">
@@ -667,7 +735,29 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-8 py-6 text-right">
                              <div className="flex items-center justify-end gap-2">
-                                <button 
+                                {activeTab === 'deals' && (
+                                  <button
+                                    onClick={() => handleToggleStorefront(item._id, !item.storefrontVisible)}
+                                    disabled={actionLoading === item._id}
+                                    title={item.storefrontVisible
+                                      ? 'Visible on customer storefront — click to hide'
+                                      : item.storefrontRequested
+                                        ? 'Merchant requested listing — click to show on storefront'
+                                        : 'Hidden from customers — click to show on storefront'}
+                                    className={cn(
+                                      "px-2.5 py-2 rounded-md text-[10px] font-black uppercase tracking-widest border transition-all flex items-center gap-1.5 disabled:opacity-50",
+                                      item.storefrontVisible
+                                        ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
+                                        : item.storefrontRequested
+                                          ? "bg-amber-500/10 text-amber-600 border-amber-500/30"
+                                          : "bg-secondary text-muted-foreground border-border opacity-0 group-hover:opacity-100"
+                                    )}
+                                  >
+                                    <Store className="w-3.5 h-3.5" />
+                                    {item.storefrontVisible ? 'Listed' : item.storefrontRequested ? 'Requested' : 'List'}
+                                  </button>
+                                )}
+                                <button
                                  onClick={() => { setSelectedItem(item); setIsDeleteOpen(true); }}
                                  className="px-3 py-2 text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/10 rounded-md"
                                 >
@@ -682,13 +772,25 @@ export default function AdminDashboard() {
                              </div>
                           </td>
                         </tr>
-                      ))}
+                        ));
+                      })()}
                     </tbody>
                   </table>
                   {data.length === 0 && !loading && (
                     <div className="p-32 text-center opacity-30">
                        <ShoppingBag className="w-12 h-12 mx-auto mb-4" />
                        <p className="text-xs font-black uppercase tracking-[0.2em]">No records in current context</p>
+                    </div>
+                  )}
+                  {data.length > 0 && tableSearch.trim() && data.filter((item) => {
+                    const q = tableSearch.trim().toLowerCase().replace(/^#/, '');
+                    const name = (item.name || item.title || '').toLowerCase();
+                    const email = (item.email || '').toLowerCase();
+                    return name.includes(q) || email.includes(q) || item._id.slice(-8).toLowerCase().includes(q) || item._id.toLowerCase().includes(q);
+                  }).length === 0 && (
+                    <div className="p-32 text-center opacity-30">
+                       <Search className="w-12 h-12 mx-auto mb-4" />
+                       <p className="text-xs font-black uppercase tracking-[0.2em]">No matches for &quot;{tableSearch}&quot;</p>
                     </div>
                   )}
                 </div>
@@ -699,7 +801,7 @@ export default function AdminDashboard() {
             {activeTab === 'review' && (
               <div className="space-y-8">
                 <div className="flex border-b border-border">
-                  {(['merchants', 'deals', 'funds', 'regions'] as const).map(sub => (
+                  {(['merchants', 'deals', 'funds', 'regions', 'storefront'] as const).map(sub => (
                     <button
                       key={sub}
                       onClick={() => setReviewSubTab(sub)}
@@ -714,6 +816,7 @@ export default function AdminDashboard() {
                         {sub === 'deals' && moderationData.deals.length}
                         {sub === 'funds' && moderationData.commissions.length}
                         {sub === 'regions' && moderationData.regionalRequests.length}
+                        {sub === 'storefront' && (moderationData.storefrontRequests?.length || 0)}
                       </span>
                       {reviewSubTab === sub && <div className="absolute bottom-[-1px] left-0 right-0 h-[3px] bg-foreground rounded-t-full" />}
                     </button>
@@ -809,6 +912,31 @@ export default function AdminDashboard() {
                                   <td className="px-8 py-8 text-right space-x-3">
                                      <button onClick={() => handleModerateCommission(c._id, 'paid')} className="px-8 py-3.5 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-[0.1em] rounded-md hover:opacity-90 transition-all">Approve Payout</button>
                                      <button onClick={() => handleModerateCommission(c._id, 'rejected')} className="px-8 py-3.5 bg-red-600/10 text-red-600 text-[10px] font-black uppercase tracking-[0.1em] rounded-md hover:bg-red-600 hover:text-white transition-all">Deny</button>
+                                  </td>
+                               </tr>
+                            ))}
+
+                            {reviewSubTab === 'storefront' && (moderationData.storefrontRequests?.length || 0) === 0 && (
+                               <tr><td className="p-32 text-center opacity-30 text-[10px] font-black uppercase tracking-widest">No storefront listing requests</td></tr>
+                            )}
+                            {reviewSubTab === 'storefront' && (moderationData.storefrontRequests || []).map((d: any) => (
+                               <tr key={d._id} className="group hover:bg-secondary/20 transition-colors">
+                                  <td className="px-8 py-8">
+                                    <div className="flex items-center gap-6">
+                                      <div className="w-12 h-12 rounded bg-secondary border border-border overflow-hidden flex items-center justify-center">
+                                        {d.images?.[0]
+                                          ? <img src={d.images[0]} alt="" className="w-full h-full object-cover" />
+                                          : <Store className="w-5 h-5 opacity-50" />}
+                                      </div>
+                                      <div>
+                                        <p className="text-lg font-bold tracking-tighter leading-none mb-2">{d.title}</p>
+                                        <p className="text-xs font-medium opacity-50">{d.merchantId?.name || 'Unknown'} • {d.categoryId?.name || 'Uncategorized'} • -{d.discountPercentage}%</p>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td className="px-8 py-8 text-right space-x-3">
+                                     <button onClick={() => handleReviewStorefront(d._id, true)} disabled={actionLoading === d._id} className="px-8 py-3.5 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-[0.1em] rounded-md hover:opacity-90 transition-all disabled:opacity-50">Approve for Storefront</button>
+                                     <button onClick={() => handleReviewStorefront(d._id, false)} disabled={actionLoading === d._id} className="px-8 py-3.5 bg-red-600/10 text-red-600 text-[10px] font-black uppercase tracking-[0.1em] rounded-md hover:bg-red-600 hover:text-white transition-all disabled:opacity-50">Decline</button>
                                   </td>
                                </tr>
                             ))}

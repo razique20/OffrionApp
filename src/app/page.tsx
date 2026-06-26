@@ -16,16 +16,27 @@ import {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background selection:bg-purple-500/20">
+    <div className="min-h-screen bg-background selection:bg-foreground/20">
       <main>
 
         {/* ── Hero ── */}
         <section className="relative min-h-[88svh] lg:min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
-          {/* Brand gradient blobs */}
-          <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full bg-[#A855F7] opacity-[0.07] blur-[120px] -z-10" />
-          <div className="absolute top-10 left-1/3 w-[400px] h-[400px] rounded-full bg-[#F97316] opacity-[0.06] blur-[100px] -z-10" />
-          <div className="absolute bottom-10 left-20 w-[300px] h-[300px] rounded-full bg-[#22C55E] opacity-[0.05] blur-[80px] -z-10" />
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent -z-10" />
+          {/* Platform background image */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=2000&q=80"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-right z-0 opacity-50 dark:opacity-40"
+          />
+          {/* Readability overlays: solid base + fade from the text side */}
+          <div className="absolute inset-0 z-0 bg-background/55" />
+          <div className="absolute inset-0 z-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
+
+          {/* Brand gradient blobs (over the dimmed image) */}
+          <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full bg-[#A855F7] opacity-[0.07] blur-[120px] z-0" />
+          <div className="absolute top-10 left-1/3 w-[400px] h-[400px] rounded-full bg-[#F97316] opacity-[0.06] blur-[100px] z-0" />
+          <div className="absolute bottom-10 left-20 w-[300px] h-[300px] rounded-full bg-[#22C55E] opacity-[0.05] blur-[80px] z-0" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent z-0" />
 
           <div className="w-full px-6 md:px-16 lg:px-24 grid grid-cols-1 gap-12 items-start z-10">
             <div className="flex flex-col items-start text-left max-w-4xl">
@@ -43,7 +54,7 @@ export default function LandingPage() {
                 <br />
                 <span className="text-foreground/70">connected to the apps</span>
                 <br />
-                <span className="bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444] bg-clip-text text-transparent">
+                <span className="text-[#F97316]">
                   people already use.
                 </span>
               </h1>
@@ -88,8 +99,7 @@ export default function LandingPage() {
                   title: 'Bring in more customers',
                   desc: 'List a deal and reach people through dozens of apps. Only pay when someone actually shows up.',
                   cta: 'Start as a merchant',
-                  accent: 'from-[#F97316] to-[#EF4444]',
-                  dot: 'bg-[#F97316]',
+                  dot: 'bg-foreground',
                 },
                 {
                   href: '/auth/register?role=partner',
@@ -98,8 +108,7 @@ export default function LandingPage() {
                   title: 'Reward your users & earn',
                   desc: 'Drop in one API and offer your users real local deals. Earn 70% on every redemption, settled automatically.',
                   cta: 'Start as a partner',
-                  accent: 'from-[#A855F7] to-[#F97316]',
-                  dot: 'bg-[#A855F7]',
+                  dot: 'bg-foreground',
                 },
               ].map((p) => (
                 <Link
@@ -107,17 +116,17 @@ export default function LandingPage() {
                   href={p.href}
                   className="group relative p-7 rounded-3xl border border-border bg-card hover:border-transparent transition-all hover:-translate-y-1 hover:shadow-lg overflow-hidden"
                 >
-                  {/* Hover gradient border */}
-                  <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${p.accent} opacity-0 group-hover:opacity-10 transition-opacity -z-10`} />
+                  {/* Hover accent wash */}
+                  <div className="absolute inset-0 rounded-3xl bg-foreground opacity-0 group-hover:opacity-10 transition-opacity -z-10" />
                   <div className="flex items-center gap-3 mb-5">
-                    <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${p.accent} flex items-center justify-center`}>
-                      <p.icon className="w-5 h-5 text-white" />
+                    <div className="w-11 h-11 rounded-2xl bg-foreground flex items-center justify-center">
+                      <p.icon className="w-5 h-5 text-background" />
                     </div>
                     <span className="text-xs font-semibold text-muted-foreground">{p.tag}</span>
                   </div>
                   <h3 className="text-xl font-bold tracking-tight mb-2">{p.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-5">{p.desc}</p>
-                  <span className={`inline-flex items-center gap-2 text-sm font-semibold bg-gradient-to-r ${p.accent} bg-clip-text text-transparent`}>
+                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
                     {p.cta}
                     <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                   </span>
@@ -132,7 +141,7 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col items-center text-center mb-16">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border mb-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-[#A855F7] to-[#F97316]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
                 <span className="text-xs font-medium text-foreground">How it works</span>
               </div>
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 max-w-2xl leading-[1.1]">
@@ -144,12 +153,12 @@ export default function LandingPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-              <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-px bg-gradient-to-r from-[#A855F7]/30 via-[#F97316]/30 to-[#EF4444]/30" />
+              <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-px bg-border" />
 
               {[
-                { step: '1', icon: ShoppingBag, title: 'A business lists a deal', desc: 'Set your offer, where it works, and how many people can claim it. Live in minutes.', color: '#A855F7' },
-                { step: '2', icon: Smile, title: 'Someone discovers it', desc: 'Partner apps show the deal to nearby users. No ad budget, no cold outreach.', color: '#F97316' },
-                { step: '3', icon: QrCode, title: 'They visit & everyone wins', desc: 'A quick scan at the counter confirms the visit, and the payout is split automatically.', color: '#EF4444' },
+                { step: '1', icon: ShoppingBag, title: 'A business lists a deal', desc: 'Set your offer, where it works, and how many people can claim it. Live in minutes.', color: 'var(--foreground)' },
+                { step: '2', icon: Smile, title: 'Someone discovers it', desc: 'Partner apps show the deal to nearby users. No ad budget, no cold outreach.', color: 'var(--foreground)' },
+                { step: '3', icon: QrCode, title: 'They visit & everyone wins', desc: 'A quick scan at the counter confirms the visit, and the payout is split automatically.', color: 'var(--foreground)' },
               ].map((item) => (
                 <div key={item.step} className="relative text-center md:text-left group">
                   <div className="flex md:block items-center gap-4 mb-5 justify-center">
@@ -157,7 +166,7 @@ export default function LandingPage() {
                       style={{ boxShadow: `0 0 0 0 ${item.color}00` }}
                     >
                       <item.icon className="w-7 h-7" style={{ color: item.color }} />
-                      <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center"
+                      <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-background text-xs font-bold flex items-center justify-center"
                         style={{ background: item.color }}>
                         {item.step}
                       </span>
@@ -173,17 +182,17 @@ export default function LandingPage() {
 
         {/* ── Merchant section ── */}
         <section className="py-24 md:py-32 px-6 bg-card/30 border-y border-border overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-[#F97316] opacity-[0.04] blur-[100px] -z-10" />
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-foreground opacity-[0.04] blur-[100px] -z-10" />
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border mb-6">
-                <ShoppingBag className="w-3.5 h-3.5" style={{ color: '#F97316' }} />
+                <ShoppingBag className="w-3.5 h-3.5" style={{ color: 'var(--foreground)' }} />
                 <span className="text-xs font-medium text-foreground">For businesses</span>
               </div>
               <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight leading-[1.1]">
                 Fill quiet hours,
                 <br />
-                <span className="bg-gradient-to-r from-[#F97316] to-[#EF4444] bg-clip-text text-transparent">
+                <span className="text-foreground">
                   not expensive ad budgets
                 </span>
               </h2>
@@ -202,8 +211,8 @@ export default function LandingPage() {
                   'See what works, instantly',
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-3 text-sm font-medium">
-                    <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#F9731615' }}>
-                      <CheckCircle2 className="w-3.5 h-3.5" style={{ color: '#F97316' }} />
+                    <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'var(--secondary)' }}>
+                      <CheckCircle2 className="w-3.5 h-3.5" style={{ color: 'var(--foreground)' }} />
                     </div>
                     {item}
                   </li>
@@ -213,8 +222,8 @@ export default function LandingPage() {
               <div className="flex items-center gap-6">
                 <Link
                   href="/auth/register?role=merchant"
-                  className="px-8 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all"
-                  style={{ background: 'linear-gradient(to right, #F97316, #EF4444)' }}
+                  className="px-8 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 hover:-translate-y-0.5 transition-all"
+                  style={{ background: 'var(--foreground)' }}
                 >
                   List your first deal
                 </Link>
@@ -234,8 +243,8 @@ export default function LandingPage() {
               <div className="relative rounded-3xl border border-border bg-background p-8">
                 <div className="flex items-center justify-between mb-8 pb-6 border-b border-border">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #F97316, #EF4444)' }}>
-                      <Heart className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'var(--foreground)' }}>
+                      <Heart className="w-6 h-6 text-background" />
                     </div>
                     <div>
                       <p className="text-base font-bold tracking-tight">Your dashboard</p>
@@ -271,16 +280,16 @@ export default function LandingPage() {
 
         {/* ── Partner section ── */}
         <section id="developers" className="py-24 md:py-32 px-6 overflow-hidden relative">
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-[#A855F7] opacity-[0.04] blur-[100px] -z-10" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-foreground opacity-[0.04] blur-[100px] -z-10" />
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
             {/* Code card */}
             <div className="order-2 lg:order-1 relative">
               <div className="relative rounded-3xl border border-border bg-card overflow-hidden">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-secondary/50">
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#EF4444]/60" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#F97316]/60" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#22C55E]/60" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-foreground/60" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-foreground/60" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-foreground/60" />
                     <span className="ml-3 text-[11px] text-muted-foreground font-mono">one request, that&apos;s it</span>
                   </div>
                   <div className="px-2 py-0.5 rounded-md bg-secondary border border-border text-[10px] text-emerald-500 font-mono">
@@ -290,13 +299,13 @@ export default function LandingPage() {
                 <div className="p-8 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto">
                   <span className="text-muted-foreground block mb-1">{'// Get deals near your user'}</span>
                   <p className="text-foreground/90">
-                    const <span style={{ color: '#A855F7' }}>deals</span> = await offrion.<span className="text-foreground">nearby</span>({'{'}
+                    const <span style={{ color: 'var(--foreground)' }}>deals</span> = await offrion.<span className="text-foreground">nearby</span>({'{'}
                     <br />
                     <span className="pl-4">radius: </span>
-                    <span style={{ color: '#22C55E' }}>&apos;5km&apos;</span>,
+                    <span style={{ color: 'var(--foreground)' }}>&apos;5km&apos;</span>,
                     <br />
                     <span className="pl-4">limit: </span>
-                    <span style={{ color: '#22C55E' }}>25</span>
+                    <span style={{ color: 'var(--foreground)' }}>25</span>
                     <br />
                     {'}'});
                   </p>
@@ -305,13 +314,13 @@ export default function LandingPage() {
                     {'{'}
                     <br />
                     <span className="pl-4">deal: </span>
-                    <span style={{ color: '#F97316' }}>&apos;2-for-1 brunch&apos;</span>,
+                    <span style={{ color: 'var(--foreground)' }}>&apos;2-for-1 brunch&apos;</span>,
                     <br />
                     <span className="pl-4">your_cut: </span>
-                    <span style={{ color: '#A855F7' }}>&apos;70%&apos;</span>,
+                    <span style={{ color: 'var(--foreground)' }}>&apos;70%&apos;</span>,
                     <br />
                     <span className="pl-4">paid: </span>
-                    <span style={{ color: '#22C55E' }}>&apos;instantly&apos;</span>
+                    <span style={{ color: 'var(--foreground)' }}>&apos;instantly&apos;</span>
                     <br />
                     {'}'}
                   </p>
@@ -321,13 +330,13 @@ export default function LandingPage() {
 
             <div className="order-1 lg:order-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border mb-6">
-                <Code2 className="w-3.5 h-3.5" style={{ color: '#A855F7' }} />
+                <Code2 className="w-3.5 h-3.5" style={{ color: 'var(--foreground)' }} />
                 <span className="text-xs font-medium text-foreground">For app builders & partners</span>
               </div>
               <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight leading-[1.1]">
                 One API. Real deals.
                 <br />
-                <span className="bg-gradient-to-r from-[#A855F7] to-[#F97316] bg-clip-text text-transparent">
+                <span className="text-foreground">
                   You keep 70%.
                 </span>
               </h2>
@@ -338,10 +347,10 @@ export default function LandingPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
                 {[
-                  { icon: Clock, title: 'Fast to integrate', desc: "A handful of lines and you're live.", color: '#A855F7' },
-                  { icon: Wallet, title: 'Paid automatically', desc: 'Your 70% lands the moment a deal is used.', color: '#F97316' },
-                  { icon: MapPin, title: 'Location-aware', desc: 'Show the right deal to the right user nearby.', color: '#EF4444' },
-                  { icon: Zap, title: 'Real-time updates', desc: 'Get notified the instant something happens.', color: '#22C55E' },
+                  { icon: Clock, title: 'Fast to integrate', desc: "A handful of lines and you're live.", color: 'var(--foreground)' },
+                  { icon: Wallet, title: 'Paid automatically', desc: 'Your 70% lands the moment a deal is used.', color: 'var(--foreground)' },
+                  { icon: MapPin, title: 'Location-aware', desc: 'Show the right deal to the right user nearby.', color: 'var(--foreground)' },
+                  { icon: Zap, title: 'Real-time updates', desc: 'Get notified the instant something happens.', color: 'var(--foreground)' },
                 ].map((item) => (
                   <div key={item.title} className="flex gap-3">
                     <div className="w-9 h-9 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: `${item.color}15` }}>
@@ -357,8 +366,8 @@ export default function LandingPage() {
 
               <Link
                 href="/docs"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 transition-all group"
-                style={{ background: 'linear-gradient(to right, #A855F7, #F97316)' }}
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 transition-all group"
+                style={{ background: 'var(--foreground)' }}
               >
                 Read the docs
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -369,11 +378,11 @@ export default function LandingPage() {
 
         {/* ── Trust / why ── */}
         <section className="py-24 md:py-32 px-6 bg-card/30 border-y border-border relative overflow-hidden">
-          <div className="absolute top-0 right-1/4 w-[500px] h-[300px] rounded-full bg-[#EF4444] opacity-[0.04] blur-[100px] -z-10" />
+          <div className="absolute top-0 right-1/4 w-[500px] h-[300px] rounded-full bg-foreground opacity-[0.04] blur-[100px] -z-10" />
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col items-center text-center mb-16">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border mb-4">
-                <Shield className="w-3.5 h-3.5" style={{ color: '#22C55E' }} />
+                <Shield className="w-3.5 h-3.5" style={{ color: 'var(--foreground)' }} />
                 <span className="text-xs font-medium text-foreground">Why people trust Offrion</span>
               </div>
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 leading-[1.1]">
@@ -386,12 +395,12 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {[
-                { icon: MapPin,       title: 'The right deal, nearby',  desc: 'Smart location matching surfaces offers people actually want.',          color: '#A855F7' },
-                { icon: QrCode,       title: 'Every visit is real',      desc: 'A quick scan confirms each redemption — no fake claims.',               color: '#F97316' },
-                { icon: Wallet,       title: 'Transparent payouts',      desc: 'A clear 70/30 split, settled automatically via Stripe.',                color: '#EF4444' },
-                { icon: Zap,          title: 'See results live',         desc: 'Watch visits, claims, and earnings update in real time.',               color: '#22C55E' },
-                { icon: Shield,       title: 'Verified merchants',       desc: 'Every business is checked, so quality stays high.',                     color: '#A855F7' },
-                { icon: Heart,        title: 'Made for everyone',        desc: 'Clean, friendly tools for merchants, partners, and admins.',            color: '#F97316' },
+                { icon: MapPin,       title: 'The right deal, nearby',  desc: 'Smart location matching surfaces offers people actually want.',          color: 'var(--foreground)' },
+                { icon: QrCode,       title: 'Every visit is real',      desc: 'A quick scan confirms each redemption — no fake claims.',               color: 'var(--foreground)' },
+                { icon: Wallet,       title: 'Transparent payouts',      desc: 'A clear 70/30 split, settled automatically via Stripe.',                color: 'var(--foreground)' },
+                { icon: Zap,          title: 'See results live',         desc: 'Watch visits, claims, and earnings update in real time.',               color: 'var(--foreground)' },
+                { icon: Shield,       title: 'Verified merchants',       desc: 'Every business is checked, so quality stays high.',                     color: 'var(--foreground)' },
+                { icon: Heart,        title: 'Made for everyone',        desc: 'Clean, friendly tools for merchants, partners, and admins.',            color: 'var(--foreground)' },
               ].map((item) => (
                 <div
                   key={item.title}
@@ -411,14 +420,22 @@ export default function LandingPage() {
 
         {/* ── Final CTA ── */}
         <section className="py-24 md:py-32 px-6 text-center relative overflow-hidden">
-          <div className="absolute inset-0 -z-10" style={{ background: 'linear-gradient(135deg, #A855F708 0%, #F9731608 50%, #EF444408 100%)' }} />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-gradient-to-r from-transparent via-[#A855F7]/40 to-transparent" />
-          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-[#A855F7] opacity-[0.06] blur-[80px] -z-10" />
+          {/* Platform background image */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?auto=format&fit=crop&w=2000&q=80"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center z-0"
+          />
+          {/* Single soft overlay — keeps text readable while the image shows */}
+          <div className="absolute inset-0 z-0 bg-background/55 dark:bg-background/60" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-border z-0" />
+          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-foreground opacity-[0.06] blur-[80px] z-0" />
 
-          <div className="max-w-3xl mx-auto space-y-8">
+          <div className="relative z-10 max-w-3xl mx-auto space-y-8">
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
               Ready when{' '}
-              <span className="bg-gradient-to-r from-[#A855F7] via-[#F97316] to-[#EF4444] bg-clip-text text-transparent">
+              <span className="text-foreground">
                 you are
               </span>
             </h2>
@@ -429,16 +446,16 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 href="/auth/register?role=merchant"
-                className="w-full sm:w-auto px-9 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
-                style={{ background: 'linear-gradient(to right, #F97316, #EF4444)' }}
+                className="w-full sm:w-auto px-9 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
+                style={{ background: 'var(--foreground)' }}
               >
                 <ShoppingBag className="w-4 h-4" />
                 I run a business
               </Link>
               <Link
                 href="/auth/register?role=partner"
-                className="w-full sm:w-auto px-9 py-4 rounded-full text-sm font-semibold text-white hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
-                style={{ background: 'linear-gradient(to right, #A855F7, #F97316)' }}
+                className="w-full sm:w-auto px-9 py-4 rounded-full text-sm font-semibold text-background hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
+                style={{ background: 'var(--foreground)' }}
               >
                 <Code2 className="w-4 h-4" />
                 I build an app

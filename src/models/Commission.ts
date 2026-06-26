@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface ICommission extends Document {
   transactionId: mongoose.Types.ObjectId;
-  partnerId: mongoose.Types.ObjectId;
+  partnerId?: mongoose.Types.ObjectId; // Absent for first-party 'direct' claims
   merchantId: mongoose.Types.ObjectId;
   amount: number;
   partnerShare: number;
@@ -15,7 +15,7 @@ export interface ICommission extends Document {
 const CommissionSchema: Schema = new Schema(
   {
     transactionId: { type: Schema.Types.ObjectId, ref: 'Transaction', required: true, unique: true },
-    partnerId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    partnerId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
     merchantId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     amount: { type: Number, required: true },
     partnerShare: { type: Number, required: true }, // Partner share in currency

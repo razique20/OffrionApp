@@ -207,7 +207,7 @@ const { redeemCode, transactionId } = await res.json();
                 {deal.discountPercentage}% OFF
               </span>
               {deal.isHot && (
-                <span className="bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                <span className="bg-secondary text-foreground text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
                   <Flame className="w-3 h-3" /> HOT
                 </span>
               )}
@@ -620,7 +620,7 @@ function CardGrid({ deals, onDealClick }: { deals: Deal[]; onDealClick: (d: Deal
               -{deal.discountPercentage}%
             </span>
             {deal.isHot && (
-              <span className="absolute top-2 left-2 bg-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+              <span className="absolute top-2 left-2 bg-secondary text-foreground text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
                 <Flame className="w-2.5 h-2.5" /> HOT
               </span>
             )}
@@ -674,15 +674,15 @@ function HotDeals({ deals, onDealClick }: { deals: Deal[]; onDealClick: (d: Deal
   return (
     <div className="p-4 space-y-3">
       <div className="flex items-center gap-2 mb-4">
-        <Flame className="w-4 h-4 text-orange-500" />
-        <span className="text-xs font-bold uppercase tracking-wider text-orange-500">Flash Deals</span>
+        <Flame className="w-4 h-4 text-foreground" />
+        <span className="text-xs font-bold uppercase tracking-wider text-foreground">Flash Deals</span>
         <span className="ml-auto text-[10px] text-muted-foreground animate-pulse">Ending soon</span>
       </div>
       {deals.slice(0, 4).map((deal, i) => (
         <button
           key={deal._id}
           onClick={() => onDealClick(deal)}
-          className="w-full flex items-center gap-3 p-3 rounded-md bg-orange-500/5 border border-orange-500/15 hover:border-orange-500/40 hover:bg-orange-500/10 transition-all text-left group"
+          className="w-full flex items-center gap-3 p-3 rounded-md bg-secondary border border-border hover:border-border hover:bg-secondary transition-all text-left group"
         >
           <span className="text-xs font-mono text-muted-foreground w-4">{i + 1}</span>
           <DealImage src={deal.images?.[0]} alt={deal.title} className="w-10 h-10 rounded-md shrink-0" />
@@ -690,7 +690,7 @@ function HotDeals({ deals, onDealClick }: { deals: Deal[]; onDealClick: (d: Deal
             <p className="text-sm font-bold truncate">{deal.title}</p>
             <p className="text-[10px] text-muted-foreground">{deal.emirate}</p>
           </div>
-          <div className="shrink-0 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded group-hover:bg-orange-600 transition-colors">
+          <div className="shrink-0 bg-secondary text-foreground text-xs font-bold px-2 py-1 rounded group-hover:bg-secondary transition-colors">
             {deal.discountPercentage}% OFF
           </div>
         </button>
@@ -816,8 +816,8 @@ const FLOW_STEPS = [
   {
     icon: Store,
     role: 'Merchant',
-    color: 'text-orange-500',
-    bg: 'bg-orange-500/10 border-orange-500/20',
+    color: 'text-foreground',
+    bg: 'bg-secondary border-border',
     title: 'Redeems in-store',
     desc: 'The member shows the code; the merchant validates it at the point of sale. The redemption is recorded against the deal.',
     code: 'POST /api/redeem',
@@ -918,7 +918,7 @@ function MiniDeal({ d, compact }: { d: typeof MOCK_DEALS[number]; compact?: bool
           -{d.pct}%
         </span>
         {d.hot && !compact && (
-          <span className="absolute top-1.5 left-1.5 bg-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+          <span className="absolute top-1.5 left-1.5 bg-secondary text-foreground text-[8px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
             <Flame className="w-2 h-2" /> HOT
           </span>
         )}
@@ -1000,14 +1000,14 @@ const PARTNER_SITES = [
     name: 'SaverPop — Browser Extension',
     url: 'chrome-extension://saverpop/popup',
     icon: Search,
-    accent: 'bg-purple-500/10 text-purple-500',
+    accent: 'bg-secondary text-foreground',
     tagline: 'A coupon extension pops local deals while members browse the web.',
     endpoint: '/api/deals?isHot=true&limit=4',
     render: () => (
       <div className="p-4 flex justify-center">
         <div className="w-48 rounded-lg border border-border bg-background overflow-hidden">
-          <div className="flex items-center gap-1.5 px-3 py-2 border-b border-border bg-purple-500/5">
-            <Search className="w-3 h-3 text-purple-500" />
+          <div className="flex items-center gap-1.5 px-3 py-2 border-b border-border bg-secondary">
+            <Search className="w-3 h-3 text-foreground" />
             <span className="text-[10px] font-bold">SaverPop found 4 deals</span>
           </div>
           <div className="p-2 space-y-1.5">
@@ -1017,12 +1017,12 @@ const PARTNER_SITES = [
                   <p className="text-[9px] font-bold truncate">{d.title}</p>
                   <p className="text-[8px] text-muted-foreground">{d.place}</p>
                 </div>
-                <span className="text-[8px] font-bold bg-purple-500 text-white px-1.5 py-0.5 rounded shrink-0">
+                <span className="text-[8px] font-bold bg-secondary text-foreground px-1.5 py-0.5 rounded shrink-0">
                   -{d.pct}%
                 </span>
               </div>
             ))}
-            <button className="w-full bg-purple-500 text-white text-[9px] font-bold py-1.5 rounded">
+            <button className="w-full bg-secondary text-foreground text-[9px] font-bold py-1.5 rounded">
               Apply at checkout
             </button>
           </div>
@@ -1102,10 +1102,10 @@ function PartnerSiteMockups() {
 const INTEGRATION_IDEAS = [
   { title: 'Loyalty App Rewards Feed', icon: Star, accent: 'text-amber-500', visual: 'feed', desc: 'Surface relevant local deals inside a points or cashback app.', endpoint: '/api/deals?categoryId=dining&audience=members&limit=3', params: ['categoryId', 'audience', 'limit'] },
   { title: 'Travel / City Guide App', icon: MapPin, accent: 'text-blue-500', visual: 'map', desc: "Show deals near the user's GPS coordinates.", endpoint: '/api/deals?lat=25.2&lng=55.27&radius=15000', params: ['lat', 'lng', 'radius', 'activeNow'] },
-  { title: 'Flash Sale Banner', icon: Flame, accent: 'text-orange-500', visual: 'banner', desc: 'Highlight only the most urgent, time-limited deals.', endpoint: '/api/deals?isHot=true&activeNow=true&limit=1', params: ['isHot=true', 'activeNow', 'limit'] },
+  { title: 'Flash Sale Banner', icon: Flame, accent: 'text-foreground', visual: 'banner', desc: 'Highlight only the most urgent, time-limited deals.', endpoint: '/api/deals?isHot=true&activeNow=true&limit=1', params: ['isHot=true', 'activeNow', 'limit'] },
   { title: 'E-commerce Checkout Upsell', icon: ShoppingBag, accent: 'text-emerald-500', visual: 'checkout', desc: 'Show deals from a matching category at checkout.', endpoint: '/api/deals?categoryId=fashion&dealType=bogo&limit=2', params: ['categoryId', 'dealType', 'limit'] },
   { title: 'Newsletter Personalisation', icon: Coffee, accent: 'text-rose-500', visual: 'email', desc: 'Pull deals by tag or audience for weekly email digests.', endpoint: '/api/deals?tags=coffee&audience=subscribers', params: ['tags', 'audience', 'from', 'to'] },
-  { title: 'SuperApp Deals Tab', icon: Layers, accent: 'text-purple-500', visual: 'grid', desc: 'Full deal browser with category, discount range, event type.', endpoint: '/api/deals?search=&minDiscount=20&page=1', params: ['search', 'minDiscount', 'eventType', 'page'] },
+  { title: 'SuperApp Deals Tab', icon: Layers, accent: 'text-foreground', visual: 'grid', desc: 'Full deal browser with category, discount range, event type.', endpoint: '/api/deals?search=&minDiscount=20&page=1', params: ['search', 'minDiscount', 'eventType', 'page'] },
 ];
 
 type IntegrationIdea = (typeof INTEGRATION_IDEAS)[number];
@@ -1150,13 +1150,13 @@ function IdeaVisual({ idea }: { idea: IntegrationIdea }) {
     case 'banner':
       return (
         <div className={cn(wrap, 'flex items-center')}>
-          <div className="w-full rounded-md bg-gradient-to-r from-orange-500/15 to-orange-500/5 border border-orange-500/30 px-3 py-2.5 flex items-center gap-2">
-            <Flame className="w-4 h-4 text-orange-500 shrink-0" />
+          <div className="w-full rounded-md bg-secondary border border-border px-3 py-2.5 flex items-center gap-2">
+            <Flame className="w-4 h-4 text-foreground shrink-0" />
             <div className="flex-1">
               <p className="text-[10px] font-bold text-foreground">Flash Sale — 50% OFF</p>
               <p className="text-[8px] text-muted-foreground">Ends in 02:14:09</p>
             </div>
-            <span className="text-[8px] font-bold bg-orange-500 text-white px-1.5 py-0.5 rounded shrink-0">CLAIM</span>
+            <span className="text-[8px] font-bold bg-secondary text-foreground px-1.5 py-0.5 rounded shrink-0">CLAIM</span>
           </div>
         </div>
       );

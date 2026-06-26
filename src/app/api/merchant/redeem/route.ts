@@ -5,13 +5,14 @@ import Deal from '@/models/Deal';
 import Commission from '@/models/Commission';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import MerchantProfile from '@/models/MerchantProfile';
-import mongoose from 'mongoose';
 import { z } from 'zod';
 import { dispatchWebhook } from '@/lib/webhooks';
+import { normalizeRedeemCode } from '@/lib/redeemCode';
 
 const redeemSchema = z.object({
   transactionId: z.string().optional(),
-  redeemCode: z.string().length(6).optional(),
+  // Accept the code with or without the OFFRION- prefix / spaces; normalized below.
+  redeemCode: z.string().min(4).max(40).optional(),
 }).refine(
   (data) => data.transactionId || data.redeemCode,
   { message: 'Either transactionId or redeemCode is required' }
@@ -29,14 +30,14 @@ export async function POST(req: Request) {
 
     const { transactionId, redeemCode } = redeemSchema.parse(body);
 
-    // Look up transaction by ID or 6-digit redeem code
+    // Look up transaction by ID or redeem code (prefix/spacing tolerant)
     let transaction;
     if (transactionId) {
       transaction = await Transaction.findById(transactionId).populate('dealId');
     } else {
-      transaction = await Transaction.findOne({ 
-        qrCode: redeemCode!.toUpperCase(), 
-        status: 'pending' 
+      transaction = await Transaction.findOne({
+        qrCode: normalizeRedeemCode(redeemCode!),
+        status: 'pending'
       }).populate('dealId');
     }
 
@@ -57,10 +58,17 @@ export async function POST(req: Request) {
     }
 
     // --- Automated Commission Engine ---
+    // Split depends on the claim channel, not on whether a customer account exists:
+    //  - 'partner' claims keep the standard 70/30 partner/platform split.
+    //  - 'direct' (first-party storefront) claims have no partner, so the
+    //    platform takes the full commission.
+    const isDirect = transaction.channel === 'direct' || !transaction.partnerId;
     const commissionRate = deal.commissionPercentage / 100;
     const totalCommission = deal.discountedPrice * commissionRate;
-    const partnerShare = Math.round(totalCommission * 0.70 * 100) / 100;
-    const platformShare = Math.round(totalCommission * 0.30 * 100) / 100;
+    const partnerShare = isDirect ? 0 : Math.round(totalCommission * 0.70 * 100) / 100;
+    const platformShare = isDirect
+      ? Math.round(totalCommission * 100) / 100
+      : Math.round(totalCommission * 0.30 * 100) / 100;
 
     // --- Wallet Deduction Logic ---
     // Perform balance check BEFORE modifying the transaction status.
@@ -115,14 +123,14 @@ export async function POST(req: Request) {
     await AnalyticsEvent.create({
       type: 'conversion',
       dealId: deal._id,
-      partnerId: new mongoose.Types.ObjectId(transaction.partnerId.toString()),
+      partnerId: transaction.partnerId,
       merchantId: deal.merchantId,
-      metadata: { transactionId: transaction._id },
+      metadata: { transactionId: transaction._id, channel: transaction.channel },
     });
 
     const commission = await Commission.create({
       transactionId: transaction._id,
-      partnerId: new mongoose.Types.ObjectId(transaction.partnerId.toString()),
+      partnerId: transaction.partnerId,
       merchantId: deal.merchantId,
       amount: Math.round(totalCommission * 100) / 100,
       partnerShare,
@@ -131,18 +139,21 @@ export async function POST(req: Request) {
     });
 
     // --- Dispatch Real-Time Webhook (Fire-and-forget) ---
-    dispatchWebhook(
-      transaction.partnerId.toString(),
-      'deal.redeemed',
-      {
-        transactionId: transaction._id,
-        dealId: deal._id,
-        dealTitle: deal.title,
-        amount: deal.discountedPrice,
-        partnerShare: commission.partnerShare,
-        redeemedAt: transaction.redeemedAt,
-      }
-    ).catch(err => console.error('[Webhook Trigger Error]:', err));
+    // Only partner-channel claims notify a partner — direct claims have none.
+    if (!isDirect && transaction.partnerId) {
+      dispatchWebhook(
+        transaction.partnerId.toString(),
+        'deal.redeemed',
+        {
+          transactionId: transaction._id,
+          dealId: deal._id,
+          dealTitle: deal.title,
+          amount: deal.discountedPrice,
+          partnerShare: commission.partnerShare,
+          redeemedAt: transaction.redeemedAt,
+        }
+      ).catch(err => console.error('[Webhook Trigger Error]:', err));
+    }
 
     return NextResponse.json({ 
       message: 'Deal redeemed successfully',
