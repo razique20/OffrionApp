@@ -19,6 +19,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     const deal = await Deal.findOne({ _id: id, isActive: true, validUntil: { $gte: new Date() } })
+      .select('-storefrontRequested -storefrontVisible')
       .populate('categoryId', 'name slug');
 
     if (!deal) {

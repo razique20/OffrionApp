@@ -35,6 +35,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       isActive: true,
       validUntil: { $gte: new Date() },
     })
+      .select('-storefrontRequested -storefrontVisible')
       .populate('categoryId', 'name slug')
       .sort({ priorityScore: -1, createdAt: -1 })
       .limit(limit);

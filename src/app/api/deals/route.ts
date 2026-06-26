@@ -210,6 +210,8 @@ export async function GET(req: Request) {
 
     const [deals, total] = await Promise.all([
       DealModel.find(query)
+        // Hide internal storefront-curation flags from the partner API.
+        .select('-storefrontRequested -storefrontVisible')
         .populate('categoryId', 'name slug')
         .sort(sortParams as any)
         .skip(skip)
