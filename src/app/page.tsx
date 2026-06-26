@@ -423,7 +423,7 @@ export default function LandingPage() {
           {/* Platform background image */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=2000&q=80"
+            src="https://images.unsplash.com/photo-1614624532983-4ce03382d63d?auto=format&fit=crop&w=2000&q=80"
             alt=""
             className="absolute inset-0 w-full h-full object-cover object-center z-0"
           />
