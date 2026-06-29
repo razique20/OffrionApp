@@ -1573,8 +1573,8 @@ export default function AdminDashboard() {
                                 </div>
                                 <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/60">
                                   <div>
-                                    <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Usage</p>
-                                    <p className="text-sm font-bold">{(k.usageCount || 0).toLocaleString()}</p>
+                                    <p className="text-[9px] font-black uppercase tracking-widest opacity-40">API Usage (24h)</p>
+                                    <p className="text-sm font-bold">{(k.usage24h || 0).toLocaleString()}</p>
                                   </div>
                                   <div>
                                     <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Rate Limit</p>

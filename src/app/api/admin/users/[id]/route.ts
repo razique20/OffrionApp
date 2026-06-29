@@ -30,13 +30,21 @@ export async function GET(
     const roles = ((user.roles && user.roles.length) ? user.roles : [user.role]).map(String);
     if (roles.includes('partner')) {
       const APIKey = (await import('@/models/APIKey')).default;
+      const AnalyticsEvent = (await import('@/models/AnalyticsEvent')).default;
       const keys = await APIKey.find({ partnerId: id })
         .select('name key isActive isSandbox rateLimit usageCount lastUsedAt createdAt')
         .sort({ createdAt: -1 })
         .lean();
-      apiKeys = keys.map((k: any) => {
+
+      // 24h request count per key (same metric the partner dashboard shows).
+      const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      apiKeys = await Promise.all(keys.map(async (k: any) => {
         const raw = String(k.key || '');
         const masked = raw.length > 8 ? `${raw.slice(0, 8)}••••${raw.slice(-4)}` : '••••';
+        const usage24h = await AnalyticsEvent.countDocuments({
+          apiKeyId: k._id,
+          createdAt: { $gte: last24h },
+        });
         return {
           id: k._id,
           name: k.name,
@@ -44,11 +52,12 @@ export async function GET(
           isActive: k.isActive,
           isSandbox: k.isSandbox,
           rateLimit: k.rateLimit,
-          usageCount: k.usageCount || 0,
+          usage24h,                          // requests in the last 24h
+          usageCount: k.usageCount || 0,     // current rate-limit-hour bucket
           lastUsedAt: k.lastUsedAt || null,
           createdAt: k.createdAt,
         };
-      });
+      }));
     }
 
     return NextResponse.json({ user, profile, apiKeys });
