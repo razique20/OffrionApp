@@ -13,6 +13,7 @@ export interface IUser extends Document {
   country?: string;
   accessCountries?: string[];
   pendingAccessCountries?: string[];
+  accessCategories?: string[]; // Partner: category IDs they may access (empty = all)
   isActive: boolean;
   permissions: string[];
   stripeConnectId?: string;
@@ -37,6 +38,7 @@ const UserSchema: Schema = new Schema(
     country: { type: String, default: 'United Arab Emirates' },
     accessCountries: { type: [String], default: [] },
     pendingAccessCountries: { type: [String], default: [] },
+    accessCategories: { type: [String], default: [] },
     isActive: { type: Boolean, default: true },
     permissions: [{ type: String }],
     stripeConnectId: { type: String, unique: true, sparse: true },

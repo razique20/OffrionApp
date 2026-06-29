@@ -85,8 +85,17 @@ export async function GET(req: Request) {
     const query: any = { isActive: true, validUntil: { $gte: new Date() } };
 
     // Regional Access Enforcement for Partners (Strict Zero-Access Default)
-    const partner = await User.findById(apiKey.partnerId).select('accessCountries');
+    const partner = await User.findById(apiKey.partnerId).select('accessCountries accessCategories');
     const accessCountries = partner?.accessCountries || [];
+
+    // Category Access Enforcement: if an admin has assigned specific categories,
+    // restrict to those. Empty = all categories (no restriction).
+    const accessCategories = partner?.accessCategories || [];
+    if (accessCategories.length > 0) {
+      query.categoryId = {
+        $in: accessCategories.map((c: string) => new mongoose.Types.ObjectId(c)),
+      };
+    }
 
     if (accessCountries.length > 0) {
       // If partner has UAE access, include deals with no country field as well (fallback for legacy data)
@@ -107,10 +116,22 @@ export async function GET(req: Request) {
 
     // ... (rest of the query building logic remains same)
     // --- Category Filter (supports multiple comma-separated IDs) ---
+    // Intersects with the partner's assigned categories so the filter can never
+    // widen access beyond what the admin granted.
     const categoryId = searchParams.get('categoryId');
     if (categoryId) {
-      const ids = categoryId.split(',').map((id) => new mongoose.Types.ObjectId(id.trim()));
-      query.categoryId = ids.length === 1 ? ids[0] : { $in: ids };
+      let ids = categoryId.split(',').map((id) => id.trim());
+      if (accessCategories.length > 0) {
+        ids = ids.filter((id) => accessCategories.includes(id));
+        if (ids.length === 0) {
+          // Requested only categories they can't access → return nothing.
+          query._id = { $in: [] };
+        }
+      }
+      if (ids.length > 0) {
+        const objIds = ids.map((id) => new mongoose.Types.ObjectId(id));
+        query.categoryId = objIds.length === 1 ? objIds[0] : { $in: objIds };
+      }
     }
 
     // --- Event Type Filter ---

@@ -59,6 +59,7 @@ export default function AdminDashboard() {
   // Editable User Fields
   const [editCountry, setEditCountry] = useState('');
   const [editAccessCountries, setEditAccessCountries] = useState<string[]>([]);
+  const [editAccessCategories, setEditAccessCategories] = useState<string[]>([]);
   const [editCreditLimit, setEditCreditLimit] = useState<number>(0);
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
@@ -394,6 +395,14 @@ export default function AdminDashboard() {
         if (json.user) {
           setEditCountry(json.user.country || 'United Arab Emirates');
           setEditAccessCountries(json.user.accessCountries || []);
+          setEditAccessCategories((json.user.accessCategories || []).map((c: any) => String(c)));
+          // Ensure the category list is loaded for the assignment UI.
+          if (json.user.role === 'partner' && categories.length === 0) {
+            fetch('/api/admin/categories')
+              .then((r) => r.json())
+              .then((j) => setCategories(Array.isArray(j) ? j : []))
+              .catch(() => {});
+          }
         }
         if (json.profile) {
           setEditCreditLimit(json.profile.creditLimit || 0);
@@ -416,6 +425,7 @@ export default function AdminDashboard() {
         body: JSON.stringify({
           country: editCountry,
           accessCountries: editAccessCountries,
+          accessCategories: editAccessCategories,
           pendingAccessCountries: detailData.user.role === 'partner' ? [] : detailData.user.pendingAccessCountries,
           creditLimit: editCreditLimit
         }),
@@ -1482,9 +1492,40 @@ export default function AdminDashboard() {
                                 ))}
                               </div>
                            </div>
+
+                           {detailData.user.role === 'partner' && (
+                             <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-3 block">Authorized Categories <span className="opacity-60 normal-case">(none = all)</span></label>
+                                <div className="flex flex-wrap gap-2">
+                                  {categories.filter((c: any) => c.isActive !== false).map((c: any) => {
+                                    const id = String(c._id);
+                                    const selected = editAccessCategories.includes(id);
+                                    return (
+                                      <button
+                                        key={id}
+                                        onClick={() => setEditAccessCategories(prev =>
+                                          prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+                                        )}
+                                        className={cn(
+                                          "px-4 py-2 rounded-md text-[10px] font-black uppercase tracking-widest border transition-all",
+                                          selected
+                                            ? "bg-foreground text-background border-foreground"
+                                            : "bg-background text-muted-foreground border-border hover:border-foreground/40"
+                                        )}
+                                      >
+                                        {c.name}
+                                      </button>
+                                    );
+                                  })}
+                                  {categories.length === 0 && (
+                                    <span className="text-[10px] text-muted-foreground">Loading categories…</span>
+                                  )}
+                                </div>
+                             </div>
+                           )}
                         </div>
                         <div className="vercel-section-footer bg-secondary/20">
-                           <button 
+                           <button
                             onClick={handleUpdateUserLocations}
                             disabled={!!actionLoading}
                             className="w-full py-3 bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest rounded-md hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
