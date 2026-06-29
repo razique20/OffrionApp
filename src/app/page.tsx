@@ -137,7 +137,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── How it works ── */}
-        <section id="how-it-works" className="py-24 md:py-32 px-6">
+        <section id="how-it-works" className="hidden md:block py-24 md:py-32 px-6">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col items-center text-center mb-16">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border mb-4">
@@ -181,7 +181,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Merchant section ── */}
-        <section className="py-24 md:py-32 px-6 bg-card/30 border-y border-border overflow-hidden relative">
+        <section className="hidden md:block py-24 md:py-32 px-6 bg-card/30 border-y border-border overflow-hidden relative">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-foreground opacity-[0.04] blur-[100px] -z-10" />
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
             <div>
@@ -279,7 +279,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Partner section ── */}
-        <section id="developers" className="py-24 md:py-32 px-6 overflow-hidden relative">
+        <section id="developers" className="hidden md:block py-24 md:py-32 px-6 overflow-hidden relative">
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-foreground opacity-[0.04] blur-[100px] -z-10" />
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
             {/* Code card */}
@@ -377,7 +377,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Trust / why ── */}
-        <section className="py-24 md:py-32 px-6 bg-card/30 border-y border-border relative overflow-hidden">
+        <section className="hidden md:block py-24 md:py-32 px-6 bg-card/30 border-y border-border relative overflow-hidden">
           <div className="absolute top-0 right-1/4 w-[500px] h-[300px] rounded-full bg-foreground opacity-[0.04] blur-[100px] -z-10" />
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col items-center text-center mb-16">

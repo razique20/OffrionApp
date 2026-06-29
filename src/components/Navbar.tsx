@@ -278,8 +278,8 @@ export const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-background border-y border-border p-8 flex flex-col gap-8 shadow-2xl animate-in fade-in slide-in-from-top-4">
-          <div className="flex flex-col gap-6">
+        <div className="md:hidden absolute top-full left-0 w-full bg-background border-y border-border p-6 flex flex-col gap-5 shadow-2xl animate-in fade-in slide-in-from-top-4">
+          <div className="flex flex-col gap-1">
             {[
               ...(customer ? [{ label: 'Deals', href: '/deals' }] : []),
               { label: 'Ecosystem', href: '/ecosystem' },
@@ -292,7 +292,7 @@ export const Navbar = () => {
                 key={link.label}
                 href={link.href}
                 className={cn(
-                  "text-3xl font-black tracking-tighter transition-all",
+                  "text-sm font-medium py-2 transition-all",
                   pathname === link.href ? "text-foreground" : "text-muted-foreground"
                 )}
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -309,7 +309,7 @@ export const Navbar = () => {
                   logout();
                   setIsMobileMenuOpen(false);
                 }}
-                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black text-destructive"
+                className="w-full py-3 text-center rounded-md bg-secondary text-sm font-semibold text-destructive"
               >
                 Sign Out
               </button>
@@ -319,7 +319,7 @@ export const Navbar = () => {
               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em]">Shopper · {customer.name}</p>
               <Link
                 href="/account"
-                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
+                className="w-full py-3 text-center rounded-md bg-secondary text-sm font-semibold"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 My Account
@@ -329,7 +329,7 @@ export const Navbar = () => {
                   customerLogout();
                   setIsMobileMenuOpen(false);
                 }}
-                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black text-destructive"
+                className="w-full py-3 text-center rounded-md bg-secondary text-sm font-semibold text-destructive"
               >
                 Log Out
               </button>
@@ -338,21 +338,21 @@ export const Navbar = () => {
             <div className="flex flex-col gap-4 mt-4 pt-8 border-t border-border/30">
               <Link
                 href="/account"
-                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
+                className="w-full py-3 text-center rounded-md bg-secondary text-sm font-semibold"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Shopper Account
               </Link>
               <Link
                 href="/auth/login"
-                className="w-full py-4 text-center rounded-md bg-secondary text-sm font-black"
+                className="w-full py-3 text-center rounded-md bg-secondary text-sm font-semibold"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Sign In
               </Link>
               <Link
                 href="/auth/register"
-                className="w-full py-4 text-center rounded-full bg-foreground text-background text-sm font-semibold shadow-none"
+                className="w-full py-3 text-center rounded-full bg-foreground text-background text-sm font-semibold shadow-none"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Get Started
