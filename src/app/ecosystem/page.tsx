@@ -7,17 +7,21 @@ export default function EcosystemPage() {
     <div className="min-h-screen bg-background flex flex-col">
       <main className="flex-1">
 
-        {/* ── Section 1: model + roles (image background) ── */}
-        <section className="relative pt-32 pb-24 overflow-hidden">
-          {/* Platform background image */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=2000&q=80"
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover object-center z-0"
+        {/* ── Section 1: model + roles (themed background) ── */}
+        <section className="relative pt-32 pb-24 overflow-hidden bg-background">
+          {/* On-brand layered background: subtle grid */}
+          <div
+            className="absolute inset-0 z-0 opacity-[0.18] dark:opacity-[0.12]"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px)',
+              backgroundSize: '56px 56px',
+              maskImage:
+                'radial-gradient(ellipse 80% 60% at 50% 30%, #000 35%, transparent 100%)',
+              WebkitMaskImage:
+                'radial-gradient(ellipse 80% 60% at 50% 30%, #000 35%, transparent 100%)',
+            }}
           />
-          {/* Readability overlay */}
-          <div className="absolute inset-0 z-0 bg-background/60 dark:bg-background/65" />
 
           {/* Brand blobs */}
           <div className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-foreground opacity-[0.06] blur-[120px] z-0" />

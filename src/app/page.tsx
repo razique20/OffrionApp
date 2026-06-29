@@ -24,13 +24,13 @@ export default function LandingPage() {
           {/* Platform background image */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=2000&q=80"
+            src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=2000&q=80"
             alt=""
-            className="absolute inset-0 w-full h-full object-cover object-right z-0 opacity-50 dark:opacity-40"
+            className="absolute inset-0 w-full h-full object-cover object-right z-0 opacity-60 dark:opacity-50"
           />
           {/* Readability overlays: solid base + fade from the text side */}
-          <div className="absolute inset-0 z-0 bg-background/55" />
-          <div className="absolute inset-0 z-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
+          <div className="absolute inset-0 z-0 bg-background/40" />
+          <div className="absolute inset-0 z-0 bg-gradient-to-r from-background via-background/75 to-background/20" />
 
           {/* Brand gradient blobs (over the dimmed image) */}
           <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full bg-[#A855F7] opacity-[0.07] blur-[120px] z-0" />
@@ -395,12 +395,12 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {[
-                { icon: MapPin,       title: 'The right deal, nearby',  desc: 'Smart location matching surfaces offers people actually want.',          color: 'var(--foreground)' },
-                { icon: QrCode,       title: 'Every visit is real',      desc: 'A quick scan confirms each redemption — no fake claims.',               color: 'var(--foreground)' },
-                { icon: Wallet,       title: 'Transparent payouts',      desc: 'A clear 70/30 split, settled automatically via Stripe.',                color: 'var(--foreground)' },
-                { icon: Zap,          title: 'See results live',         desc: 'Watch visits, claims, and earnings update in real time.',               color: 'var(--foreground)' },
-                { icon: Shield,       title: 'Verified merchants',       desc: 'Every business is checked, so quality stays high.',                     color: 'var(--foreground)' },
-                { icon: Heart,        title: 'Made for everyone',        desc: 'Clean, friendly tools for merchants, partners, and admins.',            color: 'var(--foreground)' },
+                { icon: MapPin, title: 'The right deal, nearby', desc: 'Smart location matching surfaces offers people actually want.', color: 'var(--foreground)' },
+                { icon: QrCode, title: 'Every visit is real', desc: 'A quick scan confirms each redemption — no fake claims.', color: 'var(--foreground)' },
+                { icon: Wallet, title: 'Transparent payouts', desc: 'A clear 70/30 split, settled automatically via Stripe.', color: 'var(--foreground)' },
+                { icon: Zap, title: 'See results live', desc: 'Watch visits, claims, and earnings update in real time.', color: 'var(--foreground)' },
+                { icon: Shield, title: 'Verified merchants', desc: 'Every business is checked, so quality stays high.', color: 'var(--foreground)' },
+                { icon: Heart, title: 'Made for everyone', desc: 'Clean, friendly tools for merchants, partners, and admins.', color: 'var(--foreground)' },
               ].map((item) => (
                 <div
                   key={item.title}
