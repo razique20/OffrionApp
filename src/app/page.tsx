@@ -419,16 +419,21 @@ export default function LandingPage() {
         </section>
 
         {/* ── Final CTA ── */}
-        <section className="py-24 md:py-32 px-6 text-center relative overflow-hidden">
-          {/* Platform background image */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?auto=format&fit=crop&w=2000&q=80"
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover object-center z-0"
+        <section className="py-24 md:py-32 px-6 text-center relative overflow-hidden bg-background">
+          {/* On-brand layered background: subtle grid + monochrome glows */}
+          <div
+            className="absolute inset-0 z-0 opacity-[0.18] dark:opacity-[0.12]"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px)',
+              backgroundSize: '56px 56px',
+              maskImage:
+                'radial-gradient(ellipse 70% 80% at 50% 50%, #000 35%, transparent 100%)',
+              WebkitMaskImage:
+                'radial-gradient(ellipse 70% 80% at 50% 50%, #000 35%, transparent 100%)',
+            }}
           />
-          {/* Single soft overlay — keeps text readable while the image shows */}
-          <div className="absolute inset-0 z-0 bg-background/55 dark:bg-background/60" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[420px] rounded-full bg-foreground opacity-[0.07] blur-[120px] z-0" />
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-border z-0" />
           <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-foreground opacity-[0.06] blur-[80px] z-0" />
 
