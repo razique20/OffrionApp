@@ -20,6 +20,7 @@ import {
   ExternalLink,
   ChevronRight,
   Clock,
+  Key,
   Store,
   Download,
   MapPin
@@ -1532,6 +1533,64 @@ export default function AdminDashboard() {
                            >
                              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Profile Configurations'}
                            </button>
+                        </div>
+                      </section>
+                    )}
+
+                    {/* API Keys & Usage (partners) */}
+                    {detailData.user?.role === 'partner' && (
+                      <section className="vercel-section">
+                        <div className="vercel-section-header flex items-center gap-2">
+                           <Key className="w-3.5 h-3.5 opacity-50" />
+                           <span className="text-[10px] font-black uppercase tracking-[0.2em]">API Keys & Usage</span>
+                        </div>
+                        <div className="vercel-section-content space-y-3">
+                          {(!detailData.apiKeys || detailData.apiKeys.length === 0) ? (
+                            <p className="text-xs text-muted-foreground py-4 text-center">No API keys created.</p>
+                          ) : (
+                            detailData.apiKeys.map((k: any) => (
+                              <div key={k.id} className="p-4 rounded-md border border-border bg-background">
+                                <div className="flex items-center justify-between gap-3 mb-2">
+                                  <div className="min-w-0">
+                                    <p className="text-sm font-bold truncate">{k.name}</p>
+                                    <p className="font-mono text-[11px] text-muted-foreground">{k.maskedKey}</p>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 shrink-0">
+                                    <span className={cn(
+                                      "text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full",
+                                      k.isSandbox ? "bg-amber-500/10 text-amber-600" : "bg-blue-500/10 text-blue-600"
+                                    )}>
+                                      {k.isSandbox ? 'Sandbox' : 'Live'}
+                                    </span>
+                                    <span className={cn(
+                                      "text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full flex items-center gap-1",
+                                      k.isActive ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-500"
+                                    )}>
+                                      <span className={cn("w-1.5 h-1.5 rounded-full", k.isActive ? "bg-emerald-500" : "bg-red-500")} />
+                                      {k.isActive ? 'Active' : 'Revoked'}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/60">
+                                  <div>
+                                    <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Usage</p>
+                                    <p className="text-sm font-bold">{(k.usageCount || 0).toLocaleString()}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Rate Limit</p>
+                                    <p className="text-sm font-bold">{(k.rateLimit || 0).toLocaleString()}/hr</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Last Used</p>
+                                    <p className="text-xs font-bold flex items-center gap-1">
+                                      <Clock className="w-3 h-3 opacity-50" />
+                                      {k.lastUsedAt ? new Date(k.lastUsedAt).toLocaleDateString() : 'Never'}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          )}
                         </div>
                       </section>
                     )}

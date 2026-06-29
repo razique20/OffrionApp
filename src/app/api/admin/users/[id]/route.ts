@@ -25,7 +25,33 @@ export async function GET(
       profile = await MerchantProfile.findOne({ userId: id }).lean();
     }
 
-    return NextResponse.json({ user, profile });
+    // If partner, return their API keys (masked) with status + usage.
+    let apiKeys: any[] = [];
+    const roles = ((user.roles && user.roles.length) ? user.roles : [user.role]).map(String);
+    if (roles.includes('partner')) {
+      const APIKey = (await import('@/models/APIKey')).default;
+      const keys = await APIKey.find({ partnerId: id })
+        .select('name key isActive isSandbox rateLimit usageCount lastUsedAt createdAt')
+        .sort({ createdAt: -1 })
+        .lean();
+      apiKeys = keys.map((k: any) => {
+        const raw = String(k.key || '');
+        const masked = raw.length > 8 ? `${raw.slice(0, 8)}••••${raw.slice(-4)}` : '••••';
+        return {
+          id: k._id,
+          name: k.name,
+          maskedKey: masked,
+          isActive: k.isActive,
+          isSandbox: k.isSandbox,
+          rateLimit: k.rateLimit,
+          usageCount: k.usageCount || 0,
+          lastUsedAt: k.lastUsedAt || null,
+          createdAt: k.createdAt,
+        };
+      });
+    }
+
+    return NextResponse.json({ user, profile, apiKeys });
 
   } catch (error: any) {
     console.error('Admin User GET Error:', error);
