@@ -15,16 +15,25 @@ export default function PricingPage() {
     <div className="min-h-screen bg-background">
       <main className="pt-24 md:pt-32">
 
-        {/* ── Hero (image background) ── */}
-        <div className="relative overflow-hidden">
-          {/* Background image */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?auto=format&fit=crop&w=2000&q=80"
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover object-center z-0"
+        {/* ── Hero (themed background) ── */}
+        <div className="relative overflow-hidden bg-background">
+          {/* On-brand layered background: subtle grid + monochrome glows */}
+          <div
+            className="absolute inset-0 z-0 opacity-[0.18] dark:opacity-[0.12]"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px)',
+              backgroundSize: '56px 56px',
+              maskImage:
+                'radial-gradient(ellipse 80% 70% at 50% 0%, #000 40%, transparent 100%)',
+              WebkitMaskImage:
+                'radial-gradient(ellipse 80% 70% at 50% 0%, #000 40%, transparent 100%)',
+            }}
           />
-          <div className="absolute inset-0 z-0 bg-background/60 dark:bg-background/65" />
+          <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[420px] rounded-full bg-foreground opacity-[0.07] blur-[120px] z-0" />
+          <div className="absolute top-10 left-[12%] w-[320px] h-[320px] rounded-full bg-foreground opacity-[0.04] blur-[110px] z-0" />
+          <div className="absolute top-10 right-[12%] w-[320px] h-[320px] rounded-full bg-foreground opacity-[0.04] blur-[110px] z-0" />
+          <div className="absolute inset-x-0 bottom-0 h-32 z-0 bg-gradient-to-b from-transparent to-background" />
 
         <section className="relative z-10 px-6 py-12 md:py-20 flex flex-col items-center text-center max-w-4xl mx-auto overflow-hidden">
           <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[200px] rounded-full bg-foreground opacity-[0.06] blur-[80px] z-0" />

@@ -24,13 +24,13 @@ export default function LandingPage() {
           {/* Platform background image */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=2000&q=80"
+            src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=2000&q=80"
             alt=""
-            className="absolute inset-0 w-full h-full object-cover object-right z-0 opacity-50 dark:opacity-40"
+            className="absolute inset-0 w-full h-full object-cover object-right z-0 opacity-60 dark:opacity-50"
           />
           {/* Readability overlays: solid base + fade from the text side */}
-          <div className="absolute inset-0 z-0 bg-background/55" />
-          <div className="absolute inset-0 z-0 bg-gradient-to-r from-background via-background/85 to-background/30" />
+          <div className="absolute inset-0 z-0 bg-background/40" />
+          <div className="absolute inset-0 z-0 bg-gradient-to-r from-background via-background/75 to-background/20" />
 
           {/* Brand gradient blobs (over the dimmed image) */}
           <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full bg-[#A855F7] opacity-[0.07] blur-[120px] z-0" />
@@ -395,12 +395,12 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {[
-                { icon: MapPin,       title: 'The right deal, nearby',  desc: 'Smart location matching surfaces offers people actually want.',          color: 'var(--foreground)' },
-                { icon: QrCode,       title: 'Every visit is real',      desc: 'A quick scan confirms each redemption — no fake claims.',               color: 'var(--foreground)' },
-                { icon: Wallet,       title: 'Transparent payouts',      desc: 'A clear 70/30 split, settled automatically via Stripe.',                color: 'var(--foreground)' },
-                { icon: Zap,          title: 'See results live',         desc: 'Watch visits, claims, and earnings update in real time.',               color: 'var(--foreground)' },
-                { icon: Shield,       title: 'Verified merchants',       desc: 'Every business is checked, so quality stays high.',                     color: 'var(--foreground)' },
-                { icon: Heart,        title: 'Made for everyone',        desc: 'Clean, friendly tools for merchants, partners, and admins.',            color: 'var(--foreground)' },
+                { icon: MapPin, title: 'The right deal, nearby', desc: 'Smart location matching surfaces offers people actually want.', color: 'var(--foreground)' },
+                { icon: QrCode, title: 'Every visit is real', desc: 'A quick scan confirms each redemption — no fake claims.', color: 'var(--foreground)' },
+                { icon: Wallet, title: 'Transparent payouts', desc: 'A clear 70/30 split, settled automatically via Stripe.', color: 'var(--foreground)' },
+                { icon: Zap, title: 'See results live', desc: 'Watch visits, claims, and earnings update in real time.', color: 'var(--foreground)' },
+                { icon: Shield, title: 'Verified merchants', desc: 'Every business is checked, so quality stays high.', color: 'var(--foreground)' },
+                { icon: Heart, title: 'Made for everyone', desc: 'Clean, friendly tools for merchants, partners, and admins.', color: 'var(--foreground)' },
               ].map((item) => (
                 <div
                   key={item.title}
@@ -419,16 +419,21 @@ export default function LandingPage() {
         </section>
 
         {/* ── Final CTA ── */}
-        <section className="py-24 md:py-32 px-6 text-center relative overflow-hidden">
-          {/* Platform background image */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?auto=format&fit=crop&w=2000&q=80"
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover object-center z-0"
+        <section className="py-24 md:py-32 px-6 text-center relative overflow-hidden bg-background">
+          {/* On-brand layered background: subtle grid + monochrome glows */}
+          <div
+            className="absolute inset-0 z-0 opacity-[0.18] dark:opacity-[0.12]"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px)',
+              backgroundSize: '56px 56px',
+              maskImage:
+                'radial-gradient(ellipse 70% 80% at 50% 50%, #000 35%, transparent 100%)',
+              WebkitMaskImage:
+                'radial-gradient(ellipse 70% 80% at 50% 50%, #000 35%, transparent 100%)',
+            }}
           />
-          {/* Single soft overlay — keeps text readable while the image shows */}
-          <div className="absolute inset-0 z-0 bg-background/55 dark:bg-background/60" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[420px] rounded-full bg-foreground opacity-[0.07] blur-[120px] z-0" />
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-border z-0" />
           <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] rounded-full bg-foreground opacity-[0.06] blur-[80px] z-0" />
 
