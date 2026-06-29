@@ -604,13 +604,13 @@ export default function AdminDashboard() {
                     { name: 'Registered Merchants', value: stats?.merchants || '0', icon: ShoppingBag },
                     { name: 'Connected Partners', value: stats?.partners || '0', icon: Users },
                   ].map((stat) => (
-                    <div key={stat.name} className="vercel-section relative group hover:border-foreground/30 transition-all cursor-pointer">
-                      <div className="vercel-section-content">
-                        <div className="flex justify-between items-start mb-6">
-                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em]">{stat.name}</p>
-                          <stat.icon className="w-4 h-4 opacity-20 group-hover:opacity-100 group-hover:scale-110 transition-all" />
+                    <div key={stat.name} className="vercel-section relative group hover:border-foreground/30 transition-all cursor-pointer h-full flex flex-col">
+                      <div className="vercel-section-content flex-1 flex flex-col">
+                        <div className="flex justify-between items-start gap-2 mb-6">
+                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] min-h-[2.4em]">{stat.name}</p>
+                          <stat.icon className="w-4 h-4 opacity-20 group-hover:opacity-100 group-hover:scale-110 transition-all shrink-0" />
                         </div>
-                        <h3 className="text-4xl font-bold tracking-tighter">{stat.value}</h3>
+                        <h3 className="text-4xl font-bold tracking-tighter mt-auto">{stat.value}</h3>
                       </div>
                       <div className="vercel-section-footer bg-secondary/10">
                         <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-50 flex items-center gap-2">
