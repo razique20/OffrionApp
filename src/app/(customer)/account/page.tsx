@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus, Copy, ArrowLeft, Tag, Coins, Sparkles } from 'lucide-react';
+import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus, Copy, ArrowLeft, Tag, Coins, Sparkles, QrCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { notifyCustomerSessionChange } from '@/hooks/useCustomer';
 import { useSetMobileChrome } from '@/components/customer/MobileChromeContext';
+import QrCodeModal from '@/components/customer/QrCodeModal';
 
 type Customer = { id: string; name: string; email: string };
 type Claim = {
@@ -32,6 +33,8 @@ export default function AccountPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  // The claim whose QR is currently shown (null = modal closed).
+  const [qrClaim, setQrClaim] = useState<Claim | null>(null);
   // Ticks every second so the expiry countdown on pending claims stays live.
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -292,15 +295,24 @@ export default function AccountPage() {
               Code <span className="font-mono font-bold tracking-widest text-foreground">{c.redeemCode}</span>
             </span>
             {!redeemed && !expired && (
-              <button
-                onClick={() => copyCode(c.redeemCode)}
-                className="inline-flex items-center gap-1 text-[10px] font-bold text-muted-foreground hover:text-foreground transition-colors"
-                title="Copy code"
-              >
-                {copiedCode === c.redeemCode
-                  ? <><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Copied</>
-                  : <><Copy className="w-3 h-3" /> Copy</>}
-              </button>
+              <>
+                <button
+                  onClick={() => copyCode(c.redeemCode)}
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-muted-foreground hover:text-foreground transition-colors"
+                  title="Copy code"
+                >
+                  {copiedCode === c.redeemCode
+                    ? <><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Copied</>
+                    : <><Copy className="w-3 h-3" /> Copy</>}
+                </button>
+                <button
+                  onClick={() => setQrClaim(c)}
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-muted-foreground hover:text-foreground transition-colors"
+                  title="Show QR code"
+                >
+                  <QrCode className="w-3 h-3" /> QR
+                </button>
+              </>
             )}
           </div>
           {!redeemed && c.expiresAt && (() => {
@@ -429,6 +441,14 @@ export default function AccountPage() {
 
   return (
     <>
+      {qrClaim && (
+        <QrCodeModal
+          code={qrClaim.redeemCode}
+          title={qrClaim.deal?.title}
+          onClose={() => setQrClaim(null)}
+        />
+      )}
+
       {/* Desktop / web — two-column dashboard: account sidebar + claims */}
       <main className="hidden md:block min-h-screen bg-background">
         <div className="max-w-6xl mx-auto px-6 lg:px-10 pt-28 pb-16">
