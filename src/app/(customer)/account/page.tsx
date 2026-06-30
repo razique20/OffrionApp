@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus, Copy, ArrowLeft, Tag } from 'lucide-react';
+import { Loader2, AlertCircle, LogOut, Ticket, CheckCircle2, Clock, XCircle, Plus, Copy, ArrowLeft, Tag, Coins, Sparkles, QrCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { notifyCustomerSessionChange } from '@/hooks/useCustomer';
 import { useSetMobileChrome } from '@/components/customer/MobileChromeContext';
+import QrCodeModal from '@/components/customer/QrCodeModal';
 
 type Customer = { id: string; name: string; email: string };
 type Claim = {
@@ -15,6 +16,7 @@ type Claim = {
   redeemedAt: string | null;
   expiresAt: string | null;
   channel: string;
+  tokensAwarded: number;
   createdAt: string;
   deal: { id: string; title: string; image: string | null; originalPrice: number; discountedPrice: number; discountPercentage: number } | null;
 };
@@ -22,6 +24,7 @@ type Claim = {
 export default function AccountPage() {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [claims, setClaims] = useState<Claim[]>([]);
+  const [tokens, setTokens] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -30,6 +33,8 @@ export default function AccountPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  // The claim whose QR is currently shown (null = modal closed).
+  const [qrClaim, setQrClaim] = useState<Claim | null>(null);
   // Ticks every second so the expiry countdown on pending claims stays live.
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -64,7 +69,11 @@ export default function AccountPage() {
 
   const loadClaims = useCallback(async () => {
     const claimsRes = await fetch('/api/customer/claims');
-    if (claimsRes.ok) setClaims((await claimsRes.json()).claims || []);
+    if (claimsRes.ok) {
+      const json = await claimsRes.json();
+      setClaims(json.claims || []);
+      setTokens(json.tokens || 0);
+    }
   }, []);
 
   const loadSession = useCallback(async () => {
@@ -162,6 +171,7 @@ export default function AccountPage() {
     await fetch('/api/customer/auth/logout', { method: 'POST' });
     setCustomer(null);
     setClaims([]);
+    setTokens(0);
     notifyCustomerSessionChange();
   };
 
@@ -267,131 +277,220 @@ export default function AccountPage() {
   // Logged in — show account + claim history.
   // Shared body (link-coupon + claims), reused by the desktop layout and the
   // mobile app chrome below.
-  const accountBody = (
-    <>
-        {/* Link a coupon received elsewhere (e.g. a partner app) */}
-        <div className="border border-border rounded-2xl p-5 mb-10 bg-card">
-          <div className="flex items-center gap-2 mb-1.5">
-            <Plus className="w-4 h-4" />
-            <h2 className="text-sm font-black uppercase tracking-wider">Link a coupon</h2>
+  // Single claim card — shared by the mobile stack and the desktop grid.
+  const renderClaim = (c: Claim) => {
+    const redeemed = c.status === 'completed';
+    const expired = !redeemed && !!c.expiresAt && new Date(c.expiresAt).getTime() < now;
+    return (
+      <div key={c.id} className="flex items-center gap-4 border border-border rounded-2xl p-4 bg-card">
+        <div className="w-16 h-16 rounded-xl bg-secondary overflow-hidden shrink-0">
+          {c.deal?.image ? (
+            <img src={c.deal.image} alt="" className="w-full h-full object-cover" />
+          ) : null}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-bold tracking-tight truncate">{c.deal?.title || 'Deal'}</p>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="text-xs text-muted-foreground">
+              Code <span className="font-mono font-bold tracking-widest text-foreground">{c.redeemCode}</span>
+            </span>
+            {!redeemed && !expired && (
+              <>
+                <button
+                  onClick={() => copyCode(c.redeemCode)}
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-muted-foreground hover:text-foreground transition-colors"
+                  title="Copy code"
+                >
+                  {copiedCode === c.redeemCode
+                    ? <><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Copied</>
+                    : <><Copy className="w-3 h-3" /> Copy</>}
+                </button>
+                <button
+                  onClick={() => setQrClaim(c)}
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-muted-foreground hover:text-foreground transition-colors"
+                  title="Show QR code"
+                >
+                  <QrCode className="w-3 h-3" /> QR
+                </button>
+              </>
+            )}
           </div>
-          <p className="text-xs text-muted-foreground mb-4">
-            Got a code from a partner app? Add it here to track it in your account. Your discount is unaffected.
-          </p>
-          <form onSubmit={handleLinkCoupon} className="flex gap-2">
-            <input
-              value={linkCode}
-              onChange={(e) => { setLinkCode(e.target.value.toUpperCase()); setLinkMsg(null); }}
-              placeholder="Enter code (e.g. OFFRION-BL6XHT)"
-              maxLength={40}
-              className="flex-1 bg-secondary/40 border border-border rounded-xl px-4 py-2.5 text-sm font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-foreground/20"
-            />
-            <button
-              type="submit"
-              disabled={linking || !linkCode.trim()}
-              className="px-5 py-2.5 bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider rounded-xl hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
-            >
-              {linking ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Link'}
-            </button>
-          </form>
-          {linkMsg && (
-            <p className={cn('flex items-center gap-2 text-xs mt-3', linkMsg.ok ? 'text-emerald-600' : 'text-red-500')}>
-              {linkMsg.ok ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />} {linkMsg.text}
+          {!redeemed && c.expiresAt && (() => {
+            const e = expiryLabel(c.expiresAt);
+            return (
+              <p className={cn('flex items-center gap-1 text-[11px] mt-1', e.urgent ? 'text-red-500 font-semibold' : 'text-muted-foreground')}>
+                <Clock className="w-3 h-3" /> {e.text}
+              </p>
+            );
+          })()}
+          {c.deal && c.deal.originalPrice > c.deal.discountedPrice && (
+            <p className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 mt-1">
+              <Tag className="w-3 h-3" />
+              {redeemed ? 'You saved' : "You'll save"} ${c.deal.originalPrice - c.deal.discountedPrice}
+              {c.deal.discountPercentage > 0 && <span className="text-emerald-600/70 font-semibold"> ({c.deal.discountPercentage}% off)</span>}
+            </p>
+          )}
+          {redeemed && c.tokensAwarded > 0 && (
+            <p className="flex items-center gap-1 text-[11px] font-bold text-[#F97316] mt-1">
+              <Coins className="w-3 h-3" /> +{c.tokensAwarded} tokens earned
+            </p>
+          )}
+          {!redeemed && !expired && (
+            <p className="flex items-center gap-1 text-[11px] text-muted-foreground mt-1">
+              <Coins className="w-3 h-3" /> Redeem in store to earn tokens
             </p>
           )}
         </div>
+        <div className={cn(
+          'flex items-center gap-1.5 text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-full shrink-0',
+          redeemed ? 'bg-emerald-500/10 text-emerald-600'
+            : expired ? 'bg-red-500/10 text-red-500'
+            : 'bg-amber-500/10 text-amber-600'
+        )}>
+          {redeemed ? <><CheckCircle2 className="w-3.5 h-3.5" /> Redeemed</>
+            : expired ? <><XCircle className="w-3.5 h-3.5" /> Expired</>
+            : <><Clock className="w-3.5 h-3.5" /> Pending</>}
+        </div>
+      </div>
+    );
+  };
+
+  const emptyClaims = (
+    <div className="text-center py-20 border border-dashed border-border rounded-2xl text-muted-foreground">
+      <Ticket className="w-10 h-10 mx-auto mb-3 opacity-30" />
+      <p className="font-semibold">No claims yet</p>
+      <Link href="/deals" className="text-sm font-bold text-primary mt-2 inline-block">Browse deals</Link>
+    </div>
+  );
+
+  // Token balance card — `compact` trims it for the desktop sidebar.
+  const tokenCard = (compact = false) => (
+    <div className="relative overflow-hidden border border-border rounded-2xl p-5 bg-card">
+      <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-[#F97316] opacity-[0.08] blur-[60px]" />
+      <div className={cn('relative', compact ? '' : 'flex items-center justify-between gap-4')}>
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Coins className="w-3.5 h-3.5 text-[#F97316]" />
+            <p className="text-[11px] font-black uppercase tracking-[0.15em] text-muted-foreground">Offrion Tokens</p>
+            <span className="text-[9px] font-bold uppercase tracking-wider bg-secondary text-muted-foreground rounded-full px-1.5 py-0.5">Beta</span>
+          </div>
+          <p className={cn('font-black tracking-tighter tabular-nums', compact ? 'text-4xl' : 'text-3xl')}>{tokens.toLocaleString()}</p>
+          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+            <Sparkles className="w-3 h-3" /> Earned when you redeem a deal in store.
+          </p>
+        </div>
+        {!compact && (
+          <div className="w-14 h-14 rounded-2xl bg-foreground flex items-center justify-center shrink-0">
+            <Coins className="w-6 h-6 text-background" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  // Link-a-coupon card.
+  const linkCard = (
+    <div className="border border-border rounded-2xl p-5 bg-card">
+      <div className="flex items-center gap-2 mb-1.5">
+        <Plus className="w-4 h-4" />
+        <h2 className="text-sm font-black uppercase tracking-wider">Link a coupon</h2>
+      </div>
+      <p className="text-xs text-muted-foreground mb-4">
+        Got a code from a partner app? Add it here to track it in your account. Your discount is unaffected.
+      </p>
+      <form onSubmit={handleLinkCoupon} className="flex gap-2">
+        <input
+          value={linkCode}
+          onChange={(e) => { setLinkCode(e.target.value.toUpperCase()); setLinkMsg(null); }}
+          placeholder="Enter code (e.g. OFFRION-BL6XHT)"
+          maxLength={40}
+          className="flex-1 min-w-0 bg-secondary/40 border border-border rounded-xl px-4 py-2.5 text-sm font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-foreground/20"
+        />
+        <button
+          type="submit"
+          disabled={linking || !linkCode.trim()}
+          className="px-5 py-2.5 bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider rounded-xl hover:opacity-90 disabled:opacity-50 flex items-center gap-2 shrink-0"
+        >
+          {linking ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Link'}
+        </button>
+      </form>
+      {linkMsg && (
+        <p className={cn('flex items-center gap-2 text-xs mt-3', linkMsg.ok ? 'text-emerald-600' : 'text-red-500')}>
+          {linkMsg.ok ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />} {linkMsg.text}
+        </p>
+      )}
+    </div>
+  );
+
+  // Mobile body — single-column stack (unchanged layout).
+  const accountBody = (
+    <>
+        <div className="mb-6">{tokenCard()}</div>
+        <div className="mb-10">{linkCard}</div>
 
         <div className="flex items-center gap-2 mb-6">
           <Ticket className="w-5 h-5" />
           <h2 className="text-lg font-black tracking-tight">My Claims</h2>
         </div>
 
-        {claims.length === 0 ? (
-          <div className="text-center py-20 border border-dashed border-border rounded-2xl text-muted-foreground">
-            <Ticket className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p className="font-semibold">No claims yet</p>
-            <Link href="/deals" className="text-sm font-bold text-primary mt-2 inline-block">Browse deals</Link>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {claims.map((c) => {
-              const redeemed = c.status === 'completed';
-              const expired = !redeemed && !!c.expiresAt && new Date(c.expiresAt).getTime() < now;
-              return (
-                <div key={c.id} className="flex items-center gap-4 border border-border rounded-2xl p-4 bg-card">
-                  <div className="w-16 h-16 rounded-xl bg-secondary overflow-hidden shrink-0">
-                    {c.deal?.image ? (
-                      <img src={c.deal.image} alt="" className="w-full h-full object-cover" />
-                    ) : null}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold tracking-tight truncate">{c.deal?.title || 'Deal'}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-muted-foreground">
-                        Code <span className="font-mono font-bold tracking-widest text-foreground">{c.redeemCode}</span>
-                      </span>
-                      {!redeemed && !expired && (
-                        <button
-                          onClick={() => copyCode(c.redeemCode)}
-                          className="inline-flex items-center gap-1 text-[10px] font-bold text-muted-foreground hover:text-foreground transition-colors"
-                          title="Copy code"
-                        >
-                          {copiedCode === c.redeemCode
-                            ? <><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Copied</>
-                            : <><Copy className="w-3 h-3" /> Copy</>}
-                        </button>
-                      )}
-                    </div>
-                    {!redeemed && c.expiresAt && (() => {
-                      const e = expiryLabel(c.expiresAt);
-                      return (
-                        <p className={cn('flex items-center gap-1 text-[11px] mt-1', e.urgent ? 'text-red-500 font-semibold' : 'text-muted-foreground')}>
-                          <Clock className="w-3 h-3" /> {e.text}
-                        </p>
-                      );
-                    })()}
-                    {c.deal && c.deal.originalPrice > c.deal.discountedPrice && (
-                      <p className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 mt-1">
-                        <Tag className="w-3 h-3" />
-                        {redeemed ? 'You saved' : "You'll save"} ${c.deal.originalPrice - c.deal.discountedPrice}
-                        {c.deal.discountPercentage > 0 && <span className="text-emerald-600/70 font-semibold"> ({c.deal.discountPercentage}% off)</span>}
-                      </p>
-                    )}
-                  </div>
-                  <div className={cn(
-                    'flex items-center gap-1.5 text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-full shrink-0',
-                    redeemed ? 'bg-emerald-500/10 text-emerald-600'
-                      : expired ? 'bg-red-500/10 text-red-500'
-                      : 'bg-amber-500/10 text-amber-600'
-                  )}>
-                    {redeemed ? <><CheckCircle2 className="w-3.5 h-3.5" /> Redeemed</>
-                      : expired ? <><XCircle className="w-3.5 h-3.5" /> Expired</>
-                      : <><Clock className="w-3.5 h-3.5" /> Pending</>}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+        {claims.length === 0 ? emptyClaims : (
+          <div className="space-y-3">{claims.map(renderClaim)}</div>
         )}
     </>
   );
 
   return (
     <>
-      {/* Desktop / web — keep the existing layout with marketing chrome */}
+      {qrClaim && (
+        <QrCodeModal
+          code={qrClaim.redeemCode}
+          title={qrClaim.deal?.title}
+          onClose={() => setQrClaim(null)}
+        />
+      )}
+
+      {/* Desktop / web — two-column dashboard: account sidebar + claims */}
       <main className="hidden md:block min-h-screen bg-background">
-        <div className="max-w-3xl mx-auto px-6 pt-28 pb-16">
-          <div className="flex items-start justify-between mb-12">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground mb-2">My Account</p>
-              <h1 className="text-4xl font-black tracking-tighter">{customer.name}</h1>
-              <p className="text-muted-foreground mt-1">{customer.email}</p>
+        <div className="max-w-6xl mx-auto px-6 lg:px-10 pt-28 pb-16">
+          <div className="flex items-start justify-between mb-10">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-foreground text-background flex items-center justify-center text-xl font-black uppercase shrink-0">
+                {customer.name.charAt(0)}
+              </div>
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-1">My Account</p>
+                <h1 className="text-3xl font-black tracking-tighter leading-none">{customer.name}</h1>
+                <p className="text-sm text-muted-foreground mt-1">{customer.email}</p>
+              </div>
             </div>
             <button onClick={logout} className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors">
               <LogOut className="w-4 h-4" /> Log out
             </button>
           </div>
-          {accountBody}
+
+          <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-8 items-start">
+            {/* Left: account widgets (sticky on tall viewports) */}
+            <aside className="space-y-5 lg:sticky lg:top-28">
+              {tokenCard(true)}
+              {linkCard}
+            </aside>
+
+            {/* Right: claims */}
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <Ticket className="w-5 h-5" />
+                  <h2 className="text-lg font-black tracking-tight">My Claims</h2>
+                </div>
+                {claims.length > 0 && (
+                  <span className="text-xs font-bold text-muted-foreground">{claims.length} total</span>
+                )}
+              </div>
+              {claims.length === 0 ? emptyClaims : (
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">{claims.map(renderClaim)}</div>
+              )}
+            </section>
+          </div>
         </div>
       </main>
 

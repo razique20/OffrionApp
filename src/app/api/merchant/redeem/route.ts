@@ -5,9 +5,11 @@ import Deal from '@/models/Deal';
 import Commission from '@/models/Commission';
 import AnalyticsEvent from '@/models/AnalyticsEvent';
 import MerchantProfile from '@/models/MerchantProfile';
+import Customer from '@/models/Customer';
 import { z } from 'zod';
 import { dispatchWebhook } from '@/lib/webhooks';
 import { normalizeRedeemCode } from '@/lib/redeemCode';
+import { tokensForRedemption } from '@/lib/tokens';
 
 const redeemSchema = z.object({
   transactionId: z.string().optional(),
@@ -114,10 +116,28 @@ export async function POST(req: Request) {
     // Mark transaction as completed and disable TTL removal
     transaction.status = 'completed';
     transaction.redeemedAt = new Date();
-    transaction.expiresAt = undefined; 
+    transaction.expiresAt = undefined;
+
+    // --- Offrion Token Reward (beta) ---
+    // Credit tokens to the customer for completing the in-store redemption.
+    // Only first-party customer accounts earn (guests/legacy users have no
+    // balance), and only once per claim — `tokensAwarded` guards re-credits.
+    let tokensAwarded = 0;
+    if (transaction.customerId && !transaction.tokensAwarded) {
+      tokensAwarded = tokensForRedemption(deal);
+      transaction.tokensAwarded = tokensAwarded;
+    }
+
     await transaction.save();
 
     await profile.save();
+
+    if (tokensAwarded > 0 && transaction.customerId) {
+      await Customer.updateOne(
+        { _id: transaction.customerId },
+        { $inc: { tokens: tokensAwarded } }
+      );
+    }
 
     // --- Log Conversion Analytics Event ---
     await AnalyticsEvent.create({
@@ -163,6 +183,7 @@ export async function POST(req: Request) {
         dealTitle: deal.title,
         originalPrice: deal.originalPrice,
         discountedPrice: deal.discountedPrice,
+        tokensAwarded,
       },
       commission: {
         id: commission._id,
