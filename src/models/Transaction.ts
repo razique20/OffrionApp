@@ -11,6 +11,12 @@ export interface ITransaction extends Document {
   amount: number;
   currency: string;
   status: 'pending' | 'completed' | 'cancelled' | 'refunded';
+  /**
+   * Offrion tokens credited to the customer when this claim was redeemed.
+   * 0 (or absent) means none were awarded yet. Used to credit exactly once
+   * and to backfill balances for historical redemptions.
+   */
+  tokensAwarded?: number;
   redeemedAt?: Date;
   expiresAt?: Date; // TTL field
   qrCode?: string;
@@ -40,6 +46,7 @@ const TransactionSchema: Schema = new Schema(
       default: 'pending',
       index: true,
     },
+    tokensAwarded: { type: Number, default: 0, min: 0 },
     redeemedAt: { type: Date },
     expiresAt: { type: Date },
     qrCode: { type: String },

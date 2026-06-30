@@ -11,6 +11,13 @@ export interface ICustomer extends Document {
   password?: string;
   country?: string;
   isActive: boolean;
+  /**
+   * Offrion token balance. Beta-only reward credited when a claimed deal is
+   * actually redeemed at the merchant (Transaction status -> completed), to
+   * encourage customers to complete the in-store scan. No monetary value is
+   * surfaced while in beta.
+   */
+  tokens: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,6 +29,7 @@ const CustomerSchema: Schema = new Schema(
     password: { type: String, required: true },
     country: { type: String, default: 'United Arab Emirates' },
     isActive: { type: Boolean, default: true },
+    tokens: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true }
 );

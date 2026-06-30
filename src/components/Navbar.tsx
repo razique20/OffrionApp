@@ -77,11 +77,17 @@ export const Navbar = () => {
         <div className="flex items-center gap-8">
           <div className="hidden md:flex items-center gap-1">
             {[
-              ...(customer ? [{ label: 'Deals', href: '/deals' }] : []),
-              { label: 'Ecosystem', href: '/ecosystem' },
-              { label: 'Docs', href: '/docs' },
-              { label: 'Showcase', href: '/showcase' },
-              { label: 'Beta', href: '/pricing' },
+              // A logged-in shopper sees a focused nav (Deals only; Account &
+              // Log out live in their dropdown). Everyone else sees the
+              // marketing links.
+              ...(customer
+                ? [{ label: 'Deals', href: '/deals' }]
+                : [
+                    { label: 'Ecosystem', href: '/ecosystem' },
+                    { label: 'Docs', href: '/docs' },
+                    { label: 'Showcase', href: '/showcase' },
+                    { label: 'Beta', href: '/pricing' },
+                  ]),
               ...(user ? [{ label: 'Dashboard', href: dashboardHref }] : []),
             ].map((link) => (
               <Link
@@ -196,7 +202,19 @@ export const Navbar = () => {
                   )}
                 </div>
               ) : customer ? (
-                <div className="relative">
+                <>
+                  {/* Visible Account link in the top bar (the avatar dropdown also has it, plus Log Out) */}
+                  <Link
+                    href="/account"
+                    className={cn(
+                      "text-[12px] font-medium transition-colors whitespace-nowrap",
+                      pathname === '/account' ? "text-foreground" : "text-muted-foreground/80 hover:text-foreground"
+                    )}
+                  >
+                    Account
+                  </Link>
+                  <div className="h-4 w-px bg-border/40" />
+                  <div className="relative">
                   <button
                     onClick={() => setShowCustomerMenu(!showCustomerMenu)}
                     className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full border border-border bg-secondary/50 hover:bg-secondary transition-all"
@@ -244,7 +262,8 @@ export const Navbar = () => {
                       </div>
                     </>
                   )}
-                </div>
+                  </div>
+                </>
               ) : (
                 <>
                   <Link
@@ -281,11 +300,16 @@ export const Navbar = () => {
         <div className="md:hidden absolute top-full left-0 w-full bg-background border-y border-border p-6 flex flex-col gap-5 shadow-2xl animate-in fade-in slide-in-from-top-4">
           <div className="flex flex-col gap-1">
             {[
-              ...(customer ? [{ label: 'Deals', href: '/deals' }] : []),
-              { label: 'Ecosystem', href: '/ecosystem' },
-              { label: 'Docs', href: '/docs' },
-              { label: 'Showcase', href: '/showcase' },
-              { label: 'Beta', href: '/pricing' },
+              // Logged-in shopper: focused nav (Deals only; Account & Log out
+              // are in the block below). Others see the marketing links.
+              ...(customer
+                ? [{ label: 'Deals', href: '/deals' }]
+                : [
+                    { label: 'Ecosystem', href: '/ecosystem' },
+                    { label: 'Docs', href: '/docs' },
+                    { label: 'Showcase', href: '/showcase' },
+                    { label: 'Beta', href: '/pricing' },
+                  ]),
               ...(user ? [{ label: 'Dashboard', href: dashboardHref }] : []),
             ].map((link) => (
               <Link
