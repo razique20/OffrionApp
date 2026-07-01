@@ -15,6 +15,7 @@ import {
   Receipt,
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
+import QrScanner from '@/components/merchant/QrScanner';
 
 type RedeemState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -49,6 +50,7 @@ export default function MerchantRedeemPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [kycStatus, setKycStatus] = useState<string>('loading');
   const [recent, setRecent] = useState<RecentTxn[]>([]);
+  const [showScanner, setShowScanner] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const loadRecent = useCallback(() => {
@@ -102,8 +104,8 @@ export default function MerchantRedeemPage() {
     inputRefs.current[focusIndex]?.focus();
   };
 
-  const handleRedeem = async () => {
-    const cleanCode = code.replace(/\s/g, '');
+  const handleRedeem = async (explicitCode?: string) => {
+    const cleanCode = (explicitCode ?? code).replace(/\s/g, '');
     if (cleanCode.length !== 6) return;
 
     setState('loading');
@@ -130,10 +132,18 @@ export default function MerchantRedeemPage() {
       setResult(json);
       setState('success');
       loadRecent();
-    } catch (err: any) {
-      setErrorMessage(err.message);
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : 'An unknown error occurred');
       setState('error');
     }
+  };
+
+  // A QR scan gives us the normalized 6-char code directly: close the scanner,
+  // mirror it into the inputs (so the success screen shows it), and redeem.
+  const handleScanned = (scannedCode: string) => {
+    setShowScanner(false);
+    setCode(scannedCode);
+    handleRedeem(scannedCode);
   };
 
   const handleReset = () => {
@@ -196,6 +206,10 @@ export default function MerchantRedeemPage() {
 
   return (
     <div className="max-w-6xl mx-auto">
+      {showScanner && (
+        <QrScanner onDetected={handleScanned} onClose={() => setShowScanner(false)} />
+      )}
+
       {/* Terminal header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-md bg-secondary border border-border flex items-center justify-center">
@@ -226,7 +240,7 @@ export default function MerchantRedeemPage() {
 
               {/* QR scan trigger */}
               <button
-                onClick={() => alert('Camera access would be requested here in the next version to scan the customer QR code.')}
+                onClick={() => setShowScanner(true)}
                 className="w-full flex items-center gap-3 py-4 px-4 bg-secondary/50 border border-dashed border-border rounded-lg group hover:bg-secondary transition-all"
               >
                 <div className="p-2.5 bg-background border border-border rounded-md group-hover:scale-105 transition-transform">
@@ -271,7 +285,7 @@ export default function MerchantRedeemPage() {
               </div>
 
               <button
-                onClick={handleRedeem}
+                onClick={() => handleRedeem()}
                 disabled={code.replace(/\s/g, '').length !== 6 || state === 'loading'}
                 className={cn(
                   'w-full flex items-center justify-center gap-2.5 py-4 px-6 rounded-md text-sm font-bold transition-all duration-300',
